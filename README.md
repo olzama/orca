@@ -10,9 +10,6 @@ Working repository. Goals, in order of priority:
    descriptive grammars.
 3. Long term: record where the theory strains and, if warranted, revise it.
 
-Existing DELPH-IN software, grammars and treebanks in `/home/olga/delphin` are reference material
-only; this project does not depend on them at run time. The motivating downstream experiment is
-`/mnt/kesha/lenka-fork`.
 
 - `reading/`: notes from literature surveys (sources are fetched by `scripts/`).
 - `theory-log/`: theory-level observations and proposals.
