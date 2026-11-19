@@ -1,0 +1,459 @@
+991803	
+204273	n_sg_ilr
+80188	n_pl_olr
+67258	n_ms-cnt_ilr
+50823	v_n3s-bse_ilr
+31034	v_pst_olr
+18964	v_pas_odlr
+17147	v_prp_olr
+14854	v_3s-fin_olr
+10793	n_ms_ilr
+7488	n_pl-cur_ilr
+6695	v_psp_olr
+6406	n_pl-irreg-noaff_olr
+5057	v_nger-tr_dlr v_prp_olr
+4795	j_att_dlr
+4727	v_j-nb-pas-tr_dlr v_pas_odlr
+3085	v_aux-cx-noinv_dlr
+3020	v_aux-sb-inv_dlr
+2566	v_aux-advadd_dlr
+1550	v_j-nb-prp-tr_dlr v_prp_olr
+1421	n_pl-irreg_olr
+1344	n_det-mnth_dlr n_sg_ilr
+1092	v_pas-dat_odlr
+1008	v_inv-quot_dlr v_3s-fin_olr
+992	det_prt-nocmp_dlr
+989	det_prt-of-agr_dlr
+977	v_nger-intr_dlr v_prp_olr
+892	v_np-prtcl_dlr v_n3s-bse_ilr
+785	v_aux-ell-ref_dlr
+776	n_sg_ilr n_n-hour_dlr
+728	v_inv-quot_dlr v_pst_olr
+670	j_j-un_dlr
+670	w_period_plr
+657	v_nger-pp_dlr v_prp_olr
+636	v_j-nb-intr_dlr v_prp_olr
+591	j_j-un_dlr v_j-nb-pas-tr_dlr v_pas_odlr
+512	v_pas-prt-t_odlr
+401	v_np-prtcl_dlr v_pst_olr
+396	w_italright_plr w_italleft_plr
+337	n_det-wkdy_dlr n_sg_ilr
+322	v_np-prtcl_dlr v_prp_olr
+304	n_n-ed_odlr
+265	w_period_plr n_sg_ilr
+247	w_mwe-wb_dlr
+243	v_aux-advadd_dlr v_aux-cx-noinv_dlr
+219	v_n3s-bse_ilr v_dat_dlr
+206	v_v-re_dlr v_n3s-bse_ilr
+194	det_prt-of-nagr_dlr
+192	w_comma_plr
+182	w_drop-iright_plr w_drop-ileft_plr n_sg_ilr
+173	w_italleft_plr
+169	w_comma_plr n_sg_ilr
+165	w_dqleft_plr
+165	w_drop-ileft_plr
+150	j_tough_dlr
+150	w_italright_plr
+137	v_np-prtcl_dlr v_psp_olr
+132	v_pst_olr v_dat_dlr
+126	v_pas-cp_odlr
+125	v_pas_odlr v_dat_dlr
+124	v_aux-sb-inv-ell_dlr v_aux-ell-ref_dlr
+122	v_pas-p_odlr
+116	v_j-nme-tr_dlr v_pas_odlr
+110	v_v-re_dlr v_pas_odlr
+109	j_n-pre_odlr n_ms-cnt_ilr
+109	w_italright_plr w_italleft_plr n_ms-cnt_ilr
+106	j_enough_dlr
+101	w_period_plr n_ms-cnt_ilr
+92	j_j-un_dlr j_att_dlr
+88	v_np-prtcl_dlr v_3s-fin_olr
+85	w_italright_plr w_italleft_plr n_sg_ilr
+80	v_v-re_dlr v_prp_olr
+73	v_prp_olr v_dat_dlr
+67	w_comma_plr n_ms-cnt_ilr
+65	v_j-nb-pas-tr_dlr
+64	w_drop-iright_plr w_drop-ileft_plr
+57	v_pst_olr v_cp-frag_dlr
+57	v_v-un_dlr v_pas_odlr
+57	w_drop-iright_plr n_ms-cnt_ilr
+57	w_drop-iright_plr n_sg_ilr
+55	v_v-re_dlr v_pst_olr
+55	w_period_plr n_pl_olr
+55	v_cond-inv_dlr
+53	w_hyphen_plr
+53	w_drop-iright_plr n_pl_olr
+52	j_j-non_dlr
+51	v_j-nb-pas-ptcl_dlr v_pas-prt-t_odlr
+50	v_aux-neg-ell_dlr v_aux-ell-ref_dlr
+49	v_n3s-bse_ilr v_cp-frag_dlr
+48	w_mwe-wb_dlr n_sg_ilr
+47	w_comma_plr n_pl_olr
+42	v_nger-tr_dlr
+42	v_inv-quot_dlr v_pst_olr v_cp-frag_dlr
+39	v_aux-tag_dlr v_aux-sb-inv-ell_dlr v_aux-ell-ref_dlr
+39	v_3s-fin_olr v_dat_dlr
+38	v_v-over_dlr v_pas_odlr
+35	n_sg-cur_ilr
+33	v_inv-quot_dlr v_3s-fin_olr v_cp-frag_dlr
+32	v_v-un_dlr v_n3s-bse_ilr
+32	n_dom-ppof_dlr
+31	w_dqright_plr w_period_plr n_sg_ilr
+31	w_drop-ileft_plr n_sg_ilr
+30	v_j-nb-pas-tr_dlr v_v-re_dlr v_pas_odlr
+29	w_dqleft_plr w_comma_plr
+28	v_3s-fin_olr v_cp-frag_dlr
+28	v_v-over_dlr v_n3s-bse_ilr
+28	w_mwe-3-wb_dlr
+26	v_v-out_dlr v_pst_olr
+26	w_dqright_plr w_qmark_plr
+25	v_v-un_dlr v_prp_olr
+25	v_v-out_dlr v_n3s-bse_ilr
+25	w_dqright_plr w_period_plr
+25	n_n-mini_dlr n_pl_olr
+24	w_dqright_plr w_period_plr n_ms-cnt_ilr
+23	v_nger-tr_dlr v_v-re_dlr v_prp_olr
+23	v_aux-ell-xpl_dlr
+23	n_n-co_dlr n_sg_ilr
+23	j_tough-compar_dlr
+23	w_italright_plr n_ms-cnt_ilr
+22	v_aux-sb-inv_dlr v_aux-advadd_dlr
+22	v_j-nme-tr-prp_dlr v_prp_olr
+22	w_comma-nf_plr
+21	v_v-un_dlr v_pst_olr
+21	v_j-nb-pas-tr_dlr v_v-pre_dlr v_pas_odlr
+21	w_drop-iright_plr w_drop-ileft_plr n_ms-cnt_ilr
+21	n_n-co-ni_dlr
+20	v_inv-quot_dlr v_n3s-bse_ilr
+20	w_drop-iright_plr w_drop-ileft_plr v_n3s-bse_ilr
+20	w_drop-iright_plr w_drop-ileft_plr n_pl_olr
+19	w_period_plr v_n3s-bse_ilr
+18	j_enough-wc-nogap_dlr
+18	v_psp_olr v_dat_dlr
+18	w_drop-iright_plr
+17	v_v-mis_dlr v_pst_olr
+17	v_v-re_dlr v_psp_olr
+16	j_j-non_dlr v_j-nb-prp-tr_dlr v_prp_olr
+15	v_pas_odlr v_it-cp-vp_dlr
+15	v_v-over_dlr v_prp_olr
+15	w_dqright_plr w_comma_plr n_sg_ilr
+15	w_period_plr v_pst_olr
+14	v_v-mis_dlr v_pas_odlr
+14	w_period_plr n_ms_ilr
+14	j_j-un_dlr v_j-nb-prp-tr_dlr v_prp_olr
+14	n_n-counter_dlr n_sg_ilr
+14	v_v-under_dlr v_pas_odlr
+13	n_n-co_dlr n_pl_olr
+13	w_comma_plr v_pas_odlr
+13	w_comma_plr v_n3s-bse_ilr
+13	w_italright_plr n_sg_ilr
+12	v_prp-nf_olr
+12	w_comma_plr v_pst_olr
+12	w_italright_plr w_italleft_plr n_pl_olr
+11	v_v-co_dlr v_n3s-bse_ilr
+11	v_j-nb-pas-tr_dlr v_v-self_dlr v_pas_odlr
+11	v_j-nb-pas-tr_dlr v_v-over_dlr v_pas_odlr
+11	n_n-mini_dlr n_sg_ilr
+11	w_dqright_plr w_period_plr v_n3s-bse_ilr
+11	w_dqright_plr w_comma_plr
+11	v_v-pre_dlr v_pas_odlr
+10	v_v-out_dlr v_psp_olr
+10	v_j-nb-prp-tr_dlr
+10	j_j-over_dlr v_j-nb-pas-tr_dlr v_pas_odlr
+10	w_comma_plr n_ms_ilr
+10	w_drop-ileft_plr v_n3s-bse_ilr
+10	v_j-nb-pas-tr_dlr v_v-under_dlr v_pas_odlr
+10	j_j-non_dlr v_j-nb-intr_dlr v_prp_olr
+9	j_enough-wc_dlr
+9	w_period_plr v_pas_odlr
+9	v_v-re_dlr v_3s-fin_olr
+9	w_dqleft_plr v_aux-sb-inv_dlr
+9	w_dqright_plr w_qmark_plr n_sg_ilr
+9	n_n-co_dlr n_ms-cnt_ilr
+9	w_drop-ileft_plr n_ms-cnt_ilr
+9	v_v-re_dlr v_pas-dat_odlr
+8	j_n-pre_odlr n_sg_ilr
+8	v_psp_olr v_cp-frag_dlr
+8	w_comma-nf_plr n_sg_ilr
+8	v_j-nb-pas-ptcl_dlr v_pas-p_odlr
+8	w_drop-ileft_plr n_pl_olr
+8	w_italleft_plr n_ms-cnt_ilr
+8	w_italright_plr w_qmark_plr
+7	j_j-un_dlr v_j-nb-intr_dlr v_prp_olr
+7	v_j-nb-pas-tr_dlr v_v-mis_dlr v_pas_odlr
+7	v_j-nb-pas-tr_dlr v_v-out_dlr v_pas_odlr
+7	w_dqright_plr w_qmark_plr v_n3s-bse_ilr
+7	v_j-nb-pas-tr_dlr v_v-un_dlr v_pas_odlr
+7	w_drop-iright_plr w_period_plr n_pl_olr
+7	w_drop-iright_plr w_drop-ileft_plr n_ms_ilr
+7	w_drop-iright_plr n_ms_ilr
+7	v_v-co_dlr v_pas_odlr
+6	v_v-mis_dlr v_psp_olr
+6	v_v-un_dlr v_psp_olr
+6	w_dqright_plr w_comma_plr n_ms-cnt_ilr
+6	w_dqright_plr w_period_plr n_pl_olr
+6	n_pl-paren_olr
+6	v_j-nb-prp-tr_dlr v_v-self_dlr v_prp_olr
+6	v_j-nme-intr-prp_dlr v_prp_olr
+6	v_nger-tr_dlr v_v-over_dlr v_prp_olr
+6	v_v-pre_dlr v_n3s-bse_ilr
+6	n_n-counter-ni_dlr
+6	v_v-out_dlr v_3s-fin_olr
+6	n_n-counter_dlr n_pl_olr
+6	n_n-mini-ni_dlr
+5	w_semicol_plr
+5	w_dqright_plr w_qmark_plr n_ms-cnt_ilr
+5	w_hyphen_plr v_nger-intr_dlr v_prp_olr
+5	w_bang_plr
+5	w_comma_plr v_psp_olr
+5	w_dqright_plr w_period_plr n_ms_ilr
+5	w_period_plr v_psp_olr
+5	w_hyphen_plr v_nger-tr_dlr v_prp_olr
+5	n_n-hour_dlr
+5	w_dqright_plr w_bang_plr n_sg_ilr
+5	v_j-nme-tr-pl-prp_dlr v_prp_olr
+5	w_italright_plr w_period_plr
+5	v_v-out_dlr v_prp_olr
+5	v_v-co_dlr v_pst_olr
+5	n_n-counter_dlr n_ms-cnt_ilr
+5	v_v-un_dlr v_3s-fin_olr
+5	v_v-mis_dlr v_n3s-bse_ilr
+5	v_v-under_dlr v_n3s-bse_ilr
+5	v_v-mis_dlr v_prp_olr
+4	w_period_plr n_pl-irreg-noaff_olr
+4	v_nger-pp_dlr v_v-over_dlr v_prp_olr
+4	j_j-over_dlr
+4	v_v-self_dlr v_pas_odlr
+4	v_v-over_dlr v_pst_olr
+4	w_comma-nf_plr n_ms-cnt_ilr
+4	w_dqright_plr w_period_plr v_prp_olr
+4	w_period_plr v_prp_olr
+4	j_n-minut-p_dlr
+4	w_semicol_plr n_sg_ilr
+4	w_comma-nf_plr n_pl_olr
+4	w_dqright_plr w_period_plr v_aux-ell-ref_dlr
+4	w_dqleft_plr w_sqleft_plr
+4	w_dqright_plr w_bang_plr n_ms-cnt_ilr
+4	w_dqleft_plr v_n3s-bse_ilr
+4	w_dqright_plr w_bang_plr
+4	v_prp_olr v_cp-frag_dlr
+4	w_drop-iright_plr w_period_plr n_ms-cnt_ilr
+4	v_v-out_dlr v_pas_odlr
+4	w_drop-iright_plr w_period_plr n_sg_ilr
+4	v_v-pre_dlr v_3s-fin_olr
+4	w_drop-iright_plr w_drop-ileft_plr v_pas_odlr
+4	v_j-nb-intr_dlr v_v-pre_dlr v_prp_olr
+4	w_italright_plr w_italleft_plr v_n3s-bse_ilr
+4	w_drop-ileft_plr v_prp_olr
+4	v_v-pre_dlr v_prp_olr
+4	v_j-nb-prp-tr_dlr v_v-over_dlr v_prp_olr
+4	j_j-un_dlr v_j-nb-pas-ptcl_dlr v_pas-p_odlr
+4	v_j-nme-tr_dlr
+4	v_v-under_dlr v_psp_olr
+3	v_aux-tag_dlr v_aux-sb-inv-ell_dlr v_aux-ell-xpl_dlr
+3	v_pas-p-p_odlr
+3	w_period_plr v_nger-tr_dlr v_prp_olr
+3	w_semicol_plr n_ms-cnt_ilr
+3	w_comma-nf_plr j_att_dlr
+3	w_sqright_plr w_period_plr
+3	w_dqleft_plr w_sqleft_plr w_comma_plr
+3	w_dqleft_plr w_dqright_plr w_period_plr
+3	w_dqright_plr w_period_plr v_pas_odlr
+3	w_bang_plr n_sg_ilr
+3	w_bang_plr n_ms-cnt_ilr
+3	w_dqleft_plr w_comma-nf_plr
+3	w_dqleft_plr w_bang_plr
+3	w_period_plr v_aux-ell-ref_dlr
+3	w_italleft_plr w_drop-iright_plr
+3	v_v-under_dlr v_pst_olr
+3	w_drop-ileft_plr j_att_dlr
+3	w_italright_plr w_italleft_plr n_ms_ilr
+3	w_italright_plr n_pl-irreg_olr
+3	w_drop-ileft_plr v_j-nb-pas-tr_dlr v_pas_odlr
+3	j_j-co_dlr
+3	v_nger-intr_dlr v_v-un_dlr v_prp_olr
+3	v_j-nme-tr_dlr v_v-re_dlr v_pas_odlr
+3	v_v-mis_dlr v_3s-fin_olr
+3	v_v-over_dlr v_psp_olr
+2	j_j-un_dlr j_tough_dlr
+2	v_aux-sb-inv-ell_dlr v_aux-ell-xpl_dlr
+2	w_comma_plr j_j-un_dlr
+2	w_comma_plr v_prp_olr
+2	w_dqright_plr w_comma_plr v_n3s-bse_ilr
+2	w_comma_plr v_aux-ell-ref_dlr
+2	w_period_plr v_3s-fin_olr
+2	w_qmark_plr
+2	w_dqleft_plr w_dqright_plr w_bang_plr
+2	w_hyphen_plr n_sg_ilr
+2	w_dqright_plr w_comma_plr n_pl_olr
+2	w_sqright_plr w_qmark_plr
+2	w_qmark_plr n_ms-cnt_ilr
+2	w_dqright_plr w_qmark_plr n_ms_ilr
+2	w_dqright_plr w_comma_plr v_pas_odlr
+2	w_comma_plr v_3s-fin_olr
+2	w_dqleft_plr w_period_plr
+2	w_comma_plr det_prt-nocmp_dlr
+2	w_dqleft_plr j_enough_dlr
+2	w_dqleft_plr w_comma_plr n_sg_ilr
+2	w_comma-nf_plr n_ms_ilr
+2	w_hyphen_plr j_att_dlr
+2	w_comma_plr v_pst_olr v_cp-frag_dlr
+2	w_dqright_plr w_qmark_plr n_pl_olr
+2	v_v-counter_dlr v_pas_odlr
+2	w_period_plr det_prt-nocmp_dlr
+2	j_j-un_dlr v_j-nb-pas-tr_dlr
+2	v_nger-tr_dlr v_v-un_dlr v_prp_olr
+2	w_drop-iright_plr w_period_plr
+2	w_drop-ileft_plr j_j-non_dlr
+2	w_drop-iright_plr v_nger-tr_dlr v_prp_olr
+2	j_j-co_dlr v_j-nb-pas-tr_dlr v_pas_odlr
+2	w_drop-iright_plr w_drop-ileft_plr n_pl-irreg-noaff_olr
+2	v_pas-np-p_odlr
+2	w_drop-ileft_plr v_aux-advadd_dlr
+2	v_nger-tr_dlr v_v-pre_dlr v_prp_olr
+2	w_drop-iright_plr w_drop-ileft_plr v_j-nb-pas-tr_dlr v_pas_odlr
+2	w_italleft_plr w_drop-iright_plr n_sg_ilr
+2	v_pas-p-t_odlr
+2	w_drop-iright_plr w_drop-ileft_plr j_att_dlr
+2	w_drop-ileft_plr v_pas_odlr
+2	v_j-nme-intr-pl-prp_dlr v_prp_olr
+2	w_drop-iright_plr w_drop-ileft_plr v_prp_olr
+2	w_drop-ileft_plr n_ms_ilr
+2	v_v-over_dlr v_3s-fin_olr
+2	w_italright_plr w_period_plr n_ms-cnt_ilr
+2	v_j-nb-prp-tr_dlr v_v-under_dlr v_prp_olr
+2	n_n-counter_dlr n_ms_ilr
+2	v_j-nb-prp-tr_dlr v_v-mis_dlr v_prp_olr
+2	j_n-pre-pn_odlr n_sg_ilr
+2	v_nger-intr_dlr v_v-cross_dlr v_prp_olr
+2	v_j-nme-tr_dlr v_v-over_dlr v_pas_odlr
+2	v_v-under_dlr v_3s-fin_olr
+2	v_v-co_dlr v_prp_olr
+2	v_v-under_dlr v_prp_olr
+2	v_v-counter_dlr v_n3s-bse_ilr
+1	j_enough_dlr j_j-un_dlr
+1	v_aux-neg-ell_dlr v_aux-ell-xpl_dlr
+1	v_nger-intr_dlr v_v-over_dlr v_prp_olr
+1	v_v-un_dlr v_v-re_dlr v_pas_odlr
+1	v_np-prtcl_dlr v_prp-nf_olr
+1	v_v-re_dlr
+1	j_j-un_dlr v_j-nb-pas-tr_dlr v_v-re_dlr v_pas_odlr
+1	j_j-over_dlr j_att_dlr
+1	w_period_plr v_pas_odlr v_dat_dlr
+1	w_dqleft_plr w_semicol_plr
+1	w_dqright_plr w_period_plr j_j-un_dlr
+1	w_dqleft_plr w_dqright_plr n_sg_ilr
+1	w_period_plr n_pl-irreg_olr
+1	w_dqleft_plr w_sqleft_plr v_n3s-bse_ilr
+1	w_sqright_plr w_comma_plr n_sg_ilr
+1	w_sqleft_plr v_aux-sb-inv_dlr
+1	w_dqleft_plr w_sqleft_plr w_sqright_plr w_comma_plr
+1	w_sqright_plr w_qmark_plr n_ms-cnt_ilr
+1	w_sqright_plr w_period_plr n_sg_ilr
+1	w_sqright_plr w_period_plr n_ms-cnt_ilr
+1	w_dqleft_plr w_dqright_plr w_comma_plr
+1	w_comma_plr v_v-un_dlr v_pas_odlr
+1	w_sqleft_plr w_comma_plr
+1	w_sqright_plr w_bang_plr n_ms-cnt_ilr
+1	w_dqright_plr w_qmark_plr v_pas_odlr
+1	w_dqleft_plr v_prp_olr
+1	w_dqright_plr w_period_plr v_pst_olr
+1	w_dqright_plr w_qmark_plr det_prt-nocmp_dlr
+1	w_dqright_plr w_period_plr det_prt-nocmp_dlr
+1	w_dqleft_plr det_prt-of-agr_dlr
+1	w_semicol_plr n_pl_olr
+1	w_dqleft_plr n_sg_ilr
+1	w_comma-nf_plr v_n3s-bse_ilr
+1	w_dqleft_plr det_prt-nocmp_dlr
+1	w_dqright_plr w_period_plr v_3s-fin_olr
+1	w_dqright_plr w_qmark_plr v_3s-fin_olr
+1	w_dqleft_plr w_dqright_plr w_bang_plr v_n3s-bse_ilr
+1	w_hyphen_plr v_j-nb-pas-tr_dlr v_pas_odlr
+1	w_dqleft_plr v_pas_odlr
+1	w_comma-nf_plr v_pst_olr
+1	w_dqleft_plr w_bang_plr n_sg_ilr
+1	w_dqleft_plr w_dqright_plr w_comma_plr n_sg_ilr
+1	w_sqright_plr
+1	w_semicol_plr n_pl-irreg_olr
+1	w_semicol_plr v_pst_olr v_cp-frag_dlr
+1	w_comma_plr n_n-ed_odlr
+1	w_bang_plr n_pl_olr
+1	w_dqright_plr w_period_plr v_psp_olr
+1	w_sqleft_plr w_comma_plr w_sqright_plr n_ms-cnt_ilr
+1	w_period_plr j_att_dlr
+1	w_drop-iright_plr w_drop-ileft_plr v_3s-fin_olr
+1	v_v-un_dlr v_pas-cp_odlr
+1	v_nger-pp_dlr v_v-mis_dlr v_prp_olr
+1	n_n-co_dlr n_ms_ilr
+1	w_drop-iright_plr w_period_plr v_pas_odlr
+1	w_drop-ileft_plr j_j-un_dlr j_att_dlr
+1	w_drop-iright_plr w_drop-ileft_plr v_nger-tr_dlr v_prp_olr
+1	v_v-self_dlr v_n3s-bse_ilr
+1	w_italright_plr w_period_plr n_sg_ilr
+1	w_drop-ileft_plr v_j-nb-prp-tr_dlr v_prp_olr
+1	w_italright_plr n_ms_ilr
+1	w_italright_plr w_italleft_plr n_pl-irreg-noaff_olr
+1	w_drop-iright_plr n_pl-irreg-noaff_olr
+1	w_drop-iright_plr j_j-un_dlr v_j-nb-pas-tr_dlr v_pas_odlr
+1	w_italright_plr w_italleft_plr v_psp_olr
+1	w_drop-iright_plr w_drop-ileft_plr v_psp_olr
+1	w_period_plr w_drop-iright_plr w_drop-ileft_plr n_ms-cnt_ilr
+1	w_period_plr w_drop-iright_plr w_drop-ileft_plr
+1	w_italright_plr w_qmark_plr v_pas_odlr
+1	w_italleft_plr w_drop-iright_plr w_period_plr
+1	w_drop-iright_plr v_v-un_dlr v_pas_odlr
+1	w_italright_plr w_qmark_plr n_ms-cnt_ilr
+1	w_drop-ileft_plr v_nger-tr_dlr v_v-re_dlr v_prp_olr
+1	w_drop-iright_plr w_drop-ileft_plr j_j-non_dlr
+1	w_italright_plr w_italleft_plr n_pl-irreg_olr
+1	w_italleft_plr w_drop-iright_plr v_n3s-bse_ilr
+1	v_j-nb-pas-tr_dlr w_drop-iright_plr w_drop-ileft_plr v_pas_odlr
+1	v_pas-prt-t_odlr v_dat_dlr
+1	w_italleft_plr n_pl_olr
+1	w_drop-iright_plr w_drop-ileft_plr v_j-nme-tr_dlr v_pas_odlr
+1	v_j-nme-tr_dlr v_v-un_dlr v_pas_odlr
+1	w_drop-ileft_plr v_nger-pp_dlr v_prp_olr
+1	w_italright_plr v_n3s-bse_ilr
+1	v_nger-pp_dlr v_v-re_dlr v_prp_olr
+1	w_italright_plr w_italleft_plr n_sg-cur_ilr
+1	v_nger-tr_dlr v_v-self_dlr v_prp_olr
+1	w_drop-ileft_plr n_n-counter-ni_dlr
+1	v_j-nb-prp-tr_dlr w_drop-iright_plr w_drop-ileft_plr v_prp_olr
+1	w_italright_plr n_pl-irreg-noaff_olr
+1	w_italright_plr w_italleft_plr v_pst_olr
+1	w_drop-iright_plr w_drop-ileft_plr v_pst_olr
+1	w_drop-iright_plr w_period_plr w_drop-ileft_plr
+1	w_drop-iright_plr n_pl-irreg_olr
+1	v_v-cross_dlr v_pas_odlr
+1	v_j-nb-pas-tr_dlr v_v-co_dlr v_pas_odlr
+1	v_v-cross_dlr v_pst_olr
+1	v_j-nb-intr_dlr v_v-self_dlr v_prp_olr
+1	v_nger-tr_dlr v_v-cross_dlr v_prp_olr
+1	j_n-minut_dlr
+1	v_v-self_dlr v_prp_olr
+1	v_v-counter_dlr v_prp_olr
+1	n_n-co_dlr n_pl-irreg_olr
+1	v_v-self_dlr v_v-re_dlr v_n3s-bse_ilr
+1	v_j-nme-intr-prp_dlr v_v-re_dlr v_prp_olr
+1	j_enough_dlr j_att_dlr
+1	v_v-re_dlr v_pst_olr v_dat_dlr
+1	j_j-co_dlr v_j-nb-prp-tr_dlr v_prp_olr
+1	v_j-nme-tr-prp_dlr v_v-un_dlr v_prp_olr
+1	v_nger-tr_dlr v_v-co_dlr v_prp_olr
+1	v_nger-tr_dlr v_v-under_dlr v_prp_olr
+1	j_n-pre_odlr n_ms_ilr
+1	v_v-under_dlr v_pas-dat_odlr
+1	v_v-co_dlr v_3s-fin_olr
+1	n_n-co_dlr
+1	v_v-co_dlr v_psp_olr
+1	v_nger-tr_dlr v_v-mis_dlr v_prp_olr
+1	v_v-counter_dlr v_pst_olr
+1	j_j-non_dlr v_j-nb-pas-tr_dlr v_pas_odlr
+1	j_j-non_dlr j_att_dlr
+1	v_j-nme-tr_dlr v_v-out_dlr v_pas_odlr
+1	v_j-nb-prp-tr_dlr v_v-un_dlr v_prp_olr
+1	v_j-nb-intr_dlr v_v-re_dlr v_prp_olr
+1	v_v-un_dlr v_pas-p_odlr
+1	v_v-re_dlr v_n3s-bse_ilr v_dat_dlr
+1	v_v-pre_dlr v_pst_olr
+1	v_v-re_dlr v_3s-fin_olr v_dat_dlr

@@ -1,0 +1,114 @@
+1312288	
+60203	hdn_optcmp_c
+53231	hdn_bnp-pn_c
+47276	hdn_bnp-qnt_c
+36103	hd_optcmp_c
+12868	hdn_bnp_c
+5489	hdn_bnp-qnt_c hdn_optcmp_c
+4218	hdn_bnp_c hdn_optcmp_c
+4024	hd_xcmp_c
+3891	num_det_c
+2225	np_adv_c hdn_bnp-qnt_c
+2083	hdn_bnp-pn_c hdn_optcmp_c
+1602	hd_xaj-int-vp_c hd_optcmp_c
+1555	hdn_bnp-num_c hdn_np-num_c
+1184	num_prt-of_c
+1168	hdn_np-num_c
+729	np_adv_c hdn_bnp-qnt_c hdn_optcmp_c
+693	hd_xaj-int-vp_c
+668	hdn_bnp-sg-nomod_c
+410	np_frg_c hdn_bnp_c
+376	num_prt-det-nc_c
+371	np_adv_c hdn_bnp-pn_c
+351	np_adv-mnp_c hdn_bnp-num_c hdn_np-num_c
+349	np_frg_c hdn_bnp-pn_c
+339	hd_optcmp_c hd_optcmp_c
+333	hdn_bnp-qnt_c num_prt-nc_c
+299	r_scp-frg_c
+292	num_prt-nc_c
+289	hdn_bnp-pn_c w_fw_c
+268	np_frg_c hdn_bnp_c hdn_optcmp_c
+199	hd_xcmp_c hd_optcmp_c
+160	aj_prt-det-nc_c
+156	vp_rc-redrel_c hd_optcmp_c
+86	num_prt-det-of_c
+83	vp_sbrd-prd-aj_c hd_optcmp_c
+81	vp_sbrd-prd-aj_c
+77	num_prt-nc_c hd_optcmp_c
+71	hdn_bnp-qnt_c num_prt-nc_c hd_optcmp_c
+60	w_fw_c
+57	hd_optcmp_c hd_xcmp_c
+56	xp_bridge_c
+51	aj_prt-det-of_c
+46	j_n-ed_c
+42	hdn_color_c
+42	np_nb-frg_c
+35	num_prt-of_c hd_optcmp_c
+31	hd_xsb-fin_c
+22	hdn_optcmp_c hdn_optcmp_c
+21	hdn_bnp-prd_c hdn_optcmp_c
+19	vp_sbrd-prd-pas_c hd_optcmp_c
+19	np_frg_c hdn_bnp-pn_c w_fw_c
+18	j_frg_c
+16	hd_xsb-fin_c hd_optcmp_c
+16	hdn_bnp-qnt_c hd_xcmp_c
+15	pp_frg_c
+14	np_voc-post_c hdn_bnp-pn_c
+14	np_nb-frg_c hdn_optcmp_c
+13	r_dsc-frg_c
+12	np_frg_c hdn_bnp-num_c hdn_np-num_c
+11	hdn_bnp-sg-nomod_c hdn_optcmp_c
+11	hd_xaj-int-vp_c hd_optcmp_c hd_optcmp_c
+10	hdn_bnp_c hdn_color_c
+8	aj_prt-det-ncp_c
+8	aj_prt-det-of_c hd_optcmp_c
+7	aj_prt-det-nc_c hd_optcmp_c
+7	vp_rc-redrel_c
+7	r_int-frg_c
+7	vp_fin-frg_c hd_optcmp_c
+6	np_adv-mnp_c hdn_bnp_c
+5	hd_xaj-int-vp_c np_adv_c hdn_bnp-qnt_c
+5	vp_np-ger_c hd_optcmp_c
+5	vp_sbrd-prd-prp_c hd_optcmp_c
+5	xp_bridge_c hdn_bnp-qnt_c
+5	np_voc-pre_c hdn_bnp-pn_c
+4	num_det_c hd_optcmp_c
+4	np_frg_c hdn_bnp-qnt_c
+4	vp_sbrd-prd-aj_c hd_optcmp_c hd_optcmp_c
+4	vp_rc-redrel_c hd_optcmp_c hd_optcmp_c
+4	np_frg_c
+4	hdn_bnp-qnt_c hd_xcmp_c num_prt-of_c
+3	hd_imp_c hd_optcmp_c
+3	mnp_deg-bre_c
+3	xp_brck-pr_c
+3	vp_fin-frg_c
+3	hdn_bnp-vger_c vp_np-ger-gap_c hd_xcmp_c
+3	hdn_bnp-prd_c
+3	hdn_bnp-prd_c hd_xcmp_c
+2	vp_cp-sb-inf_c hd_optcmp_c
+2	hd_imp_c hd_xaj-int-vp_c hd_optcmp_c
+2	aj_prt-det-ncp_c hd_optcmp_c hd_optcmp_c
+2	np_adv_c hdn_bnp-qnt_c xp_brck-pr_c
+2	np_frg_c hdn_bnp-pn_c hdn_optcmp_c
+2	np_frg_c hdn_bnp-qnt_c hdn_optcmp_c
+2	np_frg_c hdn_optcmp_c
+2	j_frg_c hd_optcmp_c
+2	pp_frg_c np_adv_c hdn_bnp-qnt_c
+2	hdn_bnp_c hdn_optcmp_c hdn_optcmp_c
+1	hd_imp_c hd_optcmp_c hd_optcmp_c
+1	r_dsc-frg_c xp_brck-pr_c
+1	vp_sbrd-prd-prp_c
+1	hdn_bnp-vger_c vp_np-ger_c hd_optcmp_c
+1	np_adv-mnp_c hdn_bnp_c n_mnp_c
+1	xp_bridge_c hdn_bnp-qnt_c hdn_optcmp_c
+1	xp_bridge_c hdn_optcmp_c
+1	aj_prt-det-of_c hd_optcmp_c hd_optcmp_c
+1	hd_xaj-crd-s_c
+1	hd_imp_c
+1	hd_xcmp_c aj_prt-det-of_c hd_optcmp_c
+1	hd_xcmp_c num_prt-of_c
+1	hdn_bnp_c hd_xcmp_c
+1	hdn_bnp-qnt_c hd_xcmp_c num_prt-of_c hd_optcmp_c
+1	cl_np-wh_c
+1	hd_xcmp_c hd_optcmp_c hd_optcmp_c
+1	vp_nfin-frg_c hd_optcmp_c

@@ -1,0 +1,277 @@
+{
+ "train": {
+  "derivations": 85485,
+  "unparsed_derivation_strings": 0,
+  "leaves": 1556896,
+  "arity": {
+   "1": 1164060,
+   "2": 1471411
+  },
+  "max_depth": 45,
+  "tokens_per_leaf": {
+   "1": 1541479,
+   "2": 12407,
+   "3": 2807,
+   "4": 79,
+   "5": 115,
+   "7": 9
+  },
+  "form_words_per_leaf": {
+   "1": 1540505,
+   "2": 13380,
+   "3": 2808,
+   "4": 79,
+   "5": 115,
+   "7": 9
+  },
+  "unary_chain_len_at_leaf": {
+   "0": 906512,
+   "1": 460004,
+   "2": 172285,
+   "3": 16714,
+   "4": 1226,
+   "5": 152,
+   "6": 3
+  },
+  "lexrule_chain_len": {
+   "0": 991803,
+   "1": 539193,
+   "2": 24210,
+   "3": 1676,
+   "4": 14
+  },
+  "interleaved_chains": 0,
+  "unmapped_entry_tokens": 1436,
+  "unmapped_entry_types": 87,
+  "leaves_per_sentence_band": {
+   "0": 23267,
+   "10": 27073,
+   "20": 20467,
+   "30": 10632,
+   "40": 3272,
+   "50": 680,
+   "60": 94
+  },
+  "inventory": {
+   "phrasal_rule": 266,
+   "lexrule": 105,
+   "entry": 26811,
+   "lextype": 1148,
+   "lexrule_chain": 459,
+   "phrasal_unary_chain_at_leaf": 114,
+   "leaf_label:lextype+lexrules": 3662,
+   "leaf_label:lextype+lexrules+phrasal_unaries": 5100,
+   "root": 39
+  }
+ },
+ "dev": {
+  "derivations": 2045,
+  "unparsed_derivation_strings": 0,
+  "leaves": 25076,
+  "arity": {
+   "1": 19623,
+   "2": 23031
+  },
+  "max_depth": 40,
+  "tokens_per_leaf": {
+   "1": 24827,
+   "2": 195,
+   "3": 46,
+   "4": 6,
+   "5": 2
+  },
+  "form_words_per_leaf": {
+   "1": 24827,
+   "2": 195,
+   "3": 46,
+   "4": 6,
+   "5": 2
+  },
+  "unary_chain_len_at_leaf": {
+   "0": 13224,
+   "1": 9290,
+   "2": 2290,
+   "3": 248,
+   "4": 20,
+   "5": 4
+  },
+  "lexrule_chain_len": {
+   "0": 15715,
+   "1": 9053,
+   "2": 272,
+   "3": 36
+  },
+  "interleaved_chains": 0,
+  "unmapped_entry_tokens": 27,
+  "unmapped_entry_types": 10,
+  "leaves_per_sentence_band": {
+   "0": 979,
+   "10": 756,
+   "20": 206,
+   "30": 70,
+   "40": 25,
+   "50": 7,
+   "60": 2
+  },
+  "inventory": {
+   "phrasal_rule": 172,
+   "lexrule": 61,
+   "entry": 2998,
+   "lextype": 543,
+   "lexrule_chain": 94,
+   "phrasal_unary_chain_at_leaf": 39,
+   "leaf_label:lextype+lexrules": 891,
+   "leaf_label:lextype+lexrules+phrasal_unaries": 1102,
+   "root": 3
+  },
+  "unseen_vs_train": {
+   "phrasal_rule": {
+    "types_in_split": 172,
+    "unseen_types": 0,
+    "unseen_token_share": 0.0
+   },
+   "lexrule": {
+    "types_in_split": 61,
+    "unseen_types": 0,
+    "unseen_token_share": 0.0
+   },
+   "entry": {
+    "types_in_split": 2998,
+    "unseen_types": 130,
+    "unseen_token_share": 0.008254905088530867
+   },
+   "lextype": {
+    "types_in_split": 543,
+    "unseen_types": 2,
+    "unseen_token_share": 0.0001595150741745095
+   },
+   "lexrule_chain": {
+    "types_in_split": 94,
+    "unseen_types": 2,
+    "unseen_token_share": 7.975753708725475e-05
+   },
+   "phrasal_unary_chain_at_leaf": {
+    "types_in_split": 39,
+    "unseen_types": 0,
+    "unseen_token_share": 0.0
+   },
+   "leaf_label:lextype+lexrules": {
+    "types_in_split": 891,
+    "unseen_types": 18,
+    "unseen_token_share": 0.000957090445047057
+   },
+   "leaf_label:lextype+lexrules+phrasal_unaries": {
+    "types_in_split": 1102,
+    "unseen_types": 25,
+    "unseen_token_share": 0.001276120593396076
+   }
+  }
+ },
+ "test": {
+  "derivations": 7918,
+  "unparsed_derivation_strings": 0,
+  "leaves": 131441,
+  "arity": {
+   "1": 95981,
+   "2": 123523
+  },
+  "max_depth": 40,
+  "tokens_per_leaf": {
+   "1": 130180,
+   "2": 1002,
+   "3": 245,
+   "4": 6,
+   "5": 7,
+   "7": 1
+  },
+  "form_words_per_leaf": {
+   "1": 130172,
+   "2": 1010,
+   "3": 245,
+   "4": 6,
+   "5": 7,
+   "7": 1
+  },
+  "unary_chain_len_at_leaf": {
+   "0": 76587,
+   "1": 39732,
+   "2": 13521,
+   "3": 1469,
+   "4": 123,
+   "5": 8,
+   "6": 1
+  },
+  "lexrule_chain_len": {
+   "0": 85835,
+   "1": 43587,
+   "2": 1866,
+   "3": 151,
+   "4": 2
+  },
+  "interleaved_chains": 0,
+  "unmapped_entry_tokens": 139,
+  "unmapped_entry_types": 43,
+  "leaves_per_sentence_band": {
+   "0": 2454,
+   "10": 2776,
+   "20": 1633,
+   "30": 737,
+   "40": 244,
+   "50": 61,
+   "60": 13
+  },
+  "inventory": {
+   "phrasal_rule": 240,
+   "lexrule": 81,
+   "entry": 10143,
+   "lextype": 889,
+   "lexrule_chain": 158,
+   "phrasal_unary_chain_at_leaf": 66,
+   "leaf_label:lextype+lexrules": 1723,
+   "leaf_label:lextype+lexrules+phrasal_unaries": 2290,
+   "root": 4
+  },
+  "unseen_vs_train": {
+   "phrasal_rule": {
+    "types_in_split": 240,
+    "unseen_types": 1,
+    "unseen_token_share": 5.8232978500384335e-06
+   },
+   "lexrule": {
+    "types_in_split": 81,
+    "unseen_types": 0,
+    "unseen_token_share": 0.0
+   },
+   "entry": {
+    "types_in_split": 10143,
+    "unseen_types": 1038,
+    "unseen_token_share": 0.014089971926567814
+   },
+   "lextype": {
+    "types_in_split": 889,
+    "unseen_types": 9,
+    "unseen_token_share": 0.00012172761923600703
+   },
+   "lexrule_chain": {
+    "types_in_split": 158,
+    "unseen_types": 6,
+    "unseen_token_share": 5.3255833415753074e-05
+   },
+   "phrasal_unary_chain_at_leaf": {
+    "types_in_split": 66,
+    "unseen_types": 1,
+    "unseen_token_share": 7.607976202250439e-06
+   },
+   "leaf_label:lextype+lexrules": {
+    "types_in_split": 1723,
+    "unseen_types": 81,
+    "unseen_token_share": 0.0007760135726295448
+   },
+   "leaf_label:lextype+lexrules+phrasal_unaries": {
+    "types_in_split": 2290,
+    "unseen_types": 122,
+    "unseen_token_share": 0.0011183725017308145
+   }
+  }
+ }
+}
