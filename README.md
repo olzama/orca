@@ -1,6 +1,6 @@
 # Orca: Omnilingual Rapid Constraint-based Analysis
 
-Fast HPSG-style parsing and inspectable grammars for many languages. An orca is a fast dolphin: the project grows out of the DELPH-IN tradition and aims to be much faster.
+Fast HPSG-style parsing and inspectable grammars for many languages. An orca is a fast dolphin: the project grows out of the DELPH-IN tradition.
 
 Working repository. Goals, in order of priority:
 
