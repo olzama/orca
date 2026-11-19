@@ -1,0 +1,11 @@
+# Downloaded sources (re-fetch with scripts/)
+/reading/*/pdf/
+/reading/*/txt/
+
+__pycache__/
+*.pyc
+
+# Papers and archives supplied for reading (not redistributable)
+/reading/*.pdf
+/reading/*.zip
+/reading/txt/
