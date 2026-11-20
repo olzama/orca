@@ -42,6 +42,7 @@ class FastGrammar:
         for t in self.h.code:
             self.tid(t)
         self._instances, self._tokens = {}, {}
+        self.leaf_memo = {}
         C.init(self._glb, self._constraint)
         self.NULL, self.CONS = self.tid(NULL), self.tid(CONS)
         self.F = {f: self.fid(f) for f in (ARGS, 'FIRST', 'REST') + DELETED_DAUGHTERS}
@@ -118,6 +119,7 @@ class FastGrammar:
     def reset(self):
         C.reset()
         self._tokens.clear()
+        self.leaf_memo.clear()
 
     # -- building blocks ---------------------------------------------------
 

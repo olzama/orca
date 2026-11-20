@@ -70,8 +70,8 @@
   }
  },
  "replays_per_sentence": 23.755092143549952,
- "tagging_seconds": 16.555257558822632,
- "repair_seconds": 10.654441833496094,
+ "tagging_seconds": 16.83672785758972,
+ "repair_seconds": 9.450693368911743,
  "workers": 6,
- "sentences_per_second_repair_stage": 193.53430543093836
+ "sentences_per_second_repair_stage": 218.1850494465298
 }

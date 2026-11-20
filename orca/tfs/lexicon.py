@@ -155,8 +155,7 @@ def _leaf_range(tree, where):
     """Indices of the leaves under the node that a replay failure names."""
     from ..encoding import Leaf
 
-    def n_leaves(t):
-        return 1 if isinstance(t, Leaf) else sum(n_leaves(c) for c in t.children)
+    from ..encoding import n_leaves
 
     node, start = tree, 0
     for i in (int(x) for x in where.split()[0].split('.')[1:]):
@@ -175,35 +174,49 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
     word's own token are dropped first. If replay then fails at a node above
     such a word, its other entries are tried (for example the entries of a
     verb that differ in the preposition they select). Returns the feature
-    structure and the tree with the entries that were used."""
-    from ..encoding import Leaf
+    structure and the tree with the entries that were used.
+
+    If the grammar object has a `leaf_memo` dict (cleared per sentence), the
+    candidate entries of each leaf are worked out once per sentence."""
+    from ..encoding import Leaf, Node
     from .grammar import ReplayFailure
-    _, candidates = resolve(tree, lexicon)
-    leaves = []
+    memo = getattr(grammar, 'leaf_memo', None)
+    leaves = []                       # (leaf, lexical rules above it, first token)
+    position = [0]
 
-    def collect(t):
+    def collect(t, rules):
         if isinstance(t, Leaf):
-            leaves.append(t)
+            leaves.append((t, rules, position[0]))
+            position[0] += len(t.forms)
         else:
+            lex = len(t.children) == 1 and t.label.lower().endswith('lr')
             for c in t.children:
-                collect(c)
+                collect(c, rules + (t.label.lower(),) if lex else ())
 
-    collect(tree)
-    pos, usable = 0, []
-    for leaf, cands in zip(leaves, candidates):
-        toks = tokens[pos:pos + len(leaf.forms)]
-        pos += len(leaf.forms)
-        if len(cands) > 1:
-            keep = []
-            for c in cands:
-                mark = grammar.u.mark()
-                try:
-                    grammar.replay_tree(Leaf('entry:' + c, leaf.forms), toks)
-                    keep.append(c)
-                except ReplayFailure:
-                    pass
-                del grammar.u.trail[mark:]
-            cands = keep or cands
+    collect(tree, ())
+    usable = []
+    for leaf, rules, pos in leaves:
+        key = (leaf, rules, pos)
+        cands = memo.get(key) if memo is not None else None
+        if cands is None:
+            if leaf.entry.startswith('entry:') or leaf.entry.startswith('<'):
+                cands = []
+            else:
+                cands = lexicon.lookup(leaf.forms, leaf.entry.lower(), rules)
+            if len(cands) > 1:
+                toks = tokens[pos:pos + len(leaf.forms)]
+                keep = []
+                for c in cands:
+                    mark = grammar.u.mark()
+                    try:
+                        grammar.replay_tree(Leaf('entry:' + c, leaf.forms), toks)
+                        keep.append(c)
+                    except ReplayFailure:
+                        pass
+                    del grammar.u.trail[mark:]
+                cands = keep or cands
+            if memo is not None:
+                memo[key] = cands
         usable.append(cands)
 
     def build(pick):
@@ -215,12 +228,11 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
                 if usable[i]:
                     return Leaf('entry:' + usable[i][pick.get(i, 0)], t.forms)
                 return t
-            return type(t)(t.label, tuple(walk(c) for c in t.children))
+            return Node(t.label, tuple(walk(c) for c in t.children))
 
         return walk(tree)
 
-    pick, tries, last = {}, 0, None
-    queue = None
+    pick, tries, last, queue = {}, 0, None, None
     while True:
         resolved = build(pick)
         try:

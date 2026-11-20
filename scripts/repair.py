@@ -32,7 +32,7 @@ sys.setrecursionlimit(20000)
 
 from eval_trees import to_leaves  # noqa: E402
 from llm_label import read  # noqa: E402
-from orca.encoding import Leaf, decode  # noqa: E402
+from orca.encoding import Leaf, decode, n_leaves  # noqa: E402
 from orca.tfs.grammar import Grammar, ReplayFailure  # noqa: E402
 from orca.tfs.lexicon import Lexicon, replay_with_entries  # noqa: E402
 from replay_predictions import gold_tokens  # noqa: E402
@@ -46,9 +46,6 @@ def failing_tokens(tree, where, leaf_labels):
     path = [int(i) for i in where.split()[0].split('.')[1:]]
     node = tree
     start = 0
-
-    def n_leaves(t):
-        return 1 if isinstance(t, Leaf) else sum(n_leaves(c) for c in t.children)
 
     for i in path:
         if isinstance(node, Leaf) or i >= len(node.children):

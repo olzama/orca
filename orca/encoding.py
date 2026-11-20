@@ -35,6 +35,17 @@ class Node:
 Tree = Union[Leaf, Node]
 
 
+def n_leaves(t) -> int:
+    """Number of leaves under a node (cached on the node)."""
+    if isinstance(t, Leaf):
+        return 1
+    n = t.__dict__.get('_n')
+    if n is None:
+        n = sum(n_leaves(c) for c in t.children)
+        object.__setattr__(t, '_n', n)
+    return n
+
+
 @dataclass
 class LeafLabel:
     """Everything one leaf contributes to the tree.

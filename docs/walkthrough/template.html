@@ -153,6 +153,36 @@ code { font-family: var(--mono); font-size: 0.88em; }
   </section>
 
   <section class="stack">
+    <h2>Orca and the ACE chart parser, side by side</h2>
+    <p>ACE is the parser the treebank was built with. It searches a chart of all possible analyses and then ranks them with a statistical model. Orca proposes one derivation per sentence with the tagger and lets the grammar check it, so it never builds the chart.</p>
+    <h3>Exact meaning by sentence length</h3>
+    <div class="scroll">
+      <table class="results">
+        <thead><tr><th>Words in the sentence</th><th class="n">Sentences</th><th class="n hl">ACE: same meaning as gold</th><th class="n hl">Orca: same meaning as gold</th></tr></thead>
+        <tbody>
+          <tr><td>Under 10</td><td class="n">953</td><td class="n hl">94.6% (902)</td><td class="n hl">75.3% (718)</td></tr>
+          <tr><td>10 to 19</td><td class="n">781</td><td class="n hl">86.0% (672)</td><td class="n hl">52.0% (406)</td></tr>
+          <tr><td>20 to 29</td><td class="n">213</td><td class="n hl">71.4% (152)</td><td class="n hl">18.8% (40)</td></tr>
+          <tr><td>30 and over</td><td class="n">115</td><td class="n hl">35.7% (41)</td><td class="n hl">8.7% (10)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">Word counts are treebank tokens. Both systems lose accuracy with length; Orca loses it much faster, because one wrong label can spoil a long sentence.</p>
+    <h3>Time and memory on the same 2,062 sentences</h3>
+    <div class="scroll">
+      <table class="results">
+        <thead><tr><th>System</th><th class="n">Sentences per second, one CPU core</th><th class="n">Memory needed</th><th class="n">Sentences left without an analysis</th></tr></thead>
+        <tbody>
+          <tr><td>ACE, first-ranked analysis</td><td class="n">1.6 on average (median sentence: 0.05 s)</td><td class="n">up to 28 GB, and more for the 4 it could not finish</td><td class="n">4, out of memory at 28 GB</td></tr>
+          <tr><td>Orca, full pipeline with repair</td><td class="n">49 (194 on six cores)</td><td class="n">megabytes per sentence</td><td class="n">226, where repair found no derivation the grammar accepts</td></tr>
+          <tr><td>Orca, replay of one derivation by the grammar</td><td class="n">about 670</td><td class="n">megabytes per sentence</td><td class="n">not applicable</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">ACE's average is dominated by its longest sentences: half of the sentences take under a twentieth of a second, while the hardest ran out of 28 GB of memory after building up to 230,000 chart edges. Orca's time grows roughly in proportion to sentence length. These are short sentences (about 12 words on average); the comparison on long sentences, where ACE often fails, is still to be made. Tagging runs on a GPU and is not included in the per-core figures.</p>
+  </section>
+
+  <section class="stack">
     <h2>The steps</h2>
     <ol class="steps">
       <li><b>Tag</b><span>Each word gets a leaf label (lexical type and unary rules) and a tree label.</span></li>
