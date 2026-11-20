@@ -150,23 +150,24 @@ code { font-family: var(--mono); font-size: 0.88em; }
     <h2>How good is it right now?</h2>
     <p>Measured on 2,062 English sentences the system never saw in training: the development set of the grammar's 2025 treebank (customer e-mails about electronics and Wikipedia articles on linguistics). For each sentence the treebank holds the analysis a human annotator chose, which we call gold.</p>
     <div class="tiles">
-      <div class="tile main"><b>56.9%</b><span>of sentences get <strong>exactly the gold meaning</strong> (the same MRS)</span></div>
-      <div class="tile"><b>89.0%</b><span>get a complete analysis that the grammar accepts, with full structure and semantics</span></div>
-      <div class="tile"><b>51.5%</b><span>get exactly the gold tree</span></div>
+      <div class="tile main"><b>67.2%</b><span>of sentences get <strong>exactly the gold meaning</strong> (the same MRS)</span></div>
+      <div class="tile"><b>81.1%</b><span>get a complete analysis that the grammar accepts, with full structure and semantics</span></div>
+      <div class="tile"><b>58.4%</b><span>get exactly the gold tree</span></div>
     </div>
     <p class="caption">Meaning is the measure that matters most: different trees can express the same meaning, and the tree is there to get the meaning right. A sentence counts only if its whole semantic structure matches; partly correct analyses count as wrong here.</p>
     <div class="scroll">
       <table class="results">
         <thead><tr><th>System</th><th class="n hl">Same meaning as gold (MRS)</th><th class="n">Meaning partly right: predicates / links (F1)</th><th class="n">Complete analysis built</th><th class="n">Same tree as gold</th></tr></thead>
         <tbody>
-          <tr><td>Orca: tagger's first proposal, replayed by the grammar</td><td class="n hl">47.5% (980)</td><td class="n">not measured</td><td class="n">59.8% (1,234)</td><td class="n">45.2% (932)</td></tr>
-          <tr><td>Orca: after repair (at most 200 replays per sentence)</td><td class="n hl">56.9% (1,174)</td><td class="n">86.1 / 80.8</td><td class="n">89.0% (1,836)</td><td class="n">51.5% (1,061)</td></tr>
+          <tr><td>Orca: tagger's first proposal, replayed by the grammar</td><td class="n hl">47.5% (980)</td><td class="n">not measured</td><td class="n">55.4% (1,143)</td><td class="n">45.2% (932)</td></tr>
+          <tr><td>Orca: after repair, first accepted derivation</td><td class="n hl">61.2% (1,262)</td><td class="n">79.1 / 75.6</td><td class="n">80.2% (1,653)</td><td class="n">55.0% (1,134)</td></tr>
+          <tr><td>Orca: after repair, best of up to 30 accepted derivations by the ERG's ranking model</td><td class="n hl">67.2% (1,386)</td><td class="n">80.9 / 78.3</td><td class="n">81.1% (1,672)</td><td class="n">58.4% (1,205)</td></tr>
           <tr><td>ACE chart parser, its first-ranked analysis (baseline)</td><td class="n hl">85.7% (1,767)</td><td class="n">97.6 / 94.7</td><td class="n">99.8% (2,058)</td><td class="n">82.9% (1,710)</td></tr>
           <tr><td>Check of the engine: gold derivations, replayed</td><td class="n hl">100% (2,062)</td><td class="n">100 / 100</td><td class="n">100% (2,062)</td><td class="n">100%</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="caption">Sentence counts are in parentheses. "Partly right" counts the predicates and the semantic links of each analysis that also occur in the gold analysis, over the whole set; a sentence without an analysis contributes nothing, which lowers recall. ACE is the parser the treebank was made with: its analyses for these sentences include the gold one, and its ranking model chose the first-ranked one. The four sentences it could not analyze ran out of memory at 28 GB. The last row shows that when the engine is given the annotators' derivations it reproduces their semantics for every sentence, so the losses in the rows above come from the tagger's proposals. What is not yet measured: word segmentation is taken from the treebank, tense and number on variables are not compared, and long sentences do much worse than short ones (see example 4 below).</p>
+    <p class="caption">Sentence counts are in parentheses. "Partly right" counts the predicates and the semantic links of each analysis that also occur in the gold analysis, over the whole set; a sentence without an analysis contributes nothing, which lowers recall. Precision alone is the same for both systems: where Orca gives an analysis, 98.4% of its predicates and 96.2% of its links are in the gold analysis (ACE: 98.3% and 95.4%), and 82.9% of its analyses have exactly the gold meaning. The gap to ACE is mostly the 19% of sentences for which Orca finds no accepted derivation. Every Orca row requires each word to have an entry of the proposed type in the lexicon (or an unknown-word entry), as the parser does; an earlier version replayed a bare lexical type for such words, which accepted more sentences, often with readings the parser would never build. The ranking model is the one ACE uses, shipped with the grammar; it scores Orca's derivations exactly as ACE scores its own. ACE is the parser the treebank was made with: its analyses for these sentences include the gold one, and its ranking model chose the first-ranked one. The four sentences it could not analyze ran out of memory at 28 GB. The last row shows that when the engine is given the annotators' derivations it reproduces their semantics for every sentence, so the losses in the rows above come from the tagger's proposals. What is not yet measured: word segmentation is taken from the treebank, tense and number on variables are not compared, and long sentences do much worse than short ones (see example 4 below).</p>
   </section>
 
   <section class="stack">
@@ -177,26 +178,26 @@ code { font-family: var(--mono); font-size: 0.88em; }
       <table class="results">
         <thead><tr><th>Words in the sentence</th><th class="n">Sentences</th><th class="n hl">ACE: same meaning as gold</th><th class="n hl">Orca: same meaning as gold</th></tr></thead>
         <tbody>
-          <tr><td>Under 10</td><td class="n">953</td><td class="n hl">94.6% (902)</td><td class="n hl">75.3% (718)</td></tr>
-          <tr><td>10 to 19</td><td class="n">781</td><td class="n hl">86.0% (672)</td><td class="n hl">52.0% (406)</td></tr>
-          <tr><td>20 to 29</td><td class="n">213</td><td class="n hl">71.4% (152)</td><td class="n hl">18.8% (40)</td></tr>
-          <tr><td>30 and over</td><td class="n">115</td><td class="n hl">35.7% (41)</td><td class="n hl">8.7% (10)</td></tr>
+          <tr><td>Under 10</td><td class="n">953</td><td class="n hl">94.6% (902)</td><td class="n hl">84.9% (809)</td></tr>
+          <tr><td>10 to 19</td><td class="n">781</td><td class="n hl">86.0% (672)</td><td class="n hl">63.8% (498)</td></tr>
+          <tr><td>20 to 29</td><td class="n">213</td><td class="n hl">71.4% (152)</td><td class="n hl">31.0% (66)</td></tr>
+          <tr><td>30 and over</td><td class="n">115</td><td class="n hl">35.7% (41)</td><td class="n hl">11.3% (13)</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="caption">Word counts are treebank tokens. Both systems lose accuracy with length; Orca loses it much faster, because one wrong label can spoil a long sentence.</p>
+    <p class="caption">Word counts are treebank tokens. Both systems lose accuracy with length; Orca loses it much faster, mostly because for long sentences it more often finds no accepted derivation at all.</p>
     <h3>Time and memory on the same 2,062 sentences</h3>
     <div class="scroll">
       <table class="results">
         <thead><tr><th>System</th><th class="n">Sentences per second, one CPU core</th><th class="n">Memory needed</th><th class="n">Sentences left without an analysis</th></tr></thead>
         <tbody>
           <tr><td>ACE, first-ranked analysis</td><td class="n">1.0 on average, 2,016 s in total (median sentence: 0.05 s)</td><td class="n">up to 28 GB, and more for the 4 it could not finish</td><td class="n">4, out of memory at 28 GB</td></tr>
-          <tr><td>Orca, full pipeline with repair</td><td class="n">37 on average including tagging, 55 s in total; 218 on six cores</td><td class="n">megabytes per sentence</td><td class="n">226, where repair found no derivation the grammar accepts</td></tr>
+          <tr><td>Orca, full pipeline: repair collecting up to 30 accepted derivations, then ranking</td><td class="n">12.5 on average including tagging, 165 s in total</td><td class="n">megabytes per sentence</td><td class="n">390, where repair found no derivation the grammar accepts</td></tr>
           <tr><td>Orca, replay of one derivation by the grammar</td><td class="n">about 670</td><td class="n">megabytes per sentence</td><td class="n">not applicable</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="caption">ACE's average is dominated by its longest sentences: half of the sentences take under a twentieth of a second, while the hardest ran out of 28 GB of memory after building up to 230,000 chart edges. Orca's time grows roughly in proportion to sentence length. These are short sentences (about 12 words on average); the comparison on long sentences, where ACE often fails, is still to be made. Orca's tagging runs on a GPU (17 of its 55 seconds); replay and repair run on one CPU core. ACE's total includes the retries of its 14 hardest sentences with more memory. Loading the grammar (about 17 seconds for Orca, 1 for ACE) is not included.</p>
+    <p class="caption">ACE's average is dominated by its longest sentences: half of the sentences take under a twentieth of a second, while the hardest ran out of 28 GB of memory after building up to 230,000 chart edges. Orca's time grows roughly in proportion to sentence length. These are short sentences (about 12 words on average); the comparison on long sentences, where ACE often fails, is still to be made. Orca's 165 seconds are 18 for tagging on a GPU, 144 for replay and repair on one CPU core (29 on six cores), and 2 for ranking. Collecting several readings per sentence costs about three times as much as stopping at the first. ACE's total includes the retries of its 14 hardest sentences with more memory. Loading the grammar (about 17 seconds for Orca, 1 for ACE) is not included.</p>
   </section>
 
   <section class="stack">
@@ -206,7 +207,8 @@ code { font-family: var(--mono); font-size: 0.88em; }
       <li><b>Decode</b><span>The tree labels say how each word joins the next. Together they fix exactly one tree.</span></li>
       <li><b>Look up</b><span>Each word's lexical entry is found in the grammar's lexicon from its type and rules.</span></li>
       <li><b>Replay</b><span>Bottom-up, the grammar unifies each rule with its daughters. One pass, no search.</span></li>
-      <li><b>Repair</b><span>If replay fails, the tagger's next-best labels under the failing node are tried.</span></li>
+      <li><b>Repair</b><span>If replay fails, the tagger's next-best labels under the failing node are tried. Up to 30 accepted derivations are collected.</span></li>
+      <li><b>Rank</b><span>The ranking model that ships with the grammar, the one ACE uses, picks the most likely of them.</span></li>
       <li><b>Read off</b><span>The result is the full sign. Its semantics is written out as MRS and DMRS.</span></li>
     </ol>
     <div class="legend">
@@ -444,16 +446,17 @@ const host = document.getElementById('examples');
 
 // C: accepted, different from gold
 (function () {
-  const ex = DATA.C, s = example('Example 3', ex, 'Accepted, and different from the treebank');
+  const ex = DATA.C, s = example('Example 3', ex, 'Two readings accepted, and the ranking model picks the treebank\'s');
   const goldSet = setOf(ex.gold_tree), firstSet = setOf(ex.first_tree);
-  s.appendChild(el('p', '', 'The grammar licenses more than one analysis of most sentences. Here the tagger chose one that replays but is not the annotators\' choice. One tree label differs.'));
+  s.appendChild(el('p', '', 'The grammar licenses more than one analysis of most sentences. Here the tagger\'s first proposal replays but is not the annotators\' choice. One tree label differs.'));
   s.appendChild(labelTable(ex, ex.first, ex.gold, 'gold'));
   s.appendChild(el('h3', '', 'The tagger\'s tree'));
   s.appendChild(drawTree(ex.first_tree, { other: goldSet, label: 'Tree proposed by the tagger' }).frame);
   s.appendChild(el('h3', '', 'The treebank\'s tree'));
   s.appendChild(drawTree(ex.gold_tree, { other: firstSet, label: 'Gold tree' }).frame);
   s.appendChild(el('div', 'verdict chg', '<b>Both replay.</b> The tagger attaches "for a digital cam" to "webpage", as a modifier of the noun. The treebank attaches it to the verb "consulted". For Orca an accepted derivation counts as valid; the gold tree is one of several.'));
-  fullAnalysis(s, STRUCT.C, 'Both trees give a full structure. The difference between them is a difference in meaning, and it shows in the semantics. The excerpt and MRS below are those of the tagger\'s tree.');
+  s.appendChild(el('div', 'verdict ok', '<b>Ranking picks the treebank\'s reading.</b> Repair keeps looking after the first accepted derivation and finds four. The grammar\'s ranking model scores the verb attachment highest, so the final analysis is the treebank\'s. Before ranking was added, Orca returned the first one.'));
+  fullAnalysis(s, STRUCT.C, 'Both trees give a full structure. The difference between them is a difference in meaning, and it shows in the semantics. The excerpt and MRS below are those of the tagger\'s first proposal.');
   s.appendChild(el('h3', '', 'DMRS of the tagger\'s tree'));
   s.appendChild(drawDmrs(STRUCT.C.dmrs, STRUCT.Cgold.dmrs));
   s.appendChild(el('h3', '', 'DMRS of the treebank\'s tree'));
@@ -483,7 +486,7 @@ const host = document.getElementById('examples');
   s.appendChild(strip);
   s.appendChild(el('div', 'legend', '<span><i style="background:var(--ok)"></i>stretch that replays as a complete subtree</span><span><i style="background:var(--bad)"></i>node where replay fails</span><span style="text-decoration:underline dotted var(--chg) 2px;text-underline-offset:4px">word with a label that differs from the treebank</span>'));
   const covered = cls.filter(c => c.includes('in')).length;
-  s.appendChild(el('div', 'verdict bad', `<b>Replay: rejected at <code>${esc(f[2])}</code> over "${esc(ex.forms.slice(f[0], f[1]).join(' '))}".</b> The tagger makes complete noun phrases of the coordinated items (it applies the bare noun phrase rule to "screen size" and "processor speed"), so the rule that attaches "and" receives a phrase whose specifier no longer fits (<code>${esc(f[3])}</code>). The treebank coordinates the nouns first and makes one noun phrase of the whole list. Repair used its 200 replays without finding a full derivation.`));
+  s.appendChild(el('div', 'verdict bad', `<b>Replay: rejected at <code>${esc(f[2])}</code> over "${esc(ex.forms.slice(f[0], f[1]).join(' '))}".</b> The tagger makes complete noun phrases of the coordinated items (it applies the bare noun phrase rule to "screen size" and "processor speed"), so the rule that attaches "and" receives a phrase whose specifier no longer fits (<code>${esc(f[3])}</code>). The treebank coordinates the nouns first and makes one noun phrase of the whole list. Repair used its 600 replays without finding a full derivation.`));
   s.appendChild(el('p', '', `${wrong} of the ${2 * n - 1} labels differ from the treebank, spread over the sentence. Even so, ${covered} of the ${n} words sit inside subtrees of two or more words that replay, and each of those subtrees has its own full feature structure. This is the usual picture for long sentences: several wrong labels, one or two failure points, and large stretches that already have a strict analysis. Joining those stretches is the next piece of work.`));
   host.appendChild(s);
 })();

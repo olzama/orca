@@ -1,0 +1,41 @@
+{
+ "orca": {
+  "sentences": 2062,
+  "with_mrs": 1653,
+  "same_mrs": 1262,
+  "same_mrs_share": 0.612027158098933,
+  "coverage": 0.8016488845780795,
+  "predicates": {
+   "precision": 0.9792865905444937,
+   "recall": 0.6631837934560327,
+   "f1": 0.7908172985330539
+  },
+  "links": {
+   "precision": 0.9468423669816012,
+   "recall": 0.6296626984126984,
+   "f1": 0.7563455809334657
+  },
+  "by_length": {
+   "under 10": {
+    "sentences": 953,
+    "with MRS": 887,
+    "same MRS": 761
+   },
+   "10-19": {
+    "sentences": 781,
+    "with MRS": 625,
+    "same MRS": 432
+   },
+   "20-29": {
+    "sentences": 213,
+    "with MRS": 113,
+    "same MRS": 58
+   },
+   "30 and over": {
+    "sentences": 115,
+    "with MRS": 28,
+    "same MRS": 11
+   }
+  }
+ }
+}

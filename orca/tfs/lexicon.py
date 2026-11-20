@@ -167,7 +167,7 @@ def _leaf_range(tree, where):
     return range(start, start + n_leaves(node))
 
 
-def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12):
+def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12, strict=True):
     """Replay a tree whose leaves name lexical types, using lexical entries.
 
     Where several entries fit a word, those that do not unify with the
@@ -177,7 +177,9 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
     structure and the tree with the entries that were used.
 
     If the grammar object has a `leaf_memo` dict (cleared per sentence), the
-    candidate entries of each leaf are worked out once per sentence."""
+    candidate entries of each leaf are worked out once per sentence. With
+    `strict`, a leaf for which the lexicon has no entry (and the type no
+    generic entry) makes the derivation fail, as it would in the parser."""
     from ..encoding import Leaf, Node
     from .grammar import ReplayFailure
     memo = getattr(grammar, 'leaf_memo', None)
@@ -217,6 +219,9 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
                 cands = keep or cands
             if memo is not None:
                 memo[key] = cands
+        if not cands and strict and not leaf.entry.startswith('entry:'):
+            where = '0'                 # a word the lexicon does not license with this type
+            raise ReplayFailure(f'{where} {leaf.entry}', f'missing lexical entry for "{" ".join(leaf.forms)}"')
         usable.append(cands)
 
     def build(pick):

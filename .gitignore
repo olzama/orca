@@ -17,3 +17,6 @@ __pycache__/
 # Build output of the compiled core (rebuild with: .venv/bin/python setup.py build_ext --inplace)
 /build/
 *.so
+
+# Cached ranking model
+*.mem.pkl
