@@ -22,19 +22,22 @@ SECTION = re.compile(r'^\s*:(begin|end)\s+:(type|instance)(?:\s+:status\s+([\w-]
 def load_plan(top_file):
     """Files of a grammar in load order, as (path, section, status)."""
     root = os.path.dirname(os.path.abspath(top_file))
-    plan, section, status = [], None, None
+    plan, stack = [], [(None, None)]       # sections nest
     with open(top_file, encoding='utf-8') as f:
         for line in f:
             line = line.split(';')[0]
             m = SECTION.match(line)
             if m:
-                section, status = (m.group(2), m.group(3)) if m.group(1) == 'begin' else (None, None)
+                if m.group(1) == 'begin':
+                    stack.append((m.group(2), m.group(3)))
+                elif len(stack) > 1:
+                    stack.pop()
                 continue
             m = INCLUDE.match(line)
             if m:
                 name = m.group(1)
                 path = os.path.join(root, name if name.endswith('.tdl') else name + '.tdl')
-                plan.append((path, section, status))
+                plan.append((path,) + stack[-1])
     return plan
 
 

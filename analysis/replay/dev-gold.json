@@ -1,0 +1,210 @@
+{
+ "derivations": 2045,
+ "replayed": 1804,
+ "failed": 241,
+ "seconds": 48.4884467124939,
+ "derivations_per_second": 42.17499504831674,
+ "node_unifications": 10667249,
+ "failure_causes": [
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +",
+   130,
+   "ecpa/2200710 at 0.1.0.1.0.1.1.0.1.0 hdn_bnp-qnt_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.LOCAL.CAT.HEAD: det & adv",
+   24,
+   "ecpa/2226508 at 0.1.1.1.0.1 hdn-n_prnth_c"
+  ],
+  [
+   "still_adv3 | missing 'still_adv3'",
+   8,
+   "ecpa/2202210 at 0.0.1.0 still_adv3"
+  ],
+  [
+   "colour_n1 | missing 'colour_n1'",
+   7,
+   "ecpa/2280309 at 0.1.1.1.1.0.0 colour_n1"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.COMPS: *null* & *cons*",
+   5,
+   "ws212/1000007201530 at 0.0.0.0 n-n_crd-t_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: adv_or_dadv & prep_nonmob",
+   4,
+   "ecpa/2211408 at 0 np-aj_rorp-frg_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LEX: + & -",
+   4,
+   "ecpa/2240608 at 0.1.1.1.1.1.1.1.1.1.1.1 n-n_crd-t_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.POSTHD: - & +",
+   4,
+   "ws212/1000007201420 at 0.0.1.0 aj-hd_int_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: abstr_named_np_rel & named_num_or_fract_rel",
+   3,
+   "ecpa/2238708 at 0.1.1.1.1.1.1.1.1.1.1.1.1 np-hdn_nme-cpd_c"
+  ],
+  [
+   "ARGS.FIRST.ALTS.VADJ: + & -",
+   3,
+   "ws212/1000007201190 at 0.1.0.1.0 v_j-nb-prp-tr_dlr"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MOD.FIRST.LOCAL.CAT.HEAD: verb & basic_noun",
+   2,
+   "ecpa/2212109 at 0.1.1.1.1.1.1.1.1.0.1.0 hd-cmp_u_c"
+  ],
+  [
+   "specifically_adv2 | missing 'specifically_adv2'",
+   2,
+   "ecpa/2220509 at 0.1.1.0 specifically_adv2"
+  ],
+  [
+   "currently_a3 | missing 'currently_a3'",
+   2,
+   "ecpa/2238209 at 0.0.1.0 currently_a3"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD: intadj & compar_adj",
+   2,
+   "ecpa/2251908 at 0.0.1.1.1.0 num_det_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.LOCAL.CAT.HEAD: superl_adj & basic_adv",
+   2,
+   "ecpa/2277808 at 0.1.0.1.1.0.0 sp-hd_hc_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: adv_or_dadv & prep",
+   2,
+   "ecpa/2279808 at 0 np-aj_rorp-frg_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.MOD.FIRST: unexpressed_reg & anti_synsem",
+   2,
+   "ecpa/2283908 at 0.0.0 num_prt-nc_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM: count_noun_synsem & basic_mass_or_count_ppcomp_synsem",
+   2,
+   "ws212/1000007200250 at 0.1.1.1.1.1.1.1.0.1.0 n_sg_ilr"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.MODIFD.LPERIPH: na & bool",
+   2,
+   "ws212/1000007200410 at 0.0.0.1.1.1 n-hdn_cpd-pl_c"
+  ],
+  [
+   "one_or_more_d1 | missing 'one_or_more_d1'",
+   2,
+   "ws212/1000007201870 at 0.1.1.1.1.1.0.1.0.1.1.1.1.1.0.1.1.0 one_or_more_d1"
+  ],
+  [
+   "v_j-nme-tr-pl-prp_dlr | missing 'v_j-nme-tr-pl-prp_dlr'",
+   2,
+   "ws212/1000007400610 at 0.1.0.1.0 v_j-nme-tr-pl-prp_dlr"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD: fw & verb",
+   2,
+   "ws212/1000007401180 at 0.1.1.1.1.1.1.0.0.1.1.0 w_fw_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD: fw & adj",
+   2,
+   "ws212/1000007401240 at 0.0.0 w_fw_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD: fw & noun",
+   2,
+   "ws212/1000007600360 at 0.0.1.0.0 w_fw_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD: verb & frag",
+   1,
+   "ecpa/2218508 at 0 cl-cl_runon_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.VFORM: fin_or_imp & non_fin",
+   1,
+   "ecpa/2226908 at 0.1.1.1 hdn-cl_prnth_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.PUNCT.RPUNCT: comma_or_pair_punct & clause_punct",
+   1,
+   "ecpa/2229508 at 0 cl-np_runon_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MOD.FIRST.LOCAL.CAT.HEAD: noun & prep",
+   1,
+   "ecpa/2244709 at 0.1.1.1.1.0.0 hdn-aj_redrel_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM: count_noun_synsem & mass_or_count_nocomp_synsem",
+   1,
+   "ecpa/2268208 at 0.1.0.1.1.1.0 n_sg_ilr"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.MOD.FIRST.LOCAL: scopal_mod_local & int_mod_local",
+   1,
+   "ws212/1000007200030 at 0.1.0 aj-hd_scp-xp_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.MODIFD: notmod & lmod",
+   1,
+   "ws212/1000007201330 at 0.1.1.1.1 hd_xaj-int-vp_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.OPT: + & -",
+   1,
+   "ws212/1000007202310 at 0.1.0.1 pp_frg_c"
+  ],
+  [
+   "often_adv3 | missing 'often_adv3'",
+   1,
+   "ws212/1000007202360 at 0.1.1.0 often_adv3"
+  ],
+  [
+   "recently_a2 | missing 'recently_a2'",
+   1,
+   "ws212/1000007202440 at 0.0.0.0 recently_a2"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD: supnoun & det",
+   1,
+   "ws212/1000007400030 at 0.0.1.1.1.1.0.1.1.0 hdn-cl_prnth_c"
+  ],
+  [
+   "no_longer_adv3 | missing 'no_longer_adv3'",
+   1,
+   "ws212/1000007400530 at 0.1.1.1.1.0 no_longer_adv3"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MOD.FIRST.LOCAL: scopal_mod_local & int_mod_local",
+   1,
+   "ws212/1000007400600 at 0.1 hd-aj_scp-pr_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD: fw & intadj1",
+   1,
+   "ws212/1000007401040 at 0.0.1.1.1.0.1.1.0.0.0.0.0 w_fw_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.ALTMIN: proper_q_rel & implicit_q_rel",
+   1,
+   "ws212/1000007401220 at 0.1.0.0.1.1.1.0.0 np-hdn_nme-cpd_c"
+  ],
+  [
+   "even_adv2 | missing 'even_adv2'",
+   1,
+   "ws212/1000007401260 at 0.1.1.1.1.1.1.0.1.1.1.0.1.1.0.1.0.1.0.0.0 even_adv2"
+  ]
+ ]
+}
