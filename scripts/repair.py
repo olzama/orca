@@ -73,6 +73,7 @@ def search(index):
     forms, n = s['forms'], len(s['forms'])
     toks = tokens[s['id']]
     cache = {} if args.cache else None
+    _CURRENT[0] = s['id']
     if hasattr(g, 'reset'):
         g.reset()                       # compiled core: new arena per sentence
 
@@ -85,9 +86,12 @@ def search(index):
             return list(range(n))
         try:
             if lexicon is not None:
-                replay_with_entries(g, lexicon, t, toks, cache=cache)
+                fs, resolved = replay_with_entries(g, lexicon, t, toks, cache=cache)
             else:
-                g.replay_tree(t, toks, cache=cache)
+                fs, _ = g.replay_tree(t, toks, cache=cache)
+                resolved = t
+            if args.kbest > 1:
+                accepted_info.append((fs, resolved))
             return None
         except ReplayFailure as e:
             return failing_tokens(t, e.where, leaf) or list(range(n))
@@ -106,6 +110,7 @@ def search(index):
 
     heap, seen, counter, n_replays = [(0.0, 0, ())], {()}, 1, 0
     accepted, first_right = None, None
+    accepted_info, kbest = [], []
     while heap and n_replays < args.budget:
         cost, _, state = heapq.heappop(heap)
         leaf, tree = assignment(state)
@@ -114,8 +119,15 @@ def search(index):
         n_replays += 1
         span = replay(leaf, tree)
         if span is None:
-            accepted = (leaf, tree, state)
-            break
+            if accepted is None:
+                accepted = (leaf, tree, state)
+            if args.kbest <= 1:
+                break
+            fs, resolved = accepted_info.pop()
+            kbest.append(candidate(fs, resolved, leaf, tree, cost))
+            if len(kbest) >= args.kbest:
+                break
+            span = list(range(n))           # look for other readings anywhere
         changed = {(kind, j) for kind, j, _ in state}
         cands = []
         for j in span:
@@ -138,11 +150,43 @@ def search(index):
     if accepted is None:
         outcome = 'rejected, budget used' if n_replays >= args.budget else 'rejected, nothing left to try'
         leaf, tree = assignment(())
-        return outcome, leaf, tree, n_replays, first_right, False
+        return outcome, leaf, tree, n_replays, first_right, False, kbest
     leaf, tree, state = accepted
     ok = right(leaf, tree)
     outcome = ('accepted at first try' if not state else 'accepted after repair') + (', right' if ok else ', wrong')
-    return outcome, leaf, tree, n_replays, first_right, ok
+    return outcome, leaf, tree, n_replays, first_right, ok, kbest
+
+
+def candidate(fs, resolved, leaf, tree, cost):
+    """An accepted derivation, with its MRS compared to gold if gold is known."""
+    g, sents, tops, tokens, args, lexicon = _WORK
+    out = {'cost': round(cost, 4), 'leaf': leaf, 'tree': tree,
+           'entries': [l.entry for l in leaves_of(resolved)]}
+    if GOLD_MRS:
+        from delphin import mrs as M
+        from orca.tfs.fast import extract as fast_extract
+        from compare_mrs import to_pydelphin
+        try:
+            m = to_pydelphin(fast_extract(g, fs) if hasattr(g, 'reset') else extract_py(g, fs))
+            out['same_mrs'] = M.is_isomorphic(m, GOLD_MRS[_CURRENT[0]], properties=False)
+        except Exception:
+            out['same_mrs'] = False
+    return out
+
+
+def extract_py(g, fs):
+    from orca.tfs.mrs import extract
+    return extract(g, fs)
+
+
+def leaves_of(t):
+    if isinstance(t, Leaf):
+        return [t]
+    return [x for c in t.children for x in leaves_of(c)]
+
+
+GOLD_MRS = {}
+_CURRENT = [None]
 
 
 def main():
@@ -159,6 +203,8 @@ def main():
     ap.add_argument('--fanout', type=int, default=8, help='least certain decisions expanded per failure')
     ap.add_argument('--limit', type=int)
     ap.add_argument('--workers', type=int, default=1)
+    ap.add_argument('--kbest', type=int, default=1, help='collect up to this many accepted derivations')
+    ap.add_argument('--gold-mrs', action='store_true', help='compare each candidate MRS with gold')
     ap.add_argument('--fast', action='store_true', help='replay with the compiled core')
     ap.add_argument('--warmup', type=int, default=300, help='sentences repaired once before timing (with --fast)')
     ap.add_argument('--entries', action='store_true',
@@ -209,6 +255,21 @@ def main():
         g = FastGrammar(g)
     _WORK = (g, sents, tops, tokens, args, lexicon)
     t1 = time.time()
+    if args.gold_mrs:
+        import glob as _glob
+        from delphin import tsdb as _tsdb
+        from delphin.codecs import simplemrs as _smrs
+        from compare_mrs import normalized as _norm
+        for prof in sorted(_glob.glob(os.path.join(args.profiles, '*'))):
+            if not os.path.exists(os.path.join(prof, 'relations')):
+                continue
+            names = [f.name for f in _tsdb.read_schema(prof)['result']]
+            with _tsdb.open(prof, 'result') as rows:
+                for line in rows:
+                    rec = _tsdb.split(line)
+                    if rec[names.index('derivation')]:
+                        GOLD_MRS[f"{os.path.basename(prof)}/{rec[names.index('parse-id')]}"] = _norm(
+                            _smrs.decode(rec[names.index('mrs')]))
     if args.fast:                         # build templates once, before the workers fork
         for name, status in g.g.status.items():
             if status in ('rule', 'lex-rule'):
@@ -227,7 +288,7 @@ def main():
     stats = collections.Counter()
     by_len = collections.defaultdict(collections.Counter)
     out_pred = open(args.pred_out, 'w', encoding='utf-8') if args.pred_out else None
-    for s, (outcome, leaf, tree, n_replays, first_right, ok) in zip(sents, results):
+    for s, (outcome, leaf, tree, n_replays, first_right, ok, kbest) in zip(sents, results):
         band = min(len(s['forms']) // 10 * 10, 60)
         stats['sentences'] += 1
         stats['first choice right'] += first_right
@@ -238,9 +299,15 @@ def main():
         by_len[band][outcome] += 1
         stats['replays'] += n_replays
         if out_pred:
-            out_pred.write(json.dumps({'id': s['id'], 'forms': s['forms'], 'leaf': leaf, 'tree': tree,
-                                       'outcome': outcome}, ensure_ascii=False) + '\n')
-    result = {'args': {k: v for k, v in vars(args).items() if k in ('split', 'k', 'min_prob', 'budget', 'fanout', 'limit', 'cache', 'entries', 'fast')},
+            rec = {'id': s['id'], 'forms': s['forms'], 'leaf': leaf, 'tree': tree, 'outcome': outcome}
+            if args.kbest > 1:
+                rec['candidates'] = kbest
+            out_pred.write(json.dumps(rec, ensure_ascii=False) + '\n')
+        if args.kbest > 1 and GOLD_MRS:
+            stats['candidates'] += len(kbest)
+            stats['gold MRS among k best'] += any(c.get('same_mrs') for c in kbest)
+            stats['gold MRS first among k best'] += bool(kbest) and bool(kbest[0].get('same_mrs'))
+    result = {'args': {k: v for k, v in vars(args).items() if k in ('split', 'k', 'min_prob', 'budget', 'fanout', 'limit', 'cache', 'entries', 'fast', 'kbest')},
               'stats': dict(stats),
               'right_among_accepted': stats['accepted and right'] / stats['accepted'] if stats['accepted'] else None,
               'by_length': {str(b): dict(by_len[b]) for b in sorted(by_len)},

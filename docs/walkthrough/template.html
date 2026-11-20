@@ -144,7 +144,7 @@ code { font-family: var(--mono); font-size: 0.88em; }
         <tbody>
           <tr><td>Orca: tagger's first proposal, replayed by the grammar</td><td class="n hl">47.5% (980)</td><td class="n">not measured</td><td class="n">59.8% (1,234)</td><td class="n">45.2% (932)</td></tr>
           <tr><td>Orca: after repair (at most 200 replays per sentence)</td><td class="n hl">56.9% (1,174)</td><td class="n">86.1 / 80.8</td><td class="n">89.0% (1,836)</td><td class="n">51.5% (1,061)</td></tr>
-          <tr><td>ACE chart parser, its first-ranked analysis (baseline)</td><td class="n hl">85.7% (1,767)</td><td class="n">97.6 / 94.7</td><td class="n">99.8% (2,058)</td><td class="n">not measured</td></tr>
+          <tr><td>ACE chart parser, its first-ranked analysis (baseline)</td><td class="n hl">85.7% (1,767)</td><td class="n">97.6 / 94.7</td><td class="n">99.8% (2,058)</td><td class="n">82.9% (1,710)</td></tr>
           <tr><td>Check of the engine: gold derivations, replayed</td><td class="n hl">100% (2,062)</td><td class="n">100 / 100</td><td class="n">100% (2,062)</td><td class="n">100%</td></tr>
         </tbody>
       </table>
@@ -173,13 +173,13 @@ code { font-family: var(--mono); font-size: 0.88em; }
       <table class="results">
         <thead><tr><th>System</th><th class="n">Sentences per second, one CPU core</th><th class="n">Memory needed</th><th class="n">Sentences left without an analysis</th></tr></thead>
         <tbody>
-          <tr><td>ACE, first-ranked analysis</td><td class="n">1.6 on average (median sentence: 0.05 s)</td><td class="n">up to 28 GB, and more for the 4 it could not finish</td><td class="n">4, out of memory at 28 GB</td></tr>
-          <tr><td>Orca, full pipeline with repair</td><td class="n">49 (194 on six cores)</td><td class="n">megabytes per sentence</td><td class="n">226, where repair found no derivation the grammar accepts</td></tr>
+          <tr><td>ACE, first-ranked analysis</td><td class="n">1.0 on average, 2,016 s in total (median sentence: 0.05 s)</td><td class="n">up to 28 GB, and more for the 4 it could not finish</td><td class="n">4, out of memory at 28 GB</td></tr>
+          <tr><td>Orca, full pipeline with repair</td><td class="n">37 on average including tagging, 55 s in total; 218 on six cores</td><td class="n">megabytes per sentence</td><td class="n">226, where repair found no derivation the grammar accepts</td></tr>
           <tr><td>Orca, replay of one derivation by the grammar</td><td class="n">about 670</td><td class="n">megabytes per sentence</td><td class="n">not applicable</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="caption">ACE's average is dominated by its longest sentences: half of the sentences take under a twentieth of a second, while the hardest ran out of 28 GB of memory after building up to 230,000 chart edges. Orca's time grows roughly in proportion to sentence length. These are short sentences (about 12 words on average); the comparison on long sentences, where ACE often fails, is still to be made. Tagging runs on a GPU and is not included in the per-core figures.</p>
+    <p class="caption">ACE's average is dominated by its longest sentences: half of the sentences take under a twentieth of a second, while the hardest ran out of 28 GB of memory after building up to 230,000 chart edges. Orca's time grows roughly in proportion to sentence length. These are short sentences (about 12 words on average); the comparison on long sentences, where ACE often fails, is still to be made. Orca's tagging runs on a GPU (17 of its 55 seconds); replay and repair run on one CPU core. ACE's total includes the retries of its 14 hardest sentences with more memory. Loading the grammar (about 17 seconds for Orca, 1 for ACE) is not included.</p>
   </section>
 
   <section class="stack">
@@ -414,11 +414,11 @@ const host = document.getElementById('examples');
   s.appendChild(el('p', '', 'The tagger\'s first choice decodes to the tree below. Replay stops at the node marked in red.'));
   const first = drawTree(ex.first_tree, { fail: f, label: 'First proposal, with the failing node marked' });
   s.appendChild(first.frame);
-  s.appendChild(el('div', 'verdict bad', `<b>Replay: rejected at <code>${esc(f[2])}</code> over "${esc(span)}".</b> The rule${doc(f[2])} needs a head daughter that an adverbial can attach to, such as a verb phrase. It was given the noun phrase "cell phones". The engine reports the clash as <code>${esc(f[3])}</code>.`));
-  s.appendChild(el('p', '', 'Repair looks only at the words under the failing node and tries the tagger\'s next-best labels there. The second replay succeeds after one change, on word 5.'));
+  s.appendChild(el('div', 'verdict bad', `<b>Replay: rejected at <code>${esc(f[2])}</code> over "${esc(span)}".</b> The rule${doc(f[2])} builds a compound whose first part is a name-like noun phrase, but "1" is tagged as an adjective, so the head types clash (<code>${esc(f[3])}</code>).`));
+  s.appendChild(el('p', '', 'Repair looks only at the words under the failing node and tries the tagger\'s next-best labels there. An accepted derivation turns up after changing one label: the rule that joins "1" and "gig", on word 5.'));
   s.appendChild(labelTable(ex, ex.final, ex.first, 'repair'));
   s.appendChild(drawTree(ex.final_tree, { other: first.set, label: 'Repaired tree, with the changed nodes marked' }).frame);
-  s.appendChild(el('div', 'verdict ok', '<b>Replay: accepted.</b> "under $ 30" now modifies the noun, and the repaired tree is the one in the treebank. Nodes that changed are outlined in amber.'));
+  s.appendChild(el('div', 'verdict ok', '<b>Replay: accepted.</b> "1" now modifies "gig" as an adjective, and the repaired tree is the one in the treebank. Nodes that changed are outlined in amber.'));
   fullAnalysis(s, STRUCT.B, 'The accepted derivation gives the full structure and its semantics.');
   s.appendChild(el('h3', '', 'DMRS'));
   s.appendChild(drawDmrs(STRUCT.B.dmrs));
@@ -429,19 +429,19 @@ const host = document.getElementById('examples');
 (function () {
   const ex = DATA.C, s = example('Example 3', ex, 'Accepted, and different from the treebank');
   const goldSet = setOf(ex.gold_tree), firstSet = setOf(ex.first_tree);
-  s.appendChild(el('p', '', 'The grammar licenses more than one analysis of most sentences. Here the tagger chose one that replays but is not the annotators\' choice. Two tree labels differ.'));
+  s.appendChild(el('p', '', 'The grammar licenses more than one analysis of most sentences. Here the tagger chose one that replays but is not the annotators\' choice. One tree label differs.'));
   s.appendChild(labelTable(ex, ex.first, ex.gold, 'gold'));
   s.appendChild(el('h3', '', 'The tagger\'s tree'));
   s.appendChild(drawTree(ex.first_tree, { other: goldSet, label: 'Tree proposed by the tagger' }).frame);
   s.appendChild(el('h3', '', 'The treebank\'s tree'));
   s.appendChild(drawTree(ex.gold_tree, { other: firstSet, label: 'Gold tree' }).frame);
-  s.appendChild(el('div', 'verdict chg', '<b>Both replay.</b> The tagger attaches "for a college physics class" to "calculator" and groups "college physics" first. The treebank attaches the phrase to the verb and groups "physics class" first. For Orca an accepted derivation counts as valid; the gold tree is one of several.'));
+  s.appendChild(el('div', 'verdict chg', '<b>Both replay.</b> The tagger attaches "for a digital cam" to "webpage", as a modifier of the noun. The treebank attaches it to the verb "consulted". For Orca an accepted derivation counts as valid; the gold tree is one of several.'));
   fullAnalysis(s, STRUCT.C, 'Both trees give a full structure. The difference between them is a difference in meaning, and it shows in the semantics. The excerpt and MRS below are those of the tagger\'s tree.');
   s.appendChild(el('h3', '', 'DMRS of the tagger\'s tree'));
   s.appendChild(drawDmrs(STRUCT.C.dmrs, STRUCT.Cgold.dmrs));
   s.appendChild(el('h3', '', 'DMRS of the treebank\'s tree'));
   s.appendChild(drawDmrs(STRUCT.Cgold.dmrs, STRUCT.C.dmrs));
-  s.appendChild(el('p', 'caption', 'Links outlined in amber exist in one graph only: what "for" modifies, and which noun is the head of the compound.'));
+  s.appendChild(el('p', 'caption', 'Links outlined in amber exist in one graph only: what "for" modifies.'));
   host.appendChild(s);
 })();
 
@@ -466,7 +466,7 @@ const host = document.getElementById('examples');
   s.appendChild(strip);
   s.appendChild(el('div', 'legend', '<span><i style="background:var(--ok)"></i>stretch that replays as a complete subtree</span><span><i style="background:var(--bad)"></i>node where replay fails</span><span style="text-decoration:underline dotted var(--chg) 2px;text-underline-offset:4px">word with a label that differs from the treebank</span>'));
   const covered = cls.filter(c => c.includes('in')).length;
-  s.appendChild(el('div', 'verdict bad', `<b>Replay: rejected at <code>${esc(f[2])}</code> over "${esc(ex.forms.slice(f[0], f[1]).join(' '))}".</b> The rule joins the conjunction with a noun that has no complement left to find, but "list" as labeled still expects its "of" phrase (<code>${esc(f[3])}</code>). Repair used its 30 replays without finding a full derivation.`));
+  s.appendChild(el('div', 'verdict bad', `<b>Replay: rejected at <code>${esc(f[2])}</code> over "${esc(ex.forms.slice(f[0], f[1]).join(' '))}".</b> The tagger makes complete noun phrases of the coordinated items (it applies the bare noun phrase rule to "screen size" and "processor speed"), so the rule that attaches "and" receives a phrase whose specifier no longer fits (<code>${esc(f[3])}</code>). The treebank coordinates the nouns first and makes one noun phrase of the whole list. Repair used its 200 replays without finding a full derivation.`));
   s.appendChild(el('p', '', `${wrong} of the ${2 * n - 1} labels differ from the treebank, spread over the sentence. Even so, ${covered} of the ${n} words sit inside subtrees of two or more words that replay, and each of those subtrees has its own full feature structure. This is the usual picture for long sentences: several wrong labels, one or two failure points, and large stretches that already have a strict analysis. Joining those stretches is the next piece of work.`));
   host.appendChild(s);
 })();

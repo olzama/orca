@@ -7,8 +7,8 @@ from orca.tfs.grammar import Grammar
 from replay_predictions import gold_tokens
 from analyze_replay_outcomes import partial_replay
 gold={s['id']:s for s in read('data/encoded-2025/dev.jsonl')}
-first={json.loads(l)['id']:json.loads(l) for l in open('data/models/tagger-2025-bert/dev-pred.jsonl')}
-rep=[json.loads(l) for l in open('data/models/tagger-2025-bert/dev-repair-b30.jsonl')]
+first={json.loads(l)['id']:json.loads(l) for l in open('data/models/tagger-2025b-bert/dev-pred.jsonl')}
+rep=[json.loads(l) for l in open('data/models/tagger-2025b-bert/dev-repair-b200-entries.jsonl')]
 toks=gold_tokens('data/profiles-2025/dev')
 g=Grammar('data/erg/2025/english.tdl')
 def nest(t):
