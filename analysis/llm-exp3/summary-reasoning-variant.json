@@ -1,0 +1,52 @@
+{
+ "args": {
+  "split": "dev",
+  "n": 100,
+  "batch": 5,
+  "threshold": 0.9,
+  "k": 5,
+  "min_prob": 0.01,
+  "model": "claude-opus-5-5",
+  "seed": 1,
+  "reason": true,
+  "dry_run": false
+ },
+ "sentences": 100,
+ "sentences_with_decisions": 64,
+ "stats": {
+  "tagger tokens": 1360,
+  "tagger leaf right": 1271,
+  "tagger tree right": 1197,
+  "tagger sentences right": 44,
+  "judge tokens": 1360,
+  "judge leaf right": 1273,
+  "judge tree right": 1202,
+  "judge sentences right": 46,
+  "oracle tokens": 1360,
+  "oracle leaf right": 1311,
+  "oracle tree right": 1278,
+  "oracle sentences right": 56,
+  "decisions": 337,
+  "unanswered": 0,
+  "gold among options": 294,
+  "tagger right": 173,
+  "judge right": 180,
+  "judge kept A": 289,
+  "fixed": 20,
+  "broken": 13,
+  "leaf decisions": 111,
+  "leaf tagger right": 58,
+  "leaf judge right": 60,
+  "tree decisions": 226,
+  "tree tagger right": 115,
+  "tree judge right": 120
+ },
+ "usage": {
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 159539,
+  "cache_read_input_tokens": 186960,
+  "output_tokens": 31297,
+  "seconds": 336.07949328422546,
+  "cost_usd_equivalent": 1.9397479999999998
+ }
+}

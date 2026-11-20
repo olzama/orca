@@ -46,8 +46,7 @@ Documentation of the grammar's rules, from the grammar itself (name: description
 
 A statistical tagger has analyzed each sentence. You are shown its analysis as a bracketed tree and \
 a list of decisions where it was unsure. Each decision has lettered options with the tagger's own \
-probability. Option A is always the tagger's first choice, and it is right more often than any other \
-single option, so move away from A only when the sentence gives a reason.
+probability. {prior}
 
 Two kinds of decision:
 - Lexical: which lexical type and rules a word has.
@@ -55,8 +54,18 @@ Two kinds of decision:
 stretch on the right. The stretches shown for each option assume the tagger's first choice for all \
 other decisions.
 
-Choose the option that the ERG treebank would have. Answer with exactly one line per decision, in \
-the form `3.2: B` (sentence number, decision number, letter). No other text."""
+Choose the option that the ERG treebank would have. {answer}"""
+
+PRIOR = {False: "Option A is always the tagger's first choice, and it is right more often than any other "
+                "single option, so move away from A only when the sentence gives a reason.",
+         True: "The options are listed in the tagger's order of preference. On these doubtful decisions "
+               "its first choice is right only about half of the time, so judge each option on its merits."}
+ANSWER = {False: "Answer with exactly one line per decision, in the form `3.2: B` (sentence number, "
+                 "decision number, letter). No other text.",
+          True: "First reason briefly about each decision: what the sentence means, what each option "
+                "would make of it, and which rule description fits. Then write a line `ANSWERS` followed "
+                "by exactly one line per decision, in the form `3.2: B` (sentence number, decision "
+                "number, letter)."}
 
 
 def split_node(tree, leaf_index):
@@ -145,6 +154,8 @@ def main():
     ap.add_argument('--min-prob', type=float, default=0.01)
     ap.add_argument('--model', default='claude-opus-5-5')
     ap.add_argument('--seed', type=int, default=1)
+    ap.add_argument('--reason', action='store_true',
+                    help='neutral wording about the first option, and reasoning before the answers')
     ap.add_argument('--dry-run', action='store_true')
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
@@ -165,7 +176,8 @@ def main():
             type_words[l.split('|')[0]][f.lower()] += 1
     type_words = {t: [w for w, _ in c.most_common(4)] for t, c in type_words.items()}
     docs = dict(line.split(': ', 1) for line in rule_docs(args.erg) if ': ' in line)
-    system = SYSTEM.format(docs='\n'.join(rule_docs(args.erg)))
+    system = SYSTEM.format(docs='\n'.join(rule_docs(args.erg)), prior=PRIOR[args.reason],
+                           answer=ANSWER[args.reason])
 
     pool = read(os.path.join(args.data, f'{args.split}.jsonl'))
     random.Random(args.seed).shuffle(pool)
@@ -246,7 +258,10 @@ def main():
                 usage[key] += u.get(key, 0)
             usage['seconds'] += data['seconds']
             usage['cost_usd_equivalent'] += data.get('total_cost_usd') or 0
-            for m in re.finditer(r'(\d+)\.(\d+)\s*[:\-]\s*([A-H])\b', data.get('result') or ''):
+            answer_text = (data.get('result') or '')
+            if args.reason and 'ANSWERS' in answer_text:
+                answer_text = answer_text.rsplit('ANSWERS', 1)[1]
+            for m in re.finditer(r'(\d+)\.(\d+)\s*[:\-]\s*([A-H])\b', answer_text):
                 n, d_no, letter = int(m.group(1)), int(m.group(2)), LETTERS.index(m.group(3))
                 if 1 <= n <= len(batch) and 1 <= d_no <= len(batch[n - 1]['decisions']):
                     d = batch[n - 1]['decisions'][d_no - 1]

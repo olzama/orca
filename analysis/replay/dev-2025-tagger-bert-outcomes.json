@@ -1,0 +1,306 @@
+{
+ "outcome_by_length": {
+  "under 10": {
+   "rejected": 193,
+   "accepted, differs from gold": 119,
+   "accepted, same as gold": 641
+  },
+  "10-19": {
+   "accepted, same as gold": 280,
+   "accepted, differs from gold": 161,
+   "rejected": 340
+  },
+  "20-29": {
+   "rejected": 170,
+   "accepted, differs from gold": 34,
+   "accepted, same as gold": 9
+  },
+  "30 and over": {
+   "accepted, differs from gold": 6,
+   "rejected": 109
+  }
+ },
+ "rejected": {
+  "under 10": {
+   "sentences": 193,
+   "wrong labels": {
+    "mean": 2.358,
+    "median": 2
+   },
+   "failure points": {
+    "mean": 1.01,
+    "median": 1
+   },
+   "share of tokens in replayed subtrees": {
+    "mean": 0.698,
+    "median": 0.75
+   },
+   "share of tokens in largest replayed subtree": {
+    "mean": 0.511,
+    "median": 0.4444444444444444
+   },
+   "wrong labels per sentence": {
+    "1": 79,
+    "2": 40,
+    "3-4": 52,
+    "5 or more": 22
+   }
+  },
+  "10-19": {
+   "sentences": 340,
+   "wrong labels": {
+    "mean": 3.374,
+    "median": 3.0
+   },
+   "failure points": {
+    "mean": 1.074,
+    "median": 1.0
+   },
+   "share of tokens in replayed subtrees": {
+    "mean": 0.724,
+    "median": 0.7692307692307693
+   },
+   "share of tokens in largest replayed subtree": {
+    "mean": 0.435,
+    "median": 0.4
+   },
+   "wrong labels per sentence": {
+    "5 or more": 88,
+    "3-4": 99,
+    "1": 86,
+    "2": 67
+   }
+  },
+  "20-29": {
+   "sentences": 170,
+   "wrong labels": {
+    "mean": 5.876,
+    "median": 5.0
+   },
+   "failure points": {
+    "mean": 1.324,
+    "median": 1.0
+   },
+   "share of tokens in replayed subtrees": {
+    "mean": 0.788,
+    "median": 0.8181818181818182
+   },
+   "share of tokens in largest replayed subtree": {
+    "mean": 0.421,
+    "median": 0.375
+   },
+   "wrong labels per sentence": {
+    "3-4": 42,
+    "5 or more": 97,
+    "2": 16,
+    "1": 15
+   }
+  },
+  "30 and over": {
+   "sentences": 109,
+   "wrong labels": {
+    "mean": 9.697,
+    "median": 9
+   },
+   "failure points": {
+    "mean": 1.853,
+    "median": 2
+   },
+   "share of tokens in replayed subtrees": {
+    "mean": 0.784,
+    "median": 0.8035714285714286
+   },
+   "share of tokens in largest replayed subtree": {
+    "mean": 0.327,
+    "median": 0.28125
+   },
+   "wrong labels per sentence": {
+    "5 or more": 88,
+    "3-4": 13,
+    "1": 5,
+    "2": 3
+   }
+  }
+ },
+ "failure_points": {
+  "failure points": 987,
+  "with a wrong label inside": 986,
+  "tokens under failure points": 5993,
+  "tokens in those sentences": 14106.000000000007
+ },
+ "accepted_but_different": {
+  "sentences": 320,
+  "by_length": {
+   "under 10": 119,
+   "10-19": 161,
+   "20-29": 34,
+   "30 and over": 6
+  },
+  "kind": {
+   "different bracketing": 155,
+   "same bracketing, different rule names": 89,
+   "only leaf labels differ (lexical or unary rules)": 44,
+   "only lexical types differ": 29,
+   "only the root condition differs": 3
+  },
+  "labels that differ per sentence": {
+   "mean": 2.612,
+   "median": 2.0
+  },
+  "bracket_f1_against_gold": 0.9195179387726832,
+  "most common leaf differences (gold -> predicted)": [
+   [
+    "n_-_mc_le|n_ms-cnt_ilr|",
+    "n_-_m_le|n_ms_ilr|",
+    13
+   ],
+   [
+    "v_np-prd_oeq-ntr_le|v_n3s-bse_ilr|",
+    "v_np_poss_le|v_n3s-bse_ilr|",
+    12
+   ],
+   [
+    "v_np_is_le||",
+    "v_np_is_le|v_aux-sb-inv_dlr|",
+    7
+   ],
+   [
+    "av_-_dg-jomv_le||",
+    "av_-_i-vp-x_le||",
+    6
+   ],
+   [
+    "p_np_i_le||",
+    "p_np_ptcl_le||",
+    6
+   ],
+   [
+    "n_-_pn_le|n_sg_ilr|",
+    "n_-_c_le|n_sg_ilr|",
+    5
+   ],
+   [
+    "v_np_ntr_le|v_n3s-bse_ilr|",
+    "v_np-prd_oeq-ntr_le|v_n3s-bse_ilr|",
+    5
+   ],
+   [
+    "v_np_poss_le|v_n3s-bse_ilr|hd_xcmp_c",
+    "v_np-prd_oeq-ntr_le|v_n3s-bse_ilr|hd_xcmp_c",
+    5
+   ],
+   [
+    "p_np_i-nm-poss_le||",
+    "p_np_ptcl-of_le||",
+    5
+   ],
+   [
+    "v_np-np_le|v_n3s-bse_ilr|",
+    "v_np-np_only_le|v_n3s-bse_ilr|",
+    4
+   ],
+   [
+    "n_-_c-pl-unk_le||",
+    "n_-_c_le|n_pl_olr|",
+    4
+   ],
+   [
+    "n_-_pn_le|n_sg_ilr|",
+    "n_-_pn_le|n_sg_ilr|hdn_bnp-pn_c",
+    4
+   ],
+   [
+    "n_-_pn_le|n_sg_ilr|hdn_bnp-pn_c",
+    "aj_-_i-cap_le||",
+    4
+   ],
+   [
+    "aj_-_i_le||",
+    "p_np_i_le||",
+    4
+   ],
+   [
+    "<cont>||",
+    "n_-_c-brno_le|n_sg_ilr|",
+    4
+   ]
+  ],
+  "most common tree differences (gold -> predicted)": [
+   [
+    "2|hd-cmp_u_c",
+    "1|hd-cmp_u_c",
+    20
+   ],
+   [
+    "1|hd-cmp_u_c",
+    "2|hd-cmp_u_c",
+    20
+   ],
+   [
+    "1|root_strict flr-hd_wh-mc-sb_c",
+    "1|root_strict flr-hd_wh-mc_c",
+    9
+   ],
+   [
+    "1|hd_xsb-fin_c hd-cmp_u_c",
+    "1|hd_xcmp_c hd-cmp_u_c",
+    9
+   ],
+   [
+    "1|hd-aj_int-unsl_c",
+    "1|hd-cmp_u_c",
+    7
+   ],
+   [
+    "1|sp-hd_hc_c",
+    "1|aj-hd_int_c",
+    6
+   ],
+   [
+    "-2|hd-cmp_u_c",
+    "-2|hd-aj_int-unsl_c",
+    6
+   ],
+   [
+    "2|hd-cmp_u_c",
+    "3|hd-cmp_u_c",
+    5
+   ],
+   [
+    "2|np-hdn_cpd_c",
+    "1|np-hdn_cpd_c",
+    5
+   ],
+   [
+    "-1|n-hdn_cpd_c",
+    "1|n-hdn_cpd_c",
+    5
+   ],
+   [
+    "1|aj-hdn_norm_c",
+    "1|n-hdn_cpd_c",
+    5
+   ],
+   [
+    "1|hdn-aj_redrel_c",
+    "-2|hd-aj_int-unsl_c",
+    5
+   ],
+   [
+    "1|sp-hd_n_c",
+    "2|sp-hd_n_c",
+    5
+   ],
+   [
+    "<none>",
+    "1|hd-cmp_u_c",
+    5
+   ],
+   [
+    "-1|hd-cmp_u_c",
+    "1|hdn_bnp-qnt_c hdn-aj_redrel_c",
+    4
+   ]
+  ]
+ }
+}
