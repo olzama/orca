@@ -33,9 +33,12 @@ def extract(grammar, fs):
 
     def items(lst):
         cur, last = u.get(lst, 'LIST'), u.get(lst, 'LAST')
-        while deref(cur) is not deref(last) and 'FIRST' in deref(cur).arcs:
-            yield deref(deref(cur).arcs['FIRST'])
-            cur = deref(cur).arcs['REST']
+        while deref(cur) is not deref(last):
+            cell = u.expand(cur)
+            if 'FIRST' not in cell.arcs:
+                break
+            yield u.expand(cell.arcs['FIRST'])
+            cur = cell.arcs['REST']
 
     cont = u.get(fs, 'SYNSEM', 'LOCAL', 'CONT')
     out = {'top': var(u.get(cont, 'HOOK', 'LTOP')), 'index': var(u.get(cont, 'HOOK', 'INDEX')),

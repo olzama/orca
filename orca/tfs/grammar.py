@@ -219,9 +219,55 @@ class Grammar:
                     self.u.unify(node, raw, [t])
         self._building.discard(t)
         node = deref(node)
-        self._constraints[t] = node if node.arcs else None
+        self._constraints[t] = self._unfill(node) if node.arcs else None
         del self.u.trail[mark:]          # changes to fresh nodes only
         return self._constraints[t]
+
+    def _unfill(self, root):
+        """Shrink a structure: a substructure that says nothing beyond the
+        constraint of its type is replaced by a placeholder of that type,
+        which unification expands again only if it is needed."""
+        indeg = {}
+
+        def scan(n):
+            n = deref(n)
+            indeg[id(n)] = indeg.get(id(n), 0) + 1
+            if indeg[id(n)] == 1:
+                for v in n.arcs.values():
+                    scan(v)
+
+        scan(root)
+        done = set()
+
+        def plain(n):
+            return not n.arcs and indeg.get(id(n), 1) == 1
+
+        def walk(n, is_root):
+            n = deref(n)
+            if id(n) in done or not n.arcs:
+                return
+            done.add(id(n))
+            for v in n.arcs.values():
+                walk(v, False)
+            if is_root or indeg[id(n)] != 1 or n.type.startswith('"'):
+                return
+            c = self._constraints.get(n.type) if n.type not in self._building else None
+            if c is None or len(c.arcs) != len(n.arcs):
+                return
+            seen = set()
+            for f, v in n.arcs.items():
+                cv = c.arcs.get(f)
+                if cv is None:
+                    return
+                v, cv = deref(v), deref(cv)
+                if cv.arcs or id(cv) in seen or not plain(v) or v.type != cv.type:
+                    return
+                seen.add(id(cv))
+            n.arcs = {}
+            n.expanded = False
+
+        walk(root, True)
+        return root
 
     # -- instances -------------------------------------------------------
 
@@ -237,6 +283,7 @@ class Grammar:
             fs = self._wellform(raw, set(), path=(name,))
             if not fs.expanded:
                 fs = self.u.expand(fs)
+            fs = self._unfill(fs)
             self._fs[name] = fs
             del self.u.trail[mark:]
         return fs
