@@ -1,0 +1,81 @@
+{
+ "args": {
+  "split": "dev",
+  "k": 5,
+  "min_prob": 0.005,
+  "budget": 500,
+  "fanout": 8,
+  "limit": null,
+  "kbest": 50,
+  "fast": true,
+  "entries": true,
+  "cache": true
+ },
+ "stats": {
+  "sentences": 2062,
+  "first choice right": 933,
+  "accepted": 1850,
+  "accepted and right": 1061,
+  "accepted at first try, wrong": 302,
+  "replays": 415548,
+  "candidates": 25382,
+  "gold MRS among k best": 1464,
+  "gold MRS first among k best": 1175,
+  "accepted at first try, right": 932,
+  "accepted after repair, wrong": 487,
+  "accepted after repair, right": 129,
+  "rejected, nothing left to try": 61,
+  "rejected, budget used": 151
+ },
+ "right_among_accepted": 0.5735135135135135,
+ "by_length": {
+  "0": {
+   "accepted at first try, wrong": 129,
+   "accepted at first try, right": 650,
+   "accepted after repair, wrong": 96,
+   "rejected, nothing left to try": 28,
+   "rejected, budget used": 8,
+   "accepted after repair, right": 42
+  },
+  "10": {
+   "accepted after repair, wrong": 221,
+   "accepted at first try, right": 270,
+   "accepted at first try, wrong": 148,
+   "accepted after repair, right": 72,
+   "rejected, budget used": 45,
+   "rejected, nothing left to try": 25
+  },
+  "20": {
+   "accepted after repair, wrong": 119,
+   "accepted at first try, wrong": 22,
+   "rejected, budget used": 44,
+   "accepted at first try, right": 12,
+   "rejected, nothing left to try": 5,
+   "accepted after repair, right": 11
+  },
+  "30": {
+   "accepted after repair, wrong": 42,
+   "accepted at first try, wrong": 2,
+   "rejected, budget used": 26,
+   "accepted after repair, right": 4,
+   "rejected, nothing left to try": 3
+  },
+  "40": {
+   "rejected, budget used": 21,
+   "accepted after repair, wrong": 7,
+   "accepted at first try, wrong": 1
+  },
+  "50": {
+   "rejected, budget used": 6,
+   "accepted after repair, wrong": 2
+  },
+  "60": {
+   "rejected, budget used": 1
+  }
+ },
+ "replays_per_sentence": 201.5266731328807,
+ "tagging_seconds": 17.404338359832764,
+ "repair_seconds": 41.40540814399719,
+ "workers": 6,
+ "sentences_per_second_repair_stage": 49.80025780277066
+}
