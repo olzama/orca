@@ -1,0 +1,103 @@
+{
+ "stats": {
+  "sentences": 2062,
+  "structure built": 2062,
+  "same MRS as gold": 2048
+ },
+ "by_outcome": {
+  "gold derivation": {
+   "same MRS": 2048,
+   "different MRS": 14
+  }
+ },
+ "examples_of_differences": [
+  {
+   "id": "ws212/1000007400460",
+   "only ours": [],
+   "only gold": [],
+   "counts": [
+    26,
+    26,
+    8,
+    8
+   ]
+  },
+  {
+   "id": "ws212/1000007400800",
+   "only ours": [],
+   "only gold": [],
+   "counts": [
+    48,
+    48,
+    17,
+    17
+   ]
+  },
+  {
+   "id": "ws212/1000007401180",
+   "only ours": [],
+   "only gold": [],
+   "counts": [
+    25,
+    25,
+    10,
+    10
+   ]
+  },
+  {
+   "id": "ws212/1000007401490",
+   "only ours": [],
+   "only gold": [],
+   "counts": [
+    48,
+    48,
+    22,
+    22
+   ]
+  },
+  {
+   "id": "ws212/1000007600100",
+   "only ours": [],
+   "only gold": [],
+   "counts": [
+    41,
+    41,
+    13,
+    13
+   ]
+  },
+  {
+   "id": "ws212/1000007600190",
+   "only ours": [],
+   "only gold": [],
+   "counts": [
+    35,
+    35,
+    14,
+    14
+   ]
+  },
+  {
+   "id": "ws212/1000007600210",
+   "only ours": [],
+   "only gold": [],
+   "counts": [
+    61,
+    61,
+    22,
+    22
+   ]
+  },
+  {
+   "id": "ws212/1000007600220",
+   "only ours": [],
+   "only gold": [],
+   "counts": [
+    32,
+    32,
+    13,
+    13
+   ]
+  }
+ ]
+}

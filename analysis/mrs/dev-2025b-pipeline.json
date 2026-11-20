@@ -1,0 +1,157 @@
+{
+ "stats": {
+  "sentences": 2062,
+  "structure built": 1836,
+  "same MRS as gold": 1172,
+  "no structure": 226
+ },
+ "by_outcome": {
+  "accepted at first try, wrong": {
+   "different MRS": 254,
+   "same MRS": 48
+  },
+  "accepted at first try, right": {
+   "same MRS": 931,
+   "different MRS": 1
+  },
+  "accepted after repair, wrong": {
+   "different MRS": 409,
+   "same MRS": 64
+  },
+  "accepted after repair, right": {
+   "same MRS": 129
+  },
+  "rejected, nothing left to try": {
+   "no structure": 49
+  },
+  "rejected, budget used": {
+   "no structure": 177
+  }
+ },
+ "examples_of_differences": [
+  {
+   "id": "ecpa/2200108",
+   "only ours": [
+    "_lap_n_1(ARG0)",
+    "_top_n_1(ARG0)",
+    "compound(ARG0,ARG1,ARG2)",
+    "udef_q(ARG0,BODY,RSTR)"
+   ],
+   "only gold": [
+    "_laptop_n_1(ARG0)"
+   ],
+   "counts": [
+    8,
+    5,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "ecpa/2200708",
+   "only ours": [
+    "ellipsis_ref(ARG0,ARG1)"
+   ],
+   "only gold": [],
+   "counts": [
+    13,
+    12,
+    5,
+    5
+   ]
+  },
+  {
+   "id": "ecpa/2200709",
+   "only ours": [
+    "modal(ARG0,ARG1)"
+   ],
+   "only gold": [
+    "_woiuld/rb_u_unknown(ARG0,ARG1)"
+   ],
+   "counts": [
+    9,
+    9,
+    6,
+    5
+   ]
+  },
+  {
+   "id": "ecpa/2200808",
+   "only ours": [
+    "_see_v_1(ARG0,ARG1,ARG2,ARG3)"
+   ],
+   "only gold": [
+    "_balck/jj_u_unknown(ARG0,ARG1)",
+    "_see_v_1(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    18,
+    16,
+    8,
+    6
+   ]
+  },
+  {
+   "id": "ecpa/2200908",
+   "only ours": [],
+   "only gold": [],
+   "counts": [
+    16,
+    16,
+    6,
+    6
+   ]
+  },
+  {
+   "id": "ecpa/2201009",
+   "only ours": [
+    "_woman_n_1(ARG0)",
+    "def_explicit_q(ARG0,BODY,RSTR)",
+    "poss(ARG0,ARG1,ARG2)"
+   ],
+   "only gold": [
+    "_womens_a_1(ARG0,ARG1)",
+    "compound(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    14,
+    13,
+    7,
+    6
+   ]
+  },
+  {
+   "id": "ecpa/2201109",
+   "only ours": [
+    "predsort(ARG0)"
+   ],
+   "only gold": [
+    "_nmot/rb_u_unknown(ARG0,ARG1)",
+    "_xcamcorder/nn_u_unknown(ARG0)"
+   ],
+   "counts": [
+    9,
+    10,
+    4,
+    4
+   ]
+  },
+  {
+   "id": "ecpa/2201508",
+   "only ours": [
+    "named(ARG0,CARG)",
+    "proper_q(ARG0,BODY,RSTR)"
+   ],
+   "only gold": [
+    "_mucic/nn_u_unknown(ARG0)",
+    "udef_q(ARG0,BODY,RSTR)"
+   ],
+   "counts": [
+    10,
+    10,
+    5,
+    5
+   ]
+  }
+ ]
+}

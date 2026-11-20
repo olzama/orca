@@ -42,7 +42,7 @@ def extract(grammar, fs):
            'rels': [], 'hcons': []}
     for ep in items(u.get(cont, 'RELS')):
         pred = deref(ep.arcs['PRED']).type if 'PRED' in ep.arcs else ep.type
-        pred = pred.strip('"')
+        pred = pred.strip('"').replace('\\', '')
         pred = pred[:-4] if pred.endswith('_rel') else pred
         roles = [r for r in ROLES_FIRST if r in ep.arcs] + sorted(
             r for r in ep.arcs if r not in ROLES_FIRST and r not in SKIP)
