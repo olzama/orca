@@ -1,0 +1,82 @@
+{
+ "args": {
+  "split": "dev",
+  "n": 100,
+  "batch": 5,
+  "threshold": 0.9,
+  "k": 5,
+  "min_prob": 0.01,
+  "model": "claude-opus-5-5",
+  "seed": 1,
+  "dry_run": false
+ },
+ "sentences": 100,
+ "sentences_with_decisions": 64,
+ "stats": {
+  "tagger tokens": 1360,
+  "tagger leaf right": 1271,
+  "tagger tree right": 1197,
+  "tagger sentences right": 44,
+  "judge tokens": 1360,
+  "judge leaf right": 1272,
+  "judge tree right": 1195,
+  "judge sentences right": 46,
+  "oracle tokens": 1360,
+  "oracle leaf right": 1311,
+  "oracle tree right": 1278,
+  "oracle sentences right": 56,
+  "decisions": 337,
+  "unanswered": 0,
+  "gold among options": 294,
+  "tagger right": 173,
+  "judge right": 172,
+  "judge kept A": 317,
+  "fixed": 6,
+  "broken": 7,
+  "leaf decisions": 111,
+  "leaf tagger right": 58,
+  "leaf judge right": 59,
+  "tree decisions": 226,
+  "tree tagger right": 115,
+  "tree judge right": 113
+ },
+ "usage": {
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 159453,
+  "cache_read_input_tokens": 186396,
+  "output_tokens": 7614,
+  "seconds": 96.7565906047821,
+  "cost_usd_equivalent": 1.4652872000000001
+ },
+ "tree_scores": {
+  "tagger": {
+   "bracket_f1": 0.9147,
+   "exact_tree": 0.44
+  },
+  "judge": {
+   "bracket_f1": 0.9164,
+   "exact_tree": 0.47
+  },
+  "oracle": {
+   "bracket_f1": 0.9551,
+   "exact_tree": 0.56
+  }
+ },
+ "grammar_acceptance": {
+  "tagger": {
+   "accepted": 58,
+   "accepted and right": 44,
+   "accepted and wrong": 14
+  },
+  "judge": {
+   "accepted": 62,
+   "accepted and right": 46,
+   "accepted and wrong": 16
+  },
+  "oracle": {
+   "accepted": 66,
+   "accepted and right": 56,
+   "accepted and wrong": 10
+  }
+ }
+}
