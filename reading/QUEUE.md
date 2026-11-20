@@ -18,13 +18,13 @@ the date when its notes exist. Long items are read one chapter per entry.
 | 1g | todo | (not on disk; citation from memory, verify) | Zhang, Oepen and Carroll 2007: Efficiency in unification-based n-best parsing (IWPT) | Selective unpacking replays unifications for chosen trees: failure rates and cost |
 | 2 | done 2026-11-20 | MRS_intro_1999.pdf | Copestake, Flickinger, Sag and Pollard: Minimal Recursion Semantics, an introduction (1999 version) | Does MRS fall out of replay with no extra choices? What must the engine implement for composition? |
 | 3 | done 2026-11-20 | MRS_algebra.pdf | Copestake, Lascarides and Flickinger: An algebra for semantic construction | Composition rules per schema; basis for the relaxed level |
-| 4 | todo | Copestake_MRS_algebra_2007.pdf | Copestake 2007: Semantic composition with (Robust) MRS | What a relaxed, underspecified semantic level can look like |
-| 5 | todo | sag-coordination.pdf | Sag: Coordination and underspecification | Coordination of unlikes and syncretism: effect on labels and replay |
-| 6 | todo | coordination.pdf | Drellishak and Bender: A coordination module for a crosslinguistic grammar resource | Cross-linguistic coordination in an implemented core; lessons for our core |
+| 4 | done 2026-11-20 | Copestake_MRS_algebra_2007.pdf | Copestake 2007: Semantic composition with (Robust) MRS | What a relaxed, underspecified semantic level can look like |
+| 5 | done 2026-11-20 | sag-coordination.pdf | Sag: Coordination and underspecification | Coordination of unlikes and syncretism: effect on labels and replay |
+| 6 | done 2026-11-20 | coordination.pdf | Drellishak and Bender: A coordination module for a crosslinguistic grammar resource | Cross-linguistic coordination in an implemented core; lessons for our core |
 | 7 | todo | Word Order in HPSG.pdf | The proper treatment of word order in HPSG | Order domains versus a continuous backbone |
 | 8 | todo | FrenchCliticsSag.pdf | Miller and Sag: French clitic movement without clitics or movement | Arguments without leaves; token-to-leaf alignment |
 | 9 | done 2026-11-20 | oepen-carroll-2002.pdf | Oepen and Carroll: Efficient parsing for unification-based grammars (Chapter 9 of Efficiency in unification-based processing, Oepen, Flickinger, Tsujii and Uszkoreit, eds.; the file contains only this chapter) | Replay engine design |
-| 10 | todo | Slayden-MS-thesis.pdf | Slayden: Array TFS storage for unification grammars (split by chapter) | Replay engine design |
+| 10 | done 2026-11-20 | Slayden-MS-thesis.pdf | Slayden: Array TFS storage for unification grammars (split by chapter) | Replay engine design |
 | 11 | todo | Carroll-Dissertation.pdf | Carroll dissertation (split by chapter) | Unification-based parsing in practice |
 | 12 | todo | antske-fokkens-phd.pdf | Fokkens dissertation (split by chapter) | Design of the Matrix successor; alternative analyses side by side |
 | 13 | todo | malouf1997gerunds.pdf, then Malouf-dissertation.pdf (by chapter) | Malouf on gerunds and mixed categories | Mixed categories and the type hierarchy |
