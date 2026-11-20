@@ -1,0 +1,9 @@
+{
+ "setup": "claude-opus-5-5, 60 random dev sentences (seed 1), 6 retrieved training examples and 6 word analyses per word, rule documentation in the system prompt, bracketed derivation as output",
+ "answers": {"well-formed": 42, "unbalanced brackets, repaired at the end": 16, "unusable": 2},
+ "all_60_after_repair": {"llm": {"leaf_acc": 0.8092, "tree_acc": 0.7737, "bracket_f1": 0.8329, "exact_tree": 0.4333},
+                         "tagger_v1": {"leaf_acc": 0.9571, "tree_acc": 0.8905, "bracket_f1": 0.9274, "exact_tree": 0.5167}},
+ "the_42_well_formed": {"llm": {"leaf_acc": 0.9129, "tree_acc": 0.8904, "bracket_f1": 0.9261, "exact_tree": 0.5},
+                        "tagger_v1": {"leaf_acc": 0.9494, "tree_acc": 0.8904, "bracket_f1": 0.9265, "exact_tree": 0.5714}},
+ "seconds_per_sentence": 8.7
+}

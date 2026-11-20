@@ -9,3 +9,7 @@ __pycache__/
 /reading/*.pdf
 /reading/*.zip
 /reading/txt/
+
+# Local environment and generated data
+/.venv/
+/data/
