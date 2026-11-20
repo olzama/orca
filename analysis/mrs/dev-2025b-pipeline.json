@@ -2,7 +2,7 @@
  "stats": {
   "sentences": 2062,
   "structure built": 1836,
-  "same MRS as gold": 1172,
+  "same MRS as gold": 1174,
   "no structure": 226
  },
  "by_outcome": {
@@ -11,12 +11,11 @@
    "same MRS": 48
   },
   "accepted at first try, right": {
-   "same MRS": 931,
-   "different MRS": 1
+   "same MRS": 932
   },
   "accepted after repair, wrong": {
-   "different MRS": 409,
-   "same MRS": 64
+   "different MRS": 408,
+   "same MRS": 65
   },
   "accepted after repair, right": {
    "same MRS": 129

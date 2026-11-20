@@ -26,7 +26,7 @@ def extract(grammar, fs):
     def var(n):
         n = deref(n)
         if n.type.startswith('"'):
-            return n.type
+            return n.type.replace('\\', '')     # token forms escape slashes
         if id(n) not in names:
             names[id(n)] = f'{sort(n.type)}{len(names) + 1}'
         return names[id(n)]

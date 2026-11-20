@@ -111,6 +111,14 @@ pre.mrs .q { color: var(--muted); }
 .results td, .results th { white-space: normal; }
 .results td.n { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
 .results th.n { text-align: right; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tile b { font-family: var(--display); font-size: 2.2rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.tile span { color: var(--muted); font-size: 0.92rem; }
+.tile.main { background: var(--accent-soft); border-color: var(--accent); }
+.tile.main b { color: var(--accent); }
+.tile.main span { color: var(--fg); }
+.results .hl { background: var(--accent-soft); font-weight: 600; color: var(--fg); }
 code { font-family: var(--mono); font-size: 0.88em; }
 </style>
 
@@ -120,6 +128,28 @@ code { font-family: var(--mono); font-size: 0.88em; }
     <h1>How a sentence gets its analysis, on four real examples</h1>
     <p class="lede">A neural tagger proposes a complete derivation of the English Resource Grammar. The grammar then replays that derivation by unification and either accepts it or says where it breaks. An accepted derivation yields the full HPSG feature structure, and with it the semantics. No chart search is involved. The sentences are from the development set of the 2025 release.</p>
   </header>
+
+  <section class="stack">
+    <h2>How good is it right now?</h2>
+    <p>Measured on 2,062 English sentences the system never saw in training: the development set of the grammar's 2025 treebank (customer e-mails about electronics and Wikipedia articles on linguistics). For each sentence the treebank holds the analysis a human annotator chose, which we call gold.</p>
+    <div class="tiles">
+      <div class="tile main"><b>56.9%</b><span>of sentences get <strong>exactly the gold meaning</strong> (the same MRS)</span></div>
+      <div class="tile"><b>89.0%</b><span>get a complete analysis that the grammar accepts, with full structure and semantics</span></div>
+      <div class="tile"><b>51.5%</b><span>get exactly the gold tree</span></div>
+    </div>
+    <p class="caption">Meaning is the measure that matters most: different trees can express the same meaning, and the tree is there to get the meaning right. A sentence counts only if its whole semantic structure matches; partly correct analyses count as wrong here.</p>
+    <div class="scroll">
+      <table class="results">
+        <thead><tr><th>Stage</th><th class="n hl">Same meaning as gold (MRS)</th><th class="n">Complete analysis built</th><th class="n">Same tree as gold</th></tr></thead>
+        <tbody>
+          <tr><td>Tagger's first proposal, replayed by the grammar</td><td class="n hl">47.5% (980)</td><td class="n">59.8% (1,234)</td><td class="n">45.2% (932)</td></tr>
+          <tr><td>After repair (at most 200 replays per sentence)</td><td class="n hl">56.9% (1,174)</td><td class="n">89.0% (1,836)</td><td class="n">51.5% (1,061)</td></tr>
+          <tr><td>Check of the engine: gold derivations, replayed</td><td class="n hl">100% (2,062)</td><td class="n">100% (2,062)</td><td class="n">100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">Sentence counts are in parentheses. The last row shows that when the engine is given the annotators' derivations it reproduces their semantics for every sentence, so the losses in the rows above come from the tagger's proposals. What is not yet measured: word segmentation is taken from the treebank, tense and number on variables are not compared, and long sentences do much worse than short ones (see example 4 below).</p>
+  </section>
 
   <section class="stack">
     <h2>The steps</h2>
@@ -142,20 +172,6 @@ code { font-family: var(--mono); font-size: 0.88em; }
 
   <div id="examples" class="stack" style="gap:28px"></div>
 
-  <section class="stack">
-    <h2>The same steps on the whole development set</h2>
-    <div class="scroll">
-      <table class="results">
-        <thead><tr><th>Stage</th><th class="n">Full structure built</th><th class="n">Same tree as gold</th><th class="n">Same MRS as gold</th></tr></thead>
-        <tbody>
-          <tr><td>Tagger's first choice, replayed</td><td class="n">59.8% (1,234)</td><td class="n">45.2% (932)</td><td class="n">47.5% (979)</td></tr>
-          <tr><td>After repair, at most 200 replays per sentence</td><td class="n">89.0% (1,836)</td><td class="n">51.5% (1,061)</td><td class="n">56.8% (1,172)</td></tr>
-          <tr><td>For reference: gold derivations, replayed</td><td class="n">100% (2,062)</td><td class="n">100%</td><td class="n">99.3% (2,048)</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="caption">Percentages are of the 2,062 development sentences; sentence counts are in parentheses. Replay uses lexical entries found in the lexicon. "Same MRS" means isomorphic to the gold MRS, without comparing variable properties. Tokens still come from the gold profiles. The four examples above were recorded with an earlier training run of the tagger.</p>
-  </section>
 </div>
 
 <script>
@@ -356,7 +372,7 @@ const host = document.getElementById('examples');
   fullAnalysis(s, STRUCT.A, 'Replay does more than check the tree. It builds the whole feature structure of the sentence. Below are the entries it used, an excerpt of the structure at the top node, and the semantics read off it.');
   s.appendChild(el('h3', '', 'DMRS (the same semantics as a dependency graph)'));
   s.appendChild(drawDmrs(STRUCT.A.dmrs));
-  s.appendChild(el('p', 'caption', 'Solid arrows are arguments; dashed arrows are scopal links (a quantifier to its restriction). This MRS is isomorphic to the gold MRS.'));
+  s.appendChild(el('p', 'caption', 'Solid arrows are arguments; dashed arrows are scopal links (a quantifier to its restriction). This MRS is the same as the gold MRS.'));
   host.appendChild(s);
 })();
 
