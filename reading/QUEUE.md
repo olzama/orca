@@ -16,8 +16,8 @@ the date when its notes exist. Long items are read one chapter per entry.
 | 1e | todo | (not on disk; citation from memory, verify) | Zhang and Krieger 2011: Large-scale corpus-driven PCFG approximation of an HPSG (IWPT) | Derivations proposed by a model trained on ERG treebanks, then rebuilt with the grammar: how often they are licensed |
 | 1f | todo | (not on disk; citation from memory, verify) | Packard and Flickinger 2017: Evaluating hybrid approaches to robust parsing (IWPT) | Robust unification over derivations the grammar does not license: a model for our relaxed level |
 | 1g | todo | (not on disk; citation from memory, verify) | Zhang, Oepen and Carroll 2007: Efficiency in unification-based n-best parsing (IWPT) | Selective unpacking replays unifications for chosen trees: failure rates and cost |
-| 2 | todo | MRS_intro_1999.pdf | Copestake, Flickinger, Sag and Pollard: Minimal Recursion Semantics, an introduction (1999 version) | Does MRS fall out of replay with no extra choices? What must the engine implement for composition? |
-| 3 | todo | MRS_algebra.pdf | Copestake, Lascarides and Flickinger: An algebra for semantic construction | Composition rules per schema; basis for the relaxed level |
+| 2 | done 2026-11-20 | MRS_intro_1999.pdf | Copestake, Flickinger, Sag and Pollard: Minimal Recursion Semantics, an introduction (1999 version) | Does MRS fall out of replay with no extra choices? What must the engine implement for composition? |
+| 3 | done 2026-11-20 | MRS_algebra.pdf | Copestake, Lascarides and Flickinger: An algebra for semantic construction | Composition rules per schema; basis for the relaxed level |
 | 4 | todo | Copestake_MRS_algebra_2007.pdf | Copestake 2007: Semantic composition with (Robust) MRS | What a relaxed, underspecified semantic level can look like |
 | 5 | todo | sag-coordination.pdf | Sag: Coordination and underspecification | Coordination of unlikes and syncretism: effect on labels and replay |
 | 6 | todo | coordination.pdf | Drellishak and Bender: A coordination module for a crosslinguistic grammar resource | Cross-linguistic coordination in an implemented core; lessons for our core |
