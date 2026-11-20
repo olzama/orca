@@ -1,0 +1,148 @@
+{
+ "train": {
+  "derivations": 86870,
+  "unreadable": 0,
+  "not_binary": 0,
+  "round_trip_ok": 86870,
+  "round_trip_fail": 0,
+  "tokens": 1622870,
+  "leaves": 1603139,
+  "interleaved_chains": 0,
+  "max_depth": 42,
+  "failures": [],
+  "form+lextype+lexrules keys": 76151,
+  "keys with several entries": 462,
+  "leaves under such keys": 6261,
+  "inventory": {
+   "lextype": 1196,
+   "leaf: lextype+lexrules+unaries": 5058,
+   "node (unaries+binary rule)": 1363,
+   "delta": 49,
+   "tree: delta+node": 5379,
+   "tree, absolute depth: depth+node": 8194,
+   "full label": 54446
+  }
+ },
+ "dev": {
+  "derivations": 2062,
+  "unreadable": 0,
+  "not_binary": 0,
+  "round_trip_ok": 2062,
+  "round_trip_fail": 0,
+  "tokens": 25847,
+  "leaves": 25531,
+  "interleaved_chains": 0,
+  "max_depth": 28,
+  "failures": [],
+  "form+lextype+lexrules keys": 4576,
+  "keys with several entries": 2,
+  "leaves under such keys": 79,
+  "inventory": {
+   "lextype": 548,
+   "leaf: lextype+lexrules+unaries": 1099,
+   "node (unaries+binary rule)": 399,
+   "delta": 22,
+   "tree: delta+node": 1116,
+   "tree, absolute depth: depth+node": 1741,
+   "full label": 4496
+  },
+  "unseen_vs_train": {
+   "lextype": {
+    "types": 548,
+    "unseen_types": 3,
+    "unseen_leaf_share": 0.00019584035094590888
+   },
+   "leaf: lextype+lexrules+unaries": {
+    "types": 1099,
+    "unseen_types": 19,
+    "unseen_leaf_share": 0.0009400336845403627
+   },
+   "node (unaries+binary rule)": {
+    "types": 399,
+    "unseen_types": 8,
+    "unseen_leaf_share": 0.00047001684227018136
+   },
+   "delta": {
+    "types": 22,
+    "unseen_types": 0,
+    "unseen_leaf_share": 0.0
+   },
+   "tree: delta+node": {
+    "types": 1116,
+    "unseen_types": 34,
+    "unseen_leaf_share": 0.0016842270181348165
+   },
+   "tree, absolute depth: depth+node": {
+    "types": 1741,
+    "unseen_types": 35,
+    "unseen_leaf_share": 0.001566722807567271
+   },
+   "full label": {
+    "types": 4496,
+    "unseen_types": 523,
+    "unseen_leaf_share": 0.02357917825388743
+   }
+  }
+ },
+ "test": {
+  "derivations": 8004,
+  "unreadable": 0,
+  "not_binary": 0,
+  "round_trip_ok": 8004,
+  "round_trip_fail": 0,
+  "tokens": 135997,
+  "leaves": 134403,
+  "interleaved_chains": 0,
+  "max_depth": 30,
+  "failures": [],
+  "form+lextype+lexrules keys": 17504,
+  "keys with several entries": 46,
+  "leaves under such keys": 286,
+  "inventory": {
+   "lextype": 898,
+   "leaf: lextype+lexrules+unaries": 2282,
+   "node (unaries+binary rule)": 720,
+   "delta": 35,
+   "tree: delta+node": 2451,
+   "tree, absolute depth: depth+node": 3840,
+   "full label": 15023
+  },
+  "unseen_vs_train": {
+   "lextype": {
+    "types": 898,
+    "unseen_types": 10,
+    "unseen_leaf_share": 0.00012648527190613305
+   },
+   "leaf: lextype+lexrules+unaries": {
+    "types": 2282,
+    "unseen_types": 128,
+    "unseen_leaf_share": 0.0011978899280522012
+   },
+   "node (unaries+binary rule)": {
+    "types": 720,
+    "unseen_types": 30,
+    "unseen_leaf_share": 0.0003050527145971444
+   },
+   "delta": {
+    "types": 35,
+    "unseen_types": 0,
+    "unseen_leaf_share": 0.0
+   },
+   "tree: delta+node": {
+    "types": 2451,
+    "unseen_types": 163,
+    "unseen_leaf_share": 0.0013541364404068361
+   },
+   "tree, absolute depth: depth+node": {
+    "types": 3840,
+    "unseen_types": 225,
+    "unseen_leaf_share": 0.0018823984583677448
+   },
+   "full label": {
+    "types": 15023,
+    "unseen_types": 2591,
+    "unseen_leaf_share": 0.021628981495948753
+   }
+  }
+ }
+}

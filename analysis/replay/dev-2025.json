@@ -1,0 +1,9 @@
+{
+ "derivations": 2062,
+ "replayed": 2062,
+ "failed": 0,
+ "seconds": 57.587647914886475,
+ "derivations_per_second": 35.80628962390684,
+ "node_unifications": 12227345,
+ "failure_causes": []
+}
