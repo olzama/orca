@@ -1,4 +1,4 @@
-# Orca: Omnilingual Rapid Constraint-based Analysis
+# Orca: Omnilingual Replayable Constraint-based Analysis
 
 Fast HPSG-style parsing and inspectable grammars for many languages. An orca is a fast dolphin: the project grows out of the DELPH-IN tradition.
 
@@ -28,7 +28,7 @@ The point of doing so is to link fast parsing to linguistic hypothesis testing. 
 
 **Bridges between parsing and grammar.** A fast parser alone gives labels; a grammar alone gives hypotheses that are too slow to test at scale. The bridge between them is what makes hypothesis testing possible: the parser's output is stated in the grammar's own types and rules and is checked by the grammar, so a change to an analysis shows up directly in what parses and how. For this reason Orca is not tied to any existing software, but its grammars and analyses should connect to what exists. At a minimum this means a bridge to [DELPH-IN](https://delph-in.github.io/docs/), so that a grammar can be expressed in the DELPH-IN formalism and existing DELPH-IN grammars and treebanks can be used directly. A second bridge runs in both directions between HPSG derivations and Universal Dependencies, so that new grammars can be trained on and tested against the many treebanks that exist in that format.
 
-**Parsing as sequence labeling.** The parser design will probably build on parsing as sequence labeling (Gómez-Rodríguez and Vilares 2018; Strzyz et al. 2019; Kitaev and Klein 2020; Amini et al. 2023), which extends the supertagging that already speeds up HPSG parsing (Dridan 2013; Zamaraeva and Gómez-Rodríguez 2024): a neural tagger assigns each token a label, and the label sequence decodes to a full derivation. The grammar then checks the proposed derivation and builds the semantics, so that the output is licensed by the grammar wherever possible, with a more relaxed analysis as a fallback. This part of the design is still open.
+**Parsing as sequence labeling.** The parser design will probably build on parsing as sequence labeling (Gómez-Rodríguez and Vilares 2018; Strzyz et al. 2019; Kitaev and Klein 2020; Amini et al. 2023), which extends the supertagging that already speeds up HPSG parsing (Dridan 2013; Zamaraeva and Gómez-Rodríguez 2024): a neural tagger assigns each token a label, and the label sequence decodes to a full derivation. The grammar then *replays* the proposed derivation: it applies the named rules and lexical entries bottom-up by unification, with no search. A derivation that replays is licensed by the grammar and comes with its semantics; one that fails is reported with the place and cause of the failure, and a more relaxed analysis serves as a fallback. Every analysis Orca outputs can be replayed in this way, which is what the R in the name stands for.
 
 ## Status
 

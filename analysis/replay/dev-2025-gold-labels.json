@@ -1,0 +1,57 @@
+{
+ "sentences": 2062,
+ "accepted": 2062,
+ "rejected": 0,
+ "accepted and right": 2062,
+ "accepted and wrong": 0,
+ "rejected and right": 0,
+ "rejected and wrong": 0,
+ "right_among_accepted": 1.0,
+ "right_among_rejected": null,
+ "by_length": {
+  "0": {
+   "accepted and right": 953,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  },
+  "10": {
+   "accepted and right": 781,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  },
+  "20": {
+   "accepted and right": 213,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  },
+  "30": {
+   "accepted and right": 77,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  },
+  "40": {
+   "accepted and right": 29,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  },
+  "50": {
+   "accepted and right": 8,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  },
+  "60": {
+   "accepted and right": 1,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  }
+ },
+ "sentences_per_second": 37.5351026695467,
+ "failure_causes": []
+}

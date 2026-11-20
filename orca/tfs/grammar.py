@@ -305,3 +305,58 @@ class Grammar:
             raise ReplayFailure(f'{where} {name}', e) from None
         except KeyError as e:
             raise ReplayFailure(f'{where} {name}', f'missing {e}') from None
+        except ValueError as e:              # e.g. a token feature the grammar lacks
+            raise ReplayFailure(f'{where} {name}', f'missing {e}') from None
+
+    def replay_tree(self, tree, tokens, where='0'):
+        """Replay a tree of `orca.encoding` nodes, as decoded from tagger
+        labels. Leaves name a lexical type (or `entry:NAME`); `tokens` is the
+        list of token structures of the sentence, consumed left to right.
+        A node whose label starts with `root_` is checked as a root condition.
+        Returns the feature structure and the remaining tokens."""
+        from ..encoding import Leaf
+        u = self.u
+        try:
+            if isinstance(tree, Leaf):
+                name = tree.entry.lower()
+                if name.startswith('entry:'):
+                    fs = u.copy(self.instance(name[6:]))
+                else:
+                    if name not in self.h.code or not name.endswith('_le'):
+                        raise KeyError(name)
+                    fs = u.expand(Node(name))
+                n = len(tree.forms)
+                mine, tokens = [self.token_node(t) for t in tokens[:n]], tokens[n:]
+                if mine:
+                    lst = Node(NULL)
+                    for tok in reversed(mine):
+                        cell = Node(CONS, expanded=True)
+                        cell.arcs['FIRST'], cell.arcs['REST'] = tok, lst
+                        lst = cell
+                    u.unify(u.get(fs, *TOKENS_LIST), lst, list(TOKENS_LIST))
+                    u.unify(u.get(fs, *TOKENS_LAST), mine[-1], list(TOKENS_LAST))
+                return fs, tokens
+            name = tree.label.lower()
+            if name.startswith('root_'):
+                fs, tokens = self.replay_tree(tree.children[0], tokens, where + '.0')
+                u.unify(u.copy(self.instance(name)), fs, ['<root>'])
+                return fs, tokens
+            fs = u.copy(self.instance(name))
+            arg = u.get(fs, ARGS)
+            for i, d in enumerate(tree.children):
+                dfs, tokens = self.replay_tree(d, tokens, f'{where}.{i}')
+                u.unify(u.get(arg, 'FIRST'), dfs, [ARGS] + ['REST'] * i + ['FIRST'])
+                arg = u.get(arg, 'REST')
+            if deref(arg).type != NULL and self.h.glb(deref(arg).type, NULL) is None:
+                raise UnificationFailure([ARGS], 'too few daughters', name)
+            fs = deref(fs)
+            for f in DELETED_DAUGHTERS:
+                fs.arcs.pop(f, None)
+            return fs, tokens
+        except ReplayFailure:
+            raise
+        except UnificationFailure as e:
+            raise ReplayFailure(f'{where} {name}', e) from None
+        except (KeyError, ValueError) as e:
+            raise ReplayFailure(f'{where} {name}', f'missing {e}') from None
+
