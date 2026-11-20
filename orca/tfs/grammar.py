@@ -219,7 +219,7 @@ class Grammar:
                     self.u.unify(node, raw, [t])
         self._building.discard(t)
         node = deref(node)
-        self._constraints[t] = self._unfill(node) if node.arcs else None
+        self._constraints[t] = self.u.freeze(self._unfill(node)) if node.arcs else None
         del self.u.trail[mark:]          # changes to fresh nodes only
         return self._constraints[t]
 
@@ -283,7 +283,7 @@ class Grammar:
             fs = self._wellform(raw, set(), path=(name,))
             if not fs.expanded:
                 fs = self.u.expand(fs)
-            fs = self._unfill(fs)
+            fs = self.u.freeze(self._unfill(fs))
             self._fs[name] = fs
             del self.u.trail[mark:]
         return fs

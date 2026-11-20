@@ -140,15 +140,16 @@ code { font-family: var(--mono); font-size: 0.88em; }
     <p class="caption">Meaning is the measure that matters most: different trees can express the same meaning, and the tree is there to get the meaning right. A sentence counts only if its whole semantic structure matches; partly correct analyses count as wrong here.</p>
     <div class="scroll">
       <table class="results">
-        <thead><tr><th>Stage</th><th class="n hl">Same meaning as gold (MRS)</th><th class="n">Complete analysis built</th><th class="n">Same tree as gold</th></tr></thead>
+        <thead><tr><th>System</th><th class="n hl">Same meaning as gold (MRS)</th><th class="n">Meaning partly right: predicates / links (F1)</th><th class="n">Complete analysis built</th><th class="n">Same tree as gold</th></tr></thead>
         <tbody>
-          <tr><td>Tagger's first proposal, replayed by the grammar</td><td class="n hl">47.5% (980)</td><td class="n">59.8% (1,234)</td><td class="n">45.2% (932)</td></tr>
-          <tr><td>After repair (at most 200 replays per sentence)</td><td class="n hl">56.9% (1,174)</td><td class="n">89.0% (1,836)</td><td class="n">51.5% (1,061)</td></tr>
-          <tr><td>Check of the engine: gold derivations, replayed</td><td class="n hl">100% (2,062)</td><td class="n">100% (2,062)</td><td class="n">100%</td></tr>
+          <tr><td>Orca: tagger's first proposal, replayed by the grammar</td><td class="n hl">47.5% (980)</td><td class="n">not measured</td><td class="n">59.8% (1,234)</td><td class="n">45.2% (932)</td></tr>
+          <tr><td>Orca: after repair (at most 200 replays per sentence)</td><td class="n hl">56.9% (1,174)</td><td class="n">86.1 / 80.8</td><td class="n">89.0% (1,836)</td><td class="n">51.5% (1,061)</td></tr>
+          <tr><td>ACE chart parser, its first-ranked analysis (baseline)</td><td class="n hl">85.7% (1,767)</td><td class="n">97.6 / 94.7</td><td class="n">99.8% (2,058)</td><td class="n">not measured</td></tr>
+          <tr><td>Check of the engine: gold derivations, replayed</td><td class="n hl">100% (2,062)</td><td class="n">100 / 100</td><td class="n">100% (2,062)</td><td class="n">100%</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="caption">Sentence counts are in parentheses. The last row shows that when the engine is given the annotators' derivations it reproduces their semantics for every sentence, so the losses in the rows above come from the tagger's proposals. What is not yet measured: word segmentation is taken from the treebank, tense and number on variables are not compared, and long sentences do much worse than short ones (see example 4 below).</p>
+    <p class="caption">Sentence counts are in parentheses. "Partly right" counts the predicates and the semantic links of each analysis that also occur in the gold analysis, over the whole set; a sentence without an analysis contributes nothing, which lowers recall. ACE is the parser the treebank was made with: its analyses for these sentences include the gold one, and its ranking model chose the first-ranked one. The four sentences it could not analyze ran out of memory at 28 GB. The last row shows that when the engine is given the annotators' derivations it reproduces their semantics for every sentence, so the losses in the rows above come from the tagger's proposals. What is not yet measured: word segmentation is taken from the treebank, tense and number on variables are not compared, and long sentences do much worse than short ones (see example 4 below).</p>
   </section>
 
   <section class="stack">

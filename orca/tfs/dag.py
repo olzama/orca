@@ -41,6 +41,7 @@ class Unifier:
         self.glb = glb
         self.constraint = constraint     # type -> its expanded constraint, or None if it has no arcs
         self.trail: List[tuple] = []
+        self.templates = {}
         self.count = 0                   # node unifications, for profiling
 
     # -- trail -----------------------------------------------------------
@@ -72,7 +73,38 @@ class Unifier:
 
     # -- operations ------------------------------------------------------
 
+    def freeze(self, n: Node) -> Node:
+        """Mark a stored structure that will never change again, so that
+        copies of it are made from a flat template (no recursion, no
+        dereferencing, no memo lookups)."""
+        n = deref(n)
+        index, order = {}, []
+        stack = [n]
+        while stack:
+            x = deref(stack.pop())
+            if id(x) in index:
+                continue
+            index[id(x)] = len(order)
+            order.append(x)
+            stack.extend(reversed(list(x.arcs.values())))
+        types = [x.type for x in order]
+        expanded = [x.expanded for x in order]
+        arcs = [tuple((f, index[id(deref(v))]) for f, v in x.arcs.items()) for x in order]
+        self.templates[id(n)] = (n, types, expanded, arcs)
+        return n
+
     def copy(self, n: Node, memo=None) -> Node:
+        if memo is None:
+            t = self.templates.get(id(n))
+            if t is not None:
+                _, types, expanded, arcs = t
+                new = [Node(ty, ex) for ty, ex in zip(types, expanded)]
+                for node, out in zip(new, arcs):
+                    if out:
+                        d = node.arcs
+                        for f, j in out:
+                            d[f] = new[j]
+                return new[0]
         memo = {} if memo is None else memo
         n = deref(n)
         new = memo.get(id(n))

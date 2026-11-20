@@ -1,0 +1,82 @@
+{
+ "ace": {
+  "sentences": 2062,
+  "with_mrs": 2058,
+  "same_mrs": 1767,
+  "same_mrs_share": 0.8569350145489816,
+  "coverage": 0.9980601357904947,
+  "predicates": {
+   "precision": 0.9828301153297914,
+   "recall": 0.9693890593047034,
+   "f1": 0.9760633163889068
+  },
+  "links": {
+   "precision": 0.9538941646253482,
+   "recall": 0.9400462962962963,
+   "f1": 0.9469196049366266
+  },
+  "by_length": {
+   "under 10": {
+    "sentences": 953,
+    "with MRS": 953,
+    "same MRS": 902
+   },
+   "10-19": {
+    "sentences": 781,
+    "with MRS": 781,
+    "same MRS": 672
+   },
+   "20-29": {
+    "sentences": 213,
+    "with MRS": 213,
+    "same MRS": 152
+   },
+   "30 and over": {
+    "sentences": 115,
+    "with MRS": 111,
+    "same MRS": 41
+   }
+  },
+  "seconds_total": 1498.7109401226044,
+  "seconds_max": 59.26232409477234
+ },
+ "orca": {
+  "sentences": 2062,
+  "with_mrs": 1836,
+  "same_mrs": 1174,
+  "same_mrs_share": 0.5693501454898157,
+  "coverage": 0.8903976721629486,
+  "predicates": {
+   "precision": 0.9630098008220044,
+   "recall": 0.7786298568507157,
+   "f1": 0.8610600706713781
+  },
+  "links": {
+   "precision": 0.9089405342816971,
+   "recall": 0.7268518518518519,
+   "f1": 0.8077615670133401
+  },
+  "by_length": {
+   "under 10": {
+    "sentences": 953,
+    "with MRS": 917,
+    "same MRS": 718
+   },
+   "10-19": {
+    "sentences": 781,
+    "with MRS": 706,
+    "same MRS": 406
+   },
+   "20-29": {
+    "sentences": 213,
+    "with MRS": 159,
+    "same MRS": 40
+   },
+   "30 and over": {
+    "sentences": 115,
+    "with MRS": 54,
+    "same MRS": 10
+   }
+  }
+ }
+}
