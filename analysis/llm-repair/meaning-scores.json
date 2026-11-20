@@ -1,0 +1,96 @@
+{
+ "data/llm/repair-pilot/log.jsonl": {
+  "under 20 words": {
+   "sentences": 38,
+   "accepted": 15,
+   "same MRS": 10,
+   "preds": {
+    "precision": 0.965,
+    "recall": 0.97,
+    "f1": 0.967
+   },
+   "links": {
+    "precision": 0.919,
+    "recall": 0.914,
+    "f1": 0.916
+   }
+  },
+  "all": {
+   "sentences": 60,
+   "accepted": 16,
+   "same MRS": 10,
+   "preds": {
+    "precision": 0.971,
+    "recall": 0.975,
+    "f1": 0.973
+   },
+   "links": {
+    "precision": 0.928,
+    "recall": 0.924,
+    "f1": 0.926
+   }
+  },
+  "20 words or more": {
+   "sentences": 22,
+   "accepted": 1,
+   "same MRS": 0,
+   "preds": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "links": {
+    "precision": 0.974,
+    "recall": 0.974,
+    "f1": 0.974
+   }
+  }
+ },
+ "data/llm/repair-v2/log.jsonl": {
+  "under 20 words": {
+   "sentences": 38,
+   "accepted": 21,
+   "same MRS": 13,
+   "preds": {
+    "precision": 0.971,
+    "recall": 0.962,
+    "f1": 0.967
+   },
+   "links": {
+    "precision": 0.923,
+    "recall": 0.904,
+    "f1": 0.913
+   }
+  },
+  "all": {
+   "sentences": 60,
+   "accepted": 33,
+   "same MRS": 14,
+   "preds": {
+    "precision": 0.977,
+    "recall": 0.971,
+    "f1": 0.974
+   },
+   "links": {
+    "precision": 0.904,
+    "recall": 0.897,
+    "f1": 0.9
+   }
+  },
+  "20 words or more": {
+   "sentences": 22,
+   "accepted": 12,
+   "same MRS": 1,
+   "preds": {
+    "precision": 0.98,
+    "recall": 0.977,
+    "f1": 0.978
+   },
+   "links": {
+    "precision": 0.894,
+    "recall": 0.893,
+    "f1": 0.893
+   }
+  }
+ }
+}

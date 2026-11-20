@@ -133,6 +133,40 @@ def labels(t):
     return out
 
 
+def balanced(text):
+    """Close unbalanced brackets in a model's subtree (a common slip on long
+    subtrees): drop surplus closing brackets at the end, add missing ones."""
+    text = text.strip()
+    depth, out, quoted, esc = 0, [], False, False
+    for ch in text:
+        if quoted:
+            esc = ch == '\\' and not esc
+            quoted = not (ch == '"' and not esc)
+        elif ch == '"':
+            quoted = True
+        elif ch == '(':
+            depth += 1
+        elif ch == ')':
+            if depth == 0:
+                continue
+            depth -= 1
+        out.append(ch)
+    return ''.join(out) + ')' * depth
+
+
+def leaf_paths(t, path='0', rules=(), pos=0, out=None):
+    """(path, leaf, lexical rules above it, first token) for every leaf."""
+    out = [] if out is None else out
+    if isinstance(t, Leaf):
+        out.append((path, t, rules, pos))
+        return out
+    lex = len(t.children) == 1 and t.label.lower().endswith('lr')
+    for i, c in enumerate(t.children):
+        leaf_paths(c, f'{path}.{i}', rules + (t.label.lower(),) if lex else (), pos, out)
+        pos += len(words(c))
+    return out
+
+
 def lexicon_options(lx, forms):
     """For each word: lexical types the lexicon allows, with the lexical rules
     needed for the spelling."""
@@ -163,6 +197,9 @@ def main():
     ap.add_argument('--out', required=True)
     ap.add_argument('--n', type=int, default=60)
     ap.add_argument('--rounds', type=int, default=3)
+    ap.add_argument('--extra-rounds', type=int, default=3, help='more rounds for sentences of 20 words or more')
+    ap.add_argument('--max-points', type=int, default=8, help='failure points shown per round')
+    ap.add_argument('--max-context', type=int, default=40000, help='characters of grammar definitions')
     ap.add_argument('--parallel', type=int, default=4)
     ap.add_argument('--model', default='claude-opus-5-5')
     ap.add_argument('--seed', type=int, default=1)
@@ -211,12 +248,53 @@ def main():
             except Exception as e:                      # malformed proposal
                 return ('rejected', '0', f'{type(e).__name__}: {e}')
 
-    def grammar_context(tree, node):
+    def failures(sid, tree):
+        """Every failure that can be seen before any is fixed: words the
+        lexicon does not license with their type, then unification failures.
+        After a failure at node f, the subtrees beside the path from the
+        top to f are replayed on their own, recursively."""
+        out = []
+        for path, leaf, rules, pos in leaf_paths(tree):
+            if not leaf.entry.startswith('entry:') and not lx.lookup(leaf.forms, leaf.entry.lower(), rules):
+                out.append((path, f'missing lexical entry: the lexicon has no entry of type '
+                                  f'{leaf.entry} for "{" ".join(leaf.forms)}" (with the lexical rules above it)'))
+
+        def walk(sub, path, start):
+            with lock:
+                fg.reset()
+                try:
+                    replay_with_entries(fg, lx, sub, toks[sid][start:], strict=False)
+                    return
+                except ReplayFailure as e:
+                    where, cause = e.where.split()[0], str(e.cause)
+            f = path + where[1:]
+            out.append((f, cause))
+            node, here, steps = sub, path, f[len(path):].split('.')[1:]
+            for k in steps:
+                pos = start
+                for i, c in enumerate(node.children):
+                    if i != int(k):
+                        walk(c, f'{here}.{i}', pos)
+                    pos += len(words(c))
+                start += sum(len(words(c)) for c in node.children[:int(k)])
+                node, here = node.children[int(k)], f'{here}.{k}'
+
+        walk(tree, '0', 0)
+        seen, uniq = set(), []
+        for f, c in out:
+            if f not in seen:
+                seen.add(f)
+                uniq.append((f, c))
+        return uniq
+
+    def grammar_context(tree, node, skip=None):
+        skip = set() if skip is None else skip
         try:
             sub = node_at(tree, node)
         except Exception:
             sub = tree
-        names = sorted(labels(sub))[:12]
+        names = [n for n in sorted(labels(sub)) if n.lower() not in skip][:12]
+        skip.update(n.lower() for n in names)
         parts = []
         for n in names:
             d = defs.get(n.lower())
@@ -234,48 +312,80 @@ def main():
         log = {'id': sid, 'forms': forms, 'rounds': []}
         verdict = check(sid, tree)
         history = []
-        for rnd in range(args.rounds):
+        rounds = args.rounds + (args.extra_rounds if len(forms) >= 20 else 0)
+        for rnd in range(rounds):
             if verdict[0] == 'accepted':
                 break
-            _, node, cause = verdict
+            fails = failures(sid, tree) or [(verdict[1], verdict[2])]
+            shown = fails[:args.max_points]
+            context, used = [], set()
+            for node, _ in shown:
+                c = grammar_context(tree, node, skip=used)
+                if c:
+                    context.append(c)
+            report = []
+            for node, cause in shown:
+                try:
+                    span = ' '.join(words(node_at(tree, node)))
+                except Exception:
+                    span = '?'
+                report.append(f'- node [{node}] ("{span}"): {cause}')
             prompt = '\n'.join([
                 'Sentence: ' + ' '.join(forms),
                 '', 'Current derivation (node ids in brackets):', *numbered(tree),
-                '', f'Replay fails at node [{node}]: {cause}',
+                '', f'Replay finds {len(fails)} independent failure point(s)' +
+                (f' (the first {len(shown)} are shown)' if len(fails) > len(shown) else '') + ':', *report,
+                'Subtrees that are not listed replay correctly on their own; keep them unless the analysis '
+                'above them must change. Fix all listed points in this answer, preferably by replacing small '
+                'subtrees (one REPLACE line per point). Failures higher up in the tree only become visible once '
+                'these are fixed.',
                 '', 'Lexical types the lexicon allows for each word:', lexicon_options(lx, forms),
-                '', 'Grammar definitions of the rule and types under the failing node:',
-                grammar_context(tree, node),
+                '', 'Grammar definitions of the rules and types under the failing nodes:',
+                '\n\n'.join(context)[:args.max_context],
                 *(['', 'Earlier attempts in this conversation and why they failed:'] + history if history else []),
             ])
             data = call(args.model, system, prompt, args.out)
             text = data.get('result') or ''
-            step = {'round': rnd + 1, 'failing_node': node, 'cause': cause, 'response': text,
+            step = {'round': rnd + 1, 'failure_points': [list(x) for x in fails], 'response': text,
                     'usage': data.get('usage'), 'cost': data.get('total_cost_usd'), 'seconds': data.get('seconds')}
-            new = tree
-            ok = True
-            for m in re.finditer(r'^REPLACE\s+\[?([\d.]+)\]?\s*:\s*(\(.*\))\s*$', text, re.M):
+            new, done, problems = tree, [], []
+            for m in re.finditer(r'^REPLACE\s+\[?([\d.]+)\]?\s*:\s*(\(.*)$', text, re.M):
+                path = m.group(1).rstrip('.')
+                if any(path == d or path.startswith(d + '.') or d.startswith(path + '.') for d in done):
+                    problems.append(f'[{path}] overlaps another replacement; ignored')
+                    continue
                 try:
-                    sub = parse(m.group(2))
-                    old = node_at(new, m.group(1))
+                    raw = m.group(2).strip()
+                    try:
+                        sub = parse(raw)
+                    except Exception:
+                        sub = parse(balanced(raw))
+                        step['repaired_brackets'] = step.get('repaired_brackets', 0) + 1
+                    old = node_at(new, path)
                     if words(sub) != words(old):
-                        ok = False
-                        step['problem'] = f'words of the replacement for [{m.group(1)}] differ'
-                        break
-                    new = replace_at(new, m.group(1), sub)
+                        problems.append(f'the replacement for [{path}] covers "{" ".join(words(sub))}", '
+                                        f'not "{" ".join(words(old))}"; ignored')
+                        continue
+                    new = replace_at(new, path, sub)
+                    done.append(path)
                 except Exception as e:
-                    ok = False
-                    step['problem'] = f'unreadable replacement: {e}'
-                    break
-            if new is tree and ok:
-                step['problem'] = 'no REPLACE line'
-                ok = False
-            if ok:
+                    problems.append(f'unreadable replacement for [{path}]: {e}; ignored')
+            if problems:
+                step['problems'] = problems
+            if not done:
+                problems.append('no usable REPLACE line')
+                step['problems'] = problems
+            else:
                 tree = new
                 verdict = check(sid, tree)
             step['verdict'] = list(verdict)
             log['rounds'].append(step)
-            history.append(f"- attempt {rnd + 1}: " + (step.get('problem') or f'replay fails at [{verdict[1]}]: {verdict[2]}'
-                                                       if verdict[0] == 'rejected' or not ok else 'accepted'))
+            note = '; '.join(problems)
+            if done:
+                note = (note + '; ' if note else '') + f'replaced {", ".join("[" + d + "]" for d in done)}'
+                if verdict[0] == 'rejected':
+                    note += ' (the derivation above now includes these changes)'
+            history.append(f'- attempt {rnd + 1}: {note}')
         log['final'] = list(verdict)
         log['derivation'] = render(tree)
         return log
@@ -293,15 +403,20 @@ def main():
     st = collections.Counter()
     for log in results:
         st['sentences'] += 1
+        band = 'under 20 words' if len(log['forms']) < 20 else '20 words or more'
+        st[f'sentences {band}'] += 1
+        st[f'accepted {band}'] += log['final'][0] == 'accepted'
+        st[f'gold MRS {band}'] += log['final'][0] == 'accepted' and bool(log['final'][1])
         st['accepted'] += log['final'][0] == 'accepted'
         st['accepted with gold MRS'] += log['final'][0] == 'accepted' and bool(log['final'][1])
         st['calls'] += len(log['rounds'])
         for step in log['rounds']:
             st['cost_usd_equivalent'] += step.get('cost') or 0
             st['seconds'] += step.get('seconds') or 0
-            st['malformed answers'] += 'problem' in step
+            st['answers with problems'] += 'problems' in step
+            st['answers with repaired brackets'] += 'repaired_brackets' in step
         st[f"accepted after {len(log['rounds'])} rounds"] += log['final'][0] == 'accepted'
-    summary = {'args': {k: v for k, v in vars(args).items() if k in ('n', 'rounds', 'model', 'seed')}, 'stats': dict(st)}
+    summary = {'args': {k: v for k, v in vars(args).items() if k in ('n', 'rounds', 'extra_rounds', 'max_points', 'model', 'seed')}, 'stats': dict(st)}
     with open(os.path.join(args.out, 'summary.json'), 'w') as f:
         json.dump(summary, f, indent=1)
     print(json.dumps(summary, indent=1))
