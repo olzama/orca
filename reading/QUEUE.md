@@ -8,9 +8,10 @@ the date when its notes exist. Long items are read one chapter per entry.
 
 | # | Status | File | Item | Question to answer |
 |---|---|---|---|---|
-| 1 | todo | Bouma-Malouf-Sag-SatisfyingConstraintsOnExtract.pdf (66 pages; the 62-page SatisfyingConstraintsOnExtractionAndAdjunction.pdf is another version: note the differences briefly) | Bouma, Malouf and Sag: Satisfying constraints on extraction and adjunction | Is traceless extraction deterministic under replay? What do DEPS and SLASH amalgamation require of the engine? |
-| 1a | todo | PollardSag1994.pdf (460 pages; scanned, check the text layer and read page images where it is poor) | Pollard and Sag 1994, Chapter 9 (valence revision, traceless extraction) | What the 1994 theory assumes that DELPH-IN changed; determinism of replay |
-| 1b | todo | HPSG-Inspired_Joint_Neural_Constituent_and_Dependency_Parsing_in_On3_Time_Complexity.pdf | HPSG-inspired joint neural constituent and dependency parsing (IEEE/ACM TASLP 2022) | Closest prior neural work: what it takes from HPSG, what it leaves out, how it joins constituents and dependencies |
+| 1 | done 2026-11-20 | Bouma-Malouf-Sag-SatisfyingConstraintsOnExtract.pdf (66 pages; the 62-page SatisfyingConstraintsOnExtractionAndAdjunction.pdf is another version: note the differences briefly) | Bouma, Malouf and Sag: Satisfying constraints on extraction and adjunction | Is traceless extraction deterministic under replay? What do DEPS and SLASH amalgamation require of the engine? |
+| 1a | done 2026-11-20 | PollardSag1994.pdf (460 pages; scanned, check the text layer and read page images where it is poor) | Pollard and Sag 1994, Chapter 9 (valence revision, traceless extraction) | What the 1994 theory assumes that DELPH-IN changed; determinism of replay |
+| 1b | done 2026-11-20 | HPSG-Inspired_Joint_Neural_Constituent_and_Dependency_Parsing_in_On3_Time_Complexity.pdf | HPSG-inspired joint neural constituent and dependency parsing (IEEE/ACM TASLP 2022) | Closest prior neural work: what it takes from HPSG, what it leaves out, how it joins constituents and dependencies |
+| 1c | todo | (not on disk) | Sagae, Miyao and Tsujii 2007: HPSG parsing with shallow dependency constraints (ACL; open access, fetch from the ACL Anthology) | Precedent for constraining a grammar-based parser with predicted dependencies: how, and what speed and accuracy it gave |
 | 2 | todo | MRS_intro_1999.pdf | Copestake, Flickinger, Sag and Pollard: Minimal Recursion Semantics, an introduction (1999 version) | Does MRS fall out of replay with no extra choices? What must the engine implement for composition? |
 | 3 | todo | MRS_algebra.pdf | Copestake, Lascarides and Flickinger: An algebra for semantic construction | Composition rules per schema; basis for the relaxed level |
 | 4 | todo | Copestake_MRS_algebra_2007.pdf | Copestake 2007: Semantic composition with (Robust) MRS | What a relaxed, underspecified semantic level can look like |
@@ -18,7 +19,7 @@ the date when its notes exist. Long items are read one chapter per entry.
 | 6 | todo | coordination.pdf | Drellishak and Bender: A coordination module for a crosslinguistic grammar resource | Cross-linguistic coordination in an implemented core; lessons for our core |
 | 7 | todo | Word Order in HPSG.pdf | The proper treatment of word order in HPSG | Order domains versus a continuous backbone |
 | 8 | todo | FrenchCliticsSag.pdf | Miller and Sag: French clitic movement without clitics or movement | Arguments without leaves; token-to-leaf alignment |
-| 9 | todo | oepen-carroll-2002.pdf | Efficiency in unification-based processing (Oepen, Flickinger, Tsujii and Uszkoreit, eds.; check which chapter this is) | Replay engine design |
+| 9 | done 2026-11-20 | oepen-carroll-2002.pdf | Oepen and Carroll: Efficient parsing for unification-based grammars (Chapter 9 of Efficiency in unification-based processing, Oepen, Flickinger, Tsujii and Uszkoreit, eds.; the file contains only this chapter) | Replay engine design |
 | 10 | todo | Slayden-MS-thesis.pdf | Slayden: Array TFS storage for unification grammars (split by chapter) | Replay engine design |
 | 11 | todo | Carroll-Dissertation.pdf | Carroll dissertation (split by chapter) | Unification-based parsing in practice |
 | 12 | todo | antske-fokkens-phd.pdf | Fokkens dissertation (split by chapter) | Design of the Matrix successor; alternative analyses side by side |

@@ -37,3 +37,7 @@ Test: for English, German, and one voice-system language with a UD treebank, mea
 ## Status
 
 open.
+
+## Update 2026-11-20
+
+Pollard and Sag 1994, Chapter 9, already treats "subject" as language-dependent: Welsh finite clauses are subjectless, with the apparent subject as least oblique complement (pp. 351-358); the same is suggested for German polar questions, Japanese and Korean (pp. 357-358); possessors are specifiers in English and German and subjects in Welsh, Yup'ik and Hungarian (pp. 374-375). Notes: `reading/notes/pollard-sag-1994-ch9-reflections-and-revisions.md`.

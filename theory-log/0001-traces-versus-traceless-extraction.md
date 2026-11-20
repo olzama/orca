@@ -34,3 +34,11 @@ Test: (1) in the ERG, confirm that each extraction in Redwoods derivations is ma
 ## Status
 
 open. Not yet checked against the ERG.
+
+## Update 2026-11-20
+
+Bouma, Malouf and Sag (2001) is the underspecification variant in full (notes: `reading/notes/bouma-malouf-sag-2001-extraction-adjunction.md`). It confirms that under that variant no node records the gap, that a lexical entry is satisfied by many feature structures (pp. 14-15), and that the constraints need list and set relations with delayed evaluation (p. 16). It adds a case the Handbook notes did not single out: for an extracted adjunct the tree does not record which verb the adjunct depends on (pp. 46-47).
+
+First part of the test: the ERG treebank marks extraction with named unary rules (`hd_xcmp_c`, `hd_xsb-fin_c`, `hd_xaj-int-vp_c`; counts in `analysis/derivation-stats/`). So the ERG follows the named-step variant, as the proposal requires. Still to check in the rule definitions: whether `hd_xcmp_c` identifies the complement when there are several.
+
+Pollard and Sag 1994, Chapter 9 (notes: `reading/notes/pollard-sag-1994-ch9-reflections-and-revisions.md`) is the source of the lexical-rule variant. Two properties of it weaken the "named step" reading: the complement extraction rule removes any one complement under a single rule (p. 378), and subject and adjunct extraction are registered on the embedding verb, not on the word whose dependent is missing (pp. 382-387). The proposal above therefore needs the stronger wording: the named step must sit on the word or phrase that loses the dependent, and must identify which dependent.
