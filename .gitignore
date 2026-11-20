@@ -13,3 +13,7 @@ __pycache__/
 # Local environment and generated data
 /.venv/
 /data/
+
+# Build output of the compiled core (rebuild with: .venv/bin/python setup.py build_ext --inplace)
+/build/
+*.so

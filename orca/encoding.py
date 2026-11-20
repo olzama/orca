@@ -24,6 +24,13 @@ class Node:
     label: str                 # rule name (or root condition)
     children: Tuple['Tree', ...]
 
+    def __hash__(self):         # cached: trees are used as dictionary keys during repair
+        h = self.__dict__.get('_hash')
+        if h is None:
+            h = hash((self.label, self.children))
+            object.__setattr__(self, '_hash', h)
+        return h
+
 
 Tree = Union[Leaf, Node]
 

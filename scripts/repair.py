@@ -76,6 +76,8 @@ def search(index):
     forms, n = s['forms'], len(s['forms'])
     toks = tokens[s['id']]
     cache = {} if args.cache else None
+    if hasattr(g, 'reset'):
+        g.reset()                       # compiled core: new arena per sentence
 
     def replay(leaf, tree):
         """None if accepted, else the token positions to reconsider."""
@@ -160,6 +162,8 @@ def main():
     ap.add_argument('--fanout', type=int, default=8, help='least certain decisions expanded per failure')
     ap.add_argument('--limit', type=int)
     ap.add_argument('--workers', type=int, default=1)
+    ap.add_argument('--fast', action='store_true', help='replay with the compiled core')
+    ap.add_argument('--warmup', type=int, default=300, help='sentences repaired once before timing (with --fast)')
     ap.add_argument('--entries', action='store_true',
                     help='replay with lexical entries found in the lexicon')
     ap.add_argument('--no-cache', dest='cache', action='store_false',
@@ -203,7 +207,17 @@ def main():
     # phase 2: replay and repair (CPU), one sentence per task
     global _WORK
     lexicon = Lexicon(g, os.path.dirname(args.grammar)) if args.entries else None
+    if args.fast:
+        from orca.tfs.fast import FastGrammar
+        g = FastGrammar(g)
     _WORK = (g, sents, tops, tokens, args, lexicon)
+    t1 = time.time()
+    if args.fast:                         # build templates once, before the workers fork
+        for name, status in g.g.status.items():
+            if status in ('rule', 'lex-rule'):
+                g.instance(name)
+        for i in range(min(len(sents), args.warmup)):
+            search(i)
     t1 = time.time()
     if args.workers > 1:
         import multiprocessing
@@ -229,7 +243,7 @@ def main():
         if out_pred:
             out_pred.write(json.dumps({'id': s['id'], 'forms': s['forms'], 'leaf': leaf, 'tree': tree,
                                        'outcome': outcome}, ensure_ascii=False) + '\n')
-    result = {'args': {k: v for k, v in vars(args).items() if k in ('split', 'k', 'min_prob', 'budget', 'fanout', 'limit', 'cache', 'entries')},
+    result = {'args': {k: v for k, v in vars(args).items() if k in ('split', 'k', 'min_prob', 'budget', 'fanout', 'limit', 'cache', 'entries', 'fast')},
               'stats': dict(stats),
               'right_among_accepted': stats['accepted and right'] / stats['accepted'] if stats['accepted'] else None,
               'by_length': {str(b): dict(by_len[b]) for b in sorted(by_len)},

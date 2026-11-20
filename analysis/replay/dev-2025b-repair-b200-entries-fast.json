@@ -1,0 +1,77 @@
+{
+ "args": {
+  "split": "dev",
+  "k": 5,
+  "min_prob": 0.005,
+  "budget": 200,
+  "fanout": 8,
+  "limit": null,
+  "fast": true,
+  "entries": true,
+  "cache": true
+ },
+ "stats": {
+  "sentences": 2062,
+  "first choice right": 933,
+  "accepted": 1836,
+  "accepted and right": 1061,
+  "accepted at first try, wrong": 302,
+  "replays": 48983,
+  "accepted at first try, right": 932,
+  "accepted after repair, wrong": 473,
+  "accepted after repair, right": 129,
+  "rejected, nothing left to try": 49,
+  "rejected, budget used": 177
+ },
+ "right_among_accepted": 0.5778867102396514,
+ "by_length": {
+  "0": {
+   "accepted at first try, wrong": 129,
+   "accepted at first try, right": 650,
+   "accepted after repair, wrong": 96,
+   "rejected, nothing left to try": 24,
+   "rejected, budget used": 12,
+   "accepted after repair, right": 42
+  },
+  "10": {
+   "accepted after repair, wrong": 216,
+   "accepted at first try, right": 270,
+   "accepted at first try, wrong": 148,
+   "accepted after repair, right": 72,
+   "rejected, budget used": 56,
+   "rejected, nothing left to try": 19
+  },
+  "20": {
+   "accepted after repair, wrong": 114,
+   "accepted at first try, wrong": 22,
+   "rejected, budget used": 50,
+   "accepted at first try, right": 12,
+   "rejected, nothing left to try": 4,
+   "accepted after repair, right": 11
+  },
+  "30": {
+   "accepted after repair, wrong": 38,
+   "accepted at first try, wrong": 2,
+   "rejected, budget used": 31,
+   "accepted after repair, right": 4,
+   "rejected, nothing left to try": 2
+  },
+  "40": {
+   "rejected, budget used": 21,
+   "accepted after repair, wrong": 7,
+   "accepted at first try, wrong": 1
+  },
+  "50": {
+   "rejected, budget used": 6,
+   "accepted after repair, wrong": 2
+  },
+  "60": {
+   "rejected, budget used": 1
+  }
+ },
+ "replays_per_sentence": 23.755092143549952,
+ "tagging_seconds": 16.555257558822632,
+ "repair_seconds": 10.654441833496094,
+ "workers": 6,
+ "sentences_per_second_repair_stage": 193.53430543093836
+}
