@@ -34,6 +34,7 @@ from eval_trees import to_leaves  # noqa: E402
 from llm_label import read  # noqa: E402
 from orca.encoding import Leaf, decode  # noqa: E402
 from orca.tfs.grammar import Grammar, ReplayFailure  # noqa: E402
+from orca.tfs.lexicon import Lexicon, replay_with_entries  # noqa: E402
 from replay_predictions import gold_tokens  # noqa: E402
 from train_tagger import UNK, Tagger, collate  # noqa: E402
 
@@ -70,7 +71,7 @@ _WORK = None
 
 def search(index):
     """Best-first repair of one sentence. Runs in a worker process."""
-    g, sents, tops, tokens, args = _WORK
+    g, sents, tops, tokens, args, lexicon = _WORK
     s, top = sents[index], tops[index]
     forms, n = s['forms'], len(s['forms'])
     toks = tokens[s['id']]
@@ -84,7 +85,10 @@ def search(index):
         except Exception:
             return list(range(n))
         try:
-            g.replay_tree(t, toks, cache=cache)
+            if lexicon is not None:
+                replay_with_entries(g, lexicon, t, toks, cache=cache)
+            else:
+                g.replay_tree(t, toks, cache=cache)
             return None
         except ReplayFailure as e:
             return failing_tokens(t, e.where, leaf) or list(range(n))
@@ -156,6 +160,8 @@ def main():
     ap.add_argument('--fanout', type=int, default=8, help='least certain decisions expanded per failure')
     ap.add_argument('--limit', type=int)
     ap.add_argument('--workers', type=int, default=1)
+    ap.add_argument('--entries', action='store_true',
+                    help='replay with lexical entries found in the lexicon')
     ap.add_argument('--no-cache', dest='cache', action='store_false',
                     help='rebuild every subtree on every replay')
     ap.add_argument('--pred-out')
@@ -196,7 +202,8 @@ def main():
 
     # phase 2: replay and repair (CPU), one sentence per task
     global _WORK
-    _WORK = (g, sents, tops, tokens, args)
+    lexicon = Lexicon(g, os.path.dirname(args.grammar)) if args.entries else None
+    _WORK = (g, sents, tops, tokens, args, lexicon)
     t1 = time.time()
     if args.workers > 1:
         import multiprocessing
@@ -222,7 +229,7 @@ def main():
         if out_pred:
             out_pred.write(json.dumps({'id': s['id'], 'forms': s['forms'], 'leaf': leaf, 'tree': tree,
                                        'outcome': outcome}, ensure_ascii=False) + '\n')
-    result = {'args': {k: v for k, v in vars(args).items() if k in ('split', 'k', 'min_prob', 'budget', 'fanout', 'limit', 'cache')},
+    result = {'args': {k: v for k, v in vars(args).items() if k in ('split', 'k', 'min_prob', 'budget', 'fanout', 'limit', 'cache', 'entries')},
               'stats': dict(stats),
               'right_among_accepted': stats['accepted and right'] / stats['accepted'] if stats['accepted'] else None,
               'by_length': {str(b): dict(by_len[b]) for b in sorted(by_len)},

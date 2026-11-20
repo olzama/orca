@@ -1,0 +1,88 @@
+{
+ "sentences": 2062,
+ "accepted": 2057,
+ "rejected": 5,
+ "accepted and right": 2057,
+ "accepted and wrong": 0,
+ "rejected and right": 5,
+ "rejected and wrong": 0,
+ "right_among_accepted": 1.0,
+ "right_among_rejected": 1.0,
+ "by_length": {
+  "0": {
+   "accepted and right": 952,
+   "accepted and wrong": 0,
+   "rejected and right": 1,
+   "rejected and wrong": 0
+  },
+  "10": {
+   "accepted and right": 779,
+   "accepted and wrong": 0,
+   "rejected and right": 2,
+   "rejected and wrong": 0
+  },
+  "20": {
+   "accepted and right": 211,
+   "accepted and wrong": 0,
+   "rejected and right": 2,
+   "rejected and wrong": 0
+  },
+  "30": {
+   "accepted and right": 77,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  },
+  "40": {
+   "accepted and right": 29,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  },
+  "50": {
+   "accepted and right": 8,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  },
+  "60": {
+   "accepted and right": 1,
+   "accepted and wrong": 0,
+   "rejected and right": 0,
+   "rejected and wrong": 0
+  }
+ },
+ "sentences_per_second": 33.27814464226943,
+ "lexical_entries": {
+  "leaves": 25531,
+  "no entry found": 0,
+  "several entries found": 492
+ },
+ "failure_causes": [
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: _about_p_sel_rel & _up_p_sel_rel",
+   1,
+   "ecpa/2209210 at 0.0.1.1.1.1.1.1.0.1.0 hd-cmp_u_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: _about_p_sel_rel & _of_p_sel_rel",
+   1,
+   "ecpa/2219108 at 0.0.0.1.1 hd-cmp_u_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: _back_p_sel_rel & _forward_p_sel_rel",
+   1,
+   "ecpa/2272710 at 0.0.0.0 hd-cmp_u_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: _back_p_sel_rel & _up_p_sel_rel",
+   1,
+   "ecpa/2274408 at 0.0.1.1.1.1.1.1.1.1.0.1.0 hd-cmp_u_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: _to_p_sel_rel & _with_p_sel_rel",
+   1,
+   "ws212/1000007600220 at 0.0.1.1.1.0.1.0.1.0 hd-cmp_u_c"
+  ]
+ ]
+}

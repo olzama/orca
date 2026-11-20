@@ -32,6 +32,7 @@ from eval_trees import to_leaves  # noqa: E402
 from llm_label import read  # noqa: E402
 from orca.encoding import decode  # noqa: E402
 from orca.tfs.grammar import Grammar, ReplayFailure  # noqa: E402
+from orca.tfs.lexicon import Lexicon, replay_with_entries, resolve  # noqa: E402
 
 
 def gold_tokens(split_dir):
@@ -59,6 +60,8 @@ def main():
     ap.add_argument('--pred')
     ap.add_argument('--out', required=True)
     ap.add_argument('--limit', type=int)
+    ap.add_argument('--entries', action='store_true',
+                    help='replace lexical types by lexical entries found in the lexicon')
     args = ap.parse_args()
     gold = {s['id']: s for s in read(args.gold)}
     if args.pred:
@@ -70,6 +73,8 @@ def main():
         preds = preds[:args.limit]
     tokens = gold_tokens(args.profiles)
     g = Grammar(args.grammar)
+    lexicon = Lexicon(g, os.path.dirname(args.grammar)) if args.entries else None
+    leaf_stats = collections.Counter()
 
     table = collections.Counter()          # (accepted, correct) -> sentences
     by_len = collections.defaultdict(collections.Counter)
@@ -81,6 +86,16 @@ def main():
         mark = g.u.mark()
         try:
             tree = decode(to_leaves(p['forms'], p['leaf'], p['tree']))
+            if lexicon:
+                for c in resolve(tree, lexicon)[1]:
+                    leaf_stats['leaves'] += 1
+                    leaf_stats['no entry found'] += not c
+                    leaf_stats['several entries found'] += len(c) > 1
+                replay_with_entries(g, lexicon, tree, tokens[p['id']])
+                table[(True, correct)] += 1
+                by_len[min(len(p['forms']) // 10 * 10, 60)][(True, correct)] += 1
+                del g.u.trail[mark:]
+                continue
             g.replay_tree(tree, tokens[p['id']])
             accepted = True
         except ReplayFailure as e:
@@ -109,6 +124,7 @@ def main():
         'right_among_rejected': table[(False, True)] / rej if rej else None,
         'by_length': {str(b): cells(by_len[b]) for b in sorted(by_len)},
         'sentences_per_second': n / secs,
+        'lexical_entries': dict(leaf_stats),
         'failure_causes': [[k, c, examples[k]] for k, c in causes.most_common(30)],
     }
     with open(args.out, 'w') as f:

@@ -1,5 +1,7 @@
 # Orca: Omnilingual Replayable Constraint-based Analysis
 
+<img src="assets/orca-logo.svg" alt="Orca logo: an orca inside a replay arrow" width="140">
+
 Fast HPSG-style parsing and inspectable grammars for many languages. An orca is a fast dolphin: the project grows out of the DELPH-IN tradition.
 
 ## Why
