@@ -1,26 +1,26 @@
 {
  "train": {
-  "derivations": 86870,
+  "derivations": 86278,
   "unreadable": 0,
   "not_binary": 0,
-  "round_trip_ok": 86870,
+  "round_trip_ok": 86278,
   "round_trip_fail": 0,
-  "tokens": 1622870,
-  "leaves": 1603139,
+  "tokens": 1613240,
+  "leaves": 1593610,
   "interleaved_chains": 0,
   "max_depth": 42,
   "failures": [],
-  "form+lextype+lexrules keys": 76151,
-  "keys with several entries": 462,
-  "leaves under such keys": 6261,
+  "form+lextype+lexrules keys": 74990,
+  "keys with several entries": 460,
+  "leaves under such keys": 6206,
   "inventory": {
-   "lextype": 1196,
-   "leaf: lextype+lexrules+unaries": 5058,
-   "node (unaries+binary rule)": 1363,
+   "lextype": 1184,
+   "leaf: lextype+lexrules+unaries": 4341,
+   "node (unaries+binary rule)": 1314,
    "delta": 49,
-   "tree: delta+node": 5379,
-   "tree, absolute depth: depth+node": 8194,
-   "full label": 54446
+   "tree: delta+node": 5266,
+   "tree, absolute depth: depth+node": 8040,
+   "full label": 53161
   }
  },
  "dev": {
@@ -74,8 +74,8 @@
    },
    "tree, absolute depth: depth+node": {
     "types": 1741,
-    "unseen_types": 35,
-    "unseen_leaf_share": 0.001566722807567271
+    "unseen_types": 36,
+    "unseen_leaf_share": 0.001605890877756453
    },
    "full label": {
     "types": 4496,
@@ -115,8 +115,8 @@
    },
    "leaf: lextype+lexrules+unaries": {
     "types": 2282,
-    "unseen_types": 128,
-    "unseen_leaf_share": 0.0011978899280522012
+    "unseen_types": 129,
+    "unseen_leaf_share": 0.0012053302381643267
    },
    "node (unaries+binary rule)": {
     "types": 720,

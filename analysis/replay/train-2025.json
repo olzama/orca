@@ -1,0 +1,210 @@
+{
+ "derivations": 86870,
+ "replayed": 86388,
+ "failed": 482,
+ "seconds": 3534.1550691127777,
+ "derivations_per_second": 24.580132535556242,
+ "node_unifications": 734165791,
+ "failure_causes": [
+  [
+   "w_dqleft_plr | missing 'w_dqleft_plr'",
+   223,
+   "sh-spband-r/10090 at 0.0.0.0.0.0 w_dqleft_plr"
+  ],
+  [
+   "w_dqright_plr | missing 'w_dqright_plr'",
+   61,
+   "sh-spband-r/10170 at 0.1.1.1.1.1.1.1.1.1.0 w_dqright_plr"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +",
+   55,
+   "sh-spband-r/10030 at 0.1.1.1.1.1.0.1.0 hdn_bnp-qnt_c"
+  ],
+  [
+   "w_hyphen_plr | missing 'w_hyphen_plr'",
+   32,
+   "sh-spband-r/10080 at 0.1.1.0.1.1.1.1.1.1.1.0.0.0 w_hyphen_plr"
+  ],
+  [
+   "w_comma-nf_plr | missing 'w_comma-nf_plr'",
+   21,
+   "sh-spband-r/10340 at 0.1.1.1.0.1.1.1.0 w_comma-nf_plr"
+  ],
+  [
+   "xp-xp_bridge_c | missing 'xp-xp_bridge_c'",
+   17,
+   "sh-spband-r/10020 at 0 xp-xp_bridge_c"
+  ],
+  [
+   "w_semicol_plr | missing 'w_semicol_plr'",
+   7,
+   "sh-spband-r/10480 at 0.0.1.1.1.1.0.0.1 w_semicol_plr"
+  ],
+  [
+   "ARGS.FIRST.ORTH.RD: bracket_nonnull & bracket_null",
+   7,
+   "sh-spband-r/10490 at 0.0.1.1.0.1.0.1.1.0 hd-pct_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.COMPS: *null* & *cons*",
+   5,
+   "sh-spband-r/10200 at 0.1.1.1.1.1.1.0.1 sp-hd_n_c"
+  ],
+  [
+   "w_bang_plr | missing 'w_bang_plr'",
+   5,
+   "sh-spband-r/10250 at 0.0 w_bang_plr"
+  ],
+  [
+   "w_sqright_plr | missing 'w_sqright_plr'",
+   5,
+   "sh-spband-r/11140 at 0.0.1 w_sqright_plr"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MOD.FIRST.LOCAL: scopal_mod_local & int_mod_local",
+   3,
+   "sh-spband-r/10940 at 0.0.1.0.0 hd-aj_vmod-s_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM: count_noun_synsem & mass_or_count_ppcomp_synsem",
+   3,
+   "sh-spband-r/11070 at 0.1.1.1.1.1.1.1.1.1.0 n_sg_ilr"
+  ],
+  [
+   "ARGS.FIRST.ORTH.LB: bracket_nonnull & bracket_null",
+   3,
+   "sh-spband-r/11670 at 0.1.1.1.1.1.1.1.1.1.0.0.0 xp_brck-pr_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.NORM: norm_rel & no_rel",
+   2,
+   "sh-spband-r/10160 at 0.1.1.0 hd-aj_vmod-s_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.COMPS: *null* & *cons*",
+   2,
+   "sh-spband-r/10240 at 0.1.1.0.1.1 n-n_crd-3-t_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.POSTHD: - & +",
+   2,
+   "sh-spband-r/10700 at 0.1.1.1.1 aj-hd_int_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM: basic_basic_mass_noun_synsem & mass_or_count_nocomp_synsem",
+   2,
+   "sh-spband-r/10730 at 0.0.1.1.0.1.1.0.0 n_ms_ilr"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.PUNCT.RPUNCT: comma_or_hyphen_or_pair_punct & no_punct",
+   2,
+   "sh-spband-r/10760 at 0.0.0.0 hdn-np_app-r-pr_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.COMPS: *oblnull* & *cons*",
+   2,
+   "sh-spband-r/10860 at 0.0.1.1.1.0 hdn-aj_redrel_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CONJ: cnil_full & lex-conj",
+   2,
+   "sh-spband-r/12950 at 0 cl-np_runon_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.OPT: - & +",
+   1,
+   "sh-spband-r/10270 at 0.0.0 aj-hd_int_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.AGR.DIV: - & +",
+   1,
+   "sh-spband-r/10330 at 0.0.0.1 n-n_crd-t_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.OPT: + & -",
+   1,
+   "sh-spband-r/11420 at 0.1.1.1.1.1.0.1.1.1.1.1.1.0 hd_optcmp_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MOD.FIRST.LOCAL.CAT.HEAD: verb & basic_noun",
+   1,
+   "sh-spband-r/11460 at 0.1.1.1.1.1 hd-cmp_u_c"
+  ],
+  [
+   "lie_mental_v1 | missing 'lie_mental_v1'",
+   1,
+   "sh-spband-r/11880 at 0.1.1.1.0.1.1.0.0.0.0 lie_mental_v1"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: nbar_or_nger_rel & numbered_hour_rel",
+   1,
+   "sh-spband-r/12160 at 0.0.1.0.1.1.1.1.1 n-hdn_cpd_c"
+  ],
+  [
+   "TOKENS.+LIST.FIRST.+TRAIT.+UW: - & +",
+   1,
+   "sh-spband-r/12840 at 0.1.1.0.1.1.1.1.0.0 generic_card_ne"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.--MIN: much_deg_rel & more_or_very_deg_rel",
+   1,
+   "sh-spband-r/12880 at 0.0.1.1.1 sp-hd_hc_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM: basic_mass_or_count_synsem & mass_noun_synsem",
+   1,
+   "sh-spband-r/12930 at 0.1.1.0.1 n_ms-cnt_ilr"
+  ],
+  [
+   "ARGS.FIRST.ORTH.LD: bracket_null & bracket_nonnull",
+   1,
+   "sh-spband-r/13300 at 0.1.0.1.1.1.0.0 aj-hd_int_c"
+  ],
+  [
+   "aj-pp_i-frg_c | missing 'aj-pp_i-frg_c'",
+   1,
+   "sh-spband-r/13940 at 0 aj-pp_i-frg_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.NORM: no_rel & quantity_or_norm_rel",
+   1,
+   "sh-spband-r/14210 at 0.0.1.1.0 hd-aj_vmod_c"
+  ],
+  [
+   "depend_upon_v1 | missing 'depend_upon_v1'",
+   1,
+   "sh-spband-r/14250 at 0.1.1.0.0 depend_upon_v1"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.MC: - & +",
+   1,
+   "sh-spband-r/14740 at 0.1 hd-cmp_u_c"
+  ],
+  [
+   "remark_upon_v1 | missing 'remark_upon_v1'",
+   1,
+   "sh-spband-r/14760 at 0.1.1.1.1.1.1.0.0.0.0 remark_upon_v1"
+  ],
+  [
+   "still_adv3 | missing 'still_adv3'",
+   1,
+   "sh-spband-r/14960 at 0.1.1.1.1.1.1.1.1.1.1.1.0.1.0 still_adv3"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: prep_or_modnp & verbal",
+   1,
+   "sh-spband-r/15010 at 0.1.1.1.0 hd-cmp_u_c"
+  ],
+  [
+   "ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: glbtype2383 & prep",
+   1,
+   "sh-spband-r/15150 at 0.1 hd-cmp_u_c"
+  ],
+  [
+   "ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.CASE: acc & nom_or_obliq",
+   1,
+   "sh-spband-r/15330 at 0 np-aj_rorp-frg_c"
+  ]
+ ]
+}

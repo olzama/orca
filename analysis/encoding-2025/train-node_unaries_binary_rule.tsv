@@ -1,253 +1,253 @@
-400614	hd-cmp_u_c
-158981	sp-hd_n_c
-96340	hd-pct_c
-86870	None
-53500	hd-aj_int-unsl_c
-48079	aj-hdn_norm_c
-47701	sb-hd_nmc_c
-38835	n-hdn_cpd_c
-33867	hdn-aj_redrel_c
-31688	sp-hd_hc_c
+397698	hd-cmp_u_c
+157683	sp-hd_n_c
+96333	hd-pct_c
+86278	None
+53110	hd-aj_int-unsl_c
+47756	aj-hdn_norm_c
+47276	sb-hd_nmc_c
+38789	n-hdn_cpd_c
+33677	hdn-aj_redrel_c
+31550	sp-hd_hc_c
 31262	root_strict sb-hd_mc_c
 23132	hdn_optcmp_c hd-pct_c
-22691	sb-hd_mc_c
-20967	hdn_bnp-pn_c np-hdn_nme-cpd_c
-16846	hdn_bnp_c hdn-aj_redrel_c
-16066	mrk-nh_nom_c
-15932	np-np_crd-t_c
-15043	hdn_bnp_c aj-hdn_norm_c
+22211	sb-hd_mc_c
+20946	hdn_bnp-pn_c np-hdn_nme-cpd_c
+16822	hdn_bnp_c hdn-aj_redrel_c
+16012	mrk-nh_nom_c
+15882	np-np_crd-t_c
+15007	hdn_bnp_c aj-hdn_norm_c
 14289	hd-pct_nobrk_c
-11455	aj-hd_int_c
-11440	mrk-nh_evnt_c
-11332	aj-hdn_adjn_c
-11238	hdn_bnp-pn_c hd-pct_c
-10445	hdn_bnp_c n-hdn_cpd_c
-10420	np-hdn_cpd_c
-10165	hdn-aj_rc_c
-10082	np-hdn_nme-cpd_c
-9567	hd_xaj-int-vp_c hd-cmp_u_c
-9227	flr-hd_rel-fin_c
+11373	aj-hd_int_c
+11326	mrk-nh_evnt_c
+11281	aj-hdn_adjn_c
+11237	hdn_bnp-pn_c hd-pct_c
+10442	hdn_bnp_c n-hdn_cpd_c
+10414	np-hdn_cpd_c
+10077	hdn-aj_rc_c
+10068	np-hdn_nme-cpd_c
+9511	hd_xaj-int-vp_c hd-cmp_u_c
+9141	flr-hd_rel-fin_c
 8169	root_informal sb-hd_mc_c
 7912	root_strict flr-hd_nwh_c
-7661	hdn_bnp_c hd-pct_c
-7266	hd_xsb-fin_c hd-cmp_u_c
+7660	hdn_bnp_c hd-pct_c
+7209	hd_xsb-fin_c hd-cmp_u_c
 7162	hd_optcmp_c hd-pct_c
 7140	pct-hd_c
-7045	hd-aj_scp_c
-6923	hdn_bnp-pn_c np-hdn_ttl-cpd_c
-6269	mrk-nh_cl_c
-6085	num-n_mnp_c
-5540	hdn_bnp_c num-n_mnp_c
-4933	aj-hd_scp-xp_c
+6971	hd-aj_scp_c
+6895	hdn_bnp-pn_c np-hdn_ttl-cpd_c
+6152	mrk-nh_cl_c
+6076	num-n_mnp_c
+5519	hdn_bnp_c num-n_mnp_c
 4912	root_strict aj-hd_scp_c
-4828	np_adv_c sp-hd_n_c
-4717	mrk-nh_n_c
-4653	hdn_bnp_c hdn-aj_rc_c
-4444	hdn_bnp_c aj-hdn_adjn_c
+4905	aj-hd_scp-xp_c
+4809	np_adv_c sp-hd_n_c
+4706	mrk-nh_n_c
+4643	hdn_bnp_c hdn-aj_rc_c
+4441	hdn_bnp_c aj-hdn_adjn_c
 4334	hdn_bnp-qnt_c hd-pct_c
-4090	vp_rc-redrel_c hd-cmp_u_c
-4006	hd_optcmp_c hd-cmp_u_c
+4087	vp_rc-redrel_c hd-cmp_u_c
+3965	hd_optcmp_c hd-cmp_u_c
 3955	hdn_bnp_c n-num_mnp_c
-3776	hdn_bnp-pn_c hdn-aj_title_c
+3775	hdn_bnp-pn_c hdn-aj_title_c
 3767	n-num_mnp_c
-3684	hdn_bnp-qnt_c hd-cmp_u_c
-3593	hd-aj_vmod_c
-3543	hd-aj_scp-pr_c
+3660	hdn_bnp-qnt_c hd-cmp_u_c
+3526	hd-aj_vmod_c
+3500	hd-aj_scp-pr_c
 3368	root_inffrag cl_cnj-frg_c mrk-nh_cl_c
-3366	vp-vp_crd-fin-t_c
-3207	hdn_bnp-vger_c vp_np-ger_c hd-cmp_u_c
-3166	aj-hd_scp_c
-3159	hdn_bnp_c hd-cmp_u_c
+3319	vp-vp_crd-fin-t_c
+3188	hdn_bnp-vger_c vp_np-ger_c hd-cmp_u_c
+3156	hdn_bnp_c hd-cmp_u_c
+3043	aj-hd_scp_c
 3025	hdn_bnp-pn_c hdn_optcmp_c hd-pct_c
-2949	hdn-aj_rc-pr_c
-2855	hdn-np_app-idf_c
+2929	hdn-aj_rc-pr_c
+2852	hdn-np_app-idf_c
 2757	root_informal flr-hd_nwh_c
-2695	np-np_crd-m_c
+2688	np-np_crd-m_c
 2666	np_adv_c hdn_bnp-qnt_c hd-pct_c
 2623	root_strict cl-cl_crd-t_c
-2508	flr-hd_nwh_c
 2461	hdn_bnp_c np-hdn_cpd_c
+2426	flr-hd_nwh_c
 2409	hdn_bnp_c hdn_optcmp_c hd-pct_c
-2299	n-hdn_cpd-pl_c
-2276	vp_rc-redrel_c hd-aj_int-unsl_c
-2253	n-n_crd-div-t_c
-2216	hd_xcmp_c hd-pct_c
-2149	pp-pp_crd-t_c
+2298	n-hdn_cpd-pl_c
+2266	vp_rc-redrel_c hd-aj_int-unsl_c
+2249	n-n_crd-div-t_c
+2214	hd_xcmp_c hd-pct_c
+2132	pp-pp_crd-t_c
 2049	hd_xcmp_c hd_optcmp_c hd-pct_c
 2045	root_informal aj-hd_scp_c
-1788	cl-cl_crd-t_c
 1787	np-np_crd-im_c
 1776	hdn_bnp-qnt_c pct-hd_c
-1737	vp_sbrd-prd-prp_c hd-cmp_u_c
-1724	hdn-aj_redrel-pr_c
+1721	vp_sbrd-prd-prp_c hd-cmp_u_c
+1714	hdn-aj_redrel-pr_c
 1696	hdn_bnp-pn_c hd-pct_nobrk_c
-1659	cl_rc-fin-nwh_c sb-hd_nmc_c
-1656	hdn_bnp-pn_c hdn-aj_redrel_c
-1647	hd_xcmp_c hd_optcmp_c hd-cmp_u_c
-1597	hdn-np_app-pr_c
+1686	cl-cl_crd-t_c
+1654	cl_rc-fin-nwh_c sb-hd_nmc_c
+1653	hdn_bnp-pn_c hdn-aj_redrel_c
+1616	hd_xcmp_c hd_optcmp_c hd-cmp_u_c
+1590	hdn-np_app-pr_c
 1587	n-v_j-cpd_c
-1567	vp-vp_crd-nfin-t_c
+1556	vp-vp_crd-nfin-t_c
 1512	hdn_optcmp_c hd-pct_nobrk_c
 1365	hdn_bnp-pn_c np-hdn_cty-cpd_c
-1349	flr-hd_rel-fin-pp_c
-1345	hdn_bnp-pn_c hdn-aj_rc-pr_c
-1329	np-hdn_ttl-cpd_c
+1343	hdn_bnp-pn_c hdn-aj_rc-pr_c
+1318	np-hdn_ttl-cpd_c
 1316	root_informal flr-hd_nwh-nc_c
+1314	flr-hd_rel-fin-pp_c
 1312	root_informal cl-cl_crd-t_c
-1288	n-n_crd-t_c
+1283	n-n_crd-t_c
 1277	hdn_bnp-num_c hdn_np-num_c hd-pct_c
-1252	hdn-np_app-nbr_c
-1249	np_adv_c hdn_bnp-qnt_c hdn-aj_redrel_c
-1245	np_adv-mnp_c hdn_bnp_c num-n_mnp_c
-1236	hd_xsb-fin_c hd-aj_int-unsl_c
-1222	j-j_crd-att-t_c
+1251	hdn-np_app-nbr_c
+1244	np_adv-mnp_c hdn_bnp_c num-n_mnp_c
+1242	np_adv_c hdn_bnp-qnt_c hdn-aj_redrel_c
+1226	hd_xsb-fin_c hd-aj_int-unsl_c
+1216	j-j_crd-att-t_c
 1200	root_strict cl-cl_runon_c
-1137	flr-hd_nwh-nc_c
-1099	hdn_bnp-qnt_c hdn-aj_redrel_c
-1094	hdn_bnp-vger_c vp_np-ger_c hd-aj_int-unsl_c
+1092	flr-hd_nwh-nc_c
 1085	root_strict hd-aj_scp-pr-mc_c
-1083	hdn_bnp_c hdn-aj_rc-pr_c
+1085	hdn_bnp-vger_c vp_np-ger_c hd-aj_int-unsl_c
+1080	hdn_bnp_c hdn-aj_rc-pr_c
+1077	hdn_bnp-qnt_c hdn-aj_redrel_c
 1069	w-w_fw-seq-m_c
 1062	root_strict flr-hd_wh-mc_c
 1047	root_strict hd-aj_scp_c
 1043	hdn_bnp-pn_c aj-hdn_norm_c
 1034	root_strict hd_yesno_c hd-cmp_u_c
-1018	flr-hd_wh-nmc-fin_c
 1006	hd_xaj-int-vp_c hd_optcmp_c hd-pct_c
-983	hdn-np_app-r-pr_c
-954	cl_rc-inf-nwh-sb_c hd-cmp_u_c
+1004	flr-hd_wh-nmc-fin_c
+978	hdn-np_app-r-pr_c
+948	cl_rc-inf-nwh-sb_c hd-cmp_u_c
 948	pct-hd_nobrk_c
-941	hdn_bnp-qnt_c hdn-aj_rc_c
-936	mrk-nh_atom_c
-887	hd_imp_c hd-cmp_u_c
+933	mrk-nh_atom_c
+925	hdn_bnp-qnt_c hdn-aj_rc_c
+876	hd_imp_c hd-cmp_u_c
 875	root_inffrag r_scp-frg_c hd-pct_c
-874	hdn_bnp_c hdn-aj_redrel-pr_c
-866	cl_np-wh_c flr-hd_wh-nmc-fin_c
+871	hdn_bnp_c hdn-aj_redrel-pr_c
 859	hdn_bnp-pn_c pct-hd_c
-856	hd-aj_cmod_c
-848	hdn-np_app-r_c
+858	cl_np-wh_c flr-hd_wh-nmc-fin_c
+847	hdn-np_app-r_c
+834	hd-aj_cmod_c
 831	hdn_bnp-qnt_c hdn_optcmp_c hd-pct_c
-815	hd_xcmp_c hd-cmp_u_c
-801	hdn_bnp-qnt_c num_prt-nc_c hd-cmp_u_c
-772	hdn_optcmp_c hd-cmp_u_c
+798	hdn_bnp-qnt_c num_prt-nc_c hd-cmp_u_c
+793	hd_xcmp_c hd-cmp_u_c
+768	hdn_optcmp_c hd-cmp_u_c
 761	hdn-np_app-idf-p_c
-749	n-hdn_j-n-cpd_c
-746	cl_rc-instr_c hd-cmp_u_c
+748	n-hdn_j-n-cpd_c
+741	cl_rc-instr_c hd-cmp_u_c
 730	hdn-aj_title_c
-702	hd_xaj-int-vp_c hd_optcmp_c hd-cmp_u_c
-702	hdn-np_app_c
+701	hdn-np_app_c
+700	hd_xaj-int-vp_c hd_optcmp_c hd-cmp_u_c
 627	hdn_np-num_c hd-pct_c
 614	hdn_bnp_c n-hdn_cpd-pl_c
 612	root_inffrag np_frg_c sp-hd_n_c
-608	hdn_bnp-pn_c hdn-aj_redrel-pr_c
-589	j-j_crd-prd-t_c
+600	hdn_bnp-pn_c hdn-aj_redrel-pr_c
+586	j-j_crd-prd-t_c
 577	root_informal cl-cl_runon_c
 559	hdn_bnp-num_c np-hdn_ttl-cpd_c
 551	n-n_num-seq_c
-550	hd-aj_scp-pr-mc_c
-538	vppr-vppr_crd-t_c
+536	vppr-vppr_crd-t_c
 520	root_strict hd_imp_c hd-cmp_u_c
-518	np_adv-mnp_c hdn_bnp_c hdn-aj_redrel_c
+516	np_adv-mnp_c hdn_bnp_c hdn-aj_redrel_c
 494	n-j_j-cpd_c
+489	hd-aj_scp-pr-mc_c
 488	np_adv_c hdn_bnp-pn_c hd-pct_c
 478	hdn_bnp-num_c np-hdn_num-cpd_c
 475	root_inffrag np_frg_c hdn_bnp_c hdn-aj_redrel_c
-468	hd_xaj-int-vp_c hd-pct_c
-444	n-n_crd-3-t_c
+467	hd_xaj-int-vp_c hd-pct_c
+443	n-n_crd-3-t_c
 439	hd-hd_rnr_c
 432	hdn_bnp-sg-nomod_c hd-pct_c
-425	vp_sbrd-prd-prp_c hd-aj_int-unsl_c
-414	hd_xaj-int-vp_c vp-vp_crd-fin-t_c
+416	vp_sbrd-prd-prp_c hd-aj_int-unsl_c
 413	root_informal hd-aj_scp-pr-mc_c
 410	hdn_bnp-pn_c w-w_fw-seq-t_c
+408	hd_xaj-int-vp_c vp-vp_crd-fin-t_c
 404	vp_rc-redrel_c aj-hd_int_c
 404	hdn-n_prnth_c
 401	flr-hd_nwh-nmc_c
-399	vp_sbrd-pre_c hd-cmp_u_c
 399	np_adv_c hdn_bnp-qnt_c hd-cmp_u_c
+396	vp_sbrd-pre_c hd-cmp_u_c
 390	mnp_deg-prd_c num-n_mnp_c
 380	np_adv_c hdn_bnp-qnt_c hd-cl_fr-rel_c
 378	root_inffrag np_frg_c np-np_crd-t_c
-377	np-np_crd-nc-m_c
+376	np-np_crd-nc-m_c
 369	hdn-np_app-num_c
 362	np-hdn_cty-cpd_c
 362	hdn_bnp-pn_c hd-cmp_u_c
 352	hdn_bnp-qnt_c hd-cl_fr-rel_c
-347	cl-rc_c
 346	n-n_crd-im_c
+338	cl-rc_c
 338	hd_xsb-fin_c aj-hd_int_c
 337	root_informal cl-cl_runon-cma_c
 332	hdn_bnp-num_c hdn_np-num_c hd-pct_nobrk_c
-329	vp_sbrd-prd-pas_c hd-cmp_u_c
 328	root_informal hd-aj_scp_c
+327	vp_sbrd-prd-pas_c hd-cmp_u_c
 322	root_inffrag cl-np_runon_c
 313	root_strict hd-cmp_u_c
 308	root_inffrag np_frg_c hdn-np_app-mnp_c
-307	hd_yesno_c hd-cmp_u_c
-305	cl_rc-inf-nwh_c hd-cmp_u_c
 305	root_inffrag aj-hd_scp_c
+301	cl_rc-inf-nwh_c hd-cmp_u_c
 295	hdn-np_app-mnp-npr_c
-294	hd-aj_vmod-s_c
-289	hdn_bnp-qnt_c np_prt-poss_c sp-hd_hc_c
+289	hd_yesno_c hd-cmp_u_c
+286	hdn_bnp-qnt_c np_prt-poss_c sp-hd_hc_c
 285	root_inffrag np_frg_c hdn_bnp_c aj-hdn_norm_c
 285	hdn_bnp-qnt_c hdn_optcmp_c pct-hd_c
 281	np-hdn_cpd-pr_c
-277	hd_xsb-fin_c vp-vp_crd-fin-t_c
 276	flr-hd_nwh-nc-nmc_c
+275	hd_xsb-fin_c vp-vp_crd-fin-t_c
+275	hd-aj_vmod-s_c
 275	root_inffrag pp_frg_c hd-cmp_u_c
-275	hd-cmp_2_c
-274	hd_imp_c hd-aj_int-unsl_c
-274	np_adv_c hdn_bnp-qnt_c sp-hd_hc_c
+274	hd-cmp_2_c
+273	np_adv_c hdn_bnp-qnt_c sp-hd_hc_c
+272	hd_imp_c hd-aj_int-unsl_c
 266	hdn_optcmp_c pct-hd_c
-264	mnp_deg_c num-n_mnp_c
-260	hdn_bnp-qnt_c sp-hd_hc_c
+263	mnp_deg_c num-n_mnp_c
+258	hdn_bnp-qnt_c sp-hd_hc_c
 258	root_strict flr-hd_wh-mc-sb_c
-256	num_det_c sp-hd_hc_c
-245	vp_rc-redrel_c hd-aj_scp_c
+254	num_det_c sp-hd_hc_c
 245	vp_rc-redrel_c hd_optcmp_c hd-cmp_u_c
-243	hdn_bnp-num_c hdn-aj_redrel_c
+244	vp_rc-redrel_c hd-aj_scp_c
 242	hdn_bnp-pn_c pct-hd_nobrk_c
-233	hdn_bnp-vger_c sb-hd_nmc_c
-232	flr-hd_wh-mc_c
+242	hdn_bnp-num_c hdn-aj_redrel_c
 232	root_strict hd_imp_c hd-aj_int-unsl_c
-231	np-hdn_num-cpd_c
+230	hdn_bnp-vger_c sb-hd_nmc_c
+230	np-hdn_num-cpd_c
 228	hdn_bnp_c pct-hd_c
 226	root_inffrag np_frg_c hdn_bnp_c n-hdn_cpd_c
 225	n-j_j-t-cpd_c
-221	np-prdp_vpmod_c
-215	n-n_crd-m_c
 215	hdn_bnp_c hd-pct_nobrk_c
+214	n-n_crd-m_c
+214	flr-hd_wh-mc_c
 213	root_strict aj-hd_int_c
 211	cl_rc-fin-modgap_c sb-hd_nmc_c
 211	root_inffrag np_frg_c hdn_bnp-pn_c np-hdn_nme-cpd_c
 209	vp_sbrd-prd-aj_c hd-cmp_u_c
 208	root_informal hd-cmp_u_c
 205	root_informal hd_imp_c hd-cmp_u_c
+204	np-prdp_vpmod_c
 204	hdn_bnp_c n-hdn_j-n-cpd_c
 201	hdn_bnp_c hdn-n_prnth_c
-200	hd-aj_cmod-s_c
 196	root_inffrag aj-np_frg_c
+195	hd-aj_cmod-s_c
 193	hd_xsb-fin_c hd-aj_scp_c
 188	num-n_mnp-ppof_c
-187	vp_np-ger_c hd-cmp_u_c
 186	root_inffrag np_nb-frg_c hdn-aj_redrel_c
-183	hdn_bnp-vger_c vp_np-ger_c vppr-vppr_crd-t_c
+185	vp_np-ger_c hd-cmp_u_c
+181	hdn_bnp-vger_c vp_np-ger_c vppr-vppr_crd-t_c
 180	np_adv-mnp_c sp-hd_hc_c
-179	hdn_bnp-qnt_c num_prt-nc_c sp-hd_hc_c
+178	hdn_bnp-qnt_c num_prt-nc_c sp-hd_hc_c
 177	vp_rc-redrel_c hd_optcmp_c hd-pct_c
 174	root_inffrag vp_fin-frg_c hd-cmp_u_c
 174	np-hdn_ttl-cpd-pl_c
-171	np_frg_c sp-hd_n_c
 170	j-n_crd-t_c
 169	hd_optcmp_c pct-hd_c
-168	sp-hd_hc-cmp_c
 168	j_n-ed_c aj-hdn_norm_c
-167	n-j_crd-t_c
+167	sp-hd_hc-cmp_c
+166	n-j_crd-t_c
 166	root_strict frg-cl_runon_c
-163	vp_sbrd-prd-aj_c hd-aj_int-unsl_c
 163	root_inffrag r_cl-frg_c hd-cmp_u_c
-162	hd-aj_int-sl_c
+162	vp_sbrd-prd-aj_c hd-aj_int-unsl_c
+159	hd-aj_int-sl_c
 157	vp_sbrd-pre_c hd-aj_int-unsl_c
+157	np_frg_c sp-hd_n_c
 157	root_inffrag np-aj_frg_c
 157	root_strict sp-hd_hc_c
 156	hd_optcmp_c hd-pct_nobrk_c
@@ -256,8 +256,8 @@
 152	hdn_bnp-sg-nmod_c n-hdn_cpd_c
 147	hdn_bnp-pn_c w_fw_c pct-hd_c
 143	hdn_bnp-pn_c hdn-n_prnth_c
-140	vp_sbrd-prd-aj_c sp-hd_hc_c
-138	cl-cl_crd-m_c
+138	vp_sbrd-prd-aj_c sp-hd_hc_c
+137	cl-cl_crd-m_c
 137	hdn_bnp-pn_c w_fw_c hd-pct_c
 136	hdn-cl_prnth_c
 136	n-n_crd-asym-t_c
@@ -271,72 +271,71 @@
 125	root_informal hd_yesno_c hd-cmp_u_c
 124	hd_optcmp_c hd_optcmp_c hd-pct_c
 123	hdn_bnp-vger_c vp_np-ger_c hd_optcmp_c hd-pct_c
-119	flr-hd_wh-nmc-inf_c
-118	hdn_bnp_c n-n_crd-div-t_c
 118	hd_xaj-int-vp_c vp-vp_crd-nfin-t_c
+118	flr-hd_wh-nmc-inf_c
 118	cl_np-wh_c hd-cmp_u_c
+117	hdn_bnp_c n-n_crd-div-t_c
 117	np_adv_c hdn_bnp-qnt_c hdn_optcmp_c hd-pct_c
 117	np_frg_c sp-hd_hc_c
 116	w-w_fw-seq-t_c
 116	np_adv_c hdn_bnp-pn_c hdn-aj_redrel_c
 114	root_inffrag r_dsc-frg_c hd-pct_c
-113	hdn_bnp-vger_c vp_np-ger_c aj-hd_int_c
-113	jpr-jpr_crd-t_c
 112	hdn_bnp_c hdn_optcmp_c pct-hd_c
-112	vp-vp_crd-fin-m_c
+112	hdn_bnp-vger_c vp_np-ger_c aj-hd_int_c
 111	vp-vp_crd-fin-im_c
-110	cl-cl_runon_c
-109	vp_sbrd-prd-prp_c vppr-vppr_crd-t_c
-108	vp_rc-redrel_c vppr-vppr_crd-t_c
-106	vp_rc-redrel_c aj-hd_scp-xp_c
+111	jpr-jpr_crd-t_c
+106	vp_sbrd-prd-prp_c vppr-vppr_crd-t_c
 105	root_inffrag vp_fin-frg_c hd-aj_int-unsl_c
-104	xp-xp_bridge_c
-103	hd-hd_rnr-nv_c
+105	vp-vp_crd-fin-m_c
+105	vp_rc-redrel_c aj-hd_scp-xp_c
+105	vp_rc-redrel_c vppr-vppr_crd-t_c
 102	root_inffrag np_frg_c hdn-np_app-num_c
 102	root_inffrag aj-hd_scp-xp_c
-100	cl-cl_crd-rc-t_c
+100	hd-hd_rnr-nv_c
 100	root_inffrag np_cnj-frg_c mrk-nh_nom_c
-99	hdn_bnp-qnt_c hdn-aj_redrel-pr_c
+99	cl-cl_crd-rc-t_c
 97	n-n_crd-div-dlr-t_c
+97	hdn_bnp-qnt_c hdn-aj_redrel-pr_c
 97	hd_xaj-crd-s_c cl-cl_crd-t_c
 94	root_informal flr-hd_wh-mc_c
 91	hd_xaj-int-vp_c sp-hd_hc_c
 90	hd_xsb-fin_c aj-hd_scp-xp_c
+89	cl-cl_runon_c
 89	root_inffrag vp_fin-frg_c hd_optcmp_c hd-cmp_u_c
-88	hd_imp_c hd_xaj-int-vp_c hd-cmp_u_c
-87	pp_frg_c hd-cmp_u_c
 87	root_inffrag np_frg_c hdn_bnp-pn_c hdn-aj_redrel_c
+86	hd_imp_c hd_xaj-int-vp_c hd-cmp_u_c
 86	root_inffrag j_frg_c hd-pct_c
-85	v-v_crd-fin-ncj_c
 85	num_det_c aj-hd_int_c
 84	root_inffrag np_frg_c hdn_bnp_c np-hdn_cpd_c
+84	pp_frg_c hd-cmp_u_c
+83	v-v_crd-fin-ncj_c
 83	root_inffrag pp_frg_c hd-aj_int-unsl_c
 83	hdn-np_app-mnp_c
 83	vp_sbrd-prd-prp_c aj-hd_int_c
 83	hdn_bnp-qnt_c num_prt-nc_c hd_optcmp_c hd-pct_c
-82	np_indef-adv_c sp-hd_n_c
-82	vp_sbrd-prd-prp_c hd-aj_scp_c
 81	root_informal flr-hd_wh-mc-sb_c
+81	vp_sbrd-prd-prp_c hd-aj_scp_c
 81	n-n_crd-asym2-t_c
 80	np_voc-post_c hdn_bnp-pn_c hd-pct_c
-78	jpr-vpr_crd-t_c
+79	np_indef-adv_c sp-hd_n_c
 77	hd_xcmp_c hd-pct_nobrk_c
+77	jpr-vpr_crd-t_c
 77	np_adv-mnp_c hdn_bnp_c n-num_mnp_c
-76	vp_sbrd-prd-aj_c aj-hd_int_c
 76	hdn_bnp-num_c hdn_np-num_c sp-hd_hc_c
+75	vp_sbrd-prd-aj_c aj-hd_int_c
 73	hdn_bnp-qnt_c hd-pct_nobrk_c
 72	root_strict np-cl_numitem_c
 72	hdn_bnp-pn_c aj-hdn_adjn_c
 71	num_prt-nc_c sp-hd_hc_c
 70	vp-vp_crd-nfin-im_c
 70	hd-hd_rnr-nb_c
-69	hd_xaj-int-vp_c vppr-vppr_crd-t_c
 69	root_informal frg-cl_runon_c
-69	vp_fin-frg_c hd-cmp_u_c
 69	root_inffrag aj-np_int-frg_c
-69	ppr-ppr_crd-t_c
 69	root_informal sp-hd_hc_c
+68	hd_xaj-int-vp_c vppr-vppr_crd-t_c
+68	vp_fin-frg_c hd-cmp_u_c
 68	root_inffrag np_frg_c hdn_bnp-pn_c hd-pct_c
+68	ppr-ppr_crd-t_c
 67	vp_cp-sb-inf_c hd-cmp_u_c
 67	root_inffrag np_nb-frg_c n-hdn_cpd_c
 66	root_strict sb-hd_q_c
@@ -352,30 +351,28 @@
 61	pp-pp_crd-sel-t_c
 61	hdn_bnp_c hdn-cl_prnth_c
 60	pp-pp_mod_c
-59	vp_sbrd-prd-pas_c hd-aj_int-unsl_c
-59	vp_sbrd-prd-prp_c aj-hd_scp-xp_c
-59	cl_cnj-frg_c mrk-nh_cl_c
 58	root_inffrag np_frg_c hdn_bnp_c aj-hdn_adjn_c
+58	vp_sbrd-prd-pas_c hd-aj_int-unsl_c
 58	pp-pp_crd-m_c
-58	num_prt-of_c sp-hd_hc_c
+58	vp_sbrd-prd-prp_c aj-hd_scp-xp_c
 58	hdn_bnp-pn_c hdn_optcmp_c pct-hd_c
+57	num_prt-of_c sp-hd_hc_c
 57	aj_prt-det-ncp_c sp-hd_hc_c
 56	hdn_bnp-vger_c vp_np-ger_c hd-hd_rnr_c
 56	root_inffrag np_frg_c hdn-np_app-pr_c
-55	vp-vp_crd-nfin-m_c
 55	vp_np-ger_c hd-aj_int-unsl_c
 54	root_inffrag aj-pp_frg_c
 54	hdn-cl_dsh_c
 54	root_inffrag vp_nfin-frg_c hd-cmp_u_c
 54	cl_np-wh_c flr-hd_wh-nmc-inf_c
-54	cl-cl_crd-int-t_c
-53	vp_nfin-frg_c hd-aj_int-unsl_c
+53	vp-vp_crd-nfin-m_c
 52	root_inffrag cl-np_runon-conj_c
-52	np_adv_c hdn_bnp_c hdn-aj_redrel_c
+52	vp_nfin-frg_c hd-aj_int-unsl_c
 52	hdn_bnp-pn_c hdn_optcmp_c hd-pct_nobrk_c
+51	np_adv_c hdn_bnp_c hdn-aj_redrel_c
 51	root_inffrag np_frg_c hdn-np_app-idf-p_c
+51	cl-cl_crd-int-t_c
 51	root_inffrag np_frg_c sp-hd_hc_c
-50	flr-hd_wh-mc-sb_c
 50	aj-np_frg_c
 50	root_inffrag np_frg_c hdn_bnp_c hd-cmp_u_c
 50	hdn_bnp-prd_c hd-cmp_u_c
@@ -383,108 +380,106 @@
 50	w_fw_c hd-pct_c
 49	hdn_bnp_c hdn_optcmp_c hd-pct_nobrk_c
 49	hdn_bnp-prd_c hdn-aj_redrel_c
-49	vp_sbrd-prd-pas_c aj-hd_int_c
 49	hdn-aj_redrel-asym_c
 49	root_inffrag np_frg_c hdn-aj_redrel_c
+48	flr-hd_wh-mc-sb_c
 48	hd_xsb-fin_c hd-aj_scp-pr_c
+48	vp_sbrd-prd-pas_c aj-hd_int_c
 47	root_inffrag np_frg_c hdn-np_app-nbr_c
 47	root_inffrag pp_frg_c mrk-nh_evnt_c
 47	root_inffrag np_frg_c hdn_bnp_c hdn-aj_rc_c
 46	hdn_bnp-vger_c vp_np-ger_c hd-aj_scp-pr_c
-46	hd_imp_c aj-hd_int_c
-46	np_cnj-frg_c mrk-nh_nom_c
 46	j_n-ed_c n-hdn_cpd_c
-46	hdn_bnp-qnt_c hdn-aj_rc-pr_c
 46	root_informal hd_imp_c hd-aj_int-unsl_c
 46	w_fw_c pct-hd_c
 45	np_frg_c np-np_crd-t_c
 45	vppr-vppr_crd-im_c
+45	np_cnj-frg_c mrk-nh_nom_c
 45	np_adv-mnp_c hdn_bnp-num_c hdn-aj_redrel_c
+45	hdn_bnp-qnt_c hdn-aj_rc-pr_c
 45	np_adv_c hdn_bnp_c aj-hdn_norm_c
-45	np_prt-poss_c sp-hd_hc_c
 44	j-j_crd-prd-im_c
 44	np_frg_c hdn_bnp-pn_c hd-pct_c
 44	n-n_crd-nondiv-dlr-t_c
-43	hd_inv-nwh_c aj-hd_scp-xp_c
+44	np_prt-poss_c sp-hd_hc_c
 43	root_inffrag np_nb-frg_c aj-hdn_norm_c
 43	root_inffrag j-aj_frg_c
+42	hd_inv-nwh_c aj-hd_scp-xp_c
 42	np_adv_c hdn_bnp-qnt_c hdn-aj_redrel-pr_c
 42	root_inffrag nb-aj_frg_c
-41	flr-hd_nwh-nc-np_c
 41	hd_xaj-int-vp_c hd-hd_rnr_c
 41	root_inffrag np_nb-frg_c np-hdn_cpd_c
 41	np_adv-mnp_c sp-hd_n_c
 40	r-v_j-cpd_c
+40	hd_imp_c aj-hd_int_c
 40	hd_optcmp_c hd_xcmp_c hd-pct_c
 40	hdn_bnp-vger_c vp_np-ger_c aj-hd_scp-xp_c
 39	root_inffrag np_frg_c hdn_bnp_c hd-pct_c
 39	hd_imp_c hd_optcmp_c hd-cmp_u_c
-39	xp_brck-pr_c n-hdn_cpd_c
 38	hd_xsb-fin_c hd-pct_c
 38	np-prdp_vpmod-pre_c
 37	frg-cl_runon_c
 37	vp_sbrd-prd-pas_c hd_optcmp_c hd-pct_c
 37	root_inffrag j_frg_c hd-aj_int-unsl_c
 37	hd-cl_jd-prnth_c
-37	np_frg_c hdn_bnp-pn_c np-hdn_nme-cpd_c
 36	j_sbrd-pre_c hd-cmp_u_c
 36	root_inffrag vp_nfin-frg_c hd-aj_int-unsl_c
 36	vp_fin-frg_c hd-aj_int-unsl_c
+36	np_frg_c hdn_bnp-pn_c np-hdn_nme-cpd_c
 35	hd_imp_c hd_optcmp_c hd-pct_c
 35	n-n_crd-nc-m_c
+35	flr-hd_nwh-nc-np_c
 35	np_adv_c hdn_bnp-pn_c aj-hdn_norm_c
 34	vppr-vppr_crd-m_c
 34	root_inffrag vp_fin-frg_c mrk-nh_evnt_c
 34	hdn_np-num_c sp-hd_hc_c
-33	cl_adv_c sb-hd_nmc_c
+33	cl_cnj-frg_c mrk-nh_cl_c
 33	root_strict hd-aj_scp-pr_c
 33	np_frg_c hdn_bnp_c hdn-aj_redrel_c
 33	root_inffrag np_frg_c hdn_bnp-num_c np-hdn_ttl-cpd_c
 33	hdn_bnp-num_c hdn-aj_redrel-pr_c
 32	j_n-ed_c np-hdn_cpd_c
-31	vp_nfin-frg_c hd-cmp_u_c
 31	v-v_crd-nfin-ncj_c
 31	root_inffrag hd-aj_scp-pr-mc_c
 31	root_inffrag np_nb-frg_c hd-cmp_u_c
 31	np_adv-mnp_c hdn_bnp-num_c hdn_np-num_c hd-pct_c
 30	j_sbrd-pre_c hd-aj_int-unsl_c
+30	vp_nfin-frg_c hd-cmp_u_c
+30	cl_adv_c sb-hd_nmc_c
 30	hdn-np_app-rbc_c
 30	np_voc-pre_c hdn_bnp-pn_c hd-pct_c
 30	root_inffrag vp_nfin-frg_c mrk-nh_evnt_c
 30	hdn_bnp_c hdn-aj_title_c
 29	hdn_bnp-prd_c n-hdn_cpd_c
 29	hd_xsb-fin_c hd_optcmp_c hd-pct_c
-29	vp_sbrd-prd-aj_c j-j_crd-prd-t_c
 29	hdn_bnp-sg-nomod_c hd-cmp_u_c
 29	hd_imp_c hd-aj_scp_c
 29	hdn_bnp-sg-jmod_c aj-hdn_norm_c
-29	cl-cl_runon-cma_c
 29	root_inffrag np_frg_c hdn_optcmp_c hd-cmp_u_c
 29	hdn_bnp-pn_c w_fw_c hd-pct_nobrk_c
 29	mnp-vp_jp_c
-28	hd_xsb-fin_c hd_optcmp_c hd-cmp_u_c
 28	hdn_bnp-num_c hdn_np-num_c pct-hd_c
 28	hd-aj_int-aux-sl_c
-28	r_cl-frg_c hd-cmp_u_c
+28	vp_sbrd-prd-aj_c j-j_crd-prd-t_c
 28	root_inffrag np_frg_c hdn-np_app-r_c
 28	root_informal flr-hd_nwh-nc-np_c
 28	root_inffrag np_nb-frg_c hdn-aj_rc_c
 28	hd_xsb-fin_c hd-hd_rnr_c
 27	hd_xaj-int-vp_c j-j_crd-prd-t_c
-27	np_voc-post_c hdn_bnp-pn_c np-hdn_ttl-cpd_c
+27	r_cl-frg_c hd-cmp_u_c
 27	root_inffrag np_nb-frg_c n-n_crd-asym-t_c
 27	hdn_optcmp_c pct-hd_nobrk_c
 27	hdn_bnp-num_c aj-hdn_norm_c
 27	root_inffrag np_frg_c hdn_bnp-pn_c np-hdn_cty-cpd_c
+26	hd_xsb-fin_c hd_optcmp_c hd-cmp_u_c
 26	root_strict hd_imp_c hd-aj_scp_c
 26	aj-hdn_crd-cma_c
-26	hdn-np_app-dx_c
 26	root_strict hd_imp_c aj-hd_int_c
 26	root_inffrag np_frg_c hdn-np_app_c
-26	cl-np_runon_c
 26	num_det_c pct-hd_c
 25	hdn_bnp-qnt_c hdn_optcmp_c hd-pct_nobrk_c
 25	root_strict cl-cl_crd-int-t_c
+25	hdn-np_app-dx_c
 25	root_inffrag np_frg_c hdn_bnp-qnt_c hdn-aj_redrel_c
 25	root_inffrag np_frg_c hd-cmp_u_c
 24	hd_yesno-nmc_c hd-cmp_u_c
@@ -519,18 +514,17 @@
 21	hdn_bnp-qnt_c hdn-aj_title_c
 20	j-j_crd-prd-m_c
 20	hdn_bnp-qnt_c pct-hd_nobrk_c
+20	np_voc-post_c hdn_bnp-pn_c np-hdn_ttl-cpd_c
 20	root_inffrag hd-aj_scp_c
 20	np_adv-mnp-nmod_c hdn_bnp_c hdn-aj_redrel_c
 20	j_sbrd-pre_c sp-hd_hc_c
-20	xp_bridge_c hd-cmp_u_c
+20	cl-np_runon_c
 20	np_adv_c hdn_bnp-pn_c hdn-aj_redrel-pr_c
 20	root_inffrag np_frg_c hdn_bnp_c hdn-aj_rc-pr_c
 19	vp_sbrd-prd-prp_c hd-aj_scp-pr_c
 19	vp_sbrd-prd-pas_c hd_optcmp_c hd-cmp_u_c
 19	root_strict flr-hd_nwh-inv_c
-19	hd_xaj-int-vp_c cl-rc_c
 18	root_inffrag np_frg_c hdn-np_app-idf-rbc_c
-18	hd-cl_fr-rel_c
 18	flr-hd_nwh-nc-np-nmc_c
 18	root_robust sb-hd_mc_c
 18	n-n_crd-mass-t_c
@@ -547,15 +541,16 @@
 17	root_inffrag r_cl-frg_c mrk-nh_evnt_c
 17	aj_prt-det-of_c sp-hd_hc_c
 17	root_inffrag j_frg_c sp-hd_hc_c
+17	hd_xaj-int-vp_c cl-rc_c
 16	cl_rc-fin-nwh_c hd-aj_scp_c
 16	root_inffrag np_frg_c hdn_bnp-pn_c np-hdn_ttl-cpd_c
 16	flr-hd_rel-inf_c
-16	j_frg_c sp-hd_hc_c
 16	root_inffrag pp-aj_frg_c
 16	root_inffrag np-aj_rorp-frg_c
 16	hdn_np-num_c pct-hd_c
 16	root_inffrag np_nb-frg_c n-n_crd-t_c
 16	vp_sbrd-pre-lx_c aj-hd_int_c
+16	cl-cl_runon-cma_c
 16	root_inffrag np_frg_c hdn_bnp-pn_c hdn-aj_redrel-pr_c
 16	root_inffrag np_frg_c aj-hd_scp-xp_c
 16	np_frg_c hdn_bnp-pn_c hdn-aj_redrel_c
@@ -583,29 +578,30 @@
 13	root_inffrag np_frg_c hdn_bnp_c num-n_mnp_c
 13	root_inffrag np_nb-frg_c hdn-aj_redrel-pr_c
 13	aj-pp_frg_c
-13	vp_np-ger_c aj-hd_int_c
 13	np_adv_c hdn-aj_redrel_c
 13	root_inffrag np_frg_c hdn_optcmp_c hd-pct_c
 13	w_fw_c pct-hd_nobrk_c
-12	vp_sbrd-pre_c vppr-vppr_crd-t_c
 12	hdn_bnp-num_c hdn_np-num_c hd-cmp_u_c
 12	num_prt-of_c pct-hd_c
 12	np_frg_c hdn_bnp-pn_c w-w_fw-seq-t_c
-12	vp_rc-redrel_c hd-aj_scp-pr_c
 12	vp_sbrd-prd-aj_c n-j_j-cpd_c
 12	root_inffrag np_frg_c hdn_bnp-qnt_c hd-cmp_u_c
 12	n-n_crd-mass-nom-t_c
+12	j_frg_c sp-hd_hc_c
 12	root_inffrag vp_nfin-frg_c aj-hd_int_c
 12	np_adv-mnp_c hdn_bnp-num_c np-hdn_ttl-cpd_c
 12	num_prt-nc_c hd-pct_c
 12	j_sbrd-pre_c hd-pct_c
 12	r_scp-frg_c pct-hd_nobrk_c
+12	vp_np-ger_c aj-hd_int_c
 12	np_adv-mnp_c hdn_bnp_c hdn-aj_redrel-pr_c
 12	root_inffrag pp_frg_c np_adv_c hdn_bnp-qnt_c hdn-aj_redrel_c
 12	hd_xcmp_c pct-hd_c
 12	n-n_crd-nocomma-m_c
+11	vp_sbrd-pre_c vppr-vppr_crd-t_c
+11	hd-cl_fr-rel_c
+11	vp_rc-redrel_c hd-aj_scp-pr_c
 11	vp_sbrd-prd-prp_c hd_optcmp_c hd-pct_c
-11	nb-aj_frg_c
 11	hdn_color_c hd-pct_nobrk_c
 11	j_frg_c hd-aj_int-unsl_c
 11	vp_sbrd-prd-prp_c hd-pct_c
@@ -622,8 +618,8 @@
 11	root_inffrag np_frg_c hdn_bnp_c hd-pct_nobrk_c
 11	n-hdn_cpd-pl-mnp_c
 10	hdn_bnp-pn_c hdn-cl_dsh_c
-10	np_voc-pre_c hdn_bnp-pn_c np-hdn_ttl-cpd_c
 10	root_strict hd_inv-nwh_c aj-hd_scp-xp_c
+10	nb-aj_frg_c
 10	vp_fin-frg_c mrk-nh_evnt_c
 10	np-aj_j-frg_c
 10	np_frg_c hdn_bnp-pn_c pct-hd_c
@@ -637,7 +633,6 @@
 10	vp_sbrd-pre_c aj-hd_scp-xp_c
 10	hdn_bnp_c hdn-aj_rc-asym_c
 10	j_sbrd-pre_c aj-hd_scp-xp_c
-10	np_frg_c hdn-np_app-pr_c
 10	hdn_bnp_c np-hdn_ttl-cpd_c
 10	aj_prt-det-nc_c sp-hd_hc_c
 10	root_inffrag np_frg_c hdn_bnp-pn_c hdn_optcmp_c hd-pct_c
@@ -652,7 +647,6 @@
 9	root_inffrag np_frg_c hdn_bnp-vger_c sb-hd_nmc_c
 9	root_informal hd_imp_c aj-hd_int_c
 9	root_inffrag np_frg_c hdn_bnp-num_c hdn-aj_redrel_c
-9	hd_yesno_c hd_optcmp_c hd-cmp_u_c
 9	root_inffrag vp_fin-frg_c hd_optcmp_c hd-pct_c
 9	hd_imp_c hd-aj_scp-pr_c
 9	hdn_bnp-sg-nomod_c hdn_optcmp_c hd-pct_c
@@ -683,11 +677,13 @@
 8	cl-cl_crd-ncj_c
 8	np_frg_c hdn_bnp-qnt_c hdn-aj_redrel_c
 8	vp_np-ger_c hd_optcmp_c hd-pct_c
+8	hd_yesno_c hd_optcmp_c hd-cmp_u_c
 8	hdn_bnp_c hdn_optcmp_c hd-cmp_u_c
 8	root_exclam_ques flr-hd_wh-mc-sb_c
 8	n-n_crd-nondiv-dll-t_c
 8	aj_prt-det-nc_c hd-pct_nobrk_c
 8	hd_xaj-int-vp_c jpr-vpr_crd-t_c
+8	np_frg_c hdn-np_app-pr_c
 8	hdn_bnp-pn_c hdn_optcmp_c hd-cmp_u_c
 8	np_adv-mnp_c hdn_bnp_c hdn-aj_rc_c
 8	hdn_bnp_c hdn-aj_redrel-asym_c
@@ -699,7 +695,7 @@
 7	vp_np-ger_c vppr-vppr_crd-t_c
 7	root_inffrag pp_frg_c np_adv_c hdn_bnp-qnt_c hd-pct_c
 7	np_adv_c hdn_bnp-qnt_c hd-cl_fr-rel-ellip_c
-7	pp_frg_c mrk-nh_evnt_c
+7	np_voc-pre_c hdn_bnp-pn_c np-hdn_ttl-cpd_c
 7	root_inffrag r_scp-frg_c pct-hd_c
 7	root_inffrag np_frg_c hdn_bnp-qnt_c hdn_optcmp_c hd-pct_c
 7	vp_sbrd-pre_c hd-aj_scp_c
@@ -717,7 +713,6 @@
 7	hd_xaj-int-vp_c np_adv_c hdn_bnp-qnt_c hd-pct_c
 7	num_prt-of_c j-j_crd-att-t_c
 7	root_inffrag r_cl-frg_c sp-hd_hc_c
-7	j_frg_c j-j_crd-prd-t_c
 7	root_inffrag r_scp-frg_c mrk-nh_evnt_c
 7	np_adv-mnp-nmod_c sp-hd_n_c
 7	np_frg_c hdn_bnp-pn_c hd-pct_nobrk_c
@@ -727,7 +722,6 @@
 7	vp_sbrd-prd-prp_c hd_optcmp_c hd-cmp_u_c
 7	hdn_bnp-prd_c hdn_optcmp_c hd-pct_c
 6	root_strict hd_inv-nwh_c aj-hd_int_c
-6	j_frg_c hd-cmp_u_c
 6	hd_xaj-int-vp_c pp-pp_crd-t_c
 6	np_adv-mnp_c hdn_bnp-qnt_c hd-cmp_u_c
 6	vp_sbrd-pre_c hd-aj_scp-pr_c
@@ -748,14 +742,10 @@
 6	root_inffrag np_frg_c hdn_bnp-vger_c vp_np-ger_c hd-aj_int-unsl_c
 6	n-j_crd-m_c
 6	root_strict hd_imp_c aj-hd_scp-xp_c
-6	hdn_bnp-qnt_c num_prt-nc_c aj-hd_scp-xp_c
 6	vp_sbrd-prd-pas_c vppr-vppr_crd-t_c
 6	np_frg_c hdn-np_app-idf_c
 6	np_indef-adv_c np-np_crd-t_c
 6	vp_fin-frg_c hd_optcmp_c hd-pct_c
-6	xp_bridge_c sb-hd_mc_c
-6	xp_brck-pr_c n-v_j-cpd_c
-6	xp_brck-pr_c aj-hdn_norm_c
 6	vp_sbrd-prd-aj_c n-j_j-t-cpd_c
 6	np_adv-mnp_c hdn_bnp_c hdn-n_prnth_c
 6	j_frg_c aj-hd_scp-xp_c
@@ -770,6 +760,7 @@
 6	hdn_bnp-pn_c hdn-aj_rc-propr_c
 6	root_strict np-cl_lettitem_c
 5	root_inffrag j_frg_c hd_optcmp_c hd-pct_c
+5	j_frg_c hd-cmp_u_c
 5	root_informal flr-hd_nwh-inv_c
 5	j_sbrd-pre_c j-j_crd-prd-t_c
 5	vp_sbrd-prd-pas_c sp-hd_hc_c
@@ -800,7 +791,6 @@
 5	root_inffrag cl_rel-frg_c flr-hd_rel-fin-pp_c
 5	vp_sbrd-prd-aj_c hd-aj_scp_c
 5	np_frg_c hdn_bnp-qnt_c sp-hd_hc_c
-5	j_frg_c aj-hd_int_c
 5	np-nb_numitem_c
 5	vp_rc-redrel_c hd_optcmp_c hd-pct_nobrk_c
 5	vp_np-ger_c aj-hd_scp-xp_c
@@ -808,6 +798,7 @@
 5	np_adv_c hd-aj_scp-pr_c
 5	root_robust aj-hd_scp_c
 5	np-prdp_vpmod-prn_c
+5	j_frg_c j-j_crd-prd-t_c
 5	hdn_bnp-vger_c vp_np-ger_c cl-rc_c
 5	root_inffrag np_frg_c hdn_bnp_c n-hdn_cpd-pl_c
 5	hdn_bnp-qnt_c num_prt-nc_c pct-hd_c
@@ -824,6 +815,7 @@
 5	hdn_bnp-qnt_c hdn_optcmp_c pct-hd_nobrk_c
 4	np_frg_c hdn_bnp-pn_c np-hdn_ttl-cpd_c
 4	hd_optcmp_c hd-aj_scp-pr_c
+4	pp_frg_c mrk-nh_evnt_c
 4	vp_np-ger_c hd-aj_scp-pr_c
 4	pp_frg_c aj-hd_int_c
 4	root_strict hd_yesno_c hd-aj_scp-pr_c
@@ -849,11 +841,10 @@
 4	hdn_bnp-vger_c vp_np-ger_c hd_optcmp_c hd-pct_nobrk_c
 4	hdn_bnp_c n-n_crd-mass-nom-t_c
 4	root_informal hd_imp_c aj-hd_scp-xp_c
+4	hdn_bnp-qnt_c num_prt-nc_c aj-hd_scp-xp_c
 4	np_adv_c hdn_bnp-qnt_c hdn-aj_rc_c
-4	hdn_bnp-vger_c vp_np-ger-gap_c hd-cmp_u_c
 4	j_sbrd-pre_c hd-aj_scp_c
 4	hd_yesno_c hd-aj_scp_c
-4	cl_cnj-frg_c aj-hd_scp_c
 4	root_inffrag r_int-frg_c sp-hd_hc_c
 4	num_prt-nc_c hd_optcmp_c hd-pct_c
 4	np_adv_c hdn_bnp_c hd-pct_c
@@ -922,19 +913,14 @@
 3	hdn_bnp-vger_c vp_np-ger-gap_c hd-aj_int-unsl_c
 3	np_frg_c hdn_bnp-qnt_c np_prt-poss_c sp-hd_hc_c
 3	hdn_bnp-num_c hdn_np-num_c pct-hd_nobrk_c
-3	np_frg_c aj-hd_scp-xp_c
 3	root_informal aj-hd_int-inv_c
+3	hdn_bnp-vger_c vp_np-ger-gap_c hd-cmp_u_c
 3	vp_sbrd-prd-ell_c hd-aj_int-unsl_c
 3	vp_rc-redrel_c cl-rc_c
 3	j_sbrd-pre_c jpr-vpr_crd-t_c
 3	root_inffrag vp_fin-frg_c v-v_crd-fin-ncj_c
 3	hdn_bnp_c n-hdn_j-n-cpd-pl_c
 3	j_frg_c hd-pct_nobrk_c
-3	xp_bridge_c sp-hd_hc_c
-3	cl_rc-instr_c aj-hd_int_c
-3	xp_bridge_c sp-hd_n_c
-3	xp_bridge_c mrk-nh_nom_c
-3	np-aj_rorp-frg_c
 3	r_int-frg_c hd-cmp_u_c
 3	root_inffrag vp_fin-frg_c vp-vp_crd-fin-t_c
 3	root_inffrag pp_frg_c pp-pp_mod_c
@@ -950,6 +936,7 @@
 3	np_frg_c hdn_bnp-pn_c aj-hdn_norm_c
 3	hdn_bnp-pn_c np-hdn_cpd_c
 3	vp_sbrd-prd-pas_c hd_optcmp_c pct-hd_c
+3	j_frg_c aj-hd_int_c
 3	hdn_bnp_c hdn-j_prnth_c
 3	np_frg_c hdn-np_app-idf-p_c
 3	jpr-vpr_crd-m_c
@@ -988,6 +975,7 @@
 2	hd_optcmp_c hd_optcmp_c hd-pct_nobrk_c
 2	root_inffrag j_frg_c hd-aj_scp_c
 2	np_frg_c hdn_bnp-num_c np-hdn_ttl-cpd_c
+2	np_frg_c aj-hd_scp-xp_c
 2	vp_fin-frg_c hd-aj_scp-pr_c
 2	hd_optcmp_c hd_xcmp_c hd-pct_nobrk_c
 2	hdn_bnp-num_c aj-hdn_adjn_c
@@ -1001,19 +989,7 @@
 2	vp_sbrd-prd-ell_c hd-pct_c
 2	np_voc-post_c hdn_bnp_c aj-hdn_norm_c
 2	num_prt-nc_c j-j_crd-att-t_c
-2	xp_bridge_c hd_xaj-int-vp_c hd-cmp_u_c
-2	xp_bridge_c np-prdp_vpmod_c
-2	xp_bridge_c flr-hd_nwh_c
-2	xp_brck-pr_c sp-hd_hc_c
-2	np_voc-pre_c sp-hd_n_c
-2	xp_brck-pr_c aj-hd_int_c
-2	np_voc-post_c sp-hd_n_c
-2	np_adv_c hd-cl_fr-rel_c
-2	xp_bridge_c aj-hd_scp_c
-2	xp_bridge_c cl-cl_crd-t_c
-2	xp_bridge_c aj-hd_int_c
-2	xp_bridge_c mrk-nh_evnt_c
-2	xp_brck-pr_c hd-cmp_u_c
+2	cl_rc-instr_c aj-hd_int_c
 2	root_inffrag r_dsc-frg_c pct-hd_c
 2	w_fw_c hd-pct_nobrk_c
 2	np_adv-mnp-nmod_c hdn_bnp_c hd-pct_nobrk_c
@@ -1073,6 +1049,7 @@
 2	vp_np-ger_c hd_optcmp_c hd_optcmp_c hd-pct_c
 2	vp_fin-frg_c v-v_crd-fin-ncj_c
 2	vp_fin-frg_c hd-aj_scp_c
+2	np-aj_rorp-frg_c
 2	hdn_bnp-prd_c aj-hdn_norm_c
 2	vp_sbrd-prd-aj_c hd_optcmp_c hd-cmp_u_c
 2	root_informal np-cl_indef_c
@@ -1148,34 +1125,8 @@
 1	cl_rc-inf-nwh_c hd-aj_scp-pr_c
 1	vp_sbrd-prd-prp_c hd_optcmp_c hd-pct_nobrk_c
 1	root_inffrag cl_cnj-scmp-frg_c mrk-nh_cl_c
-1	hdn_bnp-qnt_c num_prt-nc_c hd-aj_scp_c
-1	xp_brck-pr_c n-j_j-cpd_c
-1	xp_bridge_c sb-hd_nmc_c
-1	np_frg_c hdn_bnp-qnt_c hdn-aj_redrel-pr_c
-1	xp_brck-pr_c np-hdn_cpd_c
-1	mnp_deg-prd_c aj-hdn_norm_c
-1	xp_brck-pr_c n-hdn_cpd-pl_c
-1	r_scp-frg_c aj-hd_scp_c
-1	vp_sbrd-prd-aj_c xp_brck-pr_c n-j_j-t-cpd_c
-1	xp_bridge_c vp-vp_crd-nfin-t_c
-1	hd_xcmp_c xp_brck-pr_c n-hdn_cpd_c
-1	xp_bridge_c flr-hd_nwh-nc_c
-1	xp_bridge_c vp_sbrd-prd-aj_c hd-aj_scp-pr_c
-1	xp_brck-pr_c hdn-aj_redrel_c
-1	xp_bridge_c hd-aj_int-unsl_c
-1	r_int-frg_c sp-hd_hc_c
-1	j-aj_frg_c
-1	np_cnj-frg_c aj-hd_scp-xp_c
-1	pp_frg_c hd-aj_scp_c
-1	aj-pp_i-frg_c
-1	r_cl-frg_c aj-hd_scp-xp_c
-1	hdn_bnp_c xp_brck-pr_c n-hdn_cpd_c
-1	xp_bridge_c hd-aj_scp_c
-1	xp_bridge_c hd_xsb-fin_c hd-cmp_u_c
-1	vp_sbrd-prd-aj_c j_n-ed_c xp_brck-pr_c aj-hdn_norm_c
-1	xp_bridge_c mrk-nh_cl_c
-1	xp_bridge_c hd-aj_vmod_c
-1	j_n-ed_c xp_brck-pr_c aj-hdn_norm_c
+1	np_voc-pre_c sp-hd_n_c
+1	np_voc-post_c sp-hd_n_c
 1	root_inffrag r_scp-frg_c aj-hd_scp_c
 1	root_inffrag r_int-frg_c pct-hd_c
 1	hdn_bnp-qnt_c num_prt-nc_c pct-hd_nobrk_c
