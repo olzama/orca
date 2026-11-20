@@ -46,6 +46,7 @@ class Grammar:
         self._constraints: Dict[str, Optional[Node]] = {}
         self._building = set()
         self._fs: Dict[str, Node] = {}
+        self._tokens: Dict[str, Node] = {}
         self.u = Unifier(self.h.glb, self.constraint)
         self._find_introducers()
 
@@ -244,6 +245,11 @@ class Grammar:
 
     def token_node(self, text) -> Node:
         """A token feature structure as stored in a derivation."""
+        cached = self._tokens.get(text)
+        if cached is not None:
+            return self.u.copy(cached)
+        if len(self._tokens) > 20000:
+            self._tokens.clear()
         toks = DAG_TOKEN.findall(text.replace('\\"', '"'))
         pos = 0
         tags = {}
@@ -271,7 +277,9 @@ class Grammar:
                 pos += 1
             return node
 
-        return self._wellform(value(), set(), path=('token',))
+        node = self._wellform(value(), set(), path=('token',))
+        self._tokens[text] = node
+        return self.u.copy(node)
 
     def replay(self, node, where='0') -> Node:
         """Feature structure of a derivation node (a PyDelphin UDF node)."""
@@ -308,12 +316,33 @@ class Grammar:
         except ValueError as e:              # e.g. a token feature the grammar lacks
             raise ReplayFailure(f'{where} {name}', f'missing {e}') from None
 
-    def replay_tree(self, tree, tokens, where='0'):
+    def replay_tree(self, tree, tokens, where='0', cache=None):
         """Replay a tree of `orca.encoding` nodes, as decoded from tagger
         labels. Leaves name a lexical type (or `entry:NAME`); `tokens` is the
         list of token structures of the sentence, consumed left to right.
         A node whose label starts with `root_` is checked as a root condition.
-        Returns the feature structure and the remaining tokens."""
+        Returns the feature structure and the remaining tokens.
+
+        `cache` (a dict) makes repeated replays of similar trees cheap: a
+        subtree that failed before fails at once, and subtrees that were
+        complete when a failure occurred above or beside them are copied
+        from a snapshot instead of being rebuilt."""
+        if cache is None:
+            return self._replay_tree(tree, tokens, where, None)
+        key = (tree, len(tokens))
+        hit = cache.get(key)
+        if hit is not None:
+            if hit[0] == 'ok':
+                return self.u.copy(hit[1]), tokens[hit[2]:]
+            raise ReplayFailure(where + hit[1], hit[2])
+        try:
+            return self._replay_tree(tree, tokens, where, cache)
+        except ReplayFailure as e:
+            if key not in cache:
+                cache[key] = ('fail', e.where[len(where):], e.cause)
+            raise
+
+    def _replay_tree(self, tree, tokens, where, cache):
         from ..encoding import Leaf
         u = self.u
         try:
@@ -338,17 +367,31 @@ class Grammar:
                 return fs, tokens
             name = tree.label.lower()
             if name.startswith('root_'):
-                fs, tokens = self.replay_tree(tree.children[0], tokens, where + '.0')
+                fs, tokens = self.replay_tree(tree.children[0], tokens, where + '.0', cache)
                 u.unify(u.copy(self.instance(name)), fs, ['<root>'])
                 return fs, tokens
-            fs = u.copy(self.instance(name))
-            arg = u.get(fs, ARGS)
-            for i, d in enumerate(tree.children):
-                dfs, tokens = self.replay_tree(d, tokens, f'{where}.{i}')
-                u.unify(u.get(arg, 'FIRST'), dfs, [ARGS] + ['REST'] * i + ['FIRST'])
-                arg = u.get(arg, 'REST')
-            if deref(arg).type != NULL and self.h.glb(deref(arg).type, NULL) is None:
-                raise UnificationFailure([ARGS], 'too few daughters', name)
+            built = []                       # complete daughters: (key, fs, tokens used)
+            try:
+                for i, d in enumerate(tree.children):
+                    before = len(tokens)
+                    dfs, tokens = self.replay_tree(d, tokens, f'{where}.{i}', cache)
+                    built.append(((d, before), dfs, before - len(tokens)))
+                mark = u.mark()
+                fs = u.copy(self.instance(name))
+                arg = u.get(fs, ARGS)
+                for i, (_, dfs, _) in enumerate(built):
+                    u.unify(u.get(arg, 'FIRST'), dfs, [ARGS] + ['REST'] * i + ['FIRST'])
+                    arg = u.get(arg, 'REST')
+                if deref(arg).type != NULL and self.h.glb(deref(arg).type, NULL) is None:
+                    raise UnificationFailure([ARGS], 'too few daughters', name)
+            except (ReplayFailure, UnificationFailure):
+                if cache is not None and built:
+                    if len(built) == len(tree.children):
+                        u.undo(mark)         # give the daughters back as they were
+                    for key, dfs, used in built:
+                        if key not in cache:
+                            cache[key] = ('ok', u.copy(dfs), used)
+                raise
             fs = deref(fs)
             for f in DELETED_DAUGHTERS:
                 fs.arcs.pop(f, None)

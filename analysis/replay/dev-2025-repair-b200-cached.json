@@ -1,0 +1,75 @@
+{
+ "args": {
+  "split": "dev",
+  "k": 5,
+  "min_prob": 0.005,
+  "budget": 200,
+  "fanout": 8,
+  "limit": null,
+  "cache": true
+ },
+ "stats": {
+  "sentences": 2062,
+  "first choice right": 930,
+  "accepted": 1856,
+  "accepted and right": 1080,
+  "accepted at first try, wrong": 319,
+  "replays": 45010,
+  "accepted at first try, right": 930,
+  "accepted after repair, right": 150,
+  "accepted after repair, wrong": 457,
+  "rejected, nothing left to try": 47,
+  "rejected, budget used": 159
+ },
+ "right_among_accepted": 0.5818965517241379,
+ "by_length": {
+  "0": {
+   "accepted at first try, wrong": 119,
+   "accepted at first try, right": 641,
+   "accepted after repair, right": 55,
+   "accepted after repair, wrong": 106,
+   "rejected, nothing left to try": 22,
+   "rejected, budget used": 10
+  },
+  "10": {
+   "accepted after repair, wrong": 187,
+   "accepted at first try, right": 280,
+   "accepted at first try, wrong": 160,
+   "rejected, nothing left to try": 21,
+   "accepted after repair, right": 80,
+   "rejected, budget used": 53
+  },
+  "20": {
+   "accepted after repair, wrong": 113,
+   "accepted after repair, right": 12,
+   "accepted at first try, right": 9,
+   "rejected, budget used": 42,
+   "rejected, nothing left to try": 3,
+   "accepted at first try, wrong": 34
+  },
+  "30": {
+   "accepted at first try, wrong": 5,
+   "accepted after repair, wrong": 41,
+   "rejected, budget used": 27,
+   "accepted after repair, right": 3,
+   "rejected, nothing left to try": 1
+  },
+  "40": {
+   "accepted after repair, wrong": 8,
+   "rejected, budget used": 20,
+   "accepted at first try, wrong": 1
+  },
+  "50": {
+   "rejected, budget used": 6,
+   "accepted after repair, wrong": 2
+  },
+  "60": {
+   "rejected, budget used": 1
+  }
+ },
+ "replays_per_sentence": 21.828322017458778,
+ "tagging_seconds": 18.114311456680298,
+ "repair_seconds": 36.877702951431274,
+ "workers": 6,
+ "sentences_per_second_repair_stage": 55.91454551048633
+}
