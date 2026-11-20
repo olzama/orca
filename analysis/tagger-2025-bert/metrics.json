@@ -1,0 +1,573 @@
+{
+ "args": {
+  "data": "data/encoded-2025",
+  "out": "data/models/tagger-2025-bert",
+  "encoder": "bert-base-cased",
+  "epochs": 6,
+  "batch": 32,
+  "lr": 3e-05,
+  "head_lr": 0.001,
+  "limit": null,
+  "seed": 1,
+  "lora": 0,
+  "bilstm": 0,
+  "last_subword": false,
+  "freeze_embeddings": false
+ },
+ "history": [
+  {
+   "tokens": 25847,
+   "sentences": 2062,
+   "leaf_acc": 0.9138004410569892,
+   "tree_acc": 0.845513986149263,
+   "both_acc": 0.8032653692885054,
+   "exact_match": 0.3079534432589719,
+   "exact_match_by_length": {
+    "0": [
+     484,
+     953
+    ],
+    "10": [
+     148,
+     781
+    ],
+    "20": [
+     3,
+     213
+    ],
+    "30": [
+     0,
+     77
+    ],
+    "40": [
+     0,
+     29
+    ],
+    "50": [
+     0,
+     8
+    ],
+    "60": [
+     0,
+     1
+    ]
+   },
+   "lextype_acc_by_train_frequency": {
+    "100-999": [
+     2417,
+     2647
+    ],
+    "1000+": [
+     21446,
+     22946
+    ],
+    "10-99": [
+     145,
+     227
+    ],
+    "1-9": [
+     0,
+     22
+    ],
+    "0": [
+     0,
+     5
+    ]
+   },
+   "lextype_types_gold": 549,
+   "lextype_types_predicted": 506,
+   "lextype_types_gold_never_predicted": 75,
+   "lextype_jsd_bits": 0.007029559484674979,
+   "truncated_sentences": 0,
+   "sentences_per_second": 2261.050767308225,
+   "tokens_per_second": 28342.08495762158,
+   "epoch": 1,
+   "train_minutes": 2.8529260039329527,
+   "batches_skipped_for_memory": 0
+  },
+  {
+   "tokens": 25847,
+   "sentences": 2062,
+   "leaf_acc": 0.9312879637868998,
+   "tree_acc": 0.8667930514179595,
+   "both_acc": 0.833868534065849,
+   "exact_match": 0.3797284190106692,
+   "exact_match_by_length": {
+    "0": [
+     565,
+     953
+    ],
+    "10": [
+     212,
+     781
+    ],
+    "20": [
+     6,
+     213
+    ],
+    "30": [
+     0,
+     77
+    ],
+    "40": [
+     0,
+     29
+    ],
+    "50": [
+     0,
+     8
+    ],
+    "60": [
+     0,
+     1
+    ]
+   },
+   "lextype_acc_by_train_frequency": {
+    "100-999": [
+     2419,
+     2647
+    ],
+    "1000+": [
+     21814,
+     22946
+    ],
+    "10-99": [
+     165,
+     227
+    ],
+    "1-9": [
+     8,
+     22
+    ],
+    "0": [
+     0,
+     5
+    ]
+   },
+   "lextype_types_gold": 549,
+   "lextype_types_predicted": 512,
+   "lextype_types_gold_never_predicted": 57,
+   "lextype_jsd_bits": 0.004946040893418586,
+   "truncated_sentences": 0,
+   "sentences_per_second": 2262.218822757014,
+   "tokens_per_second": 28356.72643637272,
+   "epoch": 2,
+   "train_minutes": 2.91892124414444,
+   "batches_skipped_for_memory": 0
+  },
+  {
+   "tokens": 25847,
+   "sentences": 2062,
+   "leaf_acc": 0.9363562502418076,
+   "tree_acc": 0.8744148257051109,
+   "both_acc": 0.8445467559097768,
+   "exact_match": 0.40397672162948595,
+   "exact_match_by_length": {
+    "0": [
+     606,
+     953
+    ],
+    "10": [
+     223,
+     781
+    ],
+    "20": [
+     4,
+     213
+    ],
+    "30": [
+     0,
+     77
+    ],
+    "40": [
+     0,
+     29
+    ],
+    "50": [
+     0,
+     8
+    ],
+    "60": [
+     0,
+     1
+    ]
+   },
+   "lextype_acc_by_train_frequency": {
+    "100-999": [
+     2450,
+     2647
+    ],
+    "1000+": [
+     21895,
+     22946
+    ],
+    "10-99": [
+     163,
+     227
+    ],
+    "1-9": [
+     10,
+     22
+    ],
+    "0": [
+     0,
+     5
+    ]
+   },
+   "lextype_types_gold": 549,
+   "lextype_types_predicted": 524,
+   "lextype_types_gold_never_predicted": 49,
+   "lextype_jsd_bits": 0.00380498630803678,
+   "truncated_sentences": 0,
+   "sentences_per_second": 2217.757344226395,
+   "tokens_per_second": 27799.40546858372,
+   "epoch": 3,
+   "train_minutes": 2.935735321044922,
+   "batches_skipped_for_memory": 0
+  },
+  {
+   "tokens": 25847,
+   "sentences": 2062,
+   "leaf_acc": 0.9386776028165744,
+   "tree_acc": 0.8803729639803459,
+   "both_acc": 0.8519363949394514,
+   "exact_match": 0.43501454898157127,
+   "exact_match_by_length": {
+    "0": [
+     622,
+     953
+    ],
+    "10": [
+     265,
+     781
+    ],
+    "20": [
+     10,
+     213
+    ],
+    "30": [
+     0,
+     77
+    ],
+    "40": [
+     0,
+     29
+    ],
+    "50": [
+     0,
+     8
+    ],
+    "60": [
+     0,
+     1
+    ]
+   },
+   "lextype_acc_by_train_frequency": {
+    "100-999": [
+     2436,
+     2647
+    ],
+    "1000+": [
+     21935,
+     22946
+    ],
+    "10-99": [
+     172,
+     227
+    ],
+    "1-9": [
+     9,
+     22
+    ],
+    "0": [
+     0,
+     5
+    ]
+   },
+   "lextype_types_gold": 549,
+   "lextype_types_predicted": 540,
+   "lextype_types_gold_never_predicted": 39,
+   "lextype_jsd_bits": 0.003609813823855073,
+   "truncated_sentences": 0,
+   "sentences_per_second": 2225.272438351653,
+   "tokens_per_second": 27893.60655386769,
+   "epoch": 4,
+   "train_minutes": 2.9210704286893208,
+   "batches_skipped_for_memory": 0
+  },
+  {
+   "tokens": 25847,
+   "sentences": 2062,
+   "leaf_acc": 0.941656671954192,
+   "tree_acc": 0.8822687352497388,
+   "both_acc": 0.8559987619452935,
+   "exact_match": 0.4466537342386033,
+   "exact_match_by_length": {
+    "0": [
+     639,
+     953
+    ],
+    "10": [
+     270,
+     781
+    ],
+    "20": [
+     12,
+     213
+    ],
+    "30": [
+     0,
+     77
+    ],
+    "40": [
+     0,
+     29
+    ],
+    "50": [
+     0,
+     8
+    ],
+    "60": [
+     0,
+     1
+    ]
+   },
+   "lextype_acc_by_train_frequency": {
+    "100-999": [
+     2458,
+     2647
+    ],
+    "1000+": [
+     21983,
+     22946
+    ],
+    "10-99": [
+     177,
+     227
+    ],
+    "1-9": [
+     12,
+     22
+    ],
+    "0": [
+     0,
+     5
+    ]
+   },
+   "lextype_types_gold": 549,
+   "lextype_types_predicted": 531,
+   "lextype_types_gold_never_predicted": 41,
+   "lextype_jsd_bits": 0.0033037285078562667,
+   "truncated_sentences": 0,
+   "sentences_per_second": 2236.737085618802,
+   "tokens_per_second": 28037.314962167402,
+   "epoch": 5,
+   "train_minutes": 2.9218955357869465,
+   "batches_skipped_for_memory": 0
+  },
+  {
+   "tokens": 25847,
+   "sentences": 2062,
+   "leaf_acc": 0.9419274964212481,
+   "tree_acc": 0.8839710604712345,
+   "both_acc": 0.8572368166518358,
+   "exact_match": 0.4510184287099903,
+   "exact_match_by_length": {
+    "0": [
+     641,
+     953
+    ],
+    "10": [
+     280,
+     781
+    ],
+    "20": [
+     9,
+     213
+    ],
+    "30": [
+     0,
+     77
+    ],
+    "40": [
+     0,
+     29
+    ],
+    "50": [
+     0,
+     8
+    ],
+    "60": [
+     0,
+     1
+    ]
+   },
+   "lextype_acc_by_train_frequency": {
+    "100-999": [
+     2461,
+     2647
+    ],
+    "1000+": [
+     21985,
+     22946
+    ],
+    "10-99": [
+     172,
+     227
+    ],
+    "1-9": [
+     12,
+     22
+    ],
+    "0": [
+     0,
+     5
+    ]
+   },
+   "lextype_types_gold": 549,
+   "lextype_types_predicted": 534,
+   "lextype_types_gold_never_predicted": 39,
+   "lextype_jsd_bits": 0.0032287763184852525,
+   "truncated_sentences": 0,
+   "sentences_per_second": 2264.2283325461844,
+   "tokens_per_second": 28381.91547590748,
+   "epoch": 6,
+   "train_minutes": 2.9266812284787496,
+   "batches_skipped_for_memory": 0
+  }
+ ],
+ "dev": {
+  "tokens": 25847,
+  "sentences": 2062,
+  "leaf_acc": 0.9419274964212481,
+  "tree_acc": 0.8839710604712345,
+  "both_acc": 0.8572368166518358,
+  "exact_match": 0.4510184287099903,
+  "exact_match_by_length": {
+   "0": [
+    641,
+    953
+   ],
+   "10": [
+    280,
+    781
+   ],
+   "20": [
+    9,
+    213
+   ],
+   "30": [
+    0,
+    77
+   ],
+   "40": [
+    0,
+    29
+   ],
+   "50": [
+    0,
+    8
+   ],
+   "60": [
+    0,
+    1
+   ]
+  },
+  "lextype_acc_by_train_frequency": {
+   "100-999": [
+    2461,
+    2647
+   ],
+   "1000+": [
+    21985,
+    22946
+   ],
+   "10-99": [
+    172,
+    227
+   ],
+   "1-9": [
+    12,
+    22
+   ],
+   "0": [
+    0,
+    5
+   ]
+  },
+  "lextype_types_gold": 549,
+  "lextype_types_predicted": 534,
+  "lextype_types_gold_never_predicted": 39,
+  "lextype_jsd_bits": 0.0032287763184852525,
+  "truncated_sentences": 0,
+  "sentences_per_second": 2231.063987838423,
+  "tokens_per_second": 27966.20314920452
+ },
+ "test": {
+  "tokens": 135997,
+  "sentences": 8004,
+  "leaf_acc": 0.9436311095097686,
+  "tree_acc": 0.8738648646661323,
+  "both_acc": 0.847342220784282,
+  "exact_match": 0.35207396301849075,
+  "exact_match_by_length": {
+   "0": [
+    1719,
+    2436
+   ],
+   "10": [
+    911,
+    2765
+   ],
+   "20": [
+    169,
+    1654
+   ],
+   "30": [
+    16,
+    774
+   ],
+   "40": [
+    3,
+    282
+   ],
+   "50": [
+    0,
+    69
+   ],
+   "60": [
+    0,
+    24
+   ]
+  },
+  "lextype_acc_by_train_frequency": {
+   "1000+": [
+    118567,
+    123060
+   ],
+   "100-999": [
+    10121,
+    11309
+   ],
+   "10-99": [
+    1132,
+    1510
+   ],
+   "1-9": [
+    37,
+    101
+   ],
+   "0": [
+    0,
+    17
+   ]
+  },
+  "lextype_types_gold": 899,
+  "lextype_types_predicted": 847,
+  "lextype_types_gold_never_predicted": 71,
+  "lextype_jsd_bits": 0.001260385677533518,
+  "truncated_sentences": 0,
+  "sentences_per_second": 1943.613682570628,
+  "tokens_per_second": 33024.19165274334
+ }
+}
