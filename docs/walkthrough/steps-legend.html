@@ -1,0 +1,15 @@
+    <ol class="steps">
+      <li><b>Tag</b><span>Each word gets a leaf label (lexical type and unary rules) and a tree label.</span></li>
+      <li><b>Decode</b><span>The tree labels say how each word joins the next. Together they fix exactly one tree.</span></li>
+      <li><b>Look up</b><span>Each word's lexical entry is found in the grammar's lexicon from its type and rules.</span></li>
+      <li><b>Replay</b><span>Bottom-up, the grammar unifies each rule with its daughters. One pass, no search.</span></li>
+      <li><b>Repair</b><span>If replay fails, the tagger's next-best labels under the failing node are tried. Up to 30 accepted derivations are collected.</span></li>
+      <li><b>Rank</b><span>The ranking model that ships with the grammar, the one ACE uses, picks the most likely of them.</span></li>
+      <li><b>Read off</b><span>The result is the full sign. Its semantics is written out as MRS and DMRS.</span></li>
+    </ol>
+    <div class="legend">
+      <span><i style="background:var(--accent-soft)"></i>phrasal rules</span>
+      <span><i style="background:var(--lex-soft)"></i>leaf: lexical rules and lexical type</span>
+      <span><i style="background:var(--bad-soft);outline:1.5px solid var(--bad)"></i>node where replay fails</span>
+      <span><i style="outline:2px solid var(--chg)"></i>node that differs between two trees</span>
+    </div>

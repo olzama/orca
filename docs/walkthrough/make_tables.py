@@ -192,7 +192,8 @@ def rebuild(s):
     return s.replace(old_tiles, tiles)
 
 
-for p in sys.argv[1:]:
+if __name__ == "__main__":
+  for p in sys.argv[1:]:
     s = open(p).read()
     open(p, 'w').write(rebuild(s))
     print('rebuilt', p)

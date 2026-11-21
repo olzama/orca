@@ -1,0 +1,13 @@
+    <div class="scroll">
+      <table class="results">
+        <thead><tr><th>Version</th><th class="n">Sentences</th><th class="n">Accepted by the grammar</th><th class="n hl">Same meaning as gold</th><th class="n">Predicates / links of accepted analyses also in gold (F1)</th><th class="n">Model calls; usage (API-equivalent)</th></tr></thead>
+        <tbody>
+          <tr><td>First version: one failure point per round, 3 rounds. Under 20 words</td><td class="n">38</td><td class="n">15</td><td class="n hl">10</td><td class="n" rowspan="2">97.3 / 92.6</td><td class="n" rowspan="2">160; $14.6</td></tr>
+          <tr><td>First version. 20 words or more</td><td class="n">22</td><td class="n">1</td><td class="n hl">0</td></tr>
+          <tr><td>Second version: all failure points at once, 6 rounds for long sentences, brackets repaired. Under 20 words</td><td class="n">38</td><td class="n">21</td><td class="n hl">13</td><td class="n">96.7 / 91.3</td><td class="n" rowspan="2">180; $18.2</td></tr>
+          <tr><td>Second version. 20 words or more</td><td class="n">22</td><td class="n">12</td><td class="n hl">1</td><td class="n">97.8 / 89.3</td></tr>
+          <tr><td>Second version, all 390 sentences. Under 20 words</td><td class="n">214</td><td class="n">111</td><td class="n hl">74</td><td class="n">96.6 / 91.7</td><td class="n" rowspan="2">1,304; $138.3</td></tr>
+          <tr><td>Second version, all 390 sentences. 20 words or more</td><td class="n">176</td><td class="n">77</td><td class="n hl">15</td><td class="n">96.8 / 89.5</td></tr>
+        </tbody>
+      </table>
+    </div>
