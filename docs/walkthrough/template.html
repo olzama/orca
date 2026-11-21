@@ -274,7 +274,7 @@ code { font-family: var(--mono); font-size: 0.88em; }
         </tbody>
       </table>
     </div>
-    <p class="caption">The same 390 sentences that repair leaves without an analysis, given instead to ACE (its time includes retries with more memory). For English, where a chart parser and its ranking model exist, ACE is the better fallback on both speed and accuracy. ACE also spends most of its total time on exactly these sentences, so with an ACE fallback Orca would be only modestly faster than ACE alone; the speed advantage depends on Orca itself failing less often. The LLM step is more useful offline: on sentences of training or silver data that Orca cannot analyze, where its accepted repairs can become repair patterns or training examples; on sentences too long for ACE's memory; and as a diagnosis of why the grammar rejects an analysis.</p>
+    <p class="caption">The same 390 sentences that repair leaves without an analysis, given instead to ACE (its time includes retries with more memory). For English, where a chart parser and its ranking model exist, ACE is the better fallback on both speed and accuracy. ACE also spends most of its total time on exactly these sentences, so with an ACE fallback Orca would be only modestly faster than ACE alone; the speed advantage depends on Orca itself failing less often. The plan is therefore to use the LLM step offline, for training and for expanding the grammar: on sentences of training or silver data that Orca cannot analyze, where its accepted repairs can become repair patterns or training examples; on sentences too long for ACE's memory; and to diagnose why the grammar rejects an analysis.</p>
 <!-- /fallback -->
   </section>
 
