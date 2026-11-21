@@ -19,7 +19,9 @@ from make_tables import (BANDS, LLM_SECS, LLM_SENTS, N, ORCA, RANK, REPAIR1_K30,
 RAW = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothall-rawtext.json'))
 SPS = RAW['sentences per second']
 RAW_WITH = RAW['counts']['with MRS']
-ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothall-rawtext-oracle.json'))
+ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext.json'))     # best tagger from raw text (forms as typed)
+RAW_HALF = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothhalfsurf-rawtext.json'))
+OLD_ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothall-rawtext-oracle.json'))
 METRICS = json.load(open(f'{ORCA}/data/models/tagger-2025bothall-bert/metrics.json'))
 LABELS = json.load(open(f'{ORCA}/data/models/tagger-2025bothall-bert/labels.json'))
 # From treebank tokens: rerank.py on data/models/tagger-2025bothall-bert/dev-strict-k30-b600.jsonl
@@ -48,7 +50,7 @@ def tiles():
     c = RAW['counts']
     ace_sps = N / (ACE_PASS + ACE_RETRY)
     t = [('main', f'{100 * b["same MRS"] / N:.1f}%', 'exactly the gold meaning (same MRS)'),
-         ('', f'{100 * c["same MRS"] / c["sentences"]:.1f}%', 'the same, starting from raw text'),
+         ('', f'{100 * ORACLE["counts"]["same MRS"] / N:.1f}%', 'the same, from raw text (tagger trained on forms as typed)'),
          ('', f'{100 * b["with MRS"] / N:.1f}%', 'get a full analysis the grammar accepts'),
          ('', f'{RAW["sentences per second"]:.1f}', f'sentences per second from raw text (ACE: {ace_sps:.1f})')]
     return ('  <section class="stack">\n    <div class="tiles">\n'
@@ -157,6 +159,13 @@ def how():
             + '  </section>\n')
 
 
+def split(run):
+    out = [0, 0, 0, 0]
+    for x in run['records']:
+        out[3 if not x['accepted'] else 2 if not x['gold among accepted'] else 0 if x['same MRS'] else 1] += 1
+    return out
+
+
 def results():
     rows = []
     for key, name in SYSTEMS:
@@ -164,8 +173,11 @@ def results():
         rows.append(f'<tr><td>{name}</td>' + td(pct(a['same MRS'], N), True) + td(pct(a['with MRS'], N))
                     + td(p1(a['preds']['f1'])) + td(p1(a['links']['f1'])) + td(pct(a['same tree'], N)) + '</tr>')
     c = RAW['counts']
+    oc = ORACLE['counts']
     rows.insert(-1, '<tr><td>… the same, from raw text</td>' + td(pct(c['same MRS'], N), True) + td(pct(c['with MRS'], N))
                 + td('') + td('') + td('') + '</tr>')
+    rows.insert(-1, '<tr><td>… tagger trained on forms as typed, from raw text</td>' + td(pct(oc['same MRS'], N), True)
+                + td(pct(oc['with MRS'], N)) + td('') + td('') + td('') + '</tr>')
     t1 = table([('System', ''), ('Exact meaning', 'n hl'), ('Any analysis', 'n'),
                 ('Predicates (F1)', 'n'), ('Links (F1)', 'n'), ('Exact tree', 'n')], rows)
     # where each sentence ends up
@@ -181,9 +193,10 @@ def results():
         cnt[b][k] += 1
         cnt[b][4] += 1
     tot = [sum(cnt[b][i] for b in cnt) for i in range(4)]
-    rows = [f'<tr><td>From treebank tokens, all</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(TREEBANK_SPLIT)) + '</tr>',
-            f'<tr><td>From raw text, all</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(tot)) + '</tr>']
-    rows += [f'<tr><td>From raw text, {b} words ({cnt[b][4]:,})</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(cnt[b][:4])) + '</tr>'
+    rows = [f'<tr><td>Treebank forms, from treebank tokens, all</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(TREEBANK_SPLIT)) + '</tr>',
+            '<tr><td>Treebank forms, from raw text, all</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(split(OLD_ORACLE))) + '</tr>',
+            f'<tr><td>Forms as typed, from raw text, all</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(tot)) + '</tr>']
+    rows += [f'<tr><td>Forms as typed, from raw text, {b} words ({cnt[b][4]:,})</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(cnt[b][:4])) + '</tr>'
              for _, _, b in bands]
     t2 = table([('Sentences', ''), ('Exact meaning', 'n hl'), ('Gold accepted, ranking picks another', 'n'),
                 ('Gold never accepted', 'n'), ('No analysis', 'n')], rows)
@@ -192,7 +205,7 @@ def results():
                   'F1: share of gold predicates and semantic links found, balanced against extra ones. '
                   'Replaying the annotators\' own derivations gives the gold MRS for every sentence, so every loss comes from the proposed derivations.')
             + '    <h3>Where the misses are (best tagger)</h3>\n' + t2
-            + cap('Ranking loses few sentences. Most of the gap is in proposing: the gold analysis is never among the accepted '
+            + cap('Best BERT-base tagger of each kind. Ranking loses few sentences. Most of the gap is in proposing: the gold analysis is never among the accepted '
                   'derivations, or nothing is accepted. Long sentences lose most.')
             + '  </section>\n')
 
@@ -215,10 +228,17 @@ def exp_training():
                     + td(p1(a['preds']['f1'])) + td(p1(a['links']['f1'])) + td(f'{rps:.0f}') + '</tr>')
     t = table([('Tagger trained on', ''), ('Sentences', 'n'), ('Exact meaning', 'n hl'), ('Any analysis', 'n'),
                ('Predicates (F1)', 'n'), ('Links (F1)', 'n'), ('Replays per sentence', 'n')], rows)
+    rows = []
+    for name, r in (('all silver (590,721 sentences)', ORACLE), ('half of the silver (338,269)', RAW_HALF)):
+        rc = r['counts']
+        rows.append(f'<tr><td>{name}</td>' + td(pct(rc['same MRS'], N), True) + td(pct(rc['with MRS'], N))
+                    + td(f"{rc['gold MRS among accepted']:,}") + '</tr>')
+    t2 = table([('Forms as typed, from raw text', ''), ('Exact meaning', 'n hl'), ('Any analysis', 'n'), ('Gold among accepted', 'n')], rows)
+    t = t + cap('Treebank forms, from treebank tokens.') + t2 + cap('All of the treebank in both; half of the silver sentences chosen at random. Halving the silver data costs little, so more text of the same kind is unlikely to help much.')
     body = t + cap('Silver data: ACE\'s first-ranked parses of a literary corpus (novels 1838 to 1921, with LLM-written matched '
                    'excerpts) and a news corpus (NYT 2023 and 2025, with 11 LLM-written sets), kept only if they replay. '
                    'One run each; seed variation not yet measured.')
-    return fold('Training data', 'More grammar-licensed text helps; the full news set gives the largest step.', body)
+    return fold('Training data', 'More grammar-licensed text helped up to now; halving it costs little.', body)
 
 
 def exp_rawtext():
@@ -232,7 +252,7 @@ def exp_rawtext():
     body = (t1 + t2 + cap('The grammar\'s preprocessing (tokenization, POS tags, token mapping) runs in ACE without parsing; all '
                           'tokens it proposes for a word are kept, and replay picks the one the lexical entry accepts. '
                           'The loss against treebank tokens comes from word forms: in the treebank, case depends on the analysis '
-                          '(name entries keep capitals). A tagger trained on forms as typed is being trained.'))
+                          '(name entries keep capitals). Training the tagger on forms as typed removes the leak: more exact meanings from raw text, somewhat fewer analyses.'))
     return fold('From raw text', 'The grammar\'s tokens work; the tagger loses a little on capitalization.', body)
 
 
