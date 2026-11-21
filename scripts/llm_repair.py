@@ -188,6 +188,12 @@ def lexicon_options(lx, forms):
     return '\n'.join(lines)
 
 
+def limit_hit(text):
+    """True for the message the claude command returns instead of an answer
+    once the subscription's usage limit is reached."""
+    return bool(text) and bool(re.search(r"hit your .*limit", text))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--data', required=True)
@@ -203,6 +209,7 @@ def main():
     ap.add_argument('--parallel', type=int, default=4)
     ap.add_argument('--model', default='claude-opus-5-5')
     ap.add_argument('--seed', type=int, default=1)
+    ap.add_argument('--reuse', help='log.jsonl of an earlier run with the same settings: its sentences are copied, not rerun')
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     gdir = os.path.dirname(args.grammar)
@@ -231,6 +238,15 @@ def main():
                 failed.append(r)
     random.Random(args.seed).shuffle(failed)
     sample = failed[:args.n]
+    reused = {}
+    if args.reuse:
+        with open(args.reuse, encoding='utf-8') as f:
+            for line in f:
+                r = json.loads(line)
+                if not any(limit_hit(s.get('response')) for s in r['rounds']):
+                    reused[r['id']] = r
+        print(f'reusing {len(reused)} sentences from {args.reuse}', flush=True)
+    stop = threading.Event()          # set when the usage limit is reached
     system = SYSTEM.format(docs='\n'.join(rule_docs(gdir)))
     lock = threading.Lock()           # the engine is not thread-safe; LLM calls run in parallel
 
@@ -344,8 +360,14 @@ def main():
                 '\n\n'.join(context)[:args.max_context],
                 *(['', 'Earlier attempts in this conversation and why they failed:'] + history if history else []),
             ])
+            if stop.is_set():
+                return None
             data = call(args.model, system, prompt, args.out)
             text = data.get('result') or ''
+            if limit_hit(text):
+                stop.set()
+                print('usage limit reached: ' + text.strip(), flush=True)
+                return None
             step = {'round': rnd + 1, 'failure_points': [list(x) for x in fails], 'response': text,
                     'usage': data.get('usage'), 'cost': data.get('total_cost_usd'), 'seconds': data.get('seconds')}
             new, done, problems = tree, [], []
@@ -393,7 +415,9 @@ def main():
     results = []
     with concurrent.futures.ThreadPoolExecutor(args.parallel) as pool, \
             open(os.path.join(args.out, 'log.jsonl'), 'w', encoding='utf-8') as out:
-        for log in pool.map(run, sample):
+        for log in pool.map(lambda r: reused.get(r['id']) or (None if stop.is_set() else run(r)), sample):
+            if log is None:           # stopped by the usage limit; rerun later with --reuse
+                continue
             results.append(log)
             out.write(json.dumps(log, ensure_ascii=False) + '\n')
             out.flush()
@@ -417,6 +441,8 @@ def main():
             st['answers with repaired brackets'] += 'repaired_brackets' in step
         st[f"accepted after {len(log['rounds'])} rounds"] += log['final'][0] == 'accepted'
     summary = {'args': {k: v for k, v in vars(args).items() if k in ('n', 'rounds', 'extra_rounds', 'max_points', 'model', 'seed')}, 'stats': dict(st)}
+    if len(results) < len(sample):
+        summary['incomplete'] = f'{len(sample) - len(results)} sentences not run (usage limit); rerun with --reuse'
     with open(os.path.join(args.out, 'summary.json'), 'w') as f:
         json.dump(summary, f, indent=1)
     print(json.dumps(summary, indent=1))

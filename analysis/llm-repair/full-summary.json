@@ -1,0 +1,32 @@
+{
+ "args": {
+  "n": 390,
+  "rounds": 3,
+  "extra_rounds": 3,
+  "max_points": 8,
+  "model": "claude-opus-5-5",
+  "seed": 1
+ },
+ "stats": {
+  "sentences": 390,
+  "sentences under 20 words": 214,
+  "accepted under 20 words": 111,
+  "gold MRS under 20 words": 74,
+  "accepted": 188,
+  "accepted with gold MRS": 89,
+  "calls": 1304,
+  "cost_usd_equivalent": 138.33629299999996,
+  "seconds": 26136.170899391174,
+  "answers with problems": 22,
+  "answers with repaired brackets": 143,
+  "accepted after 2 rounds": 61,
+  "accepted after 3 rounds": 23,
+  "sentences 20 words or more": 176,
+  "accepted 20 words or more": 77,
+  "gold MRS 20 words or more": 15,
+  "accepted after 6 rounds": 6,
+  "accepted after 1 rounds": 75,
+  "accepted after 5 rounds": 7,
+  "accepted after 4 rounds": 16
+ }
+}

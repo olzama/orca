@@ -79,9 +79,16 @@ def main():
                 p = c[f'ok {kind}'] / c[f'sys {kind}'] if c[f'sys {kind}'] else 0
                 rc = c[f'ok {kind}'] / c[f'gold {kind}'] if c[f'gold {kind}'] else 0
                 d[kind] = {'precision': round(p, 3), 'recall': round(rc, 3),
-                           'f1': round(2 * p * rc / (p + rc), 3) if p + rc else 0}
+                           'f1': round(2 * p * rc / (p + rc), 3) if p + rc else 0,
+                           'counts': {k: c[f'{k} {kind}'] for k in ('ok', 'sys', 'gold')}}
             res[b] = d
         out[path] = res
+    tot = collections.Counter()                 # gold totals over the whole split, for combining
+    for ref in gold.values():                   # with the scores of the rest of the pipeline
+        gp, gl = graph(ref)
+        tot['gold preds'] += sum(gp.values())
+        tot['gold links'] += sum(gl.values())
+    out['split gold totals'] = dict(tot, sentences=len(gold))
     print(json.dumps(out, indent=1))
 
 

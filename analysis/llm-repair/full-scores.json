@@ -1,0 +1,84 @@
+{
+ "data/llm/repair-full2/log.jsonl": {
+  "under 20 words": {
+   "sentences": 214,
+   "accepted": 111,
+   "same MRS": 74,
+   "preds": {
+    "precision": 0.969,
+    "recall": 0.964,
+    "f1": 0.966,
+    "counts": {
+     "ok": 1463,
+     "sys": 1510,
+     "gold": 1518
+    }
+   },
+   "links": {
+    "precision": 0.921,
+    "recall": 0.912,
+    "f1": 0.917,
+    "counts": {
+     "ok": 1319,
+     "sys": 1432,
+     "gold": 1446
+    }
+   }
+  },
+  "all": {
+   "sentences": 390,
+   "accepted": 188,
+   "same MRS": 89,
+   "preds": {
+    "precision": 0.97,
+    "recall": 0.965,
+    "f1": 0.967,
+    "counts": {
+     "ok": 4122,
+     "sys": 4251,
+     "gold": 4270
+    }
+   },
+   "links": {
+    "precision": 0.905,
+    "recall": 0.9,
+    "f1": 0.903,
+    "counts": {
+     "ok": 3821,
+     "sys": 4220,
+     "gold": 4246
+    }
+   }
+  },
+  "20 words or more": {
+   "sentences": 176,
+   "accepted": 77,
+   "same MRS": 15,
+   "preds": {
+    "precision": 0.97,
+    "recall": 0.966,
+    "f1": 0.968,
+    "counts": {
+     "ok": 2659,
+     "sys": 2741,
+     "gold": 2752
+    }
+   },
+   "links": {
+    "precision": 0.897,
+    "recall": 0.894,
+    "f1": 0.895,
+    "counts": {
+     "ok": 2502,
+     "sys": 2788,
+     "gold": 2800
+    }
+   }
+  }
+ },
+ "split gold totals": {
+  "gold preds": 31296,
+  "gold links": 30240,
+  "sentences": 2062
+ }
+}
