@@ -343,8 +343,8 @@ def exp_encoders():
                ('All labels of the sentence right (%)', 'n'), ('Exact meaning', 'n hl'), ('Any analysis', 'n'), ('Gold among accepted', 'n')],
               rows, group=[('', 2), ('Tagging, dev', 3), ('Full pipeline from raw text, dev', 3)])
     body = t + cap('Same recipe for every encoder: Redwoods treebank only (86,278 sentences), forms as typed, 6 epochs, batch 32; '
-                   'learning rate 3e-5 for BERT-base, 2e-5 for the large encoders. One run each. For comparison, BERT-base trained on all 590,721 sentences gets ' + pct(ORACLE['counts']['same MRS'], N) + ' from raw text. The best encoder is now being trained on all the data.')
-    return fold('Encoders', 'XLM-R large gives the most exact meanings, nearly what BERT-base gets with seven times the data.', body)
+                   'learning rate 3e-5 for BERT-base, 2e-5 for the large encoders. One run each. For comparison, BERT-base trained on all 590,721 sentences gets ' + pct(ORACLE['counts']['same MRS'], N) + ' from raw text. DeBERTa (best tagging, most analyses) is now being trained on all the data; XLM-R follows.')
+    return fold('Encoders', 'XLM-R and DeBERTa large give the most exact meanings, nearly what BERT-base gets with seven times the data.', body)
 
 
 def exp_generated():
