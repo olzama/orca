@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orca Demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #f3f6f8; --surface: #ffffff; --well: #f8fafb; --fg: #14222e; --muted: #556775; --line: #d3dde4;
+  --accent: #0f6c8c; --accent-soft: #dcedf3; --lex: #6a4c93; --lex-soft: #ece6f4;
+  --ok: #1d7a4f; --ok-soft: #dff1e7; --bad: #b3372f; --bad-soft: #f8e1de; --chg: #9a6400; --chg-soft: #f8ebcf;
+  --display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1a22; --surface: #17252f; --well: #13202a; --fg: #e4ecf1; --muted: #9db0bd; --line: #2c3f4c;
+  --accent: #5fbddb; --accent-soft: #163645; --lex: #b79be0; --lex-soft: #2a2140;
+  --ok: #5fcf97; --ok-soft: #153526; --bad: #f08a80; --bad-soft: #3d1d1a; --chg: #e8b454; --chg-soft: #3a2c0e;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1a22; --surface: #17252f; --well: #13202a; --fg: #e4ecf1; --muted: #9db0bd; --line: #2c3f4c;
+  --accent: #5fbddb; --accent-soft: #163645; --lex: #b79be0; --lex-soft: #2a2140;
+  --ok: #5fcf97; --ok-soft: #153526; --bad: #f08a80; --bad-soft: #3d1d1a; --chg: #e8b454; --chg-soft: #3a2c0e;
+  color-scheme: dark }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 36px 64px; padding-inline: 16px; display: flex; flex-direction: column; gap: 28px; }
+h1, h2 { font-family: var(--display); margin: 0; line-height: 1.2; font-weight: 600; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.2rem; }
+p { margin: 0; max-width: 70ch; }
+.lede { color: var(--muted); font-size: 1.05rem; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+textarea { width: 100%; min-height: 76px; resize: vertical; font: 500 1.15rem/1.4 var(--display); color: var(--fg); background: var(--well); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; }
+textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+button.go { font: 600 1rem var(--display); background: var(--accent); color: var(--surface); border: 0; border-radius: 6px; padding: 10px 22px; cursor: pointer; }
+button.go:disabled { opacity: 0.55; cursor: wait; }
+label.check { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 0.92rem; cursor: pointer; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 0.85rem var(--body); background: var(--accent-soft); color: var(--fg); border: 0; border-radius: 14px; padding: 4px 12px; cursor: pointer; text-align: left; }
+.small { color: var(--muted); font-size: 0.85rem; }
+.verdict { padding: 10px 14px; border-radius: 6px; font-size: 0.95rem; }
+.verdict.ok { background: var(--ok-soft); color: var(--ok); }
+.verdict.bad { background: var(--bad-soft); color: var(--bad); }
+.verdict.chg { background: var(--chg-soft); color: var(--chg); }
+.verdict b { font-weight: 600; }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--well); }
+.scroll.pad { padding: 14px 16px; }
+table { border-collapse: collapse; font-size: 0.85rem; }
+th, td { text-align: left; padding: 6px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+tr.total td { font-weight: 600; border-bottom: 0; }
+pre { margin: 0; font: 0.78rem/1.5 var(--mono); }
+details summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.grid > * { min-width: 0; }
+.hidden { display: none !important; }
+.forms { display: flex; flex-wrap: wrap; gap: 6px; }
+.forms span { font: 0.8rem var(--mono); background: var(--well); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; }
+.forms span.alt { border-color: var(--lex); }
+/* trees and DMRS: as on the walkthrough page */
+svg text { font-family: var(--mono); font-size: 11px; fill: var(--fg); }
+svg text.word { font-family: var(--display); font-size: 15px; font-weight: 600; }
+svg text.idx { font-family: var(--body); font-size: 9.5px; fill: var(--muted); }
+svg text.lexrule { fill: var(--lex); }
+svg text.lextype { fill: var(--muted); }
+svg text.rule { fill: var(--accent); font-weight: 500; }
+svg .edge { stroke: var(--line); stroke-width: 1.4; fill: none; }
+svg .stem { stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 2 3; fill: none; }
+svg rect.node.phr { fill: var(--accent-soft); stroke: transparent; }
+svg rect.node.leaf { fill: var(--lex-soft); stroke: transparent; }
+svg .arc { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+svg .head { fill: var(--accent); }
+svg .arc.h { stroke: var(--muted); stroke-dasharray: 4 3; }
+svg .head.h { fill: var(--muted); }
+svg .arc.diff { stroke: var(--chg); stroke-width: 2.2; }
+svg .head.diff { fill: var(--chg); }
+svg text.role { font-size: 9.5px; fill: var(--muted); }
+svg text.pred { font-size: 11.5px; }
+svg rect.pred { fill: var(--surface); stroke: var(--line); }
+svg rect.pred.top { stroke: var(--accent); stroke-width: 2; }
+svg rect.pred.diff { stroke: var(--chg); stroke-width: 2; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="panel" style="background:transparent;border:0;padding:0">
+    <h1>Orca demo</h1>
+    <p class="lede">Type an English sentence. Orca proposes a derivation with a neural tagger, the English Resource Grammar checks it by replay and repairs it where it fails, the grammar's ranking model picks among the accepted derivations, and the result is a complete grammar analysis with its meaning (MRS).</p>
+    <p class="small" id="about"></p>
+  </header>
+
+  <section class="panel">
+    <textarea id="input" aria-label="Sentence" spellcheck="false">The old dog barked at Mr. Smith's mailman.</textarea>
+    <div class="row">
+      <button class="go" id="go">Parse</button>
+      <label class="check"><input type="checkbox" id="ace"> Also parse with ACE, to compare (slower)</label>
+      <span class="small">Ctrl+Enter parses</span>
+    </div>
+    <div class="chips" id="examples"></div>
+  </section>
+
+  <div id="status" class="verdict hidden" role="status"></div>
+
+  <div id="results" class="hidden" style="display:flex;flex-direction:column;gap:28px">
+    <section class="panel">
+      <h2>Meaning</h2>
+      <p class="small" id="dmrs-caption">The meaning as a DMRS graph: predicates and the links between them (dashed links are scope).</p>
+      <div id="dmrs"></div>
+      <details><summary>MRS</summary><div class="scroll pad" style="margin-top:10px"><pre id="mrs"></pre></div></details>
+    </section>
+
+    <section class="panel">
+      <h2>Derivation</h2>
+      <p class="small">Purple boxes are words, with their lexical type (gray) and lexical rules (purple). Blue boxes are syntactic rules; a box with several names is a chain of unary rules.</p>
+      <div id="tree"></div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Time</h2>
+        <div class="scroll"><table id="time"></table></div>
+        <p class="small" id="time-note"></p>
+      </div>
+      <div class="panel">
+        <h2>How it got there</h2>
+        <div class="scroll"><table id="how"></table></div>
+        <p class="small">Tokens come from the grammar's own preprocessing. A token outlined in purple has several readings (a known word, a name, an unknown word); replay picks the one the lexical entry accepts.</p>
+        <div class="forms" id="forms"></div>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="ace-panel">
+      <h2>ACE, for comparison</h2>
+      <div id="ace-verdict" class="verdict"></div>
+      <div id="ace-dmrs"></div>
+      <details><summary>ACE's MRS</summary><div class="scroll pad" style="margin-top:10px"><pre id="ace-mrs"></pre></div></details>
+    </section>
+  </div>
+</div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const CW = 6.7;
+const $ = id => document.getElementById(id);
+function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
+
+const EXAMPLES = [
+  "The old dog barked at Mr. Smith's mailman.",
+  "Kim believes that Sandy was given a book by the teacher.",
+  "Which house did you say the children wanted to buy?",
+  "The committee, which met on Tuesday, couldn't agree on a budget.",
+  "My husband's birthdya is next week.",
+  "Every farmer who owns a donkey feeds it.",
+];
+
+/* drawing code from the walkthrough page */
+function merge(t) {
+  const labels = []; let n = t;
+  while (n.c && n.c.length === 1) { labels.push(n.l); n = n.c[0]; }
+  labels.push(n.l);
+  return n.c ? { labels, kids: n.c.map(merge) } : { labels, word: n.w };
+}
+function brackets(node, pos) {
+  node.start = pos;
+  if (node.word !== undefined) pos += node.word.split(' ').length;
+  else node.kids.forEach(k => { pos = brackets(k, pos); });
+  node.end = pos;
+  return pos;
+}
+function drawTree(raw) {
+  const root = merge(raw);
+  brackets(root, 0);
+  const LH = 14, PADX = 9, GAP = 14, leaves = [];
+  let maxDepth = 0, maxInner = 1, maxLeaf = 1;
+  (function measure(n, d) {
+    n.depth = d;
+    n.w = Math.max(...n.labels.map(l => l.length)) * CW + 2 * PADX;
+    if (n.word !== undefined) { leaves.push(n); maxLeaf = Math.max(maxLeaf, n.labels.length); n.w = Math.max(n.w, n.word.length * 9 + 12); }
+    else { maxDepth = Math.max(maxDepth, d); maxInner = Math.max(maxInner, n.labels.length); n.kids.forEach(k => measure(k, d + 1)); }
+  })(root, 0);
+  let x = 6;
+  leaves.forEach(l => { l.x = x + l.w / 2; x += l.w + GAP; });
+  const width = x - GAP + 6;
+  (function place(n) { if (n.word === undefined) { n.kids.forEach(place); n.x = (n.kids[0].x + n.kids[n.kids.length - 1].x) / 2; } })(root);
+  const rowH = maxInner * LH + 12 + 26;
+  const leafY = (maxDepth + 1) * rowH + 6, leafH = maxLeaf * LH + 12;
+  const wordY = leafY + leafH + 30, height = wordY + 24;
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('width', width); svg.setAttribute('height', height);
+  svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Derivation tree');
+  let edges = '', boxes = '';
+  (function draw(n) {
+    const leaf = n.word !== undefined;
+    const h = n.labels.length * LH + 12;
+    n.y = leaf ? leafY + (leafH - h) : n.depth * rowH + 6;
+    boxes += `<rect class="node ${leaf ? 'leaf' : 'phr'}" x="${n.x - n.w / 2}" y="${n.y}" width="${n.w}" height="${h}" rx="7"></rect>`;
+    n.labels.forEach((l, i) => {
+      const kind = !leaf ? 'rule' : (i === n.labels.length - 1 ? 'lextype' : (/lr$/.test(l) ? 'lexrule' : 'rule'));
+      boxes += `<text class="${kind}" x="${n.x}" y="${n.y + 16 + i * LH}" text-anchor="middle">${esc(l)}</text>`;
+    });
+    if (leaf) {
+      edges += `<path class="stem" d="M${n.x} ${n.y + h} V${wordY - 18}"></path>`;
+      boxes += `<text class="word" x="${n.x}" y="${wordY}" text-anchor="middle">${esc(n.word)}</text>`;
+      boxes += `<text class="idx" x="${n.x}" y="${wordY + 14}" text-anchor="middle">${n.start + 1}</text>`;
+    } else n.kids.forEach(k => {
+      draw(k);
+      const y1 = n.y + h, y2 = k.y, ym = y1 + Math.min(22, (y2 - y1) / 2);
+      edges += `<path class="edge" d="M${n.x} ${y1} C${n.x} ${ym} ${k.x} ${y1 + 4} ${k.x} ${Math.min(y2, y1 + 30)} V${y2}"></path>`;
+    });
+  })(root);
+  svg.innerHTML = edges + boxes;
+  const frame = el('div', 'scroll pad'); frame.appendChild(svg);
+  return frame;
+}
+function drawDmrs(d, other) {
+  const key = (g, l) => g.nodes[l[0]][0] + '>' + g.nodes[l[1]][0] + ':' + l[2] + '/' + l[3];
+  const otherKeys = other ? new Set(other.links.map(l => key(other, l))) : null;
+  const otherPreds = other ? new Set(other.nodes.map(n => n[0] + '|' + (n[1] || ''))) : null;
+  const names = d.nodes.map(n => n[0] + (n[1] ? `("${n[1]}")` : ''));
+  const ws = names.map(s => s.length * 7 + 18), xs = [];
+  let x = 8;
+  ws.forEach(w => { xs.push(x + w / 2); x += w + 16; });
+  const width = x - 8;
+  const links = d.links.map(l => ({ a: l[0], b: l[1], role: l[2] + '/' + l[3], h: l[3] === 'H' || l[3] === 'HEQ', span: Math.abs(l[0] - l[1]), diff: otherKeys && !otherKeys.has(key(d, l)) }));
+  links.sort((p, q) => p.span - q.span);
+  const maxSpan = Math.max(1, ...links.map(l => l.span));
+  const boxY = 32 + maxSpan * 22, height = boxY + 44;
+  let out = '';
+  links.forEach((l, i) => {
+    const off = (i % 3 - 1) * 5;
+    const x1 = xs[l.a] + off, x2 = xs[l.b] - off, y = boxY, peak = y - 14 - l.span * 22;
+    const cls = (l.h ? ' h' : '') + (l.diff ? ' diff' : '');
+    out += `<path class="arc${cls}" d="M${x1} ${y} C${x1} ${peak} ${x2} ${peak} ${x2} ${y - 5}"></path>`;
+    out += `<path class="head${cls}" d="M${x2 - 4} ${y - 7} L${x2 + 4} ${y - 7} L${x2} ${y} Z"></path>`;
+    out += `<text class="role" x="${(x1 + x2) / 2}" y="${y - 14 - l.span * 22 * 0.75 - 3}" text-anchor="middle">${esc(l.role)}</text>`;
+  });
+  names.forEach((s, i) => {
+    const diff = otherPreds && !otherPreds.has(d.nodes[i][0] + '|' + (d.nodes[i][1] || ''));
+    out += `<rect class="pred${i === d.top ? ' top' : ''}${diff ? ' diff' : ''}" x="${xs[i] - ws[i] / 2}" y="${boxY}" width="${ws[i]}" height="24" rx="12"></rect>`;
+    out += `<text class="pred" x="${xs[i]}" y="${boxY + 16}" text-anchor="middle">${esc(s)}</text>`;
+    if (i === d.top) out += `<text class="role" x="${xs[i]}" y="${boxY + 38}" text-anchor="middle">TOP</text>`;
+  });
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('width', width); svg.setAttribute('height', height);
+  svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'DMRS graph');
+  svg.innerHTML = out;
+  const frame = el('div', 'scroll pad'); frame.appendChild(svg);
+  return frame;
+}
+
+function toRaw(n) {
+  if (n.children) return { l: n.label, c: n.children.map(toRaw) };
+  return { l: n.type || n.entry, w: n.forms.join(' ') };
+}
+const ms = s => s < 0.01 ? (s * 1000).toFixed(1) : Math.round(s * 1000).toLocaleString('en-US');
+const STEPS = [['tokens', 'Tokens (grammar preprocessing, in ACE)'], ['tag', 'Tagger'], ['repair', 'Replay and repair'], ['rank', 'Ranking'], ['mrs', 'Meaning (MRS)']];
+
+function show(r) {
+  const status = $('status');
+  status.classList.remove('hidden');
+  $('results').classList.remove('hidden');
+  const total = Object.values(r.seconds).reduce((a, b) => a + b, 0);
+  if (r.mrs) {
+    status.className = 'verdict ok';
+    status.innerHTML = `<b>Analyzed.</b> ${r.outcome === 'accepted at first try' ? 'The tagger’s first derivation was accepted by the grammar' : 'The grammar rejected the tagger’s first derivation; repair found one it accepts'}, in ${ms(total)} ms.`;
+  } else {
+    status.className = 'verdict bad';
+    status.innerHTML = `<b>No analysis.</b> No derivation the grammar accepts was found within ${r.replays ?? 0} replays (${esc(r.outcome || '')}).`;
+  }
+  $('dmrs').replaceChildren(r.dmrs ? drawDmrs(r.dmrs, r.ace && r.ace.dmrs) : el('p', 'small', 'No analysis.'));
+  $('dmrs-caption').textContent = 'The meaning as a DMRS graph: predicates and the links between them (dashed links are scope).' + (r.ace && r.ace.dmrs ? ' Orange marks what ACE’s analysis does not have.' : '');
+  $('mrs').textContent = r.mrs || '';
+  $('tree').replaceChildren(r.derivation ? drawTree(toRaw(r.derivation)) : el('p', 'small', 'No derivation.'));
+
+  let t = '<tr><th>Step</th><th class="n">ms</th></tr>';
+  STEPS.forEach(([k, name]) => { if (k in r.seconds) t += `<tr><td>${name}</td><td class="n">${ms(r.seconds[k])}</td></tr>`; });
+  t += `<tr class="total"><td>Orca, total</td><td class="n">${ms(total)}</td></tr>`;
+  if (r.ace) t += `<tr><td>ACE, for comparison</td><td class="n">${ms(r.ace.seconds)}</td></tr>`;
+  $('time').innerHTML = t;
+  $('time-note').textContent = 'One sentence at a time on this machine (tagger on the GPU if there is one, everything else on one CPU core). The first parse after starting the server is slower.';
+
+  let h = '<tr><th>Measure</th><th class="n">Value</th></tr>';
+  h += `<tr><td>Words (tokens)</td><td class="n">${r.tokens.length}</td></tr>`;
+  h += `<tr><td>Derivations replayed</td><td class="n">${r.replays ?? 0}</td></tr>`;
+  h += `<tr><td>Derivations accepted by the grammar</td><td class="n">${r['accepted derivations'] ?? 0}</td></tr>`;
+  if (r.chosen) h += `<tr><td>Rank of the chosen one, in order found</td><td class="n">${r.chosen['rank among accepted'] + 1}</td></tr>`;
+  $('how').innerHTML = h;
+  $('forms').replaceChildren(...r.tokens.map(tk => el('span', tk.alternatives > 1 ? 'alt' : '', esc(tk.form))));
+
+  const ap = $('ace-panel');
+  if (r.ace) {
+    ap.classList.remove('hidden');
+    const v = $('ace-verdict');
+    if (!r.ace.mrs) { v.className = 'verdict chg'; v.innerHTML = `<b>ACE found no analysis</b>${r.ace.error ? ' (' + esc(r.ace.error) + ')' : ''}.`; }
+    else if (r.ace['same as orca']) { v.className = 'verdict ok'; v.innerHTML = '<b>Same meaning.</b> ACE’s first-ranked analysis has the same MRS as Orca’s.'; }
+    else if (!r.mrs) { v.className = 'verdict chg'; v.innerHTML = '<b>Only ACE found an analysis.</b>'; }
+    else { v.className = 'verdict chg'; v.innerHTML = '<b>Different meaning.</b> ACE’s first-ranked analysis differs from Orca’s; orange marks what Orca’s analysis does not have.'; }
+    $('ace-dmrs').replaceChildren(r.ace.dmrs ? drawDmrs(r.ace.dmrs, r.dmrs) : el('span'));
+    $('ace-mrs').textContent = r.ace.mrs || '';
+  } else ap.classList.add('hidden');
+}
+
+async function run() {
+  const sentence = $('input').value.trim();
+  if (!sentence) return;
+  const btn = $('go');
+  btn.disabled = true; btn.textContent = 'Parsing…';
+  try {
+    const res = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sentence, ace: $('ace').checked }) });
+    const r = await res.json();
+    if (r.error) throw new Error(r.error);
+    show(r);
+  } catch (e) {
+    const s = $('status');
+    s.className = 'verdict bad'; s.classList.remove('hidden');
+    s.innerHTML = `<b>Error.</b> ${esc(e.message)}`;
+  } finally { btn.disabled = false; btn.textContent = 'Parse'; }
+}
+
+$('go').addEventListener('click', run);
+$('input').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); } });
+$('examples').replaceChildren(...EXAMPLES.map(s => { const b = el('button', 'chip', esc(s)); b.type = 'button'; b.addEventListener('click', () => { $('input').value = s; run(); }); return b; }));
+fetch('/api/info').then(r => r.json()).then(i => { $('about').textContent = 'Tagger: ' + i.tagger + '. ' + (i.note || ''); }).catch(() => {});
+</script>
+</body>
+</html>

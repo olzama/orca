@@ -215,6 +215,8 @@ class FastGrammar:
                         raise KeyError(name)
                     fs = self._check(C.expand(C.new_node(self.tid(name))))
                 n = len(tree.forms)
+                if any(isinstance(t, tuple) for t in tokens[:n]):
+                    return self._leaf_alternatives(tree, tokens[:n], where), tokens[n:]
                 mine, tokens = [self.token(t) for t in tokens[:n]], tokens[n:]
                 if mine:
                     lst = C.new_node(self.NULL)
@@ -266,6 +268,43 @@ class FastGrammar:
             raise ReplayFailure(f'{where} {name}', e) from None
         except (KeyError, ValueError) as e:
             raise ReplayFailure(f'{where} {name}', f'missing {e}') from None
+
+    def _leaf_alternatives(self, tree, mine, where):
+        """A leaf over token positions that each hold alternative tokens (a
+        token lattice for raw text): the first combination, in the order
+        given, that unifies with the lexical entry."""
+        import itertools
+        F = self.F
+        name = tree.entry.lower()
+        last = None
+        choices = [t if isinstance(t, tuple) else (t,) for t in mine]
+        for alts in choices:              # build masters outside any undo mark, or undo would unbuild them
+            for t in alts:
+                if t not in self._tokens:
+                    self._tokens[t] = self._build_token(t)
+        for combo in itertools.product(*choices):
+            mark = C.mark()
+            try:
+                if name.startswith('entry:'):
+                    fs = self.instance(name[6:])
+                else:
+                    if name not in self.h.code or not name.endswith('_le'):
+                        raise KeyError(name)
+                    fs = self._check(C.expand(C.new_node(self.tid(name))))
+                toks = [self.token(t) for t in combo]
+                lst = C.new_node(self.NULL)
+                for tok in reversed(toks):
+                    cell = C.new_node(self.CONS, True)
+                    C.set_arc(cell, F['FIRST'], tok)
+                    C.set_arc(cell, F['REST'], lst)
+                    lst = cell
+                self._check(C.unify(self._check(C.get(fs, self.TL)), lst, self.TL))
+                self._check(C.unify(self._check(C.get(fs, self.TLAST)), toks[-1], self.TLAST))
+                return fs
+            except UnificationFailure as e:
+                C.undo(mark)
+                last = e
+        raise last
 
 
 def extract(fg, fs):

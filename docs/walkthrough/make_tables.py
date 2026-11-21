@@ -5,6 +5,7 @@ timings recorded in analysis/replay/*.json and data/ace/*.jsonl (copied below).
 Usage: make_tables.py PAGE.html [PAGE.html ...]   (rewrites the pages in place)
 """
 import json
+import os
 import sys
 
 ORCA = '/mnt/kesha/orca'
@@ -172,7 +173,8 @@ CSS = '.results th.g { text-align: center; border-bottom: 0; color: var(--fg); }
 def rebuild(s):
     start = s.index('    <div class="scroll">\n      <table class="results">\n        <thead>', s.index('How good is it right now?'))
     end = s.index('  <section class="stack">\n    <h2>Tested:')
-    s = s[:start] + accuracy() + '\n' + training_data() + side_by_side() + s[end:]
+    raw = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rawtext-section.html')).read()
+    s = s[:start] + accuracy() + '\n' + training_data() + raw + side_by_side() + s[end:]
     if '<!-- fallback -->' in s:
         s = s[:s.index('<!-- fallback -->')] + s[s.index('<!-- /fallback -->\n') + len('<!-- /fallback -->\n'):]
     i = s.index('  <section class="stack">\n    <h2>The steps</h2>')

@@ -207,6 +207,45 @@ code { font-family: var(--mono); font-size: 0.88em; }
   </section>
 
   <section class="stack">
+    <h2>From raw text</h2>
+    <p>All the figures above start from the treebank's own tokens: the words after the grammar's preprocessing (tokenization, part-of-speech tags, and the grammar's token mapping rules), as stored with each gold analysis. For new text these tokens have to be made. ACE runs the grammar's preprocessing and stops before parsing, and prints its token chart; Orca reads the chart and keeps, for each word, every token the grammar proposes (a known word, a name, an unknown word), and replay picks the one the lexical entry accepts. This takes no parsing. As a check, the gold derivations of the development sentences were replayed over the tokens made from raw text.</p>
+    <div class="scroll">
+      <table class="results">
+        <thead><tr><th>Check on 2,062 development sentences</th><th class="n hl">Sentences</th></tr></thead>
+        <tbody>
+          <tr><td>Gold derivation replays over the raw-text tokens</td><td class="n hl">2,056</td></tr>
+          <tr><td>… and gives the gold MRS</td><td class="n hl">2,056</td></tr>
+          <tr><td>Word forms the same as the treebank's</td><td class="n hl">1,838</td></tr>
+          <tr><td>Word forms the same, ignoring capitalization</td><td class="n hl">2,003</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="scroll">
+      <table class="results">
+        <thead><tr><th>Full pipeline, best tagger</th><th class="n hl">Exact meaning</th><th class="n">Any analysis</th><th class="n">Exact meaning where forms match the treebank (1,838)</th><th class="n">Exact meaning where they differ (224)</th></tr></thead>
+        <tbody>
+          <tr><td>From the treebank's tokens</td><td class="n hl">73.3% <span class="cnt">(1,511)</span></td><td class="n">88.7% <span class="cnt">(1,828)</span></td><td class="n">1,384</td><td class="n">127</td></tr>
+          <tr><td>From raw text</td><td class="n hl">68.2% <span class="cnt">(1,406)</span></td><td class="n">88.9% <span class="cnt">(1,833)</span></td><td class="n">1,376</td><td class="n">30</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="scroll">
+      <table class="results">
+        <thead><tr><th>From raw text, one sentence at a time</th><th class="n hl">ms per sentence</th></tr></thead>
+        <tbody>
+          <tr><td>Tokens (the grammar's preprocessing, in ACE)</td><td class="n">43.6</td></tr>
+          <tr><td>Tagger (GPU)</td><td class="n">9.2</td></tr>
+          <tr><td>Replay and repair, up to 30 accepted (one core)</td><td class="n">61.6</td></tr>
+          <tr><td>Ranking</td><td class="n">1.4</td></tr>
+          <tr><td>Meaning (MRS)</td><td class="n">2.8</td></tr>
+          <tr><td><b>All, measured end to end</b> (8.3 sentences per second)</td><td class="n hl">120.0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">The tokens made from raw text are as good as the treebank's for the grammar: the gold analyses replay over them with the same meaning. What changes is what the tagger sees. In the treebank, a word analyzed as a name keeps its capital letters and other words are lower-cased, so the form depends on the analysis. From raw text the analysis is not known yet; a word keeps its capitals when the grammar proposes a name reading and the lexicon does not have the word. Where this gives the treebank's forms, raw text does as well as the treebank's tokens. Nearly all of the loss is in the sentences where it does not, mostly words the lexicon has but the treebank analyzes as names ("Palm", "East", "Church"). Retraining the tagger on forms that do not depend on the analysis should remove most of this gap. The preprocessing step is a separate ACE process per sentence, about a third of the time; run in the same process it would cost much less. This is the pipeline behind the interactive demo (scripts/demo_server.py).</p>
+  </section>
+
+  <section class="stack">
     <h2>Orca and the ACE chart parser, side by side</h2>
     <p>ACE is the parser the treebank was built with. It searches a chart of all possible analyses and then ranks them with a statistical model. Orca proposes one derivation per sentence with the tagger and lets the grammar check it, so it never builds the chart.</p>
     <h3>By sentence length</h3>

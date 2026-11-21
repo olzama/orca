@@ -1,0 +1,263 @@
+#!/usr/bin/env python3
+"""Parse raw sentences with the full Orca pipeline, one sentence at a time.
+
+Steps, each timed:
+  1. tokens:  the grammar's own preprocessing (REPP, POS tags, token
+              mapping), from ACE without parsing (orca.tokens)
+  2. tag:     the tagger's k best labels per token
+  3. repair:  best-first replay over the labels until up to --kbest
+              derivations are accepted (scripts/repair.py)
+  4. rank:    the ERG's MaxEnt model picks one of them (scripts/rerank.py)
+  5. MRS:     the chosen derivation is replayed and its MRS read off
+
+Usage:
+    orca_parse.py [--tagger MODEL_DIR] "Sentence one." ["Sentence two." ...]
+    orca_parse.py --eval SPLIT_DIR --gold DATA/dev.jsonl --out FILE.json   (raw-text run on a split)
+"""
+import argparse
+import json
+import math
+import os
+import sys
+import time
+from types import SimpleNamespace
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.join(HERE, '..')
+sys.path.insert(0, HERE)
+sys.path.insert(0, ROOT)
+sys.setrecursionlimit(20000)
+
+DEFAULTS = {
+    'grammar': os.path.join(ROOT, 'data/erg/2025/english.tdl'),
+    'tagger': os.path.join(ROOT, 'data/models/tagger-2025bothall-bert'),
+    'ace': '/home/olga/delphin/tools/ACE/ace-0.9.34/ace',
+    'dat': os.path.join(ROOT, 'data/ace/erg-2025.dat'),
+}
+
+
+def dmrs_json(m):
+    """The DMRS of an MRS in the form the walkthrough's drawing code takes:
+    nodes [pred, carg], links [from, to, role, post], top (node index)."""
+    from delphin import dmrs
+    d = dmrs.from_mrs(m)
+    idx = {n.id: i for i, n in enumerate(d.nodes)}
+    return {'nodes': [[n.predicate, n.carg] for n in d.nodes],
+            'links': [[idx[l.start], idx[l.end], l.role, l.post] for l in d.links if l.start in idx and l.end in idx],
+            'top': idx.get(d.top)}
+
+
+class Parser:
+    def __init__(self, grammar=DEFAULTS['grammar'], tagger=DEFAULTS['tagger'], ace=DEFAULTS['ace'],
+                 dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.005, device=None):
+        import torch
+        from transformers import AutoTokenizer
+        import repair
+        from orca.maxent import MaxEnt
+        from orca.tfs.fast import FastGrammar
+        from orca.tfs.grammar import Grammar
+        from orca.tfs.lexicon import Lexicon
+        from orca.tokens import known_words
+        from train_tagger import Tagger
+        self.torch, self.repair = torch, repair
+        self.ace, self.dat, self.k = ace, dat, k
+        self.args = SimpleNamespace(cache=True, kbest=kbest, budget=budget, fanout=fanout, min_prob=min_prob)
+        self.device = torch.device(device or ('cuda' if torch.cuda.is_available() else 'cpu'))
+        labels = json.load(open(os.path.join(tagger, 'labels.json')))
+        self.itos = {'leaf': labels['leaf'], 'tree': labels['tree']}
+        self.stoi = {k: {l: i for i, l in enumerate(v)} for k, v in self.itos.items()}
+        self.tok = AutoTokenizer.from_pretrained(labels['encoder'])
+        self.model = Tagger(labels['encoder'], len(self.itos['leaf']), len(self.itos['tree'])).to(self.device)
+        self.model.load_state_dict(torch.load(os.path.join(tagger, 'model.pt'), map_location=self.device), strict=False)
+        self.model.eval()
+        gdir = os.path.dirname(grammar)
+        g = Grammar(grammar)
+        self.lx = Lexicon(g, gdir)
+        self.known = known_words(self.lx)
+        self.me = MaxEnt(os.path.join(gdir, 'redwoods.mem'))
+        self.generic = lambda e: g.status.get(e) == 'generic-lex-entry'
+        self.fg = FastGrammar(g)
+        for name, status in g.status.items():           # rule templates, built once
+            if status in ('rule', 'lex-rule'):
+                self.fg.instance(name)
+        self.tagger_name = os.path.basename(os.path.normpath(tagger))
+
+    def tag(self, forms):
+        from train_tagger import UNK, collate
+        torch, n = self.torch, len(forms)
+        s = {'forms': forms, 'leaf': [UNK] * n, 'tree': [UNK] * n}
+        with torch.no_grad():
+            ids, mask, first, _, _, kept = collate([s], self.tok, self.stoi['leaf'], self.stoi['tree'], self.device)
+            with torch.autocast('cuda', dtype=torch.float16, enabled=self.device.type == 'cuda'):
+                logits = dict(zip(('leaf', 'tree'), self.model(ids, mask, first)))
+        top = {}
+        for kind in ('leaf', 'tree'):
+            p = logits[kind].float().softmax(-1).topk(self.k, -1)
+            top[kind] = [[(self.itos[kind][i], math.log(max(q, 1e-12)), q) for q, i in zip(ps, idx)]
+                         for ps, idx in zip(p.values.tolist(), p.indices.tolist())]
+            top[kind] += [[(UNK, 0.0, 1.0)]] * (n - kept[0])
+        return top
+
+    def parse(self, text, sid='input'):
+        from compare_mrs import to_pydelphin
+        from delphin.codecs import simplemrs
+        from eval_trees import to_leaves
+        from orca.encoding import decode
+        from orca.tfs.fast import extract
+        from orca.tokens import lattice_path, token_chart
+        from rerank import with_entries
+        out, t = {'input': text, 'tagger': self.tagger_name, 'seconds': {}}, time.perf_counter()
+
+        def lap(name):
+            nonlocal t
+            now = time.perf_counter()
+            out['seconds'][name] = now - t
+            t = now
+
+        path = lattice_path(token_chart(text, self.ace, self.dat), self.known)
+        lap('tokens')
+        forms = [p[0] for p in path]
+        out['tokens'] = [{'form': f, 'from': span[0], 'to': span[1], 'alternatives': len(alts)}
+                         for f, alts, span in path]
+        if not forms:
+            out['outcome'] = 'no tokens'
+            return out
+        top = self.tag(forms)
+        lap('tag')
+        out['first guess'] = {'leaf': [top['leaf'][j][0][0] for j in range(len(forms))],
+                              'tree': [top['tree'][j][0][0] for j in range(len(forms))]}
+        r = self.repair
+        s = {'id': sid, 'forms': forms, 'leaf': [None] * len(forms), 'tree': [None] * len(forms)}
+        r._WORK = (self.fg, [s], [top], {sid: [p[1] for p in path]}, self.args, self.lx)
+        r.GOLD_MRS.clear()
+        outcome, leaf, tree, n_replays, _, _, kbest = r.search(0)
+        lap('repair')
+        out['outcome'] = outcome.replace(', wrong', '').replace(', right', '')
+        out['replays'] = n_replays
+        out['accepted derivations'] = len(kbest)
+        if not kbest:
+            return out
+        scored = []
+        for c in kbest:
+            tr = with_entries(decode(to_leaves(forms, c['leaf'], c['tree'])), c['entries'])
+            scored.append((self.me.score(tr, self.lx.type_of.get, self.generic), tr, c))
+        best = max(range(len(scored)), key=lambda i: scored[i][0])
+        score, tr, c = scored[best]
+        out['chosen'] = {'rank among accepted': best, 'maxent score': score, 'tagger cost': c['cost']}
+        lap('rank')
+        self.fg.reset()
+        fs, _ = self.fg.replay_tree(tr, [p[1] for p in path])
+        m = to_pydelphin(extract(self.fg, fs))
+        lap('mrs')
+        out['mrs'] = simplemrs.encode(m, indent=True)
+        out['eps'] = [{'pred': ep.predicate, 'label': ep.label,
+                       'args': {k: v for k, v in ep.args.items()}, 'carg': ep.carg} for ep in m.rels]
+        out['hcons'] = [[h.hi, h.relation, h.lo] for h in m.hcons]
+        out['top'], out['index'] = m.top, m.index
+        out['derivation'] = self.tree_json(tr)
+        try:
+            out['dmrs'] = dmrs_json(m)
+        except Exception:
+            out['dmrs'] = None
+        out['_mrs_obj'] = m
+        return out
+
+    def tree_json(self, t):
+        from orca.encoding import Leaf
+        if isinstance(t, Leaf):
+            entry = t.entry[6:] if t.entry.startswith('entry:') else t.entry
+            return {'entry': entry, 'type': self.lx.type_of.get(entry, ''), 'forms': list(t.forms)}
+        return {'label': t.label, 'children': [self.tree_json(c) for c in t.children]}
+
+
+def ace_parse(text, ace=DEFAULTS['ace'], dat=DEFAULTS['dat'], timeout=30):
+    """ACE's first-ranked analysis, for comparison."""
+    from delphin import ace as A
+    from delphin.codecs import simplemrs
+    t = time.perf_counter()
+    try:
+        resp = A.parse(dat, text, executable=ace, cmdargs=['-1', f'--timeout={timeout}'], stderr=open(os.devnull, 'w'))
+        res = resp.results()
+        secs = time.perf_counter() - t
+        if not res:
+            return {'seconds': secs, 'mrs': None}
+        m = simplemrs.decode(res[0]['mrs'])
+        try:
+            d = dmrs_json(m)
+        except Exception:
+            d = None
+        return {'seconds': secs, 'mrs': simplemrs.encode(m, indent=True), 'dmrs': d, '_mrs_obj': m}
+    except Exception as e:
+        return {'seconds': time.perf_counter() - t, 'mrs': None, 'error': str(e)[:200]}
+
+
+def evaluate(parser, split_dir, gold_path, out_path, limit=None):
+    """Raw-text run over a split, scored by exact MRS against the treebank."""
+    import collections
+    import glob
+    from delphin import mrs as M, tsdb
+    from delphin.codecs import simplemrs
+    from check_raw_tokens import raw_inputs
+    from compare_mrs import normalized
+    from llm_label import read
+    raw = raw_inputs(split_dir)
+    gold = {}
+    for prof in sorted(glob.glob(os.path.join(split_dir, '*'))):
+        if not os.path.exists(os.path.join(prof, 'relations')):
+            continue
+        names = [f.name for f in tsdb.read_schema(prof)['result']]
+        with tsdb.open(prof, 'result') as rows:
+            for line in rows:
+                rec = tsdb.split(line)
+                if rec[names.index('derivation')]:
+                    gold[f"{os.path.basename(prof)}/{rec[names.index('parse-id')]}"] = rec[names.index('mrs')]
+    sents = read(gold_path)[:limit]
+    parser.parse('The dog barked.')                     # warm up GPU and caches
+    c, secs = collections.Counter(), collections.Counter()
+    recs = []
+    t0 = time.perf_counter()
+    for s in sents:
+        r = parser.parse(raw[s['id']], s['id'])
+        m = r.pop('_mrs_obj', None)
+        same = False
+        if m is not None:
+            try:
+                same = bool(M.is_isomorphic(normalized(m), normalized(simplemrs.decode(gold[s['id']])), properties=False))
+            except Exception:
+                same = False
+        c['sentences'] += 1
+        c['with MRS'] += m is not None
+        c['same MRS'] += same
+        c['same forms as treebank'] += [t['form'] for t in r['tokens']] == [f.replace('\\/', '/') for f in s['forms']]
+        for k, v in r['seconds'].items():
+            secs[k] += v
+        recs.append({'id': s['id'], 'outcome': r.get('outcome'), 'same MRS': same, 'replays': r.get('replays')})
+    wall = time.perf_counter() - t0
+    res = {'tagger': parser.tagger_name, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
+           'sentences per second': c['sentences'] / wall, 'records': recs}
+    with open(out_path, 'w') as f:
+        json.dump(res, f, indent=1)
+    print(json.dumps({k: v for k, v in res.items() if k != 'records'}, indent=1))
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('sentences', nargs='*')
+    ap.add_argument('--tagger', default=DEFAULTS['tagger'])
+    ap.add_argument('--eval')
+    ap.add_argument('--gold')
+    ap.add_argument('--out')
+    ap.add_argument('--limit', type=int)
+    args = ap.parse_args()
+    p = Parser(tagger=args.tagger)
+    if args.eval:
+        evaluate(p, args.eval, args.gold, args.out, args.limit)
+        return
+    for text in args.sentences:
+        r = p.parse(text)
+        r.pop('_mrs_obj', None)
+        print(json.dumps(r, indent=1, ensure_ascii=False))
+
+
+if __name__ == '__main__':
+    main()
