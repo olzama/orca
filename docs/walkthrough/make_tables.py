@@ -127,22 +127,28 @@ def side_by_side():
 
 
 def training_data():
-    reps = {'best': 246.0, 'lithuman_best': 211.7, 'lit_best': 188.8}    # analysis/replay/dev-*-strict-k30-b600.json
-    sizes = {'best': 86278, 'lithuman_best': 107652, 'lit_best': 189281}
-    names = {'best': 'Redwoods treebank only (current tagger)',
-             'lithuman_best': 'plus literary corpus: human excerpts',
-             'lit_best': 'plus literary corpus: human and LLM-written excerpts'}
+    runs = [  # system key in T, replay file tag, training sentences, name
+        ('best', '2025b', 86278, 'Redwoods treebank only (current tagger)'),
+        ('lithuman_best', '2025lithuman', 107652, 'plus literary corpus, human excerpts'),
+        ('lit_best', '2025lit', 189281, 'plus literary corpus, human and LLM-written excerpts'),
+        ('nythuman_best', '2025nythuman', 128468, 'plus news (NYT 2023 and 2025), human text'),
+        ('nytall_best', '2025nytall', 487718, 'plus news, human text and 11 LLM-written sets'),
+    ]
     rows = []
-    for k in ('best', 'lithuman_best', 'lit_best'):
+    for k, tag, size, name in runs:
+        if k not in T:
+            continue
+        rps = json.load(open(f'{ORCA}/analysis/replay/dev-{tag}-strict-k30-b600.json'))['replays_per_sentence']
+        names, sizes, reps = {k: name}, {k: size}, {k: rps}
         a = T[k]['all']
         rows.append(f'<tr><td>{names[k]}</td>' + td(f'{sizes[k]:,}') + td(pct(a['same MRS'], N), True) + td(pct(a['with MRS'], N))
                     + td(p1(a['preds']['f1'])) + td(p1(a['links']['f1'])) + td(pct(a['same tree'], N)) + td(f'{reps[k]:.0f}') + '</tr>')
     t = table([('Tagger trained on', ''), ('Training sentences', 'n'), ('Exact meaning', 'n hl'), ('Any analysis', 'n'),
                ('Predicates right (F1)', 'n'), ('Links right (F1)', 'n'), ('Exact tree', 'n'), ('Replays per sentence in repair', 'n')], rows)
-    return ('  <section class="stack">\n    <h2>More training data: grammar parses of literary text</h2>\n'
-            '    <p>The treebank is small. A literary corpus (excerpts from novels of 1838 to 1921, and four sets of LLM-written excerpts matched to them) had already been parsed with the same grammar by ACE, keeping its first-ranked analysis. These analyses are not checked by an annotator, but every one replays in Orca\'s engine to the same meaning, so they are analyses the grammar licenses. Thirty excerpts are kept out of training in all five sets, for later tests on this corpus. The tagger is retrained with the same settings, and the full pipeline (repair, ranking) is measured on the same 2,062 development sentences.</p>\n'
+    return ('  <section class="stack">\n    <h2>More training data: grammar parses of other text</h2>\n'
+            '    <p>The treebank is small. Two corpora had already been parsed with the grammar by ACE, keeping its first-ranked analysis, for studies comparing human and LLM-written text: a literary corpus (excerpts from novels of 1838 to 1921, and four sets of LLM-written excerpts matched to them) and a news corpus (New York Times articles from 2023 and 2025, and eleven sets of LLM-written continuations). These analyses are not checked by an annotator. Each is replayed in Orca\'s engine, and only those that replay are used, so every one is an analysis the grammar licenses: all of the literary corpus, and 99.2% of the news corpus, which was parsed with a slightly different version of the grammar. Part of each corpus is kept out of training (30 excerpts in all five literary sets; the last tenth of each news set) for later tests on these corpora. The tagger is retrained with the same settings, and the full pipeline is measured on the same 2,062 development sentences.</p>\n'
             + t +
-            '    <p class="caption">"Repaired and ranked" in every row. Both additions help on every measure, and the tagger needs fewer replays to find an accepted derivation. Adding the LLM-written excerpts to the human ones adds analyses but not exact meanings. Each row is one training run; how much a rerun with another random seed would differ has not been measured, so differences of a few dozen sentences between the last two rows may be chance. The pipeline rows elsewhere on this page still use the treebank-only tagger.</p>\n'
+            '    <p class="caption">"Repaired and ranked" in every row. Every addition helps on every measure, and the tagger needs fewer replays to find an accepted derivation. In the literary corpus, adding the LLM-written excerpts to the human ones adds analyses but not exact meanings; the same comparison for news is still training. Each row is one training run; how much a rerun with another random seed would differ has not been measured, so differences of a few dozen sentences between the added-data rows may be chance. The pipeline rows elsewhere on this page still use the treebank-only tagger.</p>\n'
             '  </section>\n\n')
 
 
