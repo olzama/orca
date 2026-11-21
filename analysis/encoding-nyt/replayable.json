@@ -1,0 +1,119 @@
+{
+ "GPT4o-2025-llm": {
+  "failed": {
+   "ReplayFailure": 423
+  },
+  "held out": 4939,
+  "replayed": 49385,
+  "sentences": 49808,
+  "train": 44446
+ },
+ "Llama13B-2023-llm": {
+  "failed": {
+   "ReplayFailure": 189
+  },
+  "held out": 3651,
+  "replayed": 36503,
+  "sentences": 36692,
+  "train": 32852
+ },
+ "Llama30B-2023-llm": {
+  "failed": {
+   "ReplayFailure": 213
+  },
+  "held out": 3619,
+  "replayed": 36181,
+  "sentences": 36394,
+  "train": 32562
+ },
+ "Llama65B-2023-llm": {
+  "failed": {
+   "ReplayFailure": 216
+  },
+  "held out": 3654,
+  "replayed": 36537,
+  "sentences": 36753,
+  "train": 32883
+ },
+ "Llama70B-2025-llm": {
+  "failed": {
+   "ReplayFailure": 454
+  },
+  "held out": 3805,
+  "replayed": 38044,
+  "sentences": 38498,
+  "train": 34239
+ },
+ "Llama7B-2023-llm": {
+  "failed": {
+   "ReplayFailure": 228
+  },
+  "held out": 3625,
+  "replayed": 36241,
+  "sentences": 36469,
+  "train": 32616
+ },
+ "Mistral7B-2023-llm": {
+  "failed": {
+   "ReplayFailure": 210
+  },
+  "held out": 3392,
+  "replayed": 33916,
+  "sentences": 34126,
+  "train": 30524
+ },
+ "Mistral7B_i-2025-llm": {
+  "failed": {
+   "ReplayFailure": 354
+  },
+  "held out": 3868,
+  "replayed": 38678,
+  "sentences": 39032,
+  "train": 34810
+ },
+ "NYT-2023-human": {
+  "failed": {
+   "ReplayFailure": 143
+  },
+  "held out": 2422,
+  "replayed": 24219,
+  "sentences": 24362,
+  "train": 21797
+ },
+ "NYT-2025-human": {
+  "failed": {
+   "ReplayFailure": 401
+  },
+  "held out": 2266,
+  "replayed": 22659,
+  "sentences": 23060,
+  "train": 20393
+ },
+ "Qwen14B-2025-llm": {
+  "failed": {
+   "ReplayFailure": 96
+  },
+  "held out": 2593,
+  "replayed": 25921,
+  "sentences": 26017,
+  "train": 23328
+ },
+ "Qwen32B-2025-llm": {
+  "failed": {
+   "ReplayFailure": 356
+  },
+  "held out": 3399,
+  "replayed": 33988,
+  "sentences": 34344,
+  "train": 30589
+ },
+ "Qwen72B-2025-llm": {
+  "failed": {
+   "ReplayFailure": 327
+  },
+  "held out": 3378,
+  "replayed": 33779,
+  "sentences": 34106,
+  "train": 30401
+ }
+}

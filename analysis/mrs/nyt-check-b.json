@@ -1,0 +1,137 @@
+{
+ "stats": {
+  "sentences": 2000,
+  "structure built": 1976,
+  "same MRS as gold": 1954,
+  "no structure": 24
+ },
+ "by_outcome": {
+  "gold derivation": {
+   "same MRS": 1954,
+   "different MRS": 22,
+   "no structure": 24
+  }
+ },
+ "examples_of_differences": [
+  {
+   "id": "GPT4o-2025-llm/48",
+   "only ours": [
+    "_about_p(ARG0,ARG1,ARG2)"
+   ],
+   "only gold": [
+    "_about_p_state(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    39,
+    39,
+    18,
+    18
+   ]
+  },
+  {
+   "id": "GPT4o-2025-llm/92",
+   "only ours": [
+    "_about_p(ARG0,ARG1,ARG2)"
+   ],
+   "only gold": [
+    "_about_p_state(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    47,
+    47,
+    17,
+    17
+   ]
+  },
+  {
+   "id": "GPT4o-2025-llm/163",
+   "only ours": [
+    "_about_p(ARG0,ARG1,ARG2)"
+   ],
+   "only gold": [
+    "_about_p_state(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    36,
+    36,
+    14,
+    14
+   ]
+  },
+  {
+   "id": "GPT4o-2025-llm/171",
+   "only ours": [
+    "_about_p(ARG0,ARG1,ARG2)"
+   ],
+   "only gold": [
+    "_about_p_state(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    30,
+    30,
+    12,
+    12
+   ]
+  },
+  {
+   "id": "GPT4o-2025-llm/183",
+   "only ours": [
+    "_about_p(ARG0,ARG1,ARG2)"
+   ],
+   "only gold": [
+    "_about_p_state(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    35,
+    35,
+    16,
+    16
+   ]
+  },
+  {
+   "id": "GPT4o-2025-llm/302",
+   "only ours": [
+    "_about_p(ARG0,ARG1,ARG2)"
+   ],
+   "only gold": [
+    "_about_p_state(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    24,
+    24,
+    12,
+    12
+   ]
+  },
+  {
+   "id": "GPT4o-2025-llm/603",
+   "only ours": [
+    "_about_p(ARG0,ARG1,ARG2)"
+   ],
+   "only gold": [
+    "_about_p_state(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    29,
+    29,
+    12,
+    12
+   ]
+  },
+  {
+   "id": "GPT4o-2025-llm/696",
+   "only ours": [
+    "_about_p(ARG0,ARG1,ARG2)"
+   ],
+   "only gold": [
+    "_about_p_state(ARG0,ARG1,ARG2)"
+   ],
+   "counts": [
+    48,
+    48,
+    19,
+    19
+   ]
+  }
+ ]
+}
