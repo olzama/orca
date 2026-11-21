@@ -280,6 +280,24 @@ def exp_llm():
     return fold('LLM repair', 'Accepted analyses for about half the leftovers; slow; used offline only.', body)
 
 
+def exp_llm_rank():
+    path = f'{ORCA}/analysis/llm-rank/pilot1/score.json'
+    if not os.path.exists(path):
+        return ''
+    r = json.load(open(path))
+    rows = []
+    for key, name in (('all', 'All'), ('margin under 1', 'MaxEnt margin under 1'), ('1 to 3', 'Margin 1 to 3'), ('3 and over', 'Margin 3 and over')):
+        c = r['by margin'][key]
+        rows.append(f'<tr><td>{name}</td>' + td(f"{c['sentences']:,}") + td(f"{c['readings'] / c['sentences']:.1f}")
+                    + td(pct(c['maxent right'], c['sentences']), True) + td(pct(c['llm right'], c['sentences']), True) + '</tr>')
+    t = table([('Dev sentences with 2+ readings, gold among them', ''), ('Sentences', 'n'), ('Readings shown', 'n'),
+               ('MaxEnt picks gold', 'n hl'), ('LLM picks gold', 'n hl')], rows)
+    body = t + cap(f'A random 300 of the 622 such sentences. Each reading is shown only by the DMRS predicates and links that not '
+                   f'every reading has; Claude Opus picks one ({r["calls"]} calls, ${r["cost_usd"]:.2f} API-equivalent). '
+                   'Many of its misses are the grammar\'s conventions (which predicate or rule the treebank uses), not misreadings.')
+    return fold('LLM choosing among readings', 'Below the grammar\'s ranking model at every margin.', body)
+
+
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
     body = steps + '    <div id="examples" class="stack" style="gap:28px"></div>\n'
@@ -325,7 +343,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_rawtext() + exp_ace() + exp_llm() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_rawtext() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)

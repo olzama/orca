@@ -1,0 +1,36 @@
+{
+ "by margin": {
+  "all": {
+   "sentences": 300,
+   "maxent right": 263,
+   "llm right": 224,
+   "gold shown": 300,
+   "readings": 898
+  },
+  "3 and over": {
+   "sentences": 46,
+   "maxent right": 45,
+   "llm right": 39,
+   "gold shown": 46,
+   "readings": 107
+  },
+  "1 to 3": {
+   "sentences": 157,
+   "maxent right": 146,
+   "llm right": 119,
+   "gold shown": 157,
+   "readings": 447
+  },
+  "margin under 1": {
+   "sentences": 97,
+   "maxent right": 72,
+   "llm right": 66,
+   "gold shown": 97,
+   "readings": 344
+  }
+ },
+ "answered": 300,
+ "items": 300,
+ "calls": 60,
+ "cost_usd": 1.6
+}
