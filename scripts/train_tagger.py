@@ -73,7 +73,7 @@ class Tagger(nn.Module):
                 target_modules=['q_proj', 'k_proj', 'v_proj', 'o_proj',
                                 'gate_proj', 'up_proj', 'down_proj']))
         else:
-            self.encoder = AutoModel.from_pretrained(encoder)
+            self.encoder = AutoModel.from_pretrained(encoder, torch_dtype=torch.float32)  # some checkpoints (deberta-v3) default to fp16
         h = self.encoder.config.hidden_size
         self.lstm = nn.LSTM(h, bilstm, batch_first=True, bidirectional=True) if bilstm else None
         out = 2 * bilstm if bilstm else h

@@ -318,6 +318,69 @@ def exp_llm_rank():
     return fold('LLM choosing among readings', 'Below the grammar\'s ranking model at every margin.', body)
 
 
+ENCODERS = (('bertbase', 'BERT-base (cased)', '110M'), ('robertalarge', 'RoBERTa-large', '355M'),
+            ('xlmrlarge', 'XLM-R large', '560M'), ('debertav3large', 'DeBERTa-v3 large', '435M'))
+
+
+def exp_encoders():
+    rows = []
+    for key, name, size in ENCODERS:
+        mp = f'{ORCA}/data/models/tagger-2025surf-{key}/metrics.json'
+        if not os.path.exists(mp):
+            continue
+        d = json.load(open(mp))['dev']
+        rp = f'{ORCA}/analysis/mrs/dev-2025surf-{key}-rawtext.json'
+        if os.path.exists(rp):
+            rc = json.load(open(rp))['counts']
+            raw = td(pct(rc['same MRS'], N), True) + td(pct(rc['with MRS'], N)) + td(f"{rc['gold MRS among accepted']:,}")
+        else:
+            raw = td('running') + td('') + td('')
+        rows.append(f'<tr><td>{name}</td>' + td(size) + td(p1(100 * d['leaf_acc'])) + td(p1(100 * d['tree_acc']))
+                    + td(p1(100 * d['exact_match'])) + raw + '</tr>')
+    if not rows:
+        return ''
+    t = table([('Encoder', ''), ('Parameters', 'n'), ('Leaf labels right (%)', 'n'), ('Tree labels right (%)', 'n'),
+               ('All labels of the sentence right (%)', 'n'), ('Exact meaning', 'n hl'), ('Any analysis', 'n'), ('Gold among accepted', 'n')],
+              rows, group=[('', 2), ('Tagging, dev', 3), ('Full pipeline from raw text, dev', 3)])
+    body = t + cap('Same recipe for every encoder: Redwoods treebank only (86,278 sentences), forms as typed, 6 epochs, batch 32; '
+                   'learning rate 3e-5 for BERT-base, 2e-5 for the large encoders. One run each. The best encoder will then be trained on all the data.')
+    return fold('Encoders', 'Large encoders tag better; whether that carries to exact meaning is being measured.', body)
+
+
+def exp_generated():
+    path = f'{ORCA}/analysis/mrs/gen-pilot1-bothsurf-rawtext.json'
+    if not os.path.exists(path):
+        return ''
+    import collections
+    gdir = f'{ORCA}/data/generated/pilot1'
+    tgt = {}
+    for l in open(f'{gdir}/calls.jsonl'):
+        c = json.loads(l)
+        for s in c['sentences'] or []:
+            tgt.setdefault(s.strip(), c['target'])
+    sents = [l.rstrip('\n') for l in open(f'{gdir}/sentences.txt')]
+    cnt = collections.defaultdict(collections.Counter)
+    for r in json.load(open(path))['records']:
+        t = tgt[sents[int(r['id'].split('/')[1]) - 1].strip()]
+        for k in (t, 'all'):
+            cnt[k]['n'] += 1
+            cnt[k]['mrs'] += bool(r['accepted'])
+            cnt[k]['same'] += bool(r['same MRS'])
+    order = sorted((k for k in cnt if k != 'all'), key=lambda k: cnt[k]['same'] / cnt[k]['n'])
+    rows = [f'<tr><td>{k.replace("-", " ").capitalize()}</td>' + td(f"{cnt[k]['n']:,}") + td(pct(cnt[k]['same'], cnt[k]['n']), True)
+            + td(pct(cnt[k]['mrs'], cnt[k]['n'])) + '</tr>' for k in order]
+    rows.append('<tr><td><b>All generated</b></td>' + td(f"{cnt['all']['n']:,}") + td(pct(cnt['all']['same'], cnt['all']['n']), True)
+                + td(pct(cnt['all']['mrs'], cnt['all']['n'])) + '</tr>')
+    rows.append('<tr><td>Dev, for comparison (gold: annotators)</td>' + td(f'{N:,}') + td(pct(ORACLE['counts']['same MRS'], N), True)
+                + td(pct(ORACLE['counts']['with MRS'], N)) + '</tr>')
+    t = table([('Phenomenon targeted', ''), ('Sentences', 'n'), ('Same MRS as ACE', 'n hl'), ('Any analysis', 'n')], rows)
+    body = t + cap('Claude Sonnet wrote sentences for ten phenomena where Orca misses (20 calls, $1.71 API-equivalent, 1,982 sentences); '
+                   'ACE parsed 1,940 and 1,932 replay. Orca (forms as typed, from raw text) is compared with ACE\'s first-ranked parse, '
+                   'which nobody has checked. In a hand-checked sample of unknown-word misses, ACE itself is often wrong '
+                   '(a food noun analyzed as an adverb, a plural noun as a verb), so these parses need filtering before they are used for training.')
+    return fold('Generated sentences', 'Targeted sentences are harder than dev; unknown words most of all.', body)
+
+
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
     body = steps + '    <div id="examples" class="stack" style="gap:28px"></div>\n'
@@ -363,7 +426,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_rawtext() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_generated() + exp_rawtext() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
