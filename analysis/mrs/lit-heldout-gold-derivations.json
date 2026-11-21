@@ -1,0 +1,13 @@
+{
+ "stats": {
+  "sentences": 11319,
+  "structure built": 11319,
+  "same MRS as gold": 11319
+ },
+ "by_outcome": {
+  "gold derivation": {
+   "same MRS": 11319
+  }
+ },
+ "examples_of_differences": []
+}

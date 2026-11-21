@@ -185,6 +185,22 @@ code { font-family: var(--mono); font-size: 0.88em; }
   </section>
 
   <section class="stack">
+    <h2>More training data: grammar parses of literary text</h2>
+    <p>The treebank is small. A literary corpus (excerpts from novels of 1838 to 1921, and four sets of LLM-written excerpts matched to them) had already been parsed with the same grammar by ACE, keeping its first-ranked analysis. These analyses are not checked by an annotator, but every one replays in Orca's engine to the same meaning, so they are analyses the grammar licenses. Thirty excerpts are kept out of training in all five sets, for later tests on this corpus. The tagger is retrained with the same settings, and the full pipeline (repair, ranking) is measured on the same 2,062 development sentences.</p>
+    <div class="scroll">
+      <table class="results">
+        <thead><tr><th>Tagger trained on</th><th class="n">Training sentences</th><th class="n hl">Exact meaning</th><th class="n">Any analysis</th><th class="n">Predicates right (F1)</th><th class="n">Links right (F1)</th><th class="n">Exact tree</th><th class="n">Replays per sentence in repair</th></tr></thead>
+        <tbody>
+          <tr><td>Redwoods treebank only (current tagger)</td><td class="n">86,278</td><td class="n hl">67.2% <span class="cnt">(1,386)</span></td><td class="n">81.1% <span class="cnt">(1,672)</span></td><td class="n">80.9</td><td class="n">78.3</td><td class="n">65.8% <span class="cnt">(1,356)</span></td><td class="n">246</td></tr>
+          <tr><td>plus literary corpus: human excerpts</td><td class="n">107,652</td><td class="n hl">69.7% <span class="cnt">(1,437)</span></td><td class="n">83.7% <span class="cnt">(1,725)</span></td><td class="n">83.1</td><td class="n">80.5</td><td class="n">68.1% <span class="cnt">(1,404)</span></td><td class="n">212</td></tr>
+          <tr><td>plus literary corpus: human and LLM-written excerpts</td><td class="n">189,281</td><td class="n hl">69.0% <span class="cnt">(1,423)</span></td><td class="n">83.9% <span class="cnt">(1,730)</span></td><td class="n">83.9</td><td class="n">81.4</td><td class="n">67.7% <span class="cnt">(1,395)</span></td><td class="n">189</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">"Repaired and ranked" in every row. Both additions help on every measure, and the tagger needs fewer replays to find an accepted derivation. Adding the LLM-written excerpts to the human ones adds analyses but not exact meanings. Each row is one training run; how much a rerun with another random seed would differ has not been measured, so differences of a few dozen sentences between the last two rows may be chance. The pipeline rows elsewhere on this page still use the treebank-only tagger.</p>
+  </section>
+
+  <section class="stack">
     <h2>Orca and the ACE chart parser, side by side</h2>
     <p>ACE is the parser the treebank was built with. It searches a chart of all possible analyses and then ranks them with a statistical model. Orca proposes one derivation per sentence with the tagger and lets the grammar check it, so it never builds the chart.</p>
     <h3>By sentence length</h3>
@@ -247,6 +263,19 @@ code { font-family: var(--mono); font-size: 0.88em; }
       </table>
     </div>
     <p class="caption">Every sentence the first version got accepted, the second version got accepted too. Long sentences usually break in several independent places. The first version reported one place at a time, so after each fix replay stopped at the next one and three rounds ran out. Showing all of them at once is what made long sentences reachable. The analyses it finds for long sentences are close to gold in their parts but rarely identical as a whole: most predicates and links agree, yet one wrong attachment is enough to make the meaning differ. Usage is what the calls would cost through the API; they were made through a Claude subscription. Calls take about 20 seconds each, so this step is for the sentences the fast path cannot do. On all 390 sentences, short sentences did as well as in the sample and long ones somewhat worse. The full run reuses the 60 sample sentences and the completed part of an earlier run that the subscription's usage limit cut off; calls that hit the limit are not counted. Accepted repairs are not used as training data, since they come from the development set; the rules and types they change can instead become patterns for the ordinary repair step.</p>
+<!-- fallback -->
+    <h3>Compared with ACE as the fallback</h3>
+    <div class="scroll">
+      <table class="results">
+        <thead><tr><th>Fallback, on the 390 sentences</th><th class="n">Analyses</th><th class="n hl">Exact meaning</th><th class="n">Sentences per second</th><th class="n">Cost</th></tr></thead>
+        <tbody>
+          <tr><td>LLM repair (Claude Opus)</td><td class="n">188</td><td class="n hl">89</td><td class="n">0.01 per model call stream</td><td class="n">about $0.35 per sentence (API-equivalent)</td></tr>
+          <tr><td>ACE</td><td class="n">388</td><td class="n hl">270</td><td class="n">0.30 on one CPU core</td><td class="n">none</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">The same 390 sentences that repair leaves without an analysis, given instead to ACE (its time includes retries with more memory). For English, where a chart parser and its ranking model exist, ACE is the better fallback on both speed and accuracy. ACE also spends most of its total time on exactly these sentences, so with an ACE fallback Orca would be only modestly faster than ACE alone; the speed advantage depends on Orca itself failing less often. The LLM step is more useful offline: on sentences of training or silver data that Orca cannot analyze, where its accepted repairs can become repair patterns or training examples; on sentences too long for ACE's memory; and as a diagnosis of why the grammar rejects an analysis.</p>
+<!-- /fallback -->
   </section>
 
   <section class="stack">

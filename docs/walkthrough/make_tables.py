@@ -126,13 +126,49 @@ def side_by_side():
 ''')
 
 
+def training_data():
+    reps = {'best': 246.0, 'lithuman_best': 211.7, 'lit_best': 188.8}    # analysis/replay/dev-*-strict-k30-b600.json
+    sizes = {'best': 86278, 'lithuman_best': 107652, 'lit_best': 189281}
+    names = {'best': 'Redwoods treebank only (current tagger)',
+             'lithuman_best': 'plus literary corpus: human excerpts',
+             'lit_best': 'plus literary corpus: human and LLM-written excerpts'}
+    rows = []
+    for k in ('best', 'lithuman_best', 'lit_best'):
+        a = T[k]['all']
+        rows.append(f'<tr><td>{names[k]}</td>' + td(f'{sizes[k]:,}') + td(pct(a['same MRS'], N), True) + td(pct(a['with MRS'], N))
+                    + td(p1(a['preds']['f1'])) + td(p1(a['links']['f1'])) + td(pct(a['same tree'], N)) + td(f'{reps[k]:.0f}') + '</tr>')
+    t = table([('Tagger trained on', ''), ('Training sentences', 'n'), ('Exact meaning', 'n hl'), ('Any analysis', 'n'),
+               ('Predicates right (F1)', 'n'), ('Links right (F1)', 'n'), ('Exact tree', 'n'), ('Replays per sentence in repair', 'n')], rows)
+    return ('  <section class="stack">\n    <h2>More training data: grammar parses of literary text</h2>\n'
+            '    <p>The treebank is small. A literary corpus (excerpts from novels of 1838 to 1921, and four sets of LLM-written excerpts matched to them) had already been parsed with the same grammar by ACE, keeping its first-ranked analysis. These analyses are not checked by an annotator, but every one replays in Orca\'s engine to the same meaning, so they are analyses the grammar licenses. Thirty excerpts are kept out of training in all five sets, for later tests on this corpus. The tagger is retrained with the same settings, and the full pipeline (repair, ranking) is measured on the same 2,062 development sentences.</p>\n'
+            + t +
+            '    <p class="caption">"Repaired and ranked" in every row. Both additions help on every measure, and the tagger needs fewer replays to find an accepted derivation. Adding the LLM-written excerpts to the human ones adds analyses but not exact meanings. Each row is one training run; how much a rerun with another random seed would differ has not been measured, so differences of a few dozen sentences between the last two rows may be chance. The pipeline rows elsewhere on this page still use the treebank-only tagger.</p>\n'
+            '  </section>\n\n')
+
+
+def fallback():
+    rows = [
+        '<tr><td>LLM repair (Claude Opus)</td>' + td('188') + td('89', True) + td(sps(LLM_SENTS / LLM_SECS) + ' per model call stream') + td('about $0.35 per sentence (API-equivalent)') + '</tr>',
+        '<tr><td>ACE</td>' + td('388') + td('270', True) + td(sps(390 / 1315.0) + ' on one CPU core') + td('none') + '</tr>',
+    ]
+    t = table([('Fallback, on the 390 sentences', ''), ('Analyses', 'n'), ('Exact meaning', 'n hl'), ('Sentences per second', 'n'), ('Cost', 'n')], rows)
+    return ('<!-- fallback -->\n    <h3>Compared with ACE as the fallback</h3>\n' + t +
+            '    <p class="caption">The same 390 sentences that repair leaves without an analysis, given instead to ACE (its time includes retries with more memory). For English, where a chart parser and its ranking model exist, ACE is the better fallback on both speed and accuracy. ACE also spends most of its total time on exactly these sentences, so with an ACE fallback Orca would be only modestly faster than ACE alone; the speed advantage depends on Orca itself failing less often. The LLM step is more useful offline: on sentences of training or silver data that Orca cannot analyze, where its accepted repairs can become repair patterns or training examples; on sentences too long for ACE\'s memory; and as a diagnosis of why the grammar rejects an analysis.</p>\n'
+            '<!-- /fallback -->\n')
+
+
 CSS = '.results th.g { text-align: center; border-bottom: 0; color: var(--fg); }\n.results .cnt { color: var(--muted); font-weight: 400; }\n'
 
 
 def rebuild(s):
     start = s.index('    <div class="scroll">\n      <table class="results">\n        <thead>', s.index('How good is it right now?'))
     end = s.index('  <section class="stack">\n    <h2>Tested:')
-    s = s[:start] + accuracy() + '\n' + side_by_side() + s[end:]
+    s = s[:start] + accuracy() + '\n' + training_data() + side_by_side() + s[end:]
+    if '<!-- fallback -->' in s:
+        s = s[:s.index('<!-- fallback -->')] + s[s.index('<!-- /fallback -->\n') + len('<!-- /fallback -->\n'):]
+    i = s.index('  <section class="stack">\n    <h2>The steps</h2>')
+    j = s.rindex('  </section>', 0, i)
+    s = s[:j] + fallback() + s[j:]
     if '.results th.g' not in s:
         anchor = '.results th.n { text-align: right; }\n'
         s = s.replace(anchor, anchor + CSS)

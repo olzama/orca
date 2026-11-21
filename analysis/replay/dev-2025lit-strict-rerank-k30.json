@@ -1,0 +1,95 @@
+{
+ "stats": {
+  "sentences": 2062,
+  "with candidates": 1730,
+  "first candidate has gold MRS": 1303,
+  "oracle": 1497,
+  "reranked, cost weight 0.0": 1423,
+  "reranked, cost weight 0.5": 1377,
+  "reranked, cost weight 1.0": 1340,
+  "reranked, cost weight 2.0": 1328
+ },
+ "share_of_all_sentences": {
+  "with candidates": 0.839,
+  "first candidate has gold MRS": 0.6319,
+  "oracle": 0.726,
+  "reranked, cost weight 0.0": 0.6901,
+  "reranked, cost weight 0.5": 0.6678,
+  "reranked, cost weight 1.0": 0.6499,
+  "reranked, cost weight 2.0": 0.644
+ },
+ "by_length": {
+  "cost weight 0.0": {
+   "under 10": [
+    819,
+    953
+   ],
+   "10-19": [
+    516,
+    781
+   ],
+   "20-29": [
+    71,
+    213
+   ],
+   "30 and over": [
+    17,
+    115
+   ]
+  },
+  "cost weight 0.5": {
+   "under 10": [
+    796,
+    953
+   ],
+   "10-19": [
+    495,
+    781
+   ],
+   "20-29": [
+    69,
+    213
+   ],
+   "30 and over": [
+    17,
+    115
+   ]
+  },
+  "cost weight 1.0": {
+   "under 10": [
+    777,
+    953
+   ],
+   "10-19": [
+    478,
+    781
+   ],
+   "20-29": [
+    69,
+    213
+   ],
+   "30 and over": [
+    16,
+    115
+   ]
+  },
+  "cost weight 2.0": {
+   "under 10": [
+    773,
+    953
+   ],
+   "10-19": [
+    473,
+    781
+   ],
+   "20-29": [
+    66,
+    213
+   ],
+   "30 and over": [
+    16,
+    115
+   ]
+  }
+ }
+}
