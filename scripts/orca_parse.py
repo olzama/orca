@@ -203,7 +203,7 @@ def ace_parse(text, ace=DEFAULTS['ace'], dat=DEFAULTS['dat'], timeout=30):
         return {'seconds': time.perf_counter() - t, 'mrs': None, 'error': str(e)[:200]}
 
 
-def evaluate(parser, split_dir, gold_path, out_path, limit=None):
+def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False):
     """Raw-text run over a split, scored by exact MRS against the treebank."""
     import collections
     import glob
@@ -250,7 +250,8 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None):
             secs[k] += v
         recs.append({'id': s['id'], 'outcome': r.get('outcome'), 'same MRS': same, 'replays': r.get('replays'),
                      'accepted': r.get('accepted derivations', 0),
-                     'gold among accepted': among if parser.all_mrs and m is not None else None})
+                     'gold among accepted': among if parser.all_mrs and m is not None else None,
+                     **({'mrs': r.get('mrs')} if save_mrs else {})})
     wall = time.perf_counter() - t0
     res = {'tagger': parser.tagger_name, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
@@ -268,13 +269,14 @@ def main():
     ap.add_argument('--out')
     ap.add_argument('--limit', type=int)
     ap.add_argument('--all-mrs', action='store_true', help='with --eval: also check whether the gold MRS is among the accepted derivations')
+    ap.add_argument('--save-mrs', action='store_true', help='with --eval: keep each sentence\'s chosen MRS in the output')
     ap.add_argument('--k', type=int, default=5, help='tagger labels per word')
     ap.add_argument('--kbest', type=int, default=30, help='stop after this many accepted derivations')
     ap.add_argument('--budget', type=int, default=600, help='at most this many replays per sentence')
     args = ap.parse_args()
     p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget)
     if args.eval:
-        evaluate(p, args.eval, args.gold, args.out, args.limit)
+        evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs)
         return
     for text in args.sentences:
         r = p.parse(text)

@@ -359,26 +359,39 @@ def exp_generated():
         for s in c['sentences'] or []:
             tgt.setdefault(s.strip(), c['target'])
     sents = [l.rstrip('\n') for l in open(f'{gdir}/sentences.txt')]
+    vg = json.load(open(f'{ORCA}/analysis/adjudicate/gen-pilot1/score.json'))
+    vd = json.load(open(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json'))
     cnt = collections.defaultdict(collections.Counter)
     for r in json.load(open(path))['records']:
         t = tgt[sents[int(r['id'].split('/')[1]) - 1].strip()]
+        x = 'agree' if r['same MRS'] else vg['by_id'].get(r['id'], 'none' if not r['accepted'] else 'scope')
         for k in (t, 'all'):
             cnt[k]['n'] += 1
             cnt[k]['mrs'] += bool(r['accepted'])
-            cnt[k]['same'] += bool(r['same MRS'])
-    order = sorted((k for k in cnt if k != 'all'), key=lambda k: cnt[k]['same'] / cnt[k]['n'])
-    rows = [f'<tr><td>{k.replace("-", " ").capitalize()}</td>' + td(f"{cnt[k]['n']:,}") + td(pct(cnt[k]['same'], cnt[k]['n']), True)
-            + td(pct(cnt[k]['mrs'], cnt[k]['n'])) + '</tr>' for k in order]
-    rows.append('<tr><td><b>All generated</b></td>' + td(f"{cnt['all']['n']:,}") + td(pct(cnt['all']['same'], cnt['all']['n']), True)
-                + td(pct(cnt['all']['mrs'], cnt['all']['n'])) + '</tr>')
-    rows.append('<tr><td>Dev, for comparison (gold: annotators)</td>' + td(f'{N:,}') + td(pct(ORACLE['counts']['same MRS'], N), True)
-                + td(pct(ORACLE['counts']['with MRS'], N)) + '</tr>')
-    t = table([('Phenomenon targeted', ''), ('Sentences', 'n'), ('Same MRS as ACE', 'n hl'), ('Any analysis', 'n')], rows)
-    body = t + cap('Claude Sonnet wrote sentences for ten phenomena where Orca misses (20 calls, $1.71 API-equivalent, 1,982 sentences); '
-                   'ACE parsed 1,940 and 1,932 replay. Orca (forms as typed, from raw text) is compared with ACE\'s first-ranked parse, '
-                   'which nobody has checked. In a hand-checked sample of unknown-word misses, ACE itself is often wrong '
-                   '(a food noun analyzed as an adverb, a plural noun as a verb), so these parses need filtering before they are used for training.')
-    return fold('Generated sentences', 'Targeted sentences are harder than dev; unknown words most of all.', body)
+            cnt[k][x] += 1
+    right = lambda d: d['agree'] + d['orca'] + d['both']
+    order = sorted((k for k in cnt if k != 'all'), key=lambda k: cnt[k]['agree'] / cnt[k]['n'])
+    row = lambda name, d: (f'<tr><td>{name}</td>' + td(f"{d['n']:,}") + td(pct(d['agree'], d['n']))
+                           + td(pct(right(d), d['n']), True) + td(pct(d['mrs'], d['n'])) + '</tr>')
+    rows = [row(k.replace('-', ' ').capitalize(), cnt[k]) for k in order] + [row('<b>All generated</b>', cnt['all'])]
+    t = table([('Phenomenon targeted', ''), ('Sentences', 'n'), ('Same MRS as ACE', 'n'), ('Right, with the judge', 'n hl'),
+               ('Any analysis', 'n')], rows)
+    a, d = vg['verdicts'], vd['verdicts']
+    rows = [f'<tr><td>Generated: reference is ACE\'s first parse</td>' + td(f"{sum(a.values()):,}") + td(f"{a['orca']:,}", True)
+            + td(f"{a['reference']:,}", True) + td(f"{a['both']:,}") + td(f"{a['neither']:,}") + '</tr>',
+            f'<tr><td>Dev: reference is the annotators\' gold</td>' + td(f"{sum(d.values()):,}") + td(f"{d['orca']:,}", True)
+            + td(f"{d['reference']:,}", True) + td(f"{d['both']:,}") + td(f"{d['neither']:,}") + '</tr>']
+    t2 = table([('Orca and the reference disagree', ''), ('Sentences', 'n'), ('Judge: Orca right', 'n hl'), ('Judge: reference right', 'n hl'),
+                ('Both acceptable', 'n'), ('Neither', 'n')], rows)
+    body = (t + cap('Claude Sonnet wrote sentences for ten phenomena where Orca misses (20 calls, $1.71 API-equivalent, 1,982 sentences); '
+                    'ACE parsed 1,940 and 1,932 replay. Orca (forms as typed, from raw text) is compared with ACE\'s first-ranked parse, which nobody has checked. '
+                    'Right, with the judge: Orca agrees with ACE, or the judge below prefers Orca\'s reading or accepts both.')
+            + t2 + cap(f'Judge: Claude Opus sees the two readings in random order, each by the DMRS predicates and links the other lacks, and answers A, B, both or neither '
+                       f'(${vg["cost_usd"] + vd["cost_usd"]:.2f} API-equivalent for both sets). On dev it sides with gold more often than with Orca, '
+                       'though it misses the treebank\'s conventions; on generated sentences it sides with Orca, and a sample read by hand bears it out '
+                       '(ACE reads <i>that sound</i> with an adjective, <i>vacuum cleaner</i> with a comparative). ACE\'s first parse is a weak reference '
+                       'outside the treebank\'s domains, so for training the judged reading is used, not ACE\'s.'))
+    return fold('Generated sentences', 'Harder than dev; ACE\'s own parses of them are often wrong.', body)
 
 
 def exp_examples():
