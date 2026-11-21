@@ -17,6 +17,8 @@ import json
 import os
 import sys
 import threading
+import time
+from collections import defaultdict, deque
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -28,6 +30,13 @@ PAGE = os.path.join(HERE, '..', 'docs', 'demo', 'index.html')
 LOCK = threading.Lock()
 PARSER = None
 MAX_CHARS = 1000
+MAX_WORDS = 60           # longer sentences are refused
+PER_MINUTE = 10          # requests per visitor per minute
+MAX_WAITING = 4          # requests waiting for the parser; more get "busy"
+ACE_TIMEOUT = 10         # seconds for the ACE comparison
+RECENT = defaultdict(deque)
+WAITING = 0
+COUNT_LOCK = threading.Lock()
 
 
 def measured_note():
@@ -70,9 +79,34 @@ class Handler(http.server.BaseHTTPRequestHandler):
         else:
             self._send(404, 'not found', 'text/plain')
 
+    def visitor(self):
+        # behind a tunnel every request comes from 127.0.0.1; the tunnel passes the real address on
+        return self.headers.get('CF-Connecting-IP') or self.client_address[0]
+
+    def limited(self):
+        now, q = time.time(), RECENT[self.visitor()]
+        with COUNT_LOCK:
+            while q and now - q[0] > 60:
+                q.popleft()
+            if len(q) >= PER_MINUTE:
+                return True
+            q.append(now)
+        return False
+
     def do_POST(self):
+        global WAITING
         if self.path != '/api/parse':
             self._send(404, 'not found', 'text/plain')
+            return
+        if self.limited():
+            self._send(429, json.dumps({'error': f'Too many requests: at most {PER_MINUTE} a minute. Please wait a little.'}), 'application/json')
+            return
+        with COUNT_LOCK:
+            busy = WAITING >= MAX_WAITING
+            if not busy:
+                WAITING += 1
+        if busy:
+            self._send(503, json.dumps({'error': 'The parser is busy. Please try again in a moment.'}), 'application/json')
             return
         try:
             n = int(self.headers.get('Content-Length', 0))
@@ -81,20 +115,27 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if not text:
                 self._send(400, json.dumps({'error': 'empty sentence'}), 'application/json')
                 return
+            if len(text.split()) > MAX_WORDS:
+                self._send(400, json.dumps({'error': f'Please enter at most {MAX_WORDS} words.'}), 'application/json')
+                return
             with LOCK:
                 r = PARSER.parse(text)
                 m = r.pop('_mrs_obj', None)
                 if req.get('ace'):
-                    a = ace_parse(text)
+                    a = ace_parse(text, timeout=ACE_TIMEOUT)
                     am = a.pop('_mrs_obj', None)
                     a['same as orca'] = same_mrs(m, am) if m is not None and am is not None else None
                     r['ace'] = a
             self._send(200, json.dumps(r, ensure_ascii=False), 'application/json')
         except Exception as e:
             self._send(500, json.dumps({'error': f'{type(e).__name__}: {e}'[:500]}), 'application/json')
+        finally:
+            with COUNT_LOCK:
+                WAITING -= 1
 
     def log_message(self, fmt, *args):
-        sys.stderr.write('%s %s\n' % (self.address_string(), fmt % args))
+        # request line and status only; what visitors type is not logged
+        sys.stderr.write('%s %s\n' % (time.strftime('%Y-%m-%d %H:%M:%S'), fmt % args))
 
 
 def main():

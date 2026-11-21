@@ -67,6 +67,7 @@ class Parser:
         self.device = torch.device(device or ('cuda' if torch.cuda.is_available() else 'cpu'))
         labels = json.load(open(os.path.join(tagger, 'labels.json')))
         self.itos = {'leaf': labels['leaf'], 'tree': labels['tree']}
+        self.surface = labels.get('forms') == 'surface'   # trained on the text as typed (scripts/surface_forms.py)
         self.stoi = {k: {l: i for i, l in enumerate(v)} for k, v in self.itos.items()}
         self.tok = AutoTokenizer.from_pretrained(labels['encoder'])
         self.model = Tagger(labels['encoder'], len(self.itos['leaf']), len(self.itos['tree'])).to(self.device)
@@ -118,9 +119,9 @@ class Parser:
 
         path = lattice_path(token_chart(text, self.ace, self.dat), self.known)
         lap('tokens')
-        forms = [p[0] for p in path]
+        forms = [text[a:b] for _, _, (a, b) in path] if self.surface else [p[0] for p in path]
         out['tokens'] = [{'form': f, 'from': span[0], 'to': span[1], 'alternatives': len(alts)}
-                         for f, alts, span in path]
+                         for f, (_, alts, span) in zip(forms, path)]
         if not forms:
             out['outcome'] = 'no tokens'
             return out
@@ -251,7 +252,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None):
                      'accepted': r.get('accepted derivations', 0),
                      'gold among accepted': among if parser.all_mrs and m is not None else None})
     wall = time.perf_counter() - t0
-    res = {'tagger': parser.tagger_name, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
+    res = {'tagger': parser.tagger_name, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
     with open(out_path, 'w') as f:
         json.dump(res, f, indent=1)
@@ -267,8 +268,11 @@ def main():
     ap.add_argument('--out')
     ap.add_argument('--limit', type=int)
     ap.add_argument('--all-mrs', action='store_true', help='with --eval: also check whether the gold MRS is among the accepted derivations')
+    ap.add_argument('--k', type=int, default=5, help='tagger labels per word')
+    ap.add_argument('--kbest', type=int, default=30, help='stop after this many accepted derivations')
+    ap.add_argument('--budget', type=int, default=600, help='at most this many replays per sentence')
     args = ap.parse_args()
-    p = Parser(tagger=args.tagger, all_mrs=args.all_mrs)
+    p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit)
         return
