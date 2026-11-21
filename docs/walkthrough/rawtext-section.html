@@ -23,6 +23,20 @@
     </div>
     <div class="scroll">
       <table class="results">
+        <thead><tr><th>Where each sentence ends up, best tagger</th><th class="n hl">Exact meaning</th><th class="n">Gold meaning accepted, ranking picks another</th><th class="n">Gold meaning not among the accepted</th><th class="n">No analysis</th></tr></thead>
+        <tbody>
+          <tr><td>From the treebank's tokens, all 2,062</td><td class="n hl">1,511</td><td class="n">80</td><td class="n">237</td><td class="n">234</td></tr>
+          <tr><td>From raw text, all 2,062</td><td class="n hl">1,406</td><td class="n">85</td><td class="n">342</td><td class="n">229</td></tr>
+          <tr><td>From raw text, under 10 words (953)</td><td class="n hl">796</td><td class="n">29</td><td class="n">84</td><td class="n">44</td></tr>
+          <tr><td>From raw text, 10 to 19 words (781)</td><td class="n hl">514</td><td class="n">40</td><td class="n">146</td><td class="n">81</td></tr>
+          <tr><td>From raw text, 20 to 29 words (213)</td><td class="n hl">78</td><td class="n">15</td><td class="n">67</td><td class="n">53</td></tr>
+          <tr><td>From raw text, 30 words and over (115)</td><td class="n hl">18</td><td class="n">1</td><td class="n">45</td><td class="n">51</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">Accepted means among the up to 30 derivations that repair gets the grammar to accept; the ranking model picks one of them. The ranking model loses few sentences. Most of the distance to 100% is on the proposing side: either the gold analysis is never among the accepted derivations, or nothing is accepted at all. Raw text adds to the first group, which fits the capitalization problem described below: a wrong form leads the tagger to wrong labels, and the gold analysis is never proposed. On long sentences, finding no analysis at all is as large a loss as finding only wrong ones.</p>
+    <div class="scroll">
+      <table class="results">
         <thead><tr><th>From raw text, one sentence at a time</th><th class="n hl">ms per sentence</th></tr></thead>
         <tbody>
           <tr><td>Tokens (the grammar's preprocessing, in ACE)</td><td class="n">43.6</td></tr>

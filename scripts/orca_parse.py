@@ -49,7 +49,8 @@ def dmrs_json(m):
 
 class Parser:
     def __init__(self, grammar=DEFAULTS['grammar'], tagger=DEFAULTS['tagger'], ace=DEFAULTS['ace'],
-                 dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.005, device=None):
+                 dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.005, device=None,
+                 all_mrs=False):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -61,6 +62,7 @@ class Parser:
         from train_tagger import Tagger
         self.torch, self.repair = torch, repair
         self.ace, self.dat, self.k = ace, dat, k
+        self.all_mrs = all_mrs                          # also read off the MRS of every accepted derivation
         self.args = SimpleNamespace(cache=True, kbest=kbest, budget=budget, fanout=fanout, min_prob=min_prob)
         self.device = torch.device(device or ('cuda' if torch.cuda.is_available() else 'cpu'))
         labels = json.load(open(os.path.join(tagger, 'labels.json')))
@@ -160,6 +162,15 @@ class Parser:
         except Exception:
             out['dmrs'] = None
         out['_mrs_obj'] = m
+        if self.all_mrs:
+            out['_all_mrs'] = []
+            for _, t2, _ in scored:
+                try:
+                    self.fg.reset()
+                    f2, _ = self.fg.replay_tree(t2, [p[1] for p in path])
+                    out['_all_mrs'].append(to_pydelphin(extract(self.fg, f2)))
+                except Exception:
+                    out['_all_mrs'].append(None)
         return out
 
     def tree_json(self, t):
@@ -219,19 +230,26 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None):
     for s in sents:
         r = parser.parse(raw[s['id']], s['id'])
         m = r.pop('_mrs_obj', None)
-        same = False
-        if m is not None:
+        g = normalized(simplemrs.decode(gold[s['id']]))
+
+        def is_gold(x):
             try:
-                same = bool(M.is_isomorphic(normalized(m), normalized(simplemrs.decode(gold[s['id']])), properties=False))
+                return bool(M.is_isomorphic(normalized(x), g, properties=False))
             except Exception:
-                same = False
+                return False
+        same = m is not None and is_gold(m)
+        if parser.all_mrs and m is not None:
+            among = any(x is not None and is_gold(x) for x in r.pop('_all_mrs', []))
+            c['gold MRS among accepted'] += among
         c['sentences'] += 1
         c['with MRS'] += m is not None
         c['same MRS'] += same
         c['same forms as treebank'] += [t['form'] for t in r['tokens']] == [f.replace('\\/', '/') for f in s['forms']]
         for k, v in r['seconds'].items():
             secs[k] += v
-        recs.append({'id': s['id'], 'outcome': r.get('outcome'), 'same MRS': same, 'replays': r.get('replays')})
+        recs.append({'id': s['id'], 'outcome': r.get('outcome'), 'same MRS': same, 'replays': r.get('replays'),
+                     'accepted': r.get('accepted derivations', 0),
+                     'gold among accepted': among if parser.all_mrs and m is not None else None})
     wall = time.perf_counter() - t0
     res = {'tagger': parser.tagger_name, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
@@ -248,8 +266,9 @@ def main():
     ap.add_argument('--gold')
     ap.add_argument('--out')
     ap.add_argument('--limit', type=int)
+    ap.add_argument('--all-mrs', action='store_true', help='with --eval: also check whether the gold MRS is among the accepted derivations')
     args = ap.parse_args()
-    p = Parser(tagger=args.tagger)
+    p = Parser(tagger=args.tagger, all_mrs=args.all_mrs)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit)
         return
