@@ -18,6 +18,8 @@ import json
 import math
 import os
 import random
+import signal
+import sys
 import time
 
 import torch
@@ -260,6 +262,11 @@ def main():
                     help='represent a word by its last subword (left-to-right models)')
     ap.add_argument('--freeze-embeddings', action='store_true',
                     help='do not update the embedding table (saves optimizer memory)')
+    ap.add_argument('--grad-checkpointing', action='store_true',
+                    help='recompute activations in the backward pass (less memory, about a third slower)')
+    ap.add_argument('--checkpoint-every', type=int, default=2000,
+                    help='save a resumable checkpoint every this many steps (and on SIGTERM/SIGINT)')
+    ap.add_argument('--resume', action='store_true', help='continue from OUT/checkpoint.pt if it exists')
     args = ap.parse_args()
     random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -283,6 +290,8 @@ def main():
     tok = AutoTokenizer.from_pretrained(args.encoder)
     tok.orca_last_subword = args.last_subword
     model = Tagger(args.encoder, len(leaf_itos), len(tree_itos), lora=args.lora, bilstm=args.bilstm).to(device)
+    if args.grad_checkpointing:
+        model.encoder.gradient_checkpointing_enable()
     heads = list(model.leaf.parameters()) + list(model.tree.parameters())
     if model.lstm is not None:
         heads += list(model.lstm.parameters())
@@ -300,10 +309,54 @@ def main():
     loss_fn = nn.CrossEntropyLoss()
 
     best, history, step, skipped = -1.0, [], 0, 0
-    for epoch in range(1, args.epochs + 1):
+    ckpt_path = os.path.join(args.out, 'checkpoint.pt')
+    start_epoch, start_pos, epoch_rng = 1, 0, None
+    if args.resume and os.path.exists(ckpt_path):
+        ck = torch.load(ckpt_path, map_location=device, weights_only=False)
+        model.load_state_dict(ck['model'])
+        opt.load_state_dict(ck['opt'])
+        sched.load_state_dict(ck['sched'])
+        scaler.load_state_dict(ck['scaler'])
+        best, history, step, skipped = ck['best'], ck['history'], ck['step'], ck['skipped']
+        start_epoch, start_pos, epoch_rng = ck['epoch'], ck['pos'], ck['epoch_rng']
+        torch.set_rng_state(ck['torch_rng'].cpu())
+        if device.type == 'cuda' and ck.get('cuda_rng') is not None:
+            torch.cuda.set_rng_state(ck['cuda_rng'].cpu())
+        print(f'resumed at epoch {start_epoch}, batch {start_pos}, step {step}', flush=True)
+    stop = {'now': False}
+
+    def on_signal(signum, frame):
+        stop['now'] = True
+    signal.signal(signal.SIGTERM, on_signal)
+    signal.signal(signal.SIGINT, on_signal)
+
+    def save_checkpoint(epoch, pos, rng):
+        tmp = ckpt_path + '.tmp'
+        torch.save({'model': model.state_dict(), 'opt': opt.state_dict(), 'sched': sched.state_dict(),
+                    'scaler': scaler.state_dict(), 'best': best, 'history': history, 'step': step,
+                    'skipped': skipped, 'epoch': epoch, 'pos': pos, 'epoch_rng': rng,
+                    'torch_rng': torch.get_rng_state(),
+                    'cuda_rng': torch.cuda.get_rng_state() if device.type == 'cuda' else None}, tmp)
+        os.replace(tmp, ckpt_path)
+
+    for epoch in range(start_epoch, args.epochs + 1):
         model.train()
         t0, running = time.time(), 0.0
-        for batch in batches(train, args.batch, shuffle=True):
+        if epoch == start_epoch and epoch_rng is not None:
+            random.setstate(epoch_rng)
+        else:
+            epoch_rng = random.getstate()        # the epoch's batch order is rebuilt from this on resume
+            start_pos = 0
+        epoch_batches = list(batches(train, args.batch, shuffle=True))
+        for pos, batch in enumerate(epoch_batches):
+            if pos < start_pos:
+                continue
+            if stop['now']:
+                save_checkpoint(epoch, pos, epoch_rng)
+                print(f'stopped at epoch {epoch}, batch {pos}, step {step}; checkpoint saved', flush=True)
+                sys.exit(75)
+            if step and step % args.checkpoint_every == 0 and pos > start_pos:
+                save_checkpoint(epoch, pos, epoch_rng)
             ids, mask, first, leaf, tree, _ = collate(batch, tok, leaf_stoi, tree_stoi, device)
             try:
                 with torch.autocast('cuda', dtype=torch.float16, enabled=device.type == 'cuda'):
@@ -338,6 +391,7 @@ def main():
         if m['exact_match'] > best:
             best = m['exact_match']
             torch.save(model.trained_state(), os.path.join(args.out, 'model.pt'))
+        save_checkpoint(epoch + 1, 0, random.getstate())
 
     model.load_state_dict(torch.load(os.path.join(args.out, 'model.pt'), map_location=device), strict=False)
     final = {'args': vars(args), 'history': history}
