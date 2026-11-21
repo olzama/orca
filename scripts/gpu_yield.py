@@ -5,6 +5,8 @@ Rules:
   - at most one job, on one GPU, at a time;
   - a job starts only on a GPU that has had no process of anyone for
     --idle-minutes (checked every --interval seconds);
+  - the job never makes all GPUs busy: it starts only if at least one other
+    GPU is free too, and it yields as soon as every other GPU is in use;
   - when a process of another user appears on our GPU, the job gets SIGTERM:
     train_tagger.py then saves a checkpoint and exits with code 75, and the
     GPU is free within about a minute;
@@ -99,8 +101,11 @@ def main():
             rc = proc.poll()
             if rc is None:
                 others = users.get(gpu, set()) - {ME}
-                if others:
-                    log(logf, f'{job["name"]}: another user ({", ".join(sorted(others))}) is on GPU {gpu}; yielding')
+                all_busy = all(us for i, us in users.items() if i != gpu)
+                if others or all_busy:
+                    why = (f'another user ({", ".join(sorted(others))}) is on GPU {gpu}' if others
+                           else 'every other GPU is in use')
+                    log(logf, f'{job["name"]}: {why}; yielding')
                     proc.send_signal(signal.SIGTERM)
                     try:
                         proc.wait(timeout=600)
@@ -129,7 +134,8 @@ def main():
                 log(logf, 'all jobs done; exiting')
                 return
             ready = [i for i, t in idle_since.items() if now - t >= 60 * args.idle_minutes]
-            if ready:
+            free = [i for i, us in users.items() if not us]
+            if ready and len(free) >= 2:          # leave at least one GPU free for others
                 gpu, job = ready[0], jobs[0]
                 env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu), HF_HUB_OFFLINE='1')
                 cmd = ['nice', '-n', '19', 'ionice', '-c', '3', '.venv/bin/python', 'scripts/train_tagger.py'] + job['args'] + ['--resume']
