@@ -70,6 +70,8 @@ def main():
     ap.add_argument('--workdir', required=True)
     ap.add_argument('--idle-minutes', type=float, default=30)
     ap.add_argument('--interval', type=int, default=60)
+    ap.add_argument('--keep-free', type=int, default=1,
+                    help='GPUs left free for others: start only if this many others are free, yield when fewer are')
     args = ap.parse_args()
     os.chdir(os.path.expanduser(args.workdir))
     logf, statef, stopf = 'yield.log', 'yield-state.json', 'STOP'
@@ -101,10 +103,10 @@ def main():
             rc = proc.poll()
             if rc is None:
                 others = users.get(gpu, set()) - {ME}
-                all_busy = all(us for i, us in users.items() if i != gpu)
+                all_busy = sum(1 for i, us in users.items() if i != gpu and not us) < args.keep_free
                 if others or all_busy:
                     why = (f'another user ({", ".join(sorted(others))}) is on GPU {gpu}' if others
-                           else 'every other GPU is in use')
+                           else f'fewer than {args.keep_free} other GPUs are free')
                     log(logf, f'{job["name"]}: {why}; yielding')
                     proc.send_signal(signal.SIGTERM)
                     try:
@@ -135,7 +137,7 @@ def main():
                 return
             ready = [i for i, t in idle_since.items() if now - t >= 60 * args.idle_minutes]
             free = [i for i, us in users.items() if not us]
-            if ready and len(free) >= 2:          # leave at least one GPU free for others
+            if ready and len(free) >= 1 + args.keep_free:     # leave GPUs free for others
                 gpu, job = ready[0], jobs[0]
                 env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu), HF_HUB_OFFLINE='1')
                 cmd = ['nice', '-n', '19', 'ionice', '-c', '3', '.venv/bin/python', 'scripts/train_tagger.py'] + job['args'] + ['--resume']

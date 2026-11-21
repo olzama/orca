@@ -53,8 +53,9 @@ def items(split_dir):
                     yield {'id': f'{os.path.basename(prof)}/{pid}', 'input': text[p2i[pid]], 'gold': r[names.index('mrs')]}
 
 
-def init(n):
+def init(n, slim):
     from delphin import ace
+    _P['slim'] = slim
     _P['parser'] = ace.ACEParser(DAT, executable=ACE, cmdargs=[f'-n', str(n), '--timeout=60', '--max-chart-megabytes=4000',
                                                                '--max-unpack-megabytes=5000'], stderr=open(os.devnull, 'w'))
 
@@ -68,7 +69,10 @@ def work(it):
         res = resp.results()
     except Exception as e:
         return {**it, 'results': [], 'error': str(e)[:200]}
-    g = normalized(simplemrs.decode(it['gold']))
+    try:
+        g = normalized(simplemrs.decode(it['gold']))
+    except Exception as e:               # a few treebank MRSs are not readable by pydelphin
+        return {**it, 'results': [], 'error': f'gold MRS unreadable: {str(e)[:150]}'}
     out = []
     for r in res:
         try:
@@ -76,7 +80,10 @@ def work(it):
             same = bool(M.is_isomorphic(g, m, properties=False))
         except Exception:
             same = False
-        out.append({'derivation': r['derivation'], 'mrs': r['mrs'], 'same_mrs': same})
+        rec = {'derivation': r['derivation'], 'same_mrs': same}
+        if not _P['slim']:
+            rec['mrs'] = r['mrs']
+        out.append(rec)
     return {**it, 'results': out}
 
 
@@ -86,14 +93,17 @@ def main():
     ap.add_argument('--out', required=True)
     ap.add_argument('--n', type=int, default=30)
     ap.add_argument('--workers', type=int, default=4)
+    ap.add_argument('--ids', help='file with one sentence id per line: parse only these')
+    ap.add_argument('--slim', action='store_true', help='keep derivations and labels only, not the MRSs')
     args = ap.parse_args()
     done = set()
     if os.path.exists(args.out):
         for l in open(args.out):
             done.add(json.loads(l)['id'])
-    todo = [it for it in items(args.profiles) if it['id'] not in done]
+    only = set(open(args.ids).read().split()) if args.ids else None
+    todo = [it for it in items(args.profiles) if it['id'] not in done and (only is None or it['id'] in only)]
     print(f'{len(todo):,} sentences to parse ({len(done):,} done)', flush=True)
-    with mp.Pool(args.workers, initializer=init, initargs=(args.n,)) as pool, open(args.out, 'a') as f:
+    with mp.Pool(args.workers, initializer=init, initargs=(args.n, args.slim)) as pool, open(args.out, 'a') as f:
         for i, rec in enumerate(pool.imap_unordered(work, todo, chunksize=4), 1):
             f.write(json.dumps(rec, ensure_ascii=False) + '\n')
             if i % 2000 == 0:
