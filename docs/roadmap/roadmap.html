@@ -148,7 +148,8 @@ code { font-family: var(--mono); font-size: 0.85em; }
           <li><span class="chip done">done</span><span>Replay engine in C; MRS extraction (gold derivations give the gold MRS for every dev sentence)</span></li>
           <li><span class="chip done">done</span><span>Tagger, repair, ranking: 67.2% exact meaning, 81.1% with an analysis, 12.6 sentences per second on one core (ACE: 85.7%, 1.0)</span></li>
           <li><span class="chip done">done</span><span>LLM repair measured; role set to offline</span></li>
-          <li><span class="chip run">running</span><span>Silver training data: best so far 69.7% exact (literary human text); news and combined runs in progress</span></li>
+          <li><span class="chip done">done</span><span>Grammar parses of a literary and a news corpus checked by replay and used for training</span></li>
+          <li><span class="chip run">running</span><span>Silver training data: best so far 72.2% exact and 88.1% with an analysis (news parses, human and LLM-written); the run on both corpora is in progress</span></li>
           <li><span class="chip next">next</span><span>Repeat the best runs with other random seeds, to know what differences are real</span></li>
           <li><span class="chip next">next</span><span>Repair patterns learned from accepted LLM repairs</span></li>
           <li><span class="chip next">next</span><span>Long sentences: join the subtrees that replay instead of failing the whole sentence</span></li>
