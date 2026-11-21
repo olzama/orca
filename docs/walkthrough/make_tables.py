@@ -22,7 +22,7 @@ SYSTEMS = [
     ('first_accepted', 'Orca, repaired'),
     ('best', 'Orca, repaired and ranked'),
     ('best_llm', 'Orca, repaired and ranked, plus LLM repair'),
-    ('nytall_best', 'Orca, repaired and ranked, tagger also trained on news parses'),
+    ('bothall_best', 'Orca, repaired and ranked, tagger also trained on literary and news parses'),
     ('ace', 'ACE (baseline)'),
 ]
 
@@ -151,7 +151,7 @@ def training_data():
     return ('  <section class="stack">\n    <h2>More training data: grammar parses of other text</h2>\n'
             '    <p>The treebank is small. Two corpora had already been parsed with the grammar by ACE, keeping its first-ranked analysis, for studies comparing human and LLM-written text: a literary corpus (excerpts from novels of 1838 to 1921, and four sets of LLM-written excerpts matched to them) and a news corpus (New York Times articles from 2023 and 2025, and eleven sets of LLM-written continuations). These analyses are not checked by an annotator. Each is replayed in Orca\'s engine, and only those that replay are used, so every one is an analysis the grammar licenses: all of the literary corpus, and 99.2% of the news corpus, which was parsed with a slightly different version of the grammar. Part of each corpus is kept out of training (30 excerpts in all five literary sets; the last tenth of each news set) for later tests on these corpora. The tagger is retrained with the same settings, and the full pipeline is measured on the same 2,062 development sentences.</p>\n'
             + t +
-            '    <p class="caption">"Repaired and ranked" in every row. Every addition helps on every measure, and the tagger needs fewer replays to find an accepted derivation. The additions of human text alone all land close together, whichever corpus they come from. The largest addition, all of the news corpus with its eleven LLM-written sets, gives by far the largest gain, more exact meanings than the LLM repair step adds; in the much smaller literary corpus, adding the LLM-written excerpts added analyses but not exact meanings. So far the amount of grammar-licensed text matters more than who wrote it. Each row is one training run; how much a rerun with another random seed would differ has not been measured, so differences of a few dozen sentences may be chance. All other tables use the treebank-only tagger, except the news-trained row of the first table.</p>\n'
+            '    <p class="caption">"Repaired and ranked" in every row. Every addition helps on every measure, and the tagger needs fewer replays to find an accepted derivation. The additions of human text alone all land close together, whichever corpus they come from. Adding all of the news corpus, with its eleven LLM-written sets, gives by far the largest gain, more exact meanings than the LLM repair step adds; in the much smaller literary corpus, adding the LLM-written excerpts added analyses but not exact meanings. Adding both corpora in full gives the best tagger so far, a small step beyond the news corpus alone. So far the amount of grammar-licensed text matters more than who wrote it. Each row is one training run; how much a rerun with another random seed would differ has not been measured, so differences of a few dozen sentences may be chance. All other tables use the treebank-only tagger, except the row of the first table whose tagger is also trained on literary and news parses.</p>\n'
             '  </section>\n\n')
 
 
@@ -181,7 +181,7 @@ def rebuild(s):
     if '.results th.g' not in s:
         anchor = '.results th.n { text-align: right; }\n'
         s = s.replace(anchor, anchor + CSS)
-    b = T['nytall_best']['all']
+    b = T['bothall_best']['all']
     i = s.index('      <div class="tile main">')
     old_tiles = s[i:s.index('    </div>', i)]
     tiles = (f'      <div class="tile main"><b>{100 * b["same MRS"] / N:.1f}%</b><span>of sentences get <strong>exactly the gold meaning</strong> (the same MRS)</span></div>\n'

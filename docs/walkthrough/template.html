@@ -152,11 +152,11 @@ code { font-family: var(--mono); font-size: 0.88em; }
     <h2>How good is it right now?</h2>
     <p>Measured on 2,062 English sentences the system never saw in training: the development set of the grammar's 2025 treebank (customer e-mails about electronics and Wikipedia articles on linguistics). For each sentence the treebank holds the analysis a human annotator chose, which we call gold.</p>
     <div class="tiles">
-      <div class="tile main"><b>72.2%</b><span>of sentences get <strong>exactly the gold meaning</strong> (the same MRS)</span></div>
-      <div class="tile"><b>88.1%</b><span>get a complete analysis that the grammar accepts, with full structure and semantics</span></div>
-      <div class="tile"><b>70.6%</b><span>get exactly the gold tree</span></div>
+      <div class="tile main"><b>73.3%</b><span>of sentences get <strong>exactly the gold meaning</strong> (the same MRS)</span></div>
+      <div class="tile"><b>88.7%</b><span>get a complete analysis that the grammar accepts, with full structure and semantics</span></div>
+      <div class="tile"><b>71.8%</b><span>get exactly the gold tree</span></div>
     </div>
-    <p class="caption">Meaning is the measure that matters most: different trees can express the same meaning, and the tree is there to get the meaning right. A sentence counts only if its whole semantic structure matches; partly correct analyses count as wrong here. These figures are for the fast pipeline with the best tagger so far, trained on the treebank and on grammar parses of news text (the last Orca row of the table and the section on training data below).</p>
+    <p class="caption">Meaning is the measure that matters most: different trees can express the same meaning, and the tree is there to get the meaning right. A sentence counts only if its whole semantic structure matches; partly correct analyses count as wrong here. These figures are for the fast pipeline with the best tagger so far, trained on the treebank and on grammar parses of literary and news text (the last Orca row of the table and the section on training data below).</p>
     <div class="scroll">
       <table class="results">
         <thead><tr><th>System</th><th class="n hl">Exact meaning (same MRS as gold)</th><th class="n">Any analysis</th><th class="n">Predicates right (F1)</th><th class="n">Links right (F1)</th><th class="n">Exact tree</th></tr></thead>
@@ -165,7 +165,7 @@ code { font-family: var(--mono); font-size: 0.88em; }
           <tr><td>Orca, repaired</td><td class="n hl">61.2% <span class="cnt">(1,262)</span></td><td class="n">80.2% <span class="cnt">(1,653)</span></td><td class="n">79.1</td><td class="n">75.6</td><td class="n">59.7% <span class="cnt">(1,230)</span></td></tr>
           <tr><td>Orca, repaired and ranked</td><td class="n hl">67.2% <span class="cnt">(1,386)</span></td><td class="n">81.1% <span class="cnt">(1,672)</span></td><td class="n">80.9</td><td class="n">78.3</td><td class="n">65.8% <span class="cnt">(1,356)</span></td></tr>
           <tr><td>Orca, repaired and ranked, plus LLM repair</td><td class="n hl">71.5% <span class="cnt">(1,475)</span></td><td class="n">90.2% <span class="cnt">(1,860)</span></td><td class="n">89.2</td><td class="n">86.1</td><td class="n">69.5% <span class="cnt">(1,434)</span></td></tr>
-          <tr><td>Orca, repaired and ranked, tagger also trained on news parses</td><td class="n hl">72.2% <span class="cnt">(1,489)</span></td><td class="n">88.1% <span class="cnt">(1,816)</span></td><td class="n">88.3</td><td class="n">85.5</td><td class="n">70.6% <span class="cnt">(1,456)</span></td></tr>
+          <tr><td>Orca, repaired and ranked, tagger also trained on literary and news parses</td><td class="n hl">73.3% <span class="cnt">(1,511)</span></td><td class="n">88.7% <span class="cnt">(1,828)</span></td><td class="n">88.1</td><td class="n">85.5</td><td class="n">71.8% <span class="cnt">(1,480)</span></td></tr>
           <tr><td>ACE (baseline)</td><td class="n hl">85.7% <span class="cnt">(1,767)</span></td><td class="n">99.8% <span class="cnt">(2,058)</span></td><td class="n">97.6</td><td class="n">94.7</td><td class="n">84.5% <span class="cnt">(1,742)</span></td></tr>
         </tbody>
       </table>
@@ -178,7 +178,7 @@ code { font-family: var(--mono); font-size: 0.88em; }
         <tbody>
           <tr><td>Orca, repaired and ranked</td><td class="n">1,672</td><td class="n hl">82.9% <span class="cnt">(1,386)</span></td><td class="n">98.4</td><td class="n">96.2</td></tr>
           <tr><td>Orca, repaired and ranked, plus LLM repair</td><td class="n">1,860</td><td class="n hl">79.3% <span class="cnt">(1,475)</span></td><td class="n">98.2</td><td class="n">95.2</td></tr>
-          <tr><td>Orca, repaired and ranked, tagger also trained on news parses</td><td class="n">1,816</td><td class="n hl">82.0% <span class="cnt">(1,489)</span></td><td class="n">98.4</td><td class="n">95.7</td></tr>
+          <tr><td>Orca, repaired and ranked, tagger also trained on literary and news parses</td><td class="n">1,828</td><td class="n hl">82.7% <span class="cnt">(1,511)</span></td><td class="n">98.4</td><td class="n">95.9</td></tr>
           <tr><td>ACE (baseline)</td><td class="n">2,058</td><td class="n hl">85.9% <span class="cnt">(1,767)</span></td><td class="n">98.3</td><td class="n">95.4</td></tr>
         </tbody>
       </table>
@@ -199,10 +199,11 @@ code { font-family: var(--mono); font-size: 0.88em; }
           <tr><td>plus news (NYT 2023 and 2025), human text</td><td class="n">128,468</td><td class="n hl">69.1% <span class="cnt">(1,425)</span></td><td class="n">83.8% <span class="cnt">(1,727)</span></td><td class="n">83.7</td><td class="n">81.0</td><td class="n">67.6% <span class="cnt">(1,393)</span></td><td class="n">198</td></tr>
           <tr><td>plus news, human text and 11 LLM-written sets</td><td class="n">487,718</td><td class="n hl">72.2% <span class="cnt">(1,489)</span></td><td class="n">88.1% <span class="cnt">(1,816)</span></td><td class="n">88.3</td><td class="n">85.5</td><td class="n">70.6% <span class="cnt">(1,456)</span></td><td class="n">150</td></tr>
           <tr><td>plus both corpora, human text only</td><td class="n">149,842</td><td class="n hl">69.8% <span class="cnt">(1,440)</span></td><td class="n">84.8% <span class="cnt">(1,748)</span></td><td class="n">84.6</td><td class="n">81.8</td><td class="n">68.5% <span class="cnt">(1,412)</span></td><td class="n">194</td></tr>
+          <tr><td>plus both corpora, human and LLM-written text</td><td class="n">590,721</td><td class="n hl">73.3% <span class="cnt">(1,511)</span></td><td class="n">88.7% <span class="cnt">(1,828)</span></td><td class="n">88.1</td><td class="n">85.5</td><td class="n">71.8% <span class="cnt">(1,480)</span></td><td class="n">150</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="caption">"Repaired and ranked" in every row. Every addition helps on every measure, and the tagger needs fewer replays to find an accepted derivation. The additions of human text alone all land close together, whichever corpus they come from. The largest addition, all of the news corpus with its eleven LLM-written sets, gives by far the largest gain, more exact meanings than the LLM repair step adds; in the much smaller literary corpus, adding the LLM-written excerpts added analyses but not exact meanings. So far the amount of grammar-licensed text matters more than who wrote it. Each row is one training run; how much a rerun with another random seed would differ has not been measured, so differences of a few dozen sentences may be chance. All other tables use the treebank-only tagger, except the news-trained row of the first table.</p>
+    <p class="caption">"Repaired and ranked" in every row. Every addition helps on every measure, and the tagger needs fewer replays to find an accepted derivation. The additions of human text alone all land close together, whichever corpus they come from. Adding all of the news corpus, with its eleven LLM-written sets, gives by far the largest gain, more exact meanings than the LLM repair step adds; in the much smaller literary corpus, adding the LLM-written excerpts added analyses but not exact meanings. Adding both corpora in full gives the best tagger so far, a small step beyond the news corpus alone. So far the amount of grammar-licensed text matters more than who wrote it. Each row is one training run; how much a rerun with another random seed would differ has not been measured, so differences of a few dozen sentences may be chance. All other tables use the treebank-only tagger, except the row of the first table whose tagger is also trained on literary and news parses.</p>
   </section>
 
   <section class="stack">

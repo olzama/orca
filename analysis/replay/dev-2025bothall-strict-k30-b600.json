@@ -1,0 +1,85 @@
+{
+ "args": {
+  "split": "dev",
+  "k": 5,
+  "min_prob": 0.005,
+  "budget": 600,
+  "fanout": 8,
+  "limit": null,
+  "kbest": 30,
+  "fast": true,
+  "entries": true,
+  "cache": true
+ },
+ "stats": {
+  "sentences": 2062,
+  "first choice right": 1124,
+  "accepted": 1828,
+  "accepted and right": 1264,
+  "accepted at first try, wrong": 273,
+  "replays": 308538,
+  "candidates": 11907,
+  "gold MRS among k best": 1591,
+  "gold MRS first among k best": 1367,
+  "accepted at first try, right": 1124,
+  "rejected, budget used": 146,
+  "accepted after repair, right": 140,
+  "accepted after repair, wrong": 291,
+  "rejected, nothing left to try": 88
+ },
+ "right_among_accepted": 0.6914660831509847,
+ "by_length": {
+  "0": {
+   "accepted at first try, wrong": 90,
+   "accepted at first try, right": 718,
+   "accepted after repair, right": 54,
+   "accepted after repair, wrong": 50,
+   "rejected, nothing left to try": 32,
+   "rejected, budget used": 9
+  },
+  "10": {
+   "rejected, budget used": 48,
+   "accepted at first try, right": 364,
+   "accepted at first try, wrong": 139,
+   "accepted after repair, wrong": 123,
+   "accepted after repair, right": 65,
+   "rejected, nothing left to try": 42
+  },
+  "20": {
+   "accepted after repair, wrong": 77,
+   "accepted at first try, right": 38,
+   "rejected, budget used": 36,
+   "rejected, nothing left to try": 11,
+   "accepted after repair, right": 18,
+   "accepted at first try, wrong": 33
+  },
+  "30": {
+   "accepted after repair, wrong": 33,
+   "rejected, budget used": 27,
+   "accepted at first try, wrong": 9,
+   "accepted at first try, right": 3,
+   "accepted after repair, right": 3,
+   "rejected, nothing left to try": 2
+  },
+  "40": {
+   "accepted after repair, wrong": 6,
+   "accepted at first try, right": 1,
+   "rejected, budget used": 21,
+   "accepted at first try, wrong": 1
+  },
+  "50": {
+   "accepted after repair, wrong": 2,
+   "rejected, budget used": 4,
+   "accepted at first try, wrong": 1,
+   "rejected, nothing left to try": 1
+  },
+  "60": {
+   "rejected, budget used": 1
+  }
+ },
+ "replays_per_sentence": 149.63045586808923,
+ "tagging_seconds": 17.242759704589844,
+ "repair_seconds": 24.541588068008423,
+ "workers": 6,
+ "sentences_per_second_repair_stage": 84.02064260413339
+}
