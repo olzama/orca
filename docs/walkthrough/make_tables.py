@@ -35,7 +35,7 @@ def p1(x):
 
 
 def sps(x):
-    return f'{x:,.2f}' if x < 1 else f'{x:,.1f}' if x < 100 else f'{x:,.0f}'
+    return f'{x:.3f}' if x < 0.1 else f'{x:,.2f}' if x < 1 else f'{x:,.1f}' if x < 100 else f'{x:,.0f}'
 
 
 def td(x, hl=False):

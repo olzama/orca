@@ -239,7 +239,7 @@ code { font-family: var(--mono); font-size: 0.88em; }
           <tr><td>Repair, stopping at the first accepted derivation</td><td class="n hl">275</td><td class="n">six CPU cores</td></tr>
           <tr><td>Repair, collecting up to 30 accepted derivations</td><td class="n hl">14.3</td><td class="n">one CPU core</td></tr>
           <tr><td>Ranking the accepted derivations</td><td class="n hl">about 1,000</td><td class="n">one CPU core</td></tr>
-          <tr><td>LLM repair, per sentence it is given</td><td class="n hl">0.01</td><td class="n">one model call at a time</td></tr>
+          <tr><td>LLM repair, per sentence it is given</td><td class="n hl">0.015</td><td class="n">one model call at a time</td></tr>
         </tbody>
       </table>
     </div>
@@ -269,7 +269,7 @@ code { font-family: var(--mono); font-size: 0.88em; }
       <table class="results">
         <thead><tr><th>Fallback, on the 390 sentences</th><th class="n">Analyses</th><th class="n hl">Exact meaning</th><th class="n">Sentences per second</th><th class="n">Cost</th></tr></thead>
         <tbody>
-          <tr><td>LLM repair (Claude Opus)</td><td class="n">188</td><td class="n hl">89</td><td class="n">0.01 per model call stream</td><td class="n">about $0.35 per sentence (API-equivalent)</td></tr>
+          <tr><td>LLM repair (Claude Opus)</td><td class="n">188</td><td class="n hl">89</td><td class="n">0.015 per model call stream</td><td class="n">about $0.35 per sentence (API-equivalent)</td></tr>
           <tr><td>ACE</td><td class="n">388</td><td class="n hl">270</td><td class="n">0.30 on one CPU core</td><td class="n">none</td></tr>
         </tbody>
       </table>
