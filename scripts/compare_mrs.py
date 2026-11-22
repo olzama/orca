@@ -42,7 +42,20 @@ def to_pydelphin(m):
         rels.append(dmrs_mrs.EP(predicate.normalize(pred), roles['LBL'], args=args))
     hcons = [dmrs_mrs.HCons('h0', 'qeq', m['top'])]
     hcons += [dmrs_mrs.HCons(a, 'qeq', b) for a, rel, b in m['hcons']]
-    return dmrs_mrs.MRS('h0', m['index'], rels, hcons)
+    variables = {v: _vpm().apply(v, p)[1] for v, p in m.get('props', {}).items()}
+    return dmrs_mrs.MRS('h0', m['index'], rels, hcons, variables=variables)
+
+
+_VPM = []
+
+
+def _vpm():
+    """The ERG's variable property mapping (grammar feature paths to MRS properties)."""
+    if not _VPM:
+        from delphin import vpm
+        _VPM.append(vpm.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..',
+                                          'data/erg/2025/semi.vpm')))
+    return _VPM[0]
 
 
 def normalized(m):

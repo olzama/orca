@@ -34,7 +34,12 @@ TARGETS = {
     'coordination': 'coordination of noun phrases, adjectives, verb phrases and clauses, including lists with and without commas, "both ... and", "either ... or", and coordination inside compounds',
     'unknown-words': 'rare, technical, invented or foreign words used as nouns, adjectives and verbs in otherwise ordinary sentences (brand names, scientific terms, regional words)',
     'mass-count': 'nouns that can be mass or count ("coffee", "paper", "experience", "light") used both ways, with and without determiners',
+    'do-be': 'the do-be construction: a subject headed by what, all, thing, best, least, most or worst with a relative clause containing the verb do, then a form of be and a verb phrase ("What you have to do is get ready", "All the government does is send out checks", "The least we could do was write a paper", "The first thing he did was call his lawyer"); vary the form of do and of the final verb',
     'optional-complements': 'nouns, verbs and adjectives that take optional complements, used both with and without them ("He resigned", "He resigned from the board", "a picture", "a picture of her mother")',
+    # after Chaves and Richter 2021: agreement that BERT-family models get wrong after distracting material
+    'agreement-attractors': 'subject-verb agreement across distracting nouns of the other number: a long subject with a plural or singular noun inside it, or a clause with such nouns before the subject, or a clefted subject separated from its verb by embedded clauses ("The engineers handling the removal from our building said the lawyer seems upset", "The key to the cabinets was lost", "It was the cousins who I think you said were upset"); use many different verbs, not only be',
+    # after Pollard and Sag 1994, chapters 3 and 7: equi against raising frames of the same verb
+    'control-raising': 'verbs and adjectives with infinitival complements that are either control or raising, especially verbs that have both kinds of frames ("expect", "promise", "believe", "want", "ask", "persuade", "seem", "appear", "tend", "likely", "eager", "easy"), including expletive subjects and objects ("There seems to be a problem", "We expect it to rain")',
 }
 
 SYSTEM = ('You write natural English sentences for a linguistics dataset. Output only the sentences, '
@@ -67,6 +72,9 @@ def main():
     ap.add_argument('--rounds', type=int, default=2, help='calls per target')
     ap.add_argument('--parallel', type=int, default=4)
     ap.add_argument('--model', default='claude-sonnet-5-5')
+    ap.add_argument('--targets', help='comma-separated target:calls pairs (default: every target, --rounds calls each)')
+    ap.add_argument('--first-batch', type=int, default=1, help='batch number of the first call (vary across rounds)')
+    ap.add_argument('--exclude', nargs='*', default=[], help='sentences.txt files of earlier rounds; their sentences are dropped')
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     log = os.path.join(args.out, 'calls.jsonl')
@@ -76,12 +84,14 @@ def main():
             r = json.loads(l)
             if r.get('sentences'):
                 done.add((r['target'], r['round']))
-    jobs = [(t, r) for t in TARGETS for r in range(args.rounds) if (t, r) not in done]
+    plan = ({t: int(k) for t, k in (x.split(':') for x in args.targets.split(','))} if args.targets
+            else {t: args.rounds for t in TARGETS})
+    jobs = [(t, r) for t, k in plan.items() for r in range(k) if (t, r) not in done]
 
     def run(job):
         t, r = job
         try:
-            data = call(args.model, SYSTEM, prompt(t, args.per_call, r + 1), args.out)
+            data = call(args.model, SYSTEM, prompt(t, args.per_call, r + args.first_batch), args.out)
             text = data.get('result') or ''
         except Exception as e:
             data, text = {'error': str(e)[:300]}, ''
@@ -95,6 +105,8 @@ def main():
             f.flush()
             print(rec['target'], rec['round'], len(rec['sentences']), flush=True)
     seen, n = set(), 0
+    for f in args.exclude:
+        seen.update(l.rstrip('\n') for l in open(f))
     with open(os.path.join(args.out, 'sentences.txt'), 'w') as out:
         for l in open(log):
             r = json.loads(l)
