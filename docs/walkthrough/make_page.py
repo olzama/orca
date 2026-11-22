@@ -325,15 +325,23 @@ def exp_rawtext():
 def exp_properties():
     p = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-properties.json'))
     n = p['sentences']
-    rows = [f'<tr><td>Predicates, arguments and scope only</td>{td(pct(p["same without properties"], n), True)}</tr>',
-            f'<tr><td>… and also tense, aspect, mood, sentence force, number, person, gender</td>{td(pct(p["same with properties"], n), True)}</tr>']
-    t1 = table([('What must match gold', ''), ('Exact meaning', 'n hl')], rows)
+    pd = load(BEST_PROPS)
+    ic = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-icons.json')
+    rows = [f'<tr><td>Predicates, arguments and scope only</td>{td(pct(p["same without properties"], n), True)}'
+            + td(pct(pd['same without properties'], n) if pd else na('running'), True) + '</tr>',
+            f'<tr><td>… and also tense, aspect, mood, sentence force, number, person, gender</td>{td(pct(p["same with properties"], n), True)}'
+            + td(pct(pd['same with properties'], n) if pd else na('running'), True) + '</tr>',
+            f'<tr><td>… or instead ICONS (information structure: topic, focus)</td>{td(na("not measured"))}'
+            + td(pct(ic['same with ICONS'], n) if ic else na('running'), True) + '</tr>']
+    t1 = table([('What must match gold', ''), ('BERT-base', 'n hl'), ('DeBERTa-v3 large', 'n hl')], rows,
+               group=[('', 1), ('Exact meaning, raw text, all data', 2)])
     lost = p['same without properties'] - p['same with properties']
     rows = [f'<tr><td>{k}</td>{td(pct(v, lost))}</tr>' for k, v in sorted(p['differ by kind'].items(), key=lambda kv: -kv[1])]
     t2 = table([(f'Sentences that stop matching ({lost})', ''), ('Share', 'n')], rows)
-    body = (t1 + cap(f'BERT-base, all data, raw text. Properties: features on MRS variables (TENSE, SF, NUM …), mapped as ACE does.')
-            + t2 + cap('Each sentence counted once, under the first kind that differs. Sentence force: statement against question.'))
-    return fold('Tense, number and other properties', 'Orca now outputs them; requiring them to match changes the headline little.', body)
+    body = (t1 + notes('Properties: features on MRS variables (TENSE, SF, NUM …), mapped as ACE does.',
+                       f'ICONS: about one gold analysis in six has them ({ic["gold with ICONS"] if ic else "…"} of {n:,}). Requiring them loses no exact match: they follow from the derivation.' if ic else 'ICONS: being measured.')
+            + t2 + cap('BERT-base. Each sentence counted once, under the first kind that differs. Sentence force: statement against question.'))
+    return fold('Tense, number, information structure', 'Orca now outputs them; requiring them to match changes the headline little.', body)
 
 
 def exp_ace():
