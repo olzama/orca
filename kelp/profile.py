@@ -12,8 +12,9 @@ Decision rows:
              7 the whole chain over the span, labels joined with "@" (FFTB's "twig")
              8 Kelp only: the whole chain, refused (FFTB reads every type 7 row as yes)
              9 Kelp only: the span is a constituent, or is not
+             10 Kelp only: a statement about the meaning ('head|ROLE|dependent') holds, or does not
 FFTB skips the types it does not know, so it reads a Kelp profile without
-the decisions of types 8 and 9.
+the decisions of types 8, 9 and 10.
 
 Only the rows of the item being saved change; all other rows are kept as
 they are. Files are replaced atomically.
@@ -24,7 +25,8 @@ import time
 
 from delphin import tsdb
 
-from kelp.discriminants import ABSENT, CHAIN, NOT_CHAIN, NOT_SPAN, PRESENT, SPAN, Constraint
+from kelp.discriminants import (ABSENT, CHAIN, NOT_CHAIN, NOT_SEM, NOT_SPAN, PRESENT, SEM, SPAN,
+                                Constraint)
 
 RELATIONS = ('tree', 'decision', 'preference', 'result')
 _DATE = '%d-%m-%Y %H:%M:%S'
@@ -55,6 +57,8 @@ def decision_fields(c, lexical):
     labels that are lexical types."""
     if c.kind in (CHAIN, NOT_CHAIN):
         return (1, 7, '@'.join(c.value)) if c.kind == CHAIN else (2, 8, '@'.join(c.value))
+    if c.kind in (SEM, NOT_SEM):
+        return (1 if c.kind == SEM else 2, 10, c.value[0])
     if c.kind in (SPAN, NOT_SPAN):
         return (1 if c.kind == SPAN else 2, 9, '')
     return (1 if c.kind == PRESENT else 2, 2 if c.value[0] in lexical else 3, c.value[0])
@@ -62,9 +66,11 @@ def decision_fields(c, lexical):
 
 def constraint_from(state, kind, key, start, end):
     """The constraint of a decision row, or None for a row Kelp does not use."""
-    key = key.lower()
     if state not in (1, 2):
         return None
+    if kind == 10:
+        return Constraint(SEM if state == 1 else NOT_SEM, start, end, (key,))
+    key = key.lower()
     if kind == 7:
         return Constraint(CHAIN, start, end, tuple(key.split('@')))
     if kind == 8:

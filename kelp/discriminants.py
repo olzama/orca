@@ -22,6 +22,11 @@ three positive kinds a node is also ruled out when its span crosses the span,
 or when it contains the span and none of its daughters does: every tree of
 the remaining nodes then has a node over the span.
 
+A constraint of kind SEM or NOT_SEM is about the meaning of a tree (one
+dependency between two predicates is there, or is not). It cannot be tested
+on the forest: every node allows it, and the session applies it to the
+trees whose meaning it has.
+
 Counting. The number of remaining trees below each node is computed
 bottom-up, and the number of remaining trees that use each node top-down.
 Both passes visit each node once.
@@ -40,7 +45,8 @@ from kelp.forest import LEXEME, Forest, Tree
 
 CHAIN, PRESENT, SPAN, ABSENT = 'chain', 'present', 'span', 'absent'
 NOT_CHAIN, NOT_SPAN = 'not-chain', 'not-span'
-_OPPOSITE = {CHAIN: NOT_CHAIN, PRESENT: ABSENT, SPAN: NOT_SPAN}
+SEM, NOT_SEM = 'sem', 'not-sem'     # about the meaning: see below
+_OPPOSITE = {CHAIN: NOT_CHAIN, PRESENT: ABSENT, SPAN: NOT_SPAN, SEM: NOT_SEM}
 _OPPOSITE.update({v: k for k, v in list(_OPPOSITE.items())})
 _NEGATIVE = (ABSENT, NOT_CHAIN, NOT_SPAN)
 
@@ -71,6 +77,8 @@ class Node:
     def allows(self, c):
         """Whether a tree with this node can satisfy the constraint, as far as
         this node alone shows."""
+        if c.kind in (SEM, NOT_SEM):
+            return True
         if (self.start, self.end) == (c.start, c.end):
             if c.kind == CHAIN:
                 return self.labels == c.value
@@ -257,6 +265,8 @@ def spans(tree, lexlabel=lambda name: name):
 
 def satisfies(tree_spans, c):
     """Whether a tree, given as the result of `spans`, satisfies a constraint."""
+    if c.kind in (SEM, NOT_SEM):
+        return True
     labels = tree_spans.get((c.start, c.end))
     if c.kind in _NEGATIVE:
         return labels is None or (c.kind == ABSENT and c.value[0] not in labels) \

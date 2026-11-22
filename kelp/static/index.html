@@ -105,6 +105,9 @@ svg .carg { font: 11px var(--mono); fill: var(--muted); }
 #guide { background: var(--focus-soft); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; }
 .choicehead { padding: 8px 14px 4px; color: var(--muted); font-size: 12px; font-weight: 600; }
 .card .no { font: 11px var(--mono); color: var(--muted); }
+.card .sum, #meaningsum { font: 12px var(--mono); line-height: 1.45; }
+.card .sum div:first-child, #meaningsum div:first-child { font-weight: 700; color: var(--accent); }
+#meaningsum { margin-bottom: 8px; font-size: 13px; }
 svg .mini-edge { stroke: var(--muted); stroke-width: 1; }
 svg .mini-dot { fill: var(--muted); } svg .mini-dot.open { fill: var(--open); }
 svg .mini-label { font: 9.5px var(--mono); fill: var(--open); }
@@ -198,7 +201,30 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
-const OPPOSITE = {chain: 'not-chain', present: 'absent', span: 'not-span'};
+const OPPOSITE = {chain: 'not-chain', present: 'absent', span: 'not-span', sem: 'not-sem'};
+const isSem = d => d.kind === 'sem' || d.kind === 'not-sem';
+/* meaning statements: 'head|ROLE|dependent', or 'TOP||predicate' */
+function shortPred(p) {
+  const m = p.match(/^(.*)\((.*)\)$/);
+  if (m) return m[2];                                 // a name or number
+  return p.startsWith('_') ? p.split('_')[1] : p;     // _show_v_1 -> show
+}
+function semText(key) {
+  const [h, role, d] = key.split('|');
+  return h === 'TOP' ? 'main predicate: ' + shortPred(d) : shortPred(h) + ' — ' + role + ': ' + shortPred(d);
+}
+function summary(deps) {            // 'show(ARG1 Abrams, ARG2 office, ARG3 Browne)', main predicate first
+  const args = {}; let top = null;
+  for (const key of deps) {
+    const [h, role, d] = key.split('|');
+    if (h === 'TOP') { top = d; continue; }
+    (args[h] = args[h] || []).push(role + ' ' + shortPred(d));
+  }
+  const heads = Object.keys(args).sort((a, b) => (b === top) - (a === top));
+  const lines = heads.map(h => shortPred(h) + '(' + args[h].sort().join(', ') + ')');
+  if (top && !args[top]) lines.unshift(shortPred(top));
+  return lines;
+}
 let items = [], state = null, focus = null, sel = 0, shown = [], docs = {}, waiting = 0, version = 0;
 
 function el(tag, attrs, ...kids) {
@@ -326,7 +352,7 @@ function discsAt(sp) {
   // "has X" says nothing new next to "exactly X" with the same trees
   const whole = new Set(state.discriminants.filter(d => d.kind === 'chain' && d.value.length === 1)
     .map(d => d.start + ' ' + d.end + ' ' + d.value[0] + ' ' + d.count));
-  const list = state.discriminants.filter(d => (!sp || sameSpan(d, sp)) &&
+  const list = state.discriminants.filter(d => !isSem(d) && (!sp || sameSpan(d, sp)) &&
     !(d.kind === 'present' && whole.has(d.start + ' ' + d.end + ' ' + d.value[0] + ' ' + d.count)));
   list.sort((a, b) => (b.end - b.start) - (a.end - a.start) || a.start - b.start ||
                       RANK[a.kind] - RANK[b.kind] || b.count - a.count);
@@ -334,6 +360,7 @@ function discsAt(sp) {
 }
 function describe(d) {
   const kind = d.kind in OPPOSITE ? d.kind : Object.keys(OPPOSITE).find(k => OPPOSITE[k] === d.kind);
+  if (kind === 'sem') return ['', semText(d.value[0])];
   if (kind === 'chain') return ['exactly', d.value.join(' › ')];
   if (kind === 'present') return ['has', d.value[0]];
   return ['is a constituent', ''];
@@ -366,7 +393,9 @@ function renderChoices() {
     }
   }
   else line.append(el('div', {class: 'where'}, 'No focus: choices of the whole sentence, widest first.'));
-  const all = discsAt(focus);
+  const isTop = d => d.value[0].startsWith('TOP|');      // the main predicate first, then by how many trees agree
+  const sem = state.discriminants.filter(isSem).sort((a, b) => isTop(b) - isTop(a) || b.count - a.count || a.value[0].localeCompare(b.value[0]));
+  const all = sem.concat(discsAt(focus));
   shown = all.slice(0, 150);
   sel = Math.min(sel, Math.max(0, shown.length - 1));
   const list = $('choicelist'); list.replaceChildren();
@@ -375,20 +404,22 @@ function renderChoices() {
       : focus ? 'Nothing to decide at this span.' : 'Nothing to decide.'));
     return;
   }
-  if (focus) list.append(el('div', {class: 'choicehead'}, 'Which analysis is correct for these words?'));
   shown.forEach((d, i) => {
+    if (i === 0 && isSem(d)) list.append(el('div', {class: 'choicehead'}, 'By meaning: is this what the sentence says?'));
+    if (!isSem(d) && (i === 0 || isSem(shown[i - 1])))
+      list.append(el('div', {class: 'choicehead'}, focus ? 'By structure: which analysis is correct for the highlighted words?' : 'By structure, whole sentence'));
     const [what, label] = describe(d);
     const yes = el('button', {title: 'yes'}, 'yes'), no = el('button', {title: 'no'}, 'no');
     yes.onclick = ev => { ev.stopPropagation(); decide(d, true); };
     no.onclick = ev => { ev.stopPropagation(); decide(d, false); };
     const head = el('div', {}, el('span', {class: 'what'}, what + ' '), el('span', {class: 'label'}, label));
-    if (!focus) head.append(el('div', {class: 'where'}, words(d.start, d.end)));
-    if (d.kind === 'present' || d.value.length === 1) { const doc = docFor(d.value[0]); if (doc) head.append(doc); }
+    if (!focus && !isSem(d)) head.append(el('div', {class: 'where'}, words(d.start, d.end)));
+    if (!isSem(d) && (d.kind === 'present' || d.value.length === 1)) { const doc = docFor(d.value[0]); if (doc) head.append(doc); }
     const bar = el('div', {class: 'bar'}, el('i', {style: 'width:' + (100 * d.count / state.remaining) + '%'}));
     const row = el('div', {class: 'choice' + (i === sel ? ' sel' : '')},
       el('span', {class: 'num'}, i < 9 ? String(i + 1) : ''), head, el('span', {class: 'btns'}, yes, no),
       el('span', {class: 'keep'}, 'keeps ' + d.count + ' of ' + state.remaining), bar);
-    row.onclick = () => { sel = i; if (!focus) setFocus(d); else { renderChoices(); renderGallery(); } };
+    row.onclick = () => { sel = i; if (!focus && !isSem(d)) setFocus(d); else { renderChoices(); renderGallery(); } };
     list.append(row);
     if (i === sel) row.scrollIntoView({block: 'nearest'});
   });
@@ -417,16 +448,16 @@ function renderTop() {
   if (!state.checked) guide.textContent = 'Too many trees to list (' + state.remaining + '). Work on the highlighted words: on the right, ' +
     'press the number of the analysis that is correct for them, or select a wrong one with j / k and press x. ' +
     'Each answer removes trees. All trees are listed here once at most ' + state.limit + ' remain.';
-  else guide.textContent = 'Two ways to work. Answer choices on the right for the highlighted words: the number of the correct analysis, ' +
-    'or x on a wrong one; the trees that the selected choice would remove are faded below. ' +
-    'Or click the correct tree below and press s to keep only that one.';
+  else guide.textContent = 'Each tree below is headed by what it says: the main predicate first, then who does what. ' +
+    'Click the tree with the right meaning and press s to keep only that one. Or answer the choices on the right ' +
+    '(a number for yes, x for no on the selected one); the trees a choice would remove are faded.';
   const st = $('itemstatus'); st.replaceChildren();
   if (state.status) st.append(el('span', {class: 'badge ' + state.status}, state.status));
   const dec = $('decisions'); dec.replaceChildren();
   for (const d of state.decisions) {
     const yes = d.kind in OPPOSITE, [what, label] = describe(d);
     dec.append(el('span', {class: 'chip' + (yes ? '' : ' no')}, el('b', {}, yes ? 'yes ' : 'no '),
-      words(d.start, d.end) + ': ' + what + (label ? ' ' + label : '')));
+      isSem(d) ? label : words(d.start, d.end) + ': ' + what + (label ? ' ' + label : '')));
   }
 }
 
@@ -491,6 +522,7 @@ function renderMeaning() {
   const g = state.dmrs;
   if (state.unchecked) { holder.append(el('div', {class: 'empty'}, 'The grammar has not checked this tree yet.')); return; }
   if (!g) { holder.append(el('div', {class: 'empty'}, 'This meaning cannot be drawn as a graph.')); return; }
+  holder.append(el('div', {id: 'meaningsum'}, ...summary(g.deps).map(line => el('div', {}, line))));
   const pos = {}; let x = 14;
   g.nodes.forEach((n, i) => {
     n.text = n.pred + (n.carg ? '(' + n.carg + ')' : '');
@@ -518,8 +550,9 @@ function renderMeaning() {
   holder.append(s);
 }
 /* ---- all trees, small ---- */
-function holds(tree, d) {            // does the tree satisfy a choice?
-  const n = flat(tree, null, []).find(x => sameSpan(x, d));
+function holds(t, d) {               // does the tree satisfy a choice?
+  if (isSem(d)) return t.unchecked || t.deps.includes(d.value[0]);
+  const n = flat(clone(t.tree), null, []).find(x => sameSpan(x, d));
   if (!n) return false;
   if (d.kind === 'chain') return n.labels.length === d.value.length && n.labels.every((l, i) => l === d.value[i]);
   if (d.kind === 'present') return n.labels.includes(d.value[0]);
@@ -566,9 +599,10 @@ function renderGallery() {
   const choice = shown[sel];
   state.trees.forEach((t, i) => {
     const copy = clone(t.tree);
-    const card = el('div', {class: 'card' + (i === state.show ? ' current' : '') + (choice && !holds(copy, choice) ? ' out' : '') +
+    const card = el('div', {class: 'card' + (i === state.show ? ' current' : '') + (choice && !holds(t, choice) ? ' out' : '') +
         (t.unchecked ? ' unchecked' : '')},
-      el('div', {class: 'no'}, (i + 1) + (t.unchecked ? ' · not checked yet' : '')), miniTree(copy));
+      el('div', {class: 'no'}, (i + 1) + (t.unchecked ? ' · not checked yet' : '')),
+      el('div', {class: 'sum'}, ...summary(t.deps).map(line => el('div', {}, line))), miniTree(copy));
     card.onclick = () => showTree(0, i);
     holder.append(card);
   });

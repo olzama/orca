@@ -39,9 +39,24 @@ def to_orca(tree):
     return walk(tree), toks
 
 
+def _name(n):
+    return str(n.predicate) + (f'({n.carg})' if n.carg else '')
+
+
+def _dependencies(d):
+    """The meaning as a set of statements, each 'head|ROLE|dependent', plus
+    'TOP||predicate' for the main predicate. Links from quantifiers are left out."""
+    name = {n.id: _name(n) for n in d.nodes}
+    out = {f'TOP||{name[d.top]}'} if d.top in name else set()
+    for k in d.links:
+        if k.role and k.role != 'RSTR':
+            out.add(f'{name[k.start]}|{k.role}|{name[k.end]}')
+    return sorted(out)
+
+
 def _dmrs(m):
     d = dmrs.from_mrs(m)
-    return {'top': d.top, 'index': d.index,
+    return {'top': d.top, 'index': d.index, 'deps': _dependencies(d),
             'nodes': [{'id': n.id, 'pred': str(n.predicate), 'carg': n.carg, 'props': dict(n.properties)}
                       for n in d.nodes],
             'links': [{'from': k.start, 'to': k.end, 'role': k.role, 'post': k.post} for k in d.links]}
@@ -75,5 +90,6 @@ class Engine:
                 graph = _dmrs(m)
             except Exception:               # a meaning that has no DMRS form
                 graph = None
-            return {'root': root, 'dmrs': graph, 'mrs': simplemrs.encode(m)}
+            return {'root': root, 'dmrs': graph, 'mrs': simplemrs.encode(m),
+                    'deps': graph['deps'] if graph else []}
         return None

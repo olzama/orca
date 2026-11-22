@@ -15,6 +15,7 @@ holds trees that the grammar does not license. At or below the limit it
 unpacks the remaining trees, has Orca check each one, and from then on works
 with the licensed trees only, each with its meaning.
 """
+import collections
 import getpass
 import json
 import os
@@ -23,7 +24,7 @@ import time
 
 from delphin import itsdb
 
-from kelp.discriminants import CHAIN, PRESENT, SPAN, Chains, Constraint, satisfies, spans
+from kelp.discriminants import CHAIN, NOT_SEM, PRESENT, SEM, SPAN, Chains, Constraint, spans
 from kelp.forest import load_forests
 from kelp.profile import Annotations, decision_fields, derivation, now
 
@@ -169,6 +170,7 @@ class Session:
         if self.engine is None or counts.total > self.limit:
             return counts, None
         exact, start, first = [], time.time(), True
+        sem = [c for c in constraints if c.kind in (SEM, NOT_SEM)]
         for t in item.chains.trees(constraints):
             key = t.key()
             if key not in item.checked and (wait or first or time.time() - start < self.budget):
@@ -177,7 +179,9 @@ class Session:
             if key not in item.checked:
                 exact.append((t, spans(t, self.lexlabel), None))
             elif item.checked[key] is not None:
-                exact.append((t, spans(t, self.lexlabel), item.checked[key]))
+                deps = item.checked[key].get('deps', ())
+                if all((c.value[0] in deps) == (c.kind == SEM) for c in sem):
+                    exact.append((t, spans(t, self.lexlabel), item.checked[key]))
         return counts, exact
 
     def _replay_journal(self):
@@ -246,11 +250,16 @@ class Session:
             if exact:
                 show = min(max(show, 0), len(exact) - 1)
                 out['trees'] = [{'tree': _tree_json(t, lambda p: seen[p] == len(exact), self.lexlabel),
-                                 'root': r and r['root'], 'dmrs': r and r['dmrs'], 'unchecked': r is None}
-                                for t, _, r in exact]
+                                 'root': r and r['root'], 'dmrs': r and r['dmrs'], 'unchecked': r is None,
+                                 'deps': r.get('deps', []) if r else []} for t, _, r in exact]
                 out.update(out['trees'][show], show=show)
         item.remaining = out['remaining']
         out['discriminants'] = [dict(_to_json(c), count=k) for c, k in found.items()]
+        if exact:                           # statements about the meaning that some checked trees make
+            known = [r for _, _, r in exact if r]
+            said = collections.Counter(d for r in known for d in set(r.get('deps', ())))
+            out['discriminants'] += [{'kind': SEM, 'start': 0, 'end': 0, 'value': [d], 'count': k}
+                                     for d, k in said.items() if k < len(known)]
         return out
 
     def _remaining(self, item, constraints):
