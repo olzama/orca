@@ -1,0 +1,76 @@
+{
+ "items": 70,
+ "by kind and cause": {
+  "dev": {
+   "wrong tag only": 41,
+   "tokenization": 13,
+   "ungrammatical or robust input": 1,
+   "missing lexical entry": 4,
+   "other": 1
+  },
+  "generated": {
+   "missing lexical entry": 2,
+   "wrong tag only": 7,
+   "other": 1
+  }
+ },
+ "dev: diagnosed as tagging error (correct, gold exists)": 41,
+ "dev: items": 60,
+ "dev: tagging diagnoses naming a truly wrong word": 40,
+ "cost_usd": 4.69,
+ "dev, same items as pilot1": {
+  "items": 30,
+  "before": {
+   "tokenization": 8,
+   "wrong tag only": 12,
+   "ungrammatical or robust input": 1,
+   "missing lexical entry": 4,
+   "missing construction": 3,
+   "punctuation": 2
+  },
+  "after": {
+   "wrong tag only": 21,
+   "tokenization": 6,
+   "ungrammatical or robust input": 1,
+   "missing lexical entry": 2
+  },
+  "changes": {
+   "wrong tag only -> wrong tag only": 12,
+   "tokenization -> wrong tag only": 4,
+   "tokenization -> tokenization": 4,
+   "missing construction -> wrong tag only": 3,
+   "missing lexical entry -> wrong tag only": 2,
+   "punctuation -> tokenization": 2,
+   "missing lexical entry -> missing lexical entry": 2,
+   "ungrammatical or robust input -> ungrammatical or robust input": 1
+  }
+ },
+ "generated, same items as pilot1": {
+  "items": 10,
+  "before": {
+   "wrong tag only": 6,
+   "missing lexical entry": 4
+  },
+  "after": {
+   "missing lexical entry": 2,
+   "wrong tag only": 7,
+   "other": 1
+  },
+  "changes": {
+   "wrong tag only -> wrong tag only": 4,
+   "missing lexical entry -> wrong tag only": 3,
+   "wrong tag only -> missing lexical entry": 1,
+   "wrong tag only -> other": 1,
+   "missing lexical entry -> missing lexical entry": 1
+  }
+ },
+ "dev, new items": {
+  "items": 30,
+  "causes": {
+   "wrong tag only": 20,
+   "tokenization": 7,
+   "missing lexical entry": 2,
+   "other": 1
+  }
+ }
+}
