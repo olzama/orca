@@ -7,6 +7,7 @@ examples (drawn by the page script into #examples) sit in the last fold.
 
 Usage: make_page.py PAGE.html   (rewrites the page in place)
 """
+import collections
 import json
 import os
 import sys
@@ -109,12 +110,15 @@ def summary():
     cnt, verdicts, _, labels = gen_counts()
     if verdicts:
         g = cnt['all']
+        gb = gen_counts('')[0]['all']
         lo = g['agree'] + g['reference'] + g['both']
         hi = lo + g['none'] + g['scope']
         rows += [grp(f'Generated sentences on hard phenomena (rounds 1 to {len(labels)}), '
                      'compared with ACE\'s first-ranked parse, which nobody checked'),
-                 row('&nbsp;&nbsp;Orca (BERT-base), from raw text', g['n'], pct(g['agree'], g['n']), na('not measured'), pct(g['agree'] + g['orca'] + g['both'], g['n']),
+                 row('&nbsp;&nbsp;Orca (DeBERTa-v3 large), from raw text', g['n'], pct(g['agree'], g['n']), na('not measured'), pct(g['agree'] + g['orca'] + g['both'], g['n']),
                      pct(g['mrs'], g['n']), na('not measured')),
+                 row('&nbsp;&nbsp;Orca (BERT-base), from raw text', gb['n'], pct(gb['agree'], gb['n']), na('not measured'), pct(gb['agree'] + gb['orca'] + gb['both'], gb['n']),
+                     pct(gb['mrs'], gb['n']), na('not measured')),
                  row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], na('the reference'), na('the reference'),
                      f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), na('not measured'))]
     t = table([('Text and parser', ''), ('Sentences', 'n'), ('Same meaning as the reference', 'n hl'), ('… with tense, number and information structure too', 'n hl'),
@@ -128,6 +132,8 @@ def summary():
     finds = ['<b>Exact match understates Orca:</b> the judge often accepts Orca\'s reading where it differs (<i>Generated sentences</i>).',
              '<b>Losses are in proposing</b>, not ranking, and grow with length (<i>Where the wrong sentences go wrong</i>).',
              '<b>Bigger encoders help</b>, even with all the data (<i>Encoders</i>).',
+             '<b>Training on judged generated sentences</b> helps on new generated text by the judge but not on dev, so far from one run each (<i>Generated sentences</i>).',
+             '<b>Another grammar works:</b> Orca replays most of ACE\'s Hausa parses (<i>Another grammar: Hausa</i>).',
              '<b>Faster than ACE</b>, but more sentences get no analysis (<i>Orca and ACE</i>).',
              '<b>Wrong agreement is turned down</b>; ACE finds strained readings instead (<i>Agreement after distracting material</i>).',
              '<b>LLMs help offline</b> (repair, judging), <b>not online</b> (<i>LLM repair</i>, <i>LLM choosing among readings</i>).']
@@ -443,14 +449,14 @@ def exp_encoders():
 GEN_ROUNDS = (('pilot1', 'Round 1'), ('round2', 'Round 2'), ('round3', 'Round 3'))
 
 
-def gen_counts():
+def gen_counts(key=BEST_KEY):
     """Per round, per phenomenon and overall: sentences, analyses, and how each sentence came out
     (agree with ACE; judge says orca / reference / both / neither; none = Orca no analysis; scope = differ only in scope)."""
     import collections
     cnt = collections.defaultdict(collections.Counter)
     verdicts, info = {}, {}
     for rnd, label in GEN_ROUNDS:
-        path = f'{ORCA}/analysis/mrs/gen-{rnd}-bothsurf-rawtext.json'
+        path = f'{ORCA}/analysis/mrs/gen-{rnd}-bothsurf{"-" + key if key else ""}-rawtext.json'
         if not os.path.exists(path):
             continue
         gdir = f'{ORCA}/data/generated/{rnd}'
@@ -460,7 +466,7 @@ def gen_counts():
             for s in c['sentences'] or []:
                 tgt.setdefault(s.strip(), c['target'])
         sents = [l.rstrip('\n') for l in open(f'{gdir}/sentences.txt')]
-        vg = json.load(open(f'{ORCA}/analysis/adjudicate/gen-{rnd}/score.json'))
+        vg = json.load(open(f'{ORCA}/analysis/adjudicate/gen-{rnd}{"-" + key if key else ""}/score.json'))
         verdicts[label] = vg
         recs = json.load(open(path))['records']
         info[label] = (len(sents), len(recs))
@@ -488,7 +494,7 @@ def exp_generated():
             + [row('&nbsp;&nbsp;' + k.replace('-', ' ').capitalize().replace('Pp ', 'PP '), cnt[k]) for k in order])
     t = table([('Generated sentences', ''), ('Sentences', 'n'), ('Same meaning as ACE\'s parse', 'n'), ('Right according to the LLM judge', 'n hl'),
                ('Any analysis', 'n')], rows)
-    vd = json.load(open(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json'))
+    vd = json.load(open(BEST_JUDGE))
     def jrow(name, v):
         n = sum(v.values())
         return (f'<tr><td>{name}</td>' + td(f'{n:,}') + td(pct(v['orca'], n), True) + td(pct(v['reference'], n), True)
@@ -501,9 +507,27 @@ def exp_generated():
     cost = sum(v['cost_usd'] for v in verdicts.values()) + vd['cost_usd']
     sizes = '; '.join(f'{l}: {a:,} written, {b:,} parsed by ACE and replayable' for l, (a, b) in info.items())
     body = (t + notes('Claude Sonnet wrote the sentences. Round 1: ten phenomena; round 2: the seven hardest; round 3: agreement, control against raising, four of the hardest.',
-                      'Kept if ACE parses them and Orca can replay the parse. Orca: BERT-base, from raw text; reference: ACE\'s unchecked first parse.')
+                      f'Kept if ACE parses them and Orca can replay the parse. Orca: {BEST_NAME}, from raw text; reference: ACE\'s unchecked first parse.')
             + t2 + notes(f'Claude Opus sees the two readings in random order, each by what the other lacks (${cost:.2f} in all).',
                          'On generated text ACE\'s first parse is a weak reference, so training uses the judged reading.'))
+    m0, m1 = (load(f'{ORCA}/analysis/mrs/{x}') for x in ('dev-2025bothsurf-debertav3large-rawtext.json', 'dev-2025bothsurf-debertav3large-gen12-rawtext.json'))
+    if m0 and m1:
+        def grow(name, key):
+            dv = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{key}-rawtext.json')['counts']
+            dp = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{key}-properties.json')
+            g3 = load(f'{ORCA}/analysis/mrs/gen-round3-bothsurf-{key}-rawtext.json')['counts']
+            j3 = load(f'{ORCA}/analysis/adjudicate/gen-round3-{key}/score.json')
+            n3 = g3['sentences']
+            return (f'<tr><td>{name}</td>' + td(pct(dv['same MRS'], N), True) + td(pct(dp['same with properties'], N) if dp else na('running'))
+                    + td(pct(dv['with MRS'], N)) + td(pct(g3['same MRS'], n3)) + td(pct(g3['same MRS'] + j3['verdicts']['orca'] + j3['verdicts'].get('both', 0), n3) if j3 else na('being judged'), True)
+                    + td(pct(g3['with MRS'], n3)) + '</tr>')
+        t4 = table([('DeBERTa-v3 large, trained on', ''), ('Same meaning as gold', 'n hl'), ('… with tense, number and information structure too', 'n'), ('Any analysis', 'n'),
+                    ('Same meaning as ACE', 'n'), ('Right according to the LLM judge', 'n hl'), ('Any analysis', 'n')],
+                   [grow('All data', 'debertav3large'), grow('All data and the judged rounds 1 and 2 (four times over)', 'debertav3large-gen12')],
+                   group=[('', 1), (f'Redwoods dev ({N:,})', 3), ('Round 3, unseen in training', 3)])
+        body += ('    <h3>Training on the judged sentences</h3>\n' + t4
+                 + notes('Judged training data: ACE\'s reading unless the judge preferred Orca\'s; sentences judged wrong both ways dropped.',
+                         'One training run each; a second run of the first row, with another random seed, is under way to show how much runs differ.'))
     ap = f'{ORCA}/analysis/agreements/gen-r12/score.json'
     if os.path.exists(ap):
         a = json.load(open(ap))
@@ -528,6 +552,24 @@ def exp_generated():
                  + notes(f'Rounds 1 and 2. Readings: up to eight distinct meanings from ACE\'s 30 best parses, in random order (${a["cost_usd"]:.2f}).',
                          'Inconclusive: the judge is unreliable when choosing among many readings, as the dev row shows.'))
     return fold('Generated sentences', 'Harder than dev; ACE\'s own parses of them are often wrong.', body)
+
+
+def exp_hausa():
+    rounds = [r for r in ('round1', 'round2') if os.path.exists(f'{ORCA}/data/hausa/{r}/filter.json')]
+    if not rounds:
+        return ''
+    tot = collections.Counter()
+    rows = []
+    for i, r in enumerate(rounds, 1):
+        f = next(iter(json.load(open(f'{ORCA}/data/hausa/{r}/filter.json')).values()))
+        w = sum(1 for _ in open(f'{ORCA}/data/hausa/{r}/sentences.txt'))
+        tot.update({'w': w, 'p': f['sentences'], 'r': f['replayed']})
+        rows.append(f'<tr><td>&nbsp;&nbsp;Round {i}</td>' + td(f'{w:,}') + td(pct(f['sentences'], w)) + td(pct(f['replayed'], f['sentences']), True) + '</tr>')
+    rows.insert(0, '<tr><td><b>All</b></td>' + td(f"{tot['w']:,}") + td(pct(tot['p'], tot['w'])) + td(pct(tot['r'], tot['p']), True) + '</tr>')
+    t = table([('Hausa sentences', ''), ('Written', 'n'), ('ACE finds a parse', 'n'), ('Orca replays ACE\'s parse', 'n hl')], rows)
+    body = t + notes('Grammar: HaG (Crysmann), built on the Grammar Matrix. Claude Sonnet wrote the sentences from HaG\'s lexicon, in plain spelling without tone marks.',
+                     'Replay: Orca rebuilds ACE\'s first parse from its labels, finding entries in HaG\'s lexicon from the plain words. The failures are being sorted by cause.')
+    return fold('Another grammar: Hausa', 'Orca replays most of ACE\'s Hausa parses; each failure points to an English-only assumption or a HaG difference.', body)
 
 
 def exp_agreement():
@@ -604,7 +646,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_generated() + exp_agreement() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_generated() + exp_agreement() + exp_hausa() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
