@@ -19,10 +19,14 @@ INCLUDE = re.compile(r'^\s*:include\s+"([^"]+)"', re.M)
 SECTION = re.compile(r'^\s*:(begin|end)\s+:(type|instance)(?:\s+:status\s+([\w-]+))?', re.M)
 
 
-def load_plan(top_file):
-    """Files of a grammar in load order, as (path, section, status)."""
-    root = os.path.dirname(os.path.abspath(top_file))
-    plan, stack = [], [(None, None)]       # sections nest
+def load_plan(top_file, root=None, outer=(None, None)):
+    """Files of a grammar in load order, as (path, section, status).
+
+    Included files that themselves only include others (HaG's hausa-word.tdl)
+    are followed recursively; include paths are relative to the grammar root.
+    The ERG's top file includes only leaf files, so its plan is unchanged."""
+    root = root or os.path.dirname(os.path.abspath(top_file))
+    plan, stack = [], [outer]              # sections nest
     with open(top_file, encoding='utf-8') as f:
         for line in f:
             line = line.split(';')[0]
@@ -37,7 +41,12 @@ def load_plan(top_file):
             if m:
                 name = m.group(1)
                 path = os.path.join(root, name if name.endswith('.tdl') else name + '.tdl')
-                plan.append((path,) + stack[-1])
+                with open(path, encoding='utf-8') as g:
+                    nested = any(INCLUDE.match(l.split(';')[0]) for l in g)
+                if nested:
+                    plan += load_plan(path, root, stack[-1])
+                else:
+                    plan.append((path,) + stack[-1])
     return plan
 
 

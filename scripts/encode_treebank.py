@@ -57,12 +57,30 @@ def to_tree(node):
     return Node(node.entity, tuple(to_tree(d) for d in kids))
 
 
-def token_rows(leaves, e2t):
-    """One row per token: form plus the factored label."""
+def lexrule_names(top_file):
+    """Names of the grammar's lexical rules (status lex-rule), for grammars whose
+    rule names don't follow the ERG's convention of ending in 'lr' (HaG's _ir rules)."""
+    import sys
+    from delphin import tdl
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+    from orca.tfs.hierarchy import load_plan
+    names = set()
+    for path, section, status in load_plan(top_file):
+        if section == 'instance' and status == 'lex-rule':
+            for event, obj, _ in tdl.iterparse(path, encoding='utf-8'):
+                if event in ('TypeDefinition', 'LexicalRuleDefinition'):
+                    names.add(obj.identifier.lower())
+    return names
+
+
+def token_rows(leaves, e2t, lexrules=None):
+    """One row per token: form plus the factored label. Lexical rules are told
+    apart by name (ERG) or, given the grammar's set of lexical rules, by status."""
+    is_lex = (lambda n: n.lower() in lexrules) if lexrules else (lambda n: bool(LEXRULE.search(n)))
     rows = []
     for leaf, delta in zip(leaves, relative_depths(leaves)):
-        lex = [n for n in leaf.chain if LEXRULE.search(n)]
-        phr = [n for n in leaf.chain if not LEXRULE.search(n)]
+        lex = [n for n in leaf.chain if is_lex(n)]
+        phr = [n for n in leaf.chain if not is_lex(n)]
         rows.append({
             'form': leaf.forms[0],
             'entry': leaf.entry,
@@ -90,7 +108,7 @@ VIEWS = {
 }
 
 
-def run_split(split_dir, e2t, out_path):
+def run_split(split_dir, e2t, out_path, lexrules=None):
     st = {
         'derivations': 0, 'unreadable': 0, 'not_binary': 0, 'round_trip_ok': 0,
         'round_trip_fail': 0, 'tokens': 0, 'leaves': 0, 'interleaved_chains': 0,
@@ -139,7 +157,7 @@ def run_split(split_dir, e2t, out_path):
                         key = (' '.join(leaf.forms).lower(), e2t.get(leaf.entry, leaf.entry),
                                tuple(n for n in leaf.chain if LEXRULE.search(n)))
                         entries_by_form_type[key][leaf.entry] += 1
-                    toks = token_rows(leaves, e2t)
+                    toks = token_rows(leaves, e2t, lexrules)
                     st['leaves'] += len(leaves)
                     st['tokens'] += len(toks)
                     st['max_depth'] = max([st['max_depth']] + [l.depth or 0 for l in leaves])

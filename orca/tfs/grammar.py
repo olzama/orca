@@ -43,6 +43,9 @@ class Grammar:
                         self.instances[name] = obj
                         self.status[name] = status
         self.h.finalize()
+        # list types: the ERG's *list* *cons* *null* *diff-list*, or the Matrix's plain names (HaG)
+        plain = '*cons*' not in self.h.parents and 'cons' in self.h.parents
+        self.LIST, self.CONS, self.NULL, self.DIFF_LIST = ('list', 'cons', 'null', 'diff-list') if plain else (LIST, CONS, NULL, DIFF_LIST)
         self._constraints: Dict[str, Optional[Node]] = {}
         self._building = set()
         self._fs: Dict[str, Node] = {}
@@ -73,7 +76,7 @@ class Grammar:
     def _raw(self, term, corefs) -> Node:
         """A TDL term as nodes, with no type constraints applied yet."""
         if term is None:
-            return Node(NULL)
+            return Node(self.NULL)
         if isinstance(term, tdl.Conjunction):
             node = None
             for t in term.terms:
@@ -107,11 +110,11 @@ class Grammar:
 
     def _raw_avm(self, avm, corefs):
         if isinstance(avm, tdl.DiffList):
-            node, last = Node(DIFF_LIST), Node(TOP)
+            node, last = Node(self.DIFF_LIST), Node(TOP)
             cur = node
             feat = 'LIST'
             for value in avm.values():
-                cell = Node(CONS)
+                cell = Node(self.CONS)
                 cell.arcs['FIRST'] = self._raw(value, corefs)
                 cur.arcs[feat] = cell
                 cur, feat = cell, 'REST'
@@ -120,9 +123,9 @@ class Grammar:
             return node
         feats = list(avm.features())
         if isinstance(avm, tdl.ConsList):
-            node = Node(CONS if feats else (NULL if avm.terminated else LIST))
+            node = Node(self.CONS if feats else (self.NULL if avm.terminated else self.LIST))
         elif type(avm).__name__ == '_ImplicitAVM':
-            node = Node(CONS if feats else LIST)
+            node = Node(self.CONS if feats else self.LIST)
         else:
             node = Node(TOP)
         for path, value in feats:
@@ -338,9 +341,9 @@ class Grammar:
                 fs = u.copy(self.instance(name))
                 tokens = [self.token_node(t.tfs) for t in (kids[0].tokens or [])]
                 if tokens:
-                    lst = Node(NULL)
+                    lst = Node(self.NULL)
                     for tok in reversed(tokens):
-                        cell = Node(CONS, expanded=True)
+                        cell = Node(self.CONS, expanded=True)
                         cell.arcs['FIRST'], cell.arcs['REST'] = tok, lst
                         lst = cell
                     u.unify(u.get(fs, *TOKENS_LIST), lst, list(TOKENS_LIST))
@@ -404,9 +407,9 @@ class Grammar:
                 n = len(tree.forms)
                 mine, tokens = [self.token_node(t) for t in tokens[:n]], tokens[n:]
                 if mine:
-                    lst = Node(NULL)
+                    lst = Node(self.NULL)
                     for tok in reversed(mine):
-                        cell = Node(CONS, expanded=True)
+                        cell = Node(self.CONS, expanded=True)
                         cell.arcs['FIRST'], cell.arcs['REST'] = tok, lst
                         lst = cell
                     u.unify(u.get(fs, *TOKENS_LIST), lst, list(TOKENS_LIST))
@@ -429,7 +432,7 @@ class Grammar:
                 for i, (_, dfs, _) in enumerate(built):
                     u.unify(u.get(arg, 'FIRST'), dfs, [ARGS] + ['REST'] * i + ['FIRST'])
                     arg = u.get(arg, 'REST')
-                if deref(arg).type != NULL and self.h.glb(deref(arg).type, NULL) is None:
+                if deref(arg).type != self.NULL and self.h.glb(deref(arg).type, self.NULL) is None:
                     raise UnificationFailure([ARGS], 'too few daughters', name)
             except (ReplayFailure, UnificationFailure):
                 if cache is not None and built:

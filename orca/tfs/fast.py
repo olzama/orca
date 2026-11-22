@@ -44,7 +44,8 @@ class FastGrammar:
         self._instances, self._tokens = {}, {}
         self.leaf_memo = {}
         C.init(self._glb, self._constraint)
-        self.NULL, self.CONS = self.tid(NULL), self.tid(CONS)
+        self.null_name = grammar.NULL
+        self.NULL, self.CONS = self.tid(grammar.NULL), self.tid(grammar.CONS)
         self.F = {f: self.fid(f) for f in (ARGS, 'FIRST', 'REST') + DELETED_DAUGHTERS}
         self.TL = [self.fid(f) for f in TOKENS_LIST]
         self.TLAST = [self.fid(f) for f in TOKENS_LAST]
@@ -249,7 +250,7 @@ class FastGrammar:
                     arg = self._check(C.get(arg, [F['REST']], path))
                     path = path + [F['REST']]
                 t = C.type(arg)
-                if t != self.NULL and self.h.glb(self.type_names[t], NULL) is None:
+                if t != self.NULL and self.h.glb(self.type_names[t], self.null_name) is None:
                     raise UnificationFailure([ARGS], 'too few daughters', name)
             except (ReplayFailure, UnificationFailure):
                 if cache is not None and built:
