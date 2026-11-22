@@ -50,8 +50,8 @@ def dmrs_json(m):
 class Parser:
     def __init__(self, grammar=DEFAULTS['grammar'], tagger=DEFAULTS['tagger'], ace=DEFAULTS['ace'],
                  dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.005, device=None,
-                 all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=False,
-                 normalized_lookup=False):
+                 all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
+                 normalized_lookup=True):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -283,8 +283,8 @@ def main():
     ap.add_argument('--kbest', type=int, default=30, help='stop after this many accepted derivations')
     ap.add_argument('--budget', type=int, default=600, help='at most this many replays per sentence')
     ap.add_argument('--commit', action='store_true', help='repair: keep a fix once the failure moves to another part of the tree (scripts/repair.py)')
-    ap.add_argument('--locate-missing', action='store_true', help='repair: a word with no lexical entry for its tag fails at that word, not at the root (orca/tfs/lexicon.py)')
-    ap.add_argument('--normalized-lookup', action='store_true', help='replay and look up words in their preprocessed form (ACE\'s +FORM); the tagger still sees the text as typed')
+    ap.add_argument('--no-locate-missing', dest='locate_missing', action='store_false', help='old behavior: a word with no lexical entry for its tag fails at the root (default: at that word)')
+    ap.add_argument('--no-normalized-lookup', dest='normalized_lookup', action='store_false', help='old behavior: replay and look up words as typed (default: their preprocessed form, ACE\'s +FORM; the tagger still sees the text as typed)')
     ap.add_argument('--root-focus', action='store_true', help='repair: on a failure at the root, search the top of the tree and the head path first (scripts/repair.py)')
     ap.add_argument('--commit-min', type=int, default=0, help='with --commit: only for sentences of at least this many tokens')
     ap.add_argument('--min-tokens', type=int, default=0, help='with --eval: only sentences of at least this many tokens')
