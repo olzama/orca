@@ -125,7 +125,10 @@ class Grammar:
         if isinstance(avm, tdl.ConsList):
             node = Node(self.CONS if feats else (self.NULL if avm.terminated else self.LIST))
         elif type(avm).__name__ == '_ImplicitAVM':
-            node = Node(self.CONS if feats else self.LIST)
+            # pydelphin's implicit AVMs are list cells inside < ... >, but also the shared
+            # prefix of dotted paths (KEYREL.ARG0.E x, KEYREL.PRED y in HaG): only the former are lists
+            listy = not feats or all(p.split('.')[0].upper() in ('FIRST', 'REST') for p, _ in feats)
+            node = Node((self.CONS if feats else self.LIST) if listy else TOP)
         else:
             node = Node(TOP)
         for path, value in feats:
