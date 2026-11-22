@@ -501,6 +501,40 @@ def exp_generated():
     return fold('Generated sentences', 'Harder than dev; ACE\'s own parses of them are often wrong.', body)
 
 
+def exp_agreement():
+    path = f'{ORCA}/analysis/agreement-attractors/score.json'
+    if not os.path.exists(path):
+        return ''
+    s = json.load(open(path))
+    def row(name, e, key):
+        g, u = s[f'e{e}|grammatical|{key}'], s[f'e{e}|ungrammatical|{key}']
+        n, m = g['n'], u['n']
+        return (f'<tr><td>{name}</td>' + td(f'{n:,}') + td(pct(g.get('accepted at first try', 0), n))
+                + td(pct(g['orca analysis'], n)) + td(pct(g['same as ace'], n), True)
+                + td(pct(m - u['orca analysis'], m), True) + td(pct(m - u['ace analysis'], m)) + '</tr>')
+    grp = lambda t: f'<tr><td colspan="7"><i>{t}</i></td></tr>'
+    ind = '&nbsp;&nbsp;'
+    rows = ([grp('Experiment 1: subject, then verb; sometimes after a long clause with a noun of its own'), row('<b>All</b>', 1, 'all'),
+             row(ind + 'No clause before the subject', 1, 'no top clause'),
+             row(ind + 'A clause before it, whose noun has the subject\'s number', 1, 'top clause, attractor matches'),
+             row(ind + 'A clause before it, whose noun has the other number', 1, 'top clause, attractor mismatches'),
+             grp('Experiment 2: clefted subject, separated from its verb by embedded clauses'), row('<b>All</b>', 2, 'all')]
+            + [row(ind + f'{k} embedded clause{"s" if k > 1 else ""}', 2, f'level {k}') for k in (1, 2, 3, 4)])
+    t = table([('Stimuli', ''), ('Sentences of each kind', 'n'), ('Orca\'s first guess accepted', 'n'), ('Orca finds an analysis', 'n'),
+               ('Same meaning as ACE', 'n hl'), ('Orca finds no analysis', 'n hl'), ('ACE finds no analysis', 'n')], rows,
+              group=[('', 2), ('Verb agrees with the subject', 3), ('Verb does not agree', 2)])
+    body = t + cap('Chaves and Richter (2021) masked the verb and asked BERT which form fits; BERT often picks the form that agrees '
+                   'with a nearby noun. Orca reads the verb as written, so each stimulus is filled twice, with the agreeing and the '
+                   'non-agreeing form (experiment 1: <i>is/are</i> and <i>seems/seem</i>; experiment 2: <i>was/were</i>, as in the paper). '
+                   'Orca: BERT-base tagger, all data, from raw text; the reference is ACE\'s first-ranked parse. '
+                   'Orca turns down nearly every non-agreeing sentence. ACE, which searches the whole grammar, usually finds a strained '
+                   'reading in which the verb agrees with some other noun, for example the one in the clause before the subject '
+                   '(<i>A scientist or a mathematician who … said I thought the boys is lost</i> with <i>scientist or mathematician</i> as what is lost). '
+                   'The tagger rarely proposes such readings. On agreeing sentences, a clause before the subject makes the first guess fail '
+                   'more often, but a noun of the other number in it does not; the two sets of clauses also differ in wording, so this is not a clean contrast.')
+    return fold('Agreement after distracting material', 'Wrong agreement is turned down; ACE finds strained readings that Orca does not.', body)
+
+
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
     body = steps + '    <div id="examples" class="stack" style="gap:28px"></div>\n'
@@ -547,7 +581,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_generated() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_generated() + exp_agreement() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)

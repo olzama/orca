@@ -110,6 +110,8 @@ def score(args):
                 same = False
         g = 'grammatical' if it['grammatical'] else 'ungrammatical'
         keys = [f"e{it['exp']}|{g}|all", f"e{it['exp']}|{g}|level {it['level']}", f"e{it['exp']}|{g}|{it['condition']}"]
+        if it['exp'] == 1:                  # the attractor manipulation only exists with a top clause
+            keys.append(f"e1|{g}|" + ('no top clause' if it['level'] == 0 else f"top clause, {it['condition']}"))
         for k in keys:
             c = out[k]
             c['n'] += 1
