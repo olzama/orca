@@ -101,6 +101,9 @@ svg .carg { font: 11px var(--mono); fill: var(--muted); }
 .card:hover { border-color: var(--accent); }
 .card.current { border-color: var(--focus); box-shadow: 0 0 0 2px var(--focus-soft); }
 .card.out { opacity: .28; }
+.card.unchecked { border-style: dashed; }
+#guide { background: var(--focus-soft); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; }
+.choicehead { padding: 8px 14px 4px; color: var(--muted); font-size: 12px; font-weight: 600; }
 .card .no { font: 11px var(--mono); color: var(--muted); }
 svg .mini-edge { stroke: var(--muted); stroke-width: 1; }
 svg .mini-dot { fill: var(--muted); } svg .mini-dot.open { fill: var(--open); }
@@ -136,6 +139,7 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
     <div id="decisions"></div>
   </div>
   <div id="treewrap">
+    <div id="guide"></div>
     <h3 class="sec" id="galleryhead" style="margin-top:0"></h3><div id="gallery"></div>
     <div id="treebar"><span id="treenote"></span><span id="treebtns"></span></div>
     <div id="tree"></div>
@@ -195,7 +199,7 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
 'use strict';
 const $ = id => document.getElementById(id);
 const OPPOSITE = {chain: 'not-chain', present: 'absent', span: 'not-span'};
-let items = [], state = null, focus = null, sel = 0, shown = [], docs = {}, waiting = 0;
+let items = [], state = null, focus = null, sel = 0, shown = [], docs = {}, waiting = 0, version = 0;
 
 function el(tag, attrs, ...kids) {
   const e = document.createElement(tag);
@@ -211,7 +215,7 @@ function svg(tag, attrs, text) {
 }
 async function api(path, body) {
   const busy = setTimeout(() => { $('remaining').textContent = 'Checking trees with the grammar …'; }, 400);
-  let r; waiting++;
+  let r; waiting++; version++;
   try { r = await fetch(path, body ? {method: 'POST', headers: {'Content-Type': 'application/json'},
                                       body: JSON.stringify(body)} : undefined); }
   finally { clearTimeout(busy); waiting--; }
@@ -257,6 +261,7 @@ async function openItem(id) {
 }
 function showTree(d, absolute) {
   if (!state.checked || state.remaining < 2) return;
+  version++;
   const i = absolute !== undefined ? absolute : (state.show + d + state.remaining) % state.remaining;
   Object.assign(state, state.trees[i], {show: i});
   if (focus && !nodeAt(focus)) focus = null;
@@ -370,6 +375,7 @@ function renderChoices() {
       : focus ? 'Nothing to decide at this span.' : 'Nothing to decide.'));
     return;
   }
+  if (focus) list.append(el('div', {class: 'choicehead'}, 'Which analysis is correct for these words?'));
   shown.forEach((d, i) => {
     const [what, label] = describe(d);
     const yes = el('button', {title: 'yes'}, 'yes'), no = el('button', {title: 'no'}, 'no');
@@ -404,7 +410,16 @@ function renderTop() {
     s.append(span, ' ');
   });
   $('remaining').textContent = state.remaining + (state.remaining === 1 ? ' tree remains' : ' trees remain') +
-    (state.checked ? ', checked by the grammar' : ' in the forest, not yet checked by the grammar');
+    (!state.checked ? ' in the forest, not yet checked by the grammar'
+      : state.pending ? '; the grammar is still checking ' + state.pending : ', checked by the grammar');
+  const guide = $('guide');
+  guide.style.display = state.remaining > 1 ? '' : 'none';
+  if (!state.checked) guide.textContent = 'Too many trees to list (' + state.remaining + '). Work on the highlighted words: on the right, ' +
+    'press the number of the analysis that is correct for them, or select a wrong one with j / k and press x. ' +
+    'Each answer removes trees. All trees are listed here once at most ' + state.limit + ' remain.';
+  else guide.textContent = 'Two ways to work. Answer choices on the right for the highlighted words: the number of the correct analysis, ' +
+    'or x on a wrong one; the trees that the selected choice would remove are faded below. ' +
+    'Or click the correct tree below and press s to keep only that one.';
   const st = $('itemstatus'); st.replaceChildren();
   if (state.status) st.append(el('span', {class: 'badge ' + state.status}, state.status));
   const dec = $('decisions'); dec.replaceChildren();
@@ -436,11 +451,10 @@ function renderTree() {
   const holder = $('tree'); holder.replaceChildren();
   const note = $('treenote'), btns = $('treebtns'); btns.replaceChildren();
   if (!state.tree) { note.textContent = state.checked ? 'The grammar licenses none of the remaining trees.' : 'No tree remains.'; return; }
-  if (!state.checked) note.textContent = 'One of the ' + state.remaining + ' trees in the forest. Dashed nodes are open. ' +
-    'You can step through the trees once the grammar has checked them, which happens when fewer remain.';
-  else if (state.remaining === 1) note.textContent = 'The remaining tree (' + state.root + ').';
+  if (!state.checked) note.textContent = 'One of the ' + state.remaining + ' trees in the forest, as an example. Dashed nodes are open.';
+  else if (state.remaining === 1) note.textContent = 'The remaining tree (' + (state.root || 'not checked yet') + ').';
   else {
-    note.textContent = 'Tree ' + (state.show + 1) + ' in full (' + state.root + '). Dashed nodes are open.';
+    note.textContent = 'Tree ' + (state.show + 1) + ' in full (' + (state.root || 'not checked by the grammar yet') + '). Dashed nodes are open.';
     const prev = el('button', {}, '‹ previous ', el('kbd', {}, ',')), next = el('button', {}, 'next › ', el('kbd', {}, '.')),
       only = el('button', {}, 'Keep only this tree ', el('kbd', {}, 's'));
     prev.onclick = () => showTree(-1); next.onclick = () => showTree(1); only.onclick = () => act('only');
@@ -475,6 +489,7 @@ function renderMeaning() {
   $('dmrshead').style.display = state.checked && state.tree ? '' : 'none';
   if (!state.checked || !state.tree) return;
   const g = state.dmrs;
+  if (state.unchecked) { holder.append(el('div', {class: 'empty'}, 'The grammar has not checked this tree yet.')); return; }
   if (!g) { holder.append(el('div', {class: 'empty'}, 'This meaning cannot be drawn as a graph.')); return; }
   const pos = {}; let x = 14;
   g.nodes.forEach((n, i) => {
@@ -551,13 +566,31 @@ function renderGallery() {
   const choice = shown[sel];
   state.trees.forEach((t, i) => {
     const copy = clone(t.tree);
-    const card = el('div', {class: 'card' + (i === state.show ? ' current' : '') + (choice && !holds(copy, choice) ? ' out' : '')},
-      el('div', {class: 'no'}, String(i + 1)), miniTree(copy));
+    const card = el('div', {class: 'card' + (i === state.show ? ' current' : '') + (choice && !holds(copy, choice) ? ' out' : '') +
+        (t.unchecked ? ' unchecked' : '')},
+      el('div', {class: 'no'}, (i + 1) + (t.unchecked ? ' · not checked yet' : '')), miniTree(copy));
     card.onclick = () => showTree(0, i);
     holder.append(card);
   });
 }
-function render() { renderTop(); renderTree(); renderMeaning(); renderChoices(); renderGallery(); renderItems(); }
+let poll = 0;
+function schedulePoll() {
+  clearTimeout(poll);
+  if (!state.pending) return;
+  poll = setTimeout(async () => {
+    if (waiting) return schedulePoll();
+    const id = state.id, show = state.show, at = version;
+    let fresh;                      // a quiet request: keys keep working while it is under way
+    try { fresh = await (await fetch('/api/item/' + id + '?show=' + show)).json(); } catch (e) { return; }
+    if (version !== at || waiting || !fresh.trees) return;      // something happened meanwhile
+    const keep = state.trees[show] && fresh.trees.findIndex(t => JSON.stringify(clone(t.tree)) === JSON.stringify(clone(state.trees[show].tree)));
+    state = fresh;
+    if (keep > 0) Object.assign(state, state.trees[keep], {show: keep});
+    if (focus && !discsAt(focus).length && !nodeAt(focus)) focusFirstOpen();
+    render();
+  }, 1500);
+}
+function render() { schedulePoll(); renderTop(); renderTree(); renderMeaning(); renderChoices(); renderGallery(); renderItems(); }
 
 /* ---- keys and buttons ---- */
 $('b-undo').onclick = () => act('undo');

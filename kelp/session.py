@@ -83,12 +83,14 @@ def _tree_json(t, settled, lexlabel):
 
 
 class Session:
-    def __init__(self, profile, journal=None, engine=None, limit=50, lextypes=None, author=None):
+    def __init__(self, profile, journal=None, engine=None, limit=150, lextypes=None, author=None):
         """lextypes: {lexical entry name: lexical type}. With it, entries appear
         in chains under their type, as in FFTB's decisions."""
         self.profile = profile
         self.journal = journal or os.path.join(profile, 'kelp-journal.jsonl')
         self.engine, self.limit = engine, limit
+        self.budget = 0.5           # seconds of grammar checking inside one request
+        self.current = None         # the item last opened
         self.author = author or getpass.getuser()
         lextypes = lextypes or {}
         self.lexlabel = lambda name: lextypes.get(name.lower(), name)
@@ -124,31 +126,57 @@ class Session:
         self.store.save(item.pid, active, self.author, item.started or now(), now(), decisions, results)
 
     def check_ahead(self):
-        """Check the trees of every small enough item, one tree at a time, so
-        that a request never waits long. Meant for a background thread."""
-        for item in list(self.items.values()):
-            if item.chains.count(item.constraints).total > self.limit:
-                continue
-            for t in item.chains.trees(item.constraints):
-                with self.lock:
-                    if t.key() not in item.checked:
-                        item.checked[t.key()] = self.engine.check(t)
+        """Check trees with the grammar, one at a time, so that a request never
+        waits long: first those of the item last opened, then those of every
+        other item that is small enough. Runs for good; meant for a background thread."""
+        order, ahead = iter(list(self.items.values())), None
+        while True:
             with self.lock:
-                _, exact = self._view(item, item.constraints)
-                item.remaining = len(exact)
+                item = self.items.get(self.current)
+                busy = item is not None and self._check_one(item)
+                while not busy:
+                    if ahead is None:
+                        ahead = next(order, None)
+                    if ahead is None:
+                        break
+                    busy = self._check_one(ahead)
+                    if not busy:
+                        ahead = None
+            if not busy:
+                time.sleep(0.5)
 
-    def _view(self, item, constraints):
-        """The forest counts and, when few enough trees remain and there is an
-        engine, the licensed remaining trees as (tree, spans, engine result)."""
-        counts = item.chains.count(constraints)
-        if self.engine is None or counts.total > self.limit:
-            return counts, None
-        exact = []
-        for t in item.chains.trees(constraints):
+    def _check_one(self, item):
+        """Check one unchecked remaining tree of the item; False when there is none."""
+        if item.chains.count(item.constraints).total > self.limit:
+            return False
+        licensed = 0
+        for t in item.chains.trees(item.constraints):
             key = t.key()
             if key not in item.checked:
                 item.checked[key] = self.engine.check(t)
-            if item.checked[key] is not None:
+                return True
+            licensed += item.checked[key] is not None
+        item.remaining = licensed
+        return False
+
+    def _view(self, item, constraints, wait=False):
+        """The forest counts and, when few enough trees remain and there is an
+        engine, the remaining trees as (tree, spans, engine result). Trees the
+        grammar does not license are left out. A tree it has not checked yet
+        has None as its result: only `budget` seconds are spent on checking
+        here, unless `wait` is set."""
+        counts = item.chains.count(constraints)
+        if self.engine is None or counts.total > self.limit:
+            return counts, None
+        exact, start, first = [], time.time(), True
+        for t in item.chains.trees(constraints):
+            key = t.key()
+            if key not in item.checked and (wait or first or time.time() - start < self.budget):
+                item.checked[key] = self.engine.check(t)
+                first = False
+            if key not in item.checked:
+                exact.append((t, spans(t, self.lexlabel), None))
+            elif item.checked[key] is not None:
                 exact.append((t, spans(t, self.lexlabel), item.checked[key]))
         return counts, exact
 
@@ -184,6 +212,7 @@ class Session:
 
     def state(self, pid, show=0):
         with self.lock:
+            self.current = pid
             return self._state(self.items[pid], show)
 
     def _state(self, item, show=0):
@@ -192,7 +221,8 @@ class Session:
                'total': item.total, 'status': item.status,
                'decisions': [_to_json(c) for c in item.constraints],
                'checked': exact is not None, 'forest': counts.total,
-               'tree': None, 'show': 0, 'root': None, 'dmrs': None, 'trees': []}
+               'tree': None, 'show': 0, 'root': None, 'dmrs': None, 'trees': [], 'pending': 0,
+               'limit': self.limit}
         if exact is None:
             found = item.chains.discriminants(item.constraints, counts)
 
@@ -212,11 +242,12 @@ class Session:
                     seen[p] = seen.get(p, 0) + 1
             found = {p: k for p, k in seen.items() if k < len(exact)}
             out['remaining'] = len(exact)
+            out['pending'] = sum(r is None for _, _, r in exact)
             if exact:
                 show = min(max(show, 0), len(exact) - 1)
-                tree, _, result = exact[show]
                 out['trees'] = [{'tree': _tree_json(t, lambda p: seen[p] == len(exact), self.lexlabel),
-                                 'root': r['root'], 'dmrs': r['dmrs']} for t, _, r in exact]
+                                 'root': r and r['root'], 'dmrs': r and r['dmrs'], 'unchecked': r is None}
+                                for t, _, r in exact]
                 out.update(out['trees'][show], show=show)
         item.remaining = out['remaining']
         out['discriminants'] = [dict(_to_json(c), count=k) for c, k in found.items()]
@@ -230,7 +261,7 @@ class Session:
         """Decisions that leave only the tree shown."""
         _, exact = self._view(item, item.constraints)
         if exact is None or not 0 <= show < len(exact):
-            raise ValueError('a single tree can be chosen only among trees the grammar has checked')
+            raise ValueError('a single tree can be chosen only once the trees are listed')
         self._choose(item, exact[show][1])
 
     def _choose(self, item, target):
@@ -263,7 +294,7 @@ class Session:
         state = self._state(item, show)
         self._log(item)
         if self.store:
-            _, exact = self._view(item, item.constraints)
+            _, exact = self._view(item, item.constraints, wait=item.status == ACCEPTED)
             self._save(item, exact)
         return state
 
@@ -294,6 +325,9 @@ class Session:
                     _, exact = self._view(item, item.constraints)
                     if exact is None:
                         raise ValueError(f'too many trees remain to accept: decide until at most {self.limit} are left')
+                    if sum(r is None for _, _, r in exact) > 20:
+                        raise ValueError('the grammar is still checking the remaining trees: try again in a moment')
+                    _, exact = self._view(item, item.constraints, wait=True)
                     if not exact:
                         raise ValueError('the grammar licenses none of the remaining trees: reject the item instead')
                 item.status = ACCEPTED

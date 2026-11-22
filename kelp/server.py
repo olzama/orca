@@ -2,7 +2,7 @@
 
 Usage:
     python -m kelp.server --profile FOREST_PROFILE [--grammar ERG_DIR/english.tdl]
-                          [--limit 50] [--port 8765] [--host 127.0.0.1]
+                          [--limit 150] [--port 8765] [--host 127.0.0.1]
 
 With --grammar, Orca checks the trees of an item once at most --limit remain,
 and the page shows the grammar's documentation and each tree's meaning.
@@ -82,7 +82,7 @@ def main():
     ap.add_argument('--port', type=int, default=8765)
     ap.add_argument('--grammar', help="the grammar's top TDL file; without it, no checks and no meanings")
     ap.add_argument('--author', help='the annotator name written to the profile (default: the login name)')
-    ap.add_argument('--limit', type=int, default=50, help='check trees with the grammar once at most this many remain')
+    ap.add_argument('--limit', type=int, default=150, help='list and check the trees of an item once at most this many remain')
     args = ap.parse_args()
     engine, docs, lextypes = None, {}, None
     if args.grammar:
