@@ -22,11 +22,11 @@ SPS = RAW['sentences per second']
 RAW_WITH = RAW['counts']['with MRS']
 ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext.json'))     # best tagger from raw text (forms as typed)
 BEST_KEY, BEST_NAME = 'debertav3large', 'DeBERTa-v3 large tagger, all data'
-BEST_RUN = f'{BEST_KEY}-normlocate'          # with the lookup fixes (preprocessed forms, missing entries located at the word), now the parser's default
-BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-normlocate.json'))      # best tagger from raw text
+BEST_RUN = f'{BEST_KEY}-normlocate-rootcheck'   # lookup fixes (preprocessed forms, missing entries located at the word) and the MRS read without the root condition, as ACE does: now the parser's default
+BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-normlocate-rootcheck.json'))      # best tagger from raw text
 BEST_PROPS = f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_RUN}-properties.json'
 BEST_ICONS = f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_RUN}-icons.json'
-BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-bothsurf-{BEST_RUN}/score.json'
+BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-bothsurf-{BEST_KEY}-normlocate/score.json'   # same predicate-argument analyses as the rootcheck run
 BERT_NEW = f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext-normlocate.json'
 # Hausa: Orca's MRS against ACE's on the 357 parses of rounds 1-2 (commit 03fc7ea): same without properties, with properties and ICONS
 HAUSA_MRS = (357, 343, 343)
