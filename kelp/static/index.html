@@ -314,9 +314,11 @@ async function lookUp(name, back) {
   if (r.error) { body.append(el('div', {class: 'empty'}, r.error)); return; }
   if (r.same_spelling.length) {
     const asked = r.same_spelling.filter(e => e.asked).map(e => e.name);
-    body.append(el('div', {}, r.predicate ? ['The predicate ', el('b', {}, r.predicate), ' comes from the highlighted ' +
-        (asked.length > 1 ? 'entries' : 'entry') + '. '] : '',
-      'All lexical entries of the grammar with the same spelling, for comparison:'));
+    const intro = el('div', {});
+    if (r.predicate) intro.append('The predicate ', el('b', {}, r.predicate), ' comes from the highlighted ' +
+        (asked.length > 1 ? 'entries' : 'entry') + '. ');
+    intro.append('All lexical entries of the grammar with the same spelling, for comparison:');
+    body.append(intro);
     const table = el('table', {class: 'cmp'}, el('tr', {}, ...['Lexical entry', 'Predicate', 'Lexical type', 'What the type says', 'The type\u2019s example (any word)'].map(h => el('th', {}, h))));
     for (const e of r.same_spelling)
       table.append(el('tr', {class: e.asked ? 'asked' : ''}, el('td', {}, link(e.name)),
