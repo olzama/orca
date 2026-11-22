@@ -27,6 +27,7 @@ Usage:
   train_ranker.py eval --name NAME --kbest data/models/tagger-.../dev-strict-k30-b600.jsonl --out FILE
 """
 import argparse
+import collections
 import glob
 import json
 import multiprocessing as mp
@@ -43,7 +44,8 @@ sys.path.insert(0, os.path.join(HERE, '..'))
 ORCA = os.path.join(HERE, '..')
 FEAT = os.path.join(ORCA, 'data', 'ranking', 'features')
 BITS = int(os.environ.get('RANKER_BITS', 23))      # hashed weights: 2^BITS
-SHARDS = 'shards' if BITS == 23 else f'shards{BITS}'
+TEMPLATES = os.environ.get('RANKER_TEMPLATES', 'all')   # 'erg': only the ERG MaxEnt templates (lexical types)
+SHARDS = ('shards' if BITS == 23 else f'shards{BITS}') + ('' if TEMPLATES == 'all' else '-' + TEMPLATES)
 MASK = (1 << BITS) - 1
 GP = 3                                    # grandparenting, as in redwoods.mem
 MAX_CANDS = 100                           # per sentence, from the 500-best lists
@@ -97,7 +99,9 @@ def tree_features(tree):
                 key = (g,) + up + (name,) + kids
                 if which == 0:
                     me += w.get(key, 0.0)
-                ids.append(zlib.crc32((str(which) + SEP + SEP.join(map(str, key))).encode()) & MASK)
+                elif TEMPLATES == 'erg':
+                    continue
+                ids.append(key_id(which, key))
         if not is_leaf(t):
             for k in t[1:]:
                 walk(k, anc_t + [lt], anc_e + [labs[1][0]])
@@ -107,6 +111,10 @@ def tree_features(tree):
         top = top[1]
     walk(top, [], [])
     return ids, me
+
+
+def key_id(which, key):
+    return zlib.crc32((str(which) + SEP + SEP.join(map(str, key))).encode()) & MASK
 
 
 def featurize_line(line):
@@ -119,6 +127,7 @@ def featurize_line(line):
         rest = [x for x in d if not x[1]]
         random.Random(r['id']).shuffle(rest)
         d = gold + rest[:MAX_CANDS - len(gold)]
+        random.Random(r['id'] + '/order').shuffle(d)    # gold must not sit first: ties pick the first
     feats, lens, gold, mes = [], [], [], []
     for tree, g in d:
         try:
@@ -200,7 +209,7 @@ def model_cls():
     class Ranker(torch.nn.Module):
         def __init__(self):
             super().__init__()
-            self.w = torch.nn.EmbeddingBag(1 << BITS, 1, mode='sum')
+            self.w = torch.nn.EmbeddingBag(1 << BITS, 1, mode='sum', padding_idx=0)   # id 0: features cut as too rare
             torch.nn.init.zeros_(self.w.weight)
             self.me = torch.nn.Parameter(torch.ones(1))
 
@@ -239,6 +248,12 @@ def train(a):
     dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     ids, feats, tl, cc, gold, me = load_shards()
     print('sentences', len(cc), 'candidates', len(tl), 'feature ids', len(feats), flush=True)
+    if a.min_count:                  # features seen fewer times than this (over all candidates) are dropped to id 0
+        counts = np.bincount(feats, minlength=1 << BITS)
+        keep = counts >= a.min_count
+        keep[0] = False
+        feats = np.where(keep[feats], feats, 0).astype(np.int32)
+        print('features kept', int(keep.sum()), 'of', int((counts > 0).sum()), flush=True)
     tree_start = np.concatenate([[0], np.cumsum(tl.astype(np.int64))[:-1]])
     cand_start = np.concatenate([[0], np.cumsum(cc.astype(np.int64))[:-1]])
     rng = np.random.default_rng(1)
@@ -247,6 +262,18 @@ def train(a):
     held, tr = order[:nh], order[nh:]
     Ranker = model_cls()
     model = Ranker().to(dev)
+    if a.init_mem:                   # check: the ERG weights placed in the hashed table should reproduce MaxEnt
+        from orca.maxent import MaxEnt
+        mem = MaxEnt(os.path.join(ORCA, 'data', 'erg', '2025', 'redwoods.mem'))
+        W = torch.zeros(1 << BITS)
+        hit = collections.Counter()
+        for key, wt in mem.weights.items():
+            k = key_id(0, (key[0],) + tuple(key[1:]))
+            hit[k] += 1
+            W[k] += wt
+        print('MaxEnt features', len(mem.weights), 'buckets used', len(hit), 'colliding buckets', sum(1 for v in hit.values() if v > 1), flush=True)
+        with torch.no_grad():
+            model.w.weight[:, 0] = W.to(dev)
     if a.no_me:                      # from scratch: no ERG MaxEnt score as a feature
         with torch.no_grad():
             model.me.zero_()
@@ -255,12 +282,13 @@ def train(a):
     out = os.path.join(ORCA, 'data', 'models', f'ranker-{a.name}')
     os.makedirs(out, exist_ok=True)
 
-    def held_acc():
+    def held_acc(which=None):
+        which = held if which is None else which
         model.eval()
         right = right_me = 0
         with torch.no_grad():
-            for i in range(0, len(held), 512):
-                sel = held[i:i + 512]
+            for i in range(0, len(which), 512):
+                sel = which[i:i + 512]
                 bt = batch_tensors(sel, feats, tree_start, tl, cand_start, cc, gold, me, dev)
                 _, full, gm = nll(model, bt, len(sel))
                 best = full.argmax(1)
@@ -269,9 +297,11 @@ def train(a):
                 mfull[bt[3], bt[4]] = bt[2]
                 right_me += (gm.gather(1, mfull.argmax(1)[:, None]).squeeze(1) > -1e8).sum().item()
         model.train()
-        return right / len(held), right_me / len(held)
+        return right / len(which), right_me / len(which)
 
-    D = np.load(a.dev) if a.dev else None
+    D = dict(np.load(a.dev)) if a.dev else None
+    if D is not None and a.min_count:
+        D['feats'] = np.where(keep[D['feats']], D['feats'], 0).astype(np.int32)
     if D is not None:
         d_ts = np.concatenate([[0], np.cumsum(D['tree_lens'].astype(np.int64))[:-1]])
         d_cs = np.concatenate([[0], np.cumsum(D['cand_counts'].astype(np.int64))[:-1]])
@@ -311,6 +341,8 @@ def train(a):
             if bi % 300 == 0:
                 print(f'epoch {ep + 1} batch {bi} loss {tot / (bi + 1):.4f} dev {dev_picked()}', flush=True)
         acc, _ = held_acc()
+        tracc, trme = held_acc(tr[:3000])
+        print(f'train-sample gold picked {tracc:.4f} (MaxEnt {trme:.4f})', flush=True)
         dp, dme = dev_picked()
         log.append({'epoch': ep + 1, 'loss': tot / (bi + 1), 'held_gold_picked': acc, 'held_maxent_alone': acc_me, 'dev_picked': dp, 'dev_maxent': dme})
         print(json.dumps(log[-1]), flush=True)
@@ -409,6 +441,8 @@ def main():
     ap.add_argument('--l2', type=float, default=0.0)
     ap.add_argument('--kbest')
     ap.add_argument('--no-me', action='store_true')
+    ap.add_argument('--init-mem', action='store_true')
+    ap.add_argument('--min-count', type=int, default=0)
     ap.add_argument('--l2-touched', type=float, default=0.0)
     ap.add_argument('--dev', help='dev shard from devprep: early stopping on picked-gold count there')
     ap.add_argument('--out')
