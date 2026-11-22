@@ -27,8 +27,8 @@ BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-bothsurf-{BEST_KEY}/score.json'
 ACE_JUDGE = f'{ORCA}/analysis/adjudicate/dev-ace/score.json'
 RAW_HALF = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothhalfsurf-rawtext.json'))
 OLD_ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothall-rawtext-oracle.json'))
-METRICS = json.load(open(f'{ORCA}/data/models/tagger-2025bothall-bert/metrics.json'))
-LABELS = json.load(open(f'{ORCA}/data/models/tagger-2025bothall-bert/labels.json'))
+METRICS = json.load(open(f'{ORCA}/data/models/tagger-2025bothsurf-debertav3large/metrics.json'))   # the best tagger
+LABELS = json.load(open(f'{ORCA}/data/models/tagger-2025bothsurf-debertav3large/labels.json'))
 # From treebank tokens: rerank.py on data/models/tagger-2025bothall-bert/dev-strict-k30-b600.jsonl
 TREEBANK_SPLIT = (1511, 80, 237, 234)
 # analysis/raw-tokens-dev.json (scripts/check_raw_tokens.py)
@@ -36,8 +36,9 @@ RAW_CHECK = (('Gold derivation replays over raw-text tokens', 2056), ('… with 
              ('Word forms as in the treebank', 1838), ('… ignoring case', 2003))
 
 
-def ms(step):
-    return 1000 * RAW['seconds by step'][step] / RAW['counts']['sentences']
+def ms(step, run=None):
+    run = run or BEST
+    return 1000 * run['seconds by step'][step] / run['counts']['sentences']
 
 
 def fold(title, takeaway, body, open_=False):
@@ -85,6 +86,7 @@ def summary():
     """One table across the evaluations, then the main findings in words (numbers stay in the table)."""
     oc = BEST['counts']
     jd, props, aj = load(BEST_JUDGE), load(BEST_PROPS), load(ACE_JUDGE)
+    bj = load(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json')
     ace = T['ace']['all']
     grp = lambda text: f'<tr><td colspan="7"><i>{text}</i></td></tr>'
     row = lambda name, n, *cells: (f'<tr><td>{name}</td>' + td(f'{n:,}')
@@ -94,6 +96,10 @@ def summary():
                 pct(props['same with properties'], N) if props else na('running'),
                 pct(oc['same MRS'] + jd['verdicts']['orca'] + jd['verdicts']['both'], N) if jd else na('being judged'),
                 pct(oc['with MRS'], N), f"{BEST['sentences per second']:.1f}"),
+            row('&nbsp;&nbsp;Orca (BERT-base), from raw text', N, pct(ORACLE['counts']['same MRS'], N),
+                pct(load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-properties.json')['same with properties'], N),
+                pct(ORACLE['counts']['same MRS'] + bj['verdicts']['orca'] + bj['verdicts']['both'], N),
+                pct(ORACLE['counts']['with MRS'], N), f"{ORACLE['sentences per second']:.1f}"),
             row('&nbsp;&nbsp;ACE, first-ranked parse', N, pct(ace['same MRS'], N), na('not measured'),
                 pct(ace['same MRS'] + aj['verdicts']['orca'] + aj['verdicts']['both'], N) if aj else na('being judged'),
                 pct(ace['with MRS'], N), f'{N / (ACE_PASS + ACE_RETRY):.1f}')]
@@ -166,8 +172,8 @@ def tagger_svg():
         svg.append(f'<text class="bt" x="{x}" y="28" text-anchor="middle">{wd}</text>')
         svg.append(f'<line class="ar" x1="{x}" y1="36" x2="{x}" y2="62" marker-end="url(#ah2)"/>')
     svg.append('<rect class="bx nn" x="70" y="66" width="760" height="56" rx="8"/>')
-    svg.append('<text class="bt" x="450" y="90" text-anchor="middle">BERT-base-cased encoder, fine-tuned</text>')
-    svg.append('<text class="bs" x="450" y="108" text-anchor="middle">WordPiece subwords · 12 layers · 768 dimensions · 110M parameters</text>')
+    svg.append('<text class="bt" x="450" y="90" text-anchor="middle">DeBERTa-v3 large encoder, fine-tuned</text>')
+    svg.append('<text class="bs" x="450" y="108" text-anchor="middle">SentencePiece subwords · 24 layers · 1,024 dimensions · 435M parameters</text>')
     for x in xs:
         svg.append(f'<line class="ar" x1="{x}" y1="124" x2="{x}" y2="146" marker-end="url(#ah2)"/>')
         svg.append(f'<circle class="dot" cx="{x}" cy="152" r="5"/>')
@@ -191,7 +197,7 @@ def how():
         ('Word vector', 'first subword of each word; dropout 0.1'),
         ('Outputs', f'leaf label ({len(LABELS["leaf"]):,} classes) and tree label ({len(LABELS["tree"]):,} classes) per word'),
         ('Loss', 'sum of the two cross-entropies'),
-        ('Training data', '590,721 sentences: Redwoods treebank (86,278) and ACE parses of literary and news text, checked by replay'),
+        ('Training data', '590,721 sentences: Redwoods treebank (86,278) and ACE parses of literary and news text, checked by replay; word forms as typed'),
         ('Optimizer', f'AdamW, learning rate {a["lr"]:g} (encoder) and {a["head_lr"]:g} (heads), 5% warm-up, linear decay, '
                       f'{a["epochs"]} epochs, batch {a["batch"]}, mixed precision'),
         ('Per-word accuracy (dev)', f'leaf {100 * h["leaf_acc"]:.1f}%, tree {100 * h["tree_acc"]:.1f}%, both {100 * h["both_acc"]:.1f}%; '
@@ -209,7 +215,7 @@ def how():
                    ('Tree: depth change | rule joining this word to the next', '')], rows)
     return ('  <section class="stack">\n    <h2>How it works</h2>\n'
             f'    <div class="scroll pad">{pipeline()}</div>\n'
-            + cap('No chart: the tagger proposes a complete derivation; the grammar checks it by unification. Times per sentence (BERT-base).')
+            + cap('No chart: the tagger proposes a complete derivation; the grammar checks it by unification. Times: average per dev sentence, from raw text.')
             + '    <h3>The tagger</h3>\n'
             f'    <div class="scroll pad">{tagger_svg()}</div>\n'
             f'    <div class="kv specs">{kv}</div>\n'
@@ -226,23 +232,16 @@ def split(run):
 
 
 def results():
-    rows = []
-    for key, name in SYSTEMS:
-        a = T[key]['all']
-        rows.append(f'<tr><td>{name}</td>' + td(pct(a['same MRS'], N), True) + td(pct(a['with MRS'], N))
-                    + td(p1(a['preds']['f1'])) + td(p1(a['links']['f1'])) + td(pct(a['same tree'], N)) + '</tr>')
-    c = RAW['counts']
-    oc = ORACLE['counts']
-    nm = td(na('not measured')) * 3
-    rows.insert(-1, '<tr><td>… the same, from raw text</td>' + td(pct(c['same MRS'], N), True) + td(pct(c['with MRS'], N))
-                + nm + '</tr>')
-    rows.insert(-1, '<tr><td>… tagger trained on forms as typed, from raw text</td>' + td(pct(oc['same MRS'], N), True)
-                + td(pct(oc['with MRS'], N)) + nm + '</tr>')
-    bc = BEST['counts']
-    rows.insert(-1, f'<tr><td><b>… {BEST_NAME}, from raw text</b></td>' + td(pct(bc['same MRS'], N), True)
-                + td(pct(bc['with MRS'], N)) + nm + '</tr>')
-    t1 = table([('System', ''), ('Exact meaning', 'n hl'), ('Any analysis', 'n'),
-                ('Predicates (F1)', 'n'), ('Links (F1)', 'n'), ('Exact tree', 'n')], rows)
+    bert, best = ORACLE['counts'], BEST['counts']
+    ace = T['ace']['all']
+    rows = [f'<tr><td>ACE (chart parser)</td>' + td(pct(ace['same MRS'], N), True) + td(pct(ace['with MRS'], N))
+            + td(f'{N / (ACE_PASS + ACE_RETRY):.1f}') + td(na('no tagger')) + '</tr>',
+            f'<tr><td>Orca, BERT-base tagger</td>' + td(pct(bert['same MRS'], N), True) + td(pct(bert['with MRS'], N))
+            + td(f"{ORACLE['sentences per second']:.1f}") + td(f'{ms("tag", ORACLE):.0f}') + '</tr>',
+            f'<tr><td><b>Orca, DeBERTa-v3 large tagger</b></td>' + td(pct(best['same MRS'], N), True) + td(pct(best['with MRS'], N))
+            + td(f"{BEST['sentences per second']:.1f}") + td(f'{ms("tag"):.0f}') + '</tr>']
+    t1 = table([('Parser', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n'),
+                ('Tagger ms per sentence', 'n')], rows)
     # where each sentence ends up
     n_by = {}
     for l in open(f'{ORCA}/data/encoded-2025/dev.jsonl'):
@@ -260,20 +259,15 @@ def results():
     def mrow(name, v):
         n = sum(v[:4])
         return f'<tr><td>{name}</td>' + td(f'{n:,}') + ''.join(td(pct(x, n), i == 0) for i, x in enumerate(v[:4])) + '</tr>'
-    rows = [mrow('Treebank tokens, tagger trained on treebank word forms', TREEBANK_SPLIT),
-            mrow('Raw text, tagger trained on treebank word forms', split(OLD_ORACLE)),
-            mrow('Raw text, tagger trained on forms as typed', split(ORACLE)),
-            mrow(f'<b>Raw text, {BEST_NAME}</b>', tot)]
+    rows = [mrow('BERT-base tagger', split(ORACLE)),
+            mrow('<b>DeBERTa-v3 large tagger</b>', tot)]
     say = {'under 10': 'under 10 words', '10 to 19': '10 to 19 words', '20 to 29': '20 to 29 words', '30 and over': '30 words or more'}
     rows += [mrow(f'&nbsp;&nbsp;… of which sentences of {say[b]}', cnt[b]) for _, _, b in bands]
-    t2 = table([('Input and tagger', ''), ('Sentences', 'n'), ('Right meaning chosen', 'n hl'), ('Right meaning found, another chosen', 'n'),
+    t2 = table([('Tagger', ''), ('Sentences', 'n'), ('Right meaning chosen', 'n hl'), ('Right meaning found, another chosen', 'n'),
                 ('Analyses found, none right', 'n'), ('No analysis', 'n')], rows,
                group=[('', 2), ('Right meaning', 2), ('Wrong or missing', 2)])
-    return ('  <section class="stack">\n    <h2>Results</h2>\n' + t1
-            + notes(f'All {N:,} dev sentences. Exact meaning: the whole MRS matches gold. F1: gold predicates and links found, against extra ones.',
-                    'Rows without the encoder named: BERT-base. Gold derivations replay to the gold MRS every time, so all loss is in the proposals.')
-            + '    <h3>Where the wrong sentences go wrong</h3>\n' + t2
-            + notes('Each row adds up to 100%.',
+    return ('  <section class="stack">\n    <h2>Where the wrong sentences go wrong</h2>\n' + t2
+            + notes(f'All {N:,} dev sentences, from raw text; each row adds up to 100%. Gold derivations always replay to the gold MRS, so all loss is in the proposals.',
                     '<b>Found, another chosen:</b> a ranking error. <b>None right:</b> a proposing error. <b>No analysis:</b> the grammar rejected everything proposed.',
                     'Most of the loss is in proposing, and it grows with length.')
             + '  </section>\n')
@@ -316,9 +310,14 @@ def exp_rawtext():
     steps = [('Tokens (ACE preprocessing, separate process)', 'tokens'), ('Tagger (GPU)', 'tag'),
              ('Replay and repair (one core)', 'repair'), ('Ranking', 'rank'), ('MRS', 'mrs')]
     rows = [f'<tr><td>{n}</td>{td(format(ms(k), ".1f"))}</tr>' for n, k in steps]
-    rows.append(f'<tr><td><b>End to end</b></td>{td(format(1000 / SPS, ".1f"), True)}</tr>')
-    t2 = table([('From raw text', ''), ('ms per sentence', 'n hl')], rows)
-    body = (t1 + t2 + notes('Tokens come from ACE\'s preprocessing, without parsing; replay picks the token the lexical entry accepts.',
+    rows.append(f'<tr><td><b>End to end</b></td>{td(format(1000 / BEST["sentences per second"], ".1f"), True)}</tr>')
+    t2 = table([('DeBERTa-v3 large, from raw text', ''), ('ms per sentence', 'n hl')], rows)
+    tb = T['bothall_best']['all']
+    rows = [f'<tr><td>Treebank tokens and word forms (idealized: the annotators\' tokenization)</td>' + td(pct(tb['same MRS'], N), True) + td(pct(tb['with MRS'], N)) + '</tr>',
+            f'<tr><td>Raw text, tagger trained on treebank word forms</td>' + td(pct(RAW['counts']['same MRS'], N), True) + td(pct(RAW['counts']['with MRS'], N)) + '</tr>',
+            f'<tr><td>Raw text, tagger trained on forms as typed (used everywhere else)</td>' + td(pct(ORACLE['counts']['same MRS'], N), True) + td(pct(ORACLE['counts']['with MRS'], N)) + '</tr>']
+    t0 = table([('BERT-base tagger, all data; input', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n')], rows)
+    body = (t0 + cap('Treebank tokens are not available for new text; every other number on this page is from raw text.') + t1 + t2 + notes('Tokens come from ACE\'s preprocessing, without parsing; replay picks the token the lexical entry accepts.',
                             'Treebank word forms leak the analysis through capitalization; training on forms as typed removes the leak.'))
     return fold('From raw text', 'The grammar\'s tokens work; the tagger loses a little on capitalization.', body)
 
@@ -352,7 +351,7 @@ def exp_ace():
     rows = [f'<tr><td>ACE</td>{td(sps(N / (ACE_PASS + ACE_RETRY)), True)}{td("1 CPU core")}{td("up to 28 GB")}{td(miss("ace"))}</tr>',
             f'<tr><td>Orca</td>{td(sps(N / full1), True)}{td("1 GPU, 1 core")}{td("about 2 GB")}{td(miss("best"))}</tr>',
             f'<tr><td>Orca</td>{td(sps(N / full6), True)}{td("1 GPU, 6 cores")}{td("about 2 GB")}{td(miss("best"))}</tr>',
-            f'<tr><td>Orca, from raw text</td>{td(format(SPS, ".1f"), True)}{td("1 GPU, 1 core")}{td("about 2 GB")}{td(pct(N - RAW_WITH, N))}</tr>',
+            f'<tr><td>Orca (DeBERTa-v3 large), from raw text</td>{td(format(BEST["sentences per second"], ".1f"), True)}{td("1 GPU, 1 core")}{td("about 3 GB")}{td(pct(N - BEST["counts"]["with MRS"], N))}</tr>',
             f'<tr><td>Orca + LLM repair</td>{td(sps(N / (full1 + LLM_SECS / STREAMS)), True)}{td(f"+ {STREAMS} model calls at a time")}{td("about 2 GB, plus the API")}{td(miss("best_llm"))}</tr>']
     speed = table([('System', ''), ('Sentences per second', 'n hl'), ('Hardware', 'n'), ('Memory', 'n'), ('Sentences with no analysis', 'n')], rows)
     rows = []
