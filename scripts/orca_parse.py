@@ -158,6 +158,7 @@ class Parser:
         out['hcons'] = [[h.hi, h.relation, h.lo] for h in m.hcons]
         out['top'], out['index'] = m.top, m.index
         out['derivation'] = self.tree_json(tr)
+        out['labels'] = {'forms': forms, 'leaf': list(c['leaf']), 'tree': list(c['tree']), 'entries': list(c['entries'])}
         try:
             out['dmrs'] = dmrs_json(m)
         except Exception:
@@ -251,7 +252,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False)
         recs.append({'id': s['id'], 'outcome': r.get('outcome'), 'same MRS': same, 'replays': r.get('replays'),
                      'accepted': r.get('accepted derivations', 0),
                      'gold among accepted': among if parser.all_mrs and m is not None else None,
-                     **({'mrs': r.get('mrs')} if save_mrs else {})})
+                     **({'mrs': r.get('mrs'), 'labels': r.get('labels')} if save_mrs else {})})
     wall = time.perf_counter() - t0
     res = {'tagger': parser.tagger_name, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
