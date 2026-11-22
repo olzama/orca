@@ -353,6 +353,15 @@ def extract(fg, fs):
     for q in items(fg.get(cont, 'HCONS')):
         arcs = dict(fg.arcs(q))
         out['hcons'].append((var(arcs['HARG']), fg.type(q), var(arcs['LARG'])))
+    # individual constraints (information structure: topic, focus ...)
+    out['icons'] = []
+    try:
+        for q in items(fg.get(cont, 'ICONS')):
+            arcs = dict(fg.arcs(q))
+            if 'IARG1' in arcs and 'IARG2' in arcs:
+                out['icons'].append((var(arcs['IARG1']), fg.type(q), var(arcs['IARG2'])))
+    except Exception:
+        pass
     # variable properties (number, person, tense, ...) as grammar feature paths;
     # the grammar's VPM maps them to MRS property names (see compare_mrs.to_pydelphin)
     out['props'] = {}

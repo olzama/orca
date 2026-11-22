@@ -43,7 +43,8 @@ def to_pydelphin(m):
     hcons = [dmrs_mrs.HCons('h0', 'qeq', m['top'])]
     hcons += [dmrs_mrs.HCons(a, 'qeq', b) for a, rel, b in m['hcons']]
     variables = {v: _vpm().apply(v, p)[1] for v, p in m.get('props', {}).items()}
-    return dmrs_mrs.MRS('h0', m['index'], rels, hcons, variables=variables)
+    icons = [dmrs_mrs.ICons(a, rel, b) for a, rel, b in m.get('icons', [])]
+    return dmrs_mrs.MRS('h0', m['index'], rels, hcons, icons=icons, variables=variables)
 
 
 _VPM = []
@@ -58,9 +59,11 @@ def _vpm():
     return _VPM[0]
 
 
-def normalized(m):
+def normalized(m, icons=False):
+    """Predicates normalized, variable properties dropped; ICONS (information
+    structure) dropped unless icons=True, as in every comparison so far."""
     rels = [dmrs_mrs.EP(predicate.normalize(ep.predicate), ep.label, args=dict(ep.args)) for ep in m.rels]
-    return dmrs_mrs.MRS(m.top, m.index, rels, m.hcons)
+    return dmrs_mrs.MRS(m.top, m.index, rels, m.hcons, icons=m.icons if icons else None)
 
 
 def describe(m):
