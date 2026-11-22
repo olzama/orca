@@ -133,7 +133,7 @@ def summary():
              '<b>Losses are in proposing</b>, not ranking, and grow with length (<i>Where the wrong sentences go wrong</i>).',
              '<b>Bigger encoders help</b>, even with all the data (<i>Encoders</i>).',
              '<b>Training on judged generated sentences</b> helps on new generated text by the judge but not on dev, so far from one run each (<i>Generated sentences</i>).',
-             '<b>Another grammar works:</b> Orca replays most of ACE\'s Hausa parses (<i>Another grammar: Hausa</i>).',
+             '<b>Another grammar works:</b> Orca replays every Hausa parse ACE finds (<i>Another grammar: Hausa</i>).',
              '<b>Faster than ACE</b>, but more sentences get no analysis (<i>Orca and ACE</i>).',
              '<b>Wrong agreement is turned down</b>; ACE finds strained readings instead (<i>Agreement after distracting material</i>).',
              '<b>LLMs help offline</b> (repair, judging), <b>not online</b> (<i>LLM repair</i>, <i>LLM choosing among readings</i>).']
@@ -568,8 +568,9 @@ def exp_hausa():
     rows.insert(0, '<tr><td><b>All</b></td>' + td(f"{tot['w']:,}") + td(pct(tot['p'], tot['w'])) + td(pct(tot['r'], tot['p']), True) + '</tr>')
     t = table([('Hausa sentences', ''), ('Written', 'n'), ('ACE finds a parse', 'n'), ('Orca replays ACE\'s parse', 'n hl')], rows)
     body = t + notes('Grammar: HaG (Crysmann), built on the Grammar Matrix. Claude Sonnet wrote the sentences from HaG\'s lexicon, in plain spelling without tone marks.',
-                     'Replay: Orca rebuilds ACE\'s first parse from its labels, finding entries in HaG\'s lexicon from the plain words. The failures are being sorted by cause.')
-    return fold('Another grammar: Hausa', 'Orca replays most of ACE\'s Hausa parses; each failure points to an English-only assumption or a HaG difference.', body)
+                     'Replay: Orca rebuilds ACE\'s first parse from its labels, finding entries in HaG\'s lexicon from the plain words.',
+                     'Before two fixes, Orca assumed ERG habits: lexical-rule names, spelling rules, and a shorthand in definitions that the ERG uses only for lists.')
+    return fold('Another grammar: Hausa', 'Orca replays every Hausa parse ACE finds, after removing assumptions that held only for the ERG.', body)
 
 
 def exp_agreement():
