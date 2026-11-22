@@ -265,6 +265,24 @@ def exp_rawtext():
     return fold('From raw text', 'The grammar\'s tokens work; the tagger loses a little on capitalization.', body)
 
 
+def exp_properties():
+    p = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-properties.json'))
+    n = p['sentences']
+    rows = [f'<tr><td>Predicates, arguments and scope only</td>{td(pct(p["same without properties"], n), True)}</tr>',
+            f'<tr><td>… and also tense, aspect, mood, sentence force, number, person, gender</td>{td(pct(p["same with properties"], n), True)}</tr>']
+    t1 = table([('What must match gold', ''), ('Exact meaning', 'n hl')], rows)
+    lost = p['same without properties'] - p['same with properties']
+    rows = [f'<tr><td>{k}</td>{td(pct(v, lost))}</tr>' for k, v in sorted(p['differ by kind'].items(), key=lambda kv: -kv[1])]
+    t2 = table([(f'Sentences that stop matching ({lost})', ''), ('Share', 'n')], rows)
+    body = (t1 + cap(f'All {n:,} dev sentences, raw text, BERT-base tagger trained on all data, forms as typed; before ranking changes. '
+                     'Properties are the features on MRS variables (TENSE, SF, NUM, ...), mapped from the grammar by its VPM as ACE does.')
+            + t2 + cap('Sentence force: statement against question, often decided by punctuation or inversion. '
+                       'Each sentence counted once, under the first kind that differs.')
+            + cap('Until now Orca\'s MRS had no variable properties at all, and every comparison ignored them. '
+                  'Orca now outputs them, and requiring them changes the headline little.'))
+    return fold('Tense, number and other properties', 'Orca now outputs them; requiring them to match changes the headline little.', body)
+
+
 def exp_ace():
     rows = []
     for b, label in BANDS:
@@ -451,7 +469,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_generated() + exp_rawtext() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_generated() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
