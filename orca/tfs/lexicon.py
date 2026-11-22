@@ -192,19 +192,8 @@ def _leaf_range(tree, where):
     return range(start, start + n_leaves(node))
 
 
-def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12, strict=True):
-    """Replay a tree whose leaves name lexical types, using lexical entries.
-
-    Where several entries fit a word, those that do not unify with the
-    word's own token are dropped first. If replay then fails at a node above
-    such a word, its other entries are tried (for example the entries of a
-    verb that differ in the preposition they select). Returns the feature
-    structure and the tree with the entries that were used.
-
-    If the grammar object has a `leaf_memo` dict (cleared per sentence), the
-    candidate entries of each leaf are worked out once per sentence. With
-    `strict`, a leaf for which the lexicon has no entry (and the type no
-    generic entry) makes the derivation fail, as it would in the parser."""
+def _leaf_candidates(grammar, lexicon, tree, tokens, strict=True):
+    """The leaves of a tree and, per leaf, the lexical entries that fit it (see replay_with_entries)."""
     from ..encoding import Leaf, Node
     from .grammar import ReplayFailure
     memo = getattr(grammar, 'leaf_memo', None)
@@ -253,6 +242,26 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
             raise ReplayFailure(f'{where} {leaf.entry}', f'missing lexical entry for "{" ".join(leaf.forms)}"')
         usable.append(cands)
 
+    return leaves, usable
+
+
+def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12, strict=True):
+    """Replay a tree whose leaves name lexical types, using lexical entries.
+
+    Where several entries fit a word, those that do not unify with the
+    word's own token are dropped first. If replay then fails at a node above
+    such a word, its other entries are tried (for example the entries of a
+    verb that differ in the preposition they select). Returns the feature
+    structure and the tree with the entries that were used.
+
+    If the grammar object has a `leaf_memo` dict (cleared per sentence), the
+    candidate entries of each leaf are worked out once per sentence. With
+    `strict`, a leaf for which the lexicon has no entry (and the type no
+    generic entry) makes the derivation fail, as it would in the parser."""
+    from ..encoding import Leaf, Node
+    from .grammar import ReplayFailure
+    leaves, usable = _leaf_candidates(grammar, lexicon, tree, tokens, strict)
+
     def build(pick):
         it = iter(range(len(leaves)))
 
@@ -282,3 +291,46 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
                 raise last from None
             i, r = queue.pop(0)
             pick = {i: r}
+
+
+def entry_variants(grammar, lexicon, tree, tokens, resolved, limit=16):
+    """Other analyses of an accepted tree that differ only in which of a word's
+    lexical entries is used, where several entries of the same type fit the
+    same spelling (Hausa plain "nama": naamàa_n 'meat' and naamàa_n_animal).
+    Replay cannot tell them apart; a ranking model, the tagger or the reader must.
+
+    `resolved` is the tree replay_with_entries returned. Returns the other
+    resolved trees that the grammar accepts, one word changed at a time
+    (at most `limit`); each must be replayed again to get its structure."""
+    from ..encoding import Leaf, Node
+    from .grammar import ReplayFailure
+    leaves, usable = _leaf_candidates(grammar, lexicon, tree, tokens, strict=False)
+    chosen = []
+
+    def walk(t):
+        if isinstance(t, Leaf):
+            chosen.append(t.entry[len('entry:'):] if t.entry.startswith('entry:') else None)
+        else:
+            for c in t.children:
+                walk(c)
+    walk(resolved)
+    out = []
+    for i, cands in enumerate(usable):
+        for c in cands:
+            if c == chosen[i] or len(out) >= limit:
+                continue
+            it = iter(range(len(leaves)))
+
+            def swap(t):
+                if isinstance(t, Leaf):
+                    j = next(it)
+                    return Leaf('entry:' + c, t.forms) if j == i else t
+                return Node(t.label, tuple(swap(k) for k in t.children))
+            alt = swap(resolved)
+            grammar.reset()
+            try:
+                grammar.replay_tree(alt, tokens)
+                out.append(alt)
+            except ReplayFailure:
+                pass
+    return out

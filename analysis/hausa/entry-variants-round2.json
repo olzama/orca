@@ -1,0 +1,60 @@
+{
+ "counts": {
+  "sentences": 218,
+  "first resolution = ACE": 208,
+  "with entry variants": 10,
+  "ACE among first or variants": 218
+ },
+ "differences": [
+  {
+   "id": "hag-round2/27",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round2/79",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round2/89",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round2/103",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round2/109",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round2/163",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round2/206",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round2/239",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round2/261",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round2/282",
+   "variants": 1,
+   "ace among variants": true
+  }
+ ]
+}

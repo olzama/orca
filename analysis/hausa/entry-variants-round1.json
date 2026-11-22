@@ -1,0 +1,30 @@
+{
+ "counts": {
+  "sentences": 139,
+  "first resolution = ACE": 135,
+  "with entry variants": 4,
+  "ACE among first or variants": 139
+ },
+ "differences": [
+  {
+   "id": "hag-round1/20",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round1/45",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round1/115",
+   "variants": 1,
+   "ace among variants": true
+  },
+  {
+   "id": "hag-round1/164",
+   "variants": 1,
+   "ace among variants": true
+  }
+ ]
+}
