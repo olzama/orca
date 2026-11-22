@@ -141,6 +141,7 @@ def summary():
              '<b>Training on judged generated sentences</b> helps on new generated text by the judge but not on dev, so far from one run each (<i>Generated sentences</i>).',
              '<b>Other grammars work:</b> Orca replays every Hausa parse ACE finds and nearly all of the Spanish treebank (<i>Another grammar: Hausa</i>, <i>Spanish</i>).',
              '<b>Faster than ACE</b>, but more sentences get no analysis (<i>Orca and ACE</i>).',
+             '<b>Where ACE runs out of memory</b>, Orca still gives a right or partly right reading almost every time (<i>Where ACE fails</i>).',
              '<b>Wrong agreement is turned down</b>; ACE finds strained readings instead (<i>Agreement after distracting material</i>).',
              '<b>LLMs help offline</b> (repair, judging), <b>not online</b> (<i>LLM repair</i>, <i>LLM choosing among readings</i>).']
     return ('  <section class="stack">\n    <h2>Where Orca stands</h2>\n' + t + c
@@ -620,6 +621,33 @@ def exp_spanish():
     return fold('Another grammar: Spanish', 'Orca replays the Spanish treebank and rebuilds its meanings; a Spanish tagger is next.', body)
 
 
+def exp_beyond_ace():
+    d = f'{ORCA}/analysis/beyond-ace'
+    if not os.path.exists(f'{d}/verdicts.json'):
+        return ''
+    items = {json.loads(l)['id']: json.loads(l) for l in open(f'{d}/items.jsonl')}
+    ace = {json.loads(l)['id']: json.loads(l)['outcome'] for l in open(f'{d}/ace.jsonl')}
+    verd = json.load(open(f'{d}/verdicts.json'))
+    vs = verd['verdicts']
+    c = collections.defaultdict(collections.Counter)
+    for i, it in items.items():
+        src = 'Generated sentences ACE could not parse' if it['kind'] == 'generated' else 'Dev sentences without a gold analysis'
+        for k in (src, (src, ace.get(i)), 'all'):
+            c[k]['n'] += 1
+            c[k][vs.get(i, ['none'])[0]] += 1
+    label = {'parsed': 'ACE parses them on a rerun', 'memory limit': 'ACE runs out of memory (6 GB)', 'no parse': 'ACE finds no analysis'}
+    row = lambda name, x: (f'<tr><td>{name}</td>' + td(f"{x['n']:,}") + td(pct(x['RIGHT'], x['n']), True) + td(pct(x['PARTLY'], x['n'])) + td(pct(x['WRONG'], x['n'])) + '</tr>')
+    rows = []
+    for src in ('Dev sentences without a gold analysis', 'Generated sentences ACE could not parse'):
+        rows.append(row(f'<b>{src}</b>', c[src]))
+        rows += [row('&nbsp;&nbsp;' + label[o], c[(src, o)]) for o in ('parsed', 'memory limit', 'no parse') if c[(src, o)]['n']]
+    t = table([('Sentences Orca analyzes', ''), ('Sentences', 'n'), ('Orca right', 'n hl'), ('Partly right', 'n'), ('Wrong', 'n')], rows,
+              group=[('', 2), ('According to the LLM judge', 3)])
+    body = t + notes(f'ACE rerun one sentence at a time, 300 s and 6 GB per sentence. Claude Opus judged Orca\'s reading alone from its predicates and links (${verd["cost_usd"]:.2f}).',
+                     'Dev items without gold are ones the annotators rejected every reading for; ACE does parse most of them.')
+    return fold('Where ACE fails', 'On generated text, ACE mostly fails by running out of memory; Orca\'s reading is then right or partly right almost every time.', body)
+
+
 def exp_agreement():
     path = f'{ORCA}/analysis/agreement-attractors/score.json'
     if not os.path.exists(path):
@@ -694,7 +722,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_edm() + exp_generated() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_edm() + exp_generated() + exp_beyond_ace() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
