@@ -374,51 +374,66 @@ def exp_encoders():
     return fold('Encoders', 'XLM-R and DeBERTa large give the most exact meanings, nearly what BERT-base gets with seven times the data.', body)
 
 
+GEN_ROUNDS = (('pilot1', 'Round 1'), ('round2', 'Round 2'))
+
+
 def exp_generated():
-    path = f'{ORCA}/analysis/mrs/gen-pilot1-bothsurf-rawtext.json'
-    if not os.path.exists(path):
-        return ''
     import collections
-    gdir = f'{ORCA}/data/generated/pilot1'
-    tgt = {}
-    for l in open(f'{gdir}/calls.jsonl'):
-        c = json.loads(l)
-        for s in c['sentences'] or []:
-            tgt.setdefault(s.strip(), c['target'])
-    sents = [l.rstrip('\n') for l in open(f'{gdir}/sentences.txt')]
-    vg = json.load(open(f'{ORCA}/analysis/adjudicate/gen-pilot1/score.json'))
-    vd = json.load(open(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json'))
     cnt = collections.defaultdict(collections.Counter)
-    for r in json.load(open(path))['records']:
-        t = tgt[sents[int(r['id'].split('/')[1]) - 1].strip()]
-        x = 'agree' if r['same MRS'] else vg['by_id'].get(r['id'], 'none' if not r['accepted'] else 'scope')
-        for k in (t, 'all'):
-            cnt[k]['n'] += 1
-            cnt[k]['mrs'] += bool(r['accepted'])
-            cnt[k][x] += 1
+    verdicts, info = {}, {}
+    for rnd, label in GEN_ROUNDS:
+        path = f'{ORCA}/analysis/mrs/gen-{rnd}-bothsurf-rawtext.json'
+        if not os.path.exists(path):
+            continue
+        gdir = f'{ORCA}/data/generated/{rnd}'
+        tgt = {}
+        for l in open(f'{gdir}/calls.jsonl'):
+            c = json.loads(l)
+            for s in c['sentences'] or []:
+                tgt.setdefault(s.strip(), c['target'])
+        sents = [l.rstrip('\n') for l in open(f'{gdir}/sentences.txt')]
+        vg = json.load(open(f'{ORCA}/analysis/adjudicate/gen-{rnd}/score.json'))
+        verdicts[label] = vg
+        recs = json.load(open(path))['records']
+        info[label] = (len(sents), len(recs))
+        for r in recs:
+            t = tgt[sents[int(r['id'].split('/')[1]) - 1].strip()]
+            x = 'agree' if str(r['same MRS']) == 'True' else vg['by_id'].get(r['id'], 'none' if not int(r['accepted'] or 0) else 'scope')
+            for k in (t, label, 'all'):
+                cnt[k]['n'] += 1
+                cnt[k]['mrs'] += bool(int(r['accepted'] or 0))
+                cnt[k][x] += 1
+    if not verdicts:
+        return ''
+    labels = [l for _, l in GEN_ROUNDS if l in verdicts]
     right = lambda d: d['agree'] + d['orca'] + d['both']
-    order = sorted((k for k in cnt if k != 'all'), key=lambda k: cnt[k]['agree'] / cnt[k]['n'])
+    order = sorted((k for k in cnt if k not in labels and k != 'all'), key=lambda k: cnt[k]['agree'] / cnt[k]['n'])
     row = lambda name, d: (f'<tr><td>{name}</td>' + td(f"{d['n']:,}") + td(pct(d['agree'], d['n']))
                            + td(pct(right(d), d['n']), True) + td(pct(d['mrs'], d['n'])) + '</tr>')
-    rows = [row(k.replace('-', ' ').capitalize(), cnt[k]) for k in order] + [row('<b>All generated</b>', cnt['all'])]
-    t = table([('Phenomenon targeted', ''), ('Sentences', 'n'), ('Same meaning as ACE\'s parse', 'n'), ('Right, counting the judge\'s verdicts', 'n hl'),
+    rows = ([row(f'<b>{l}</b>', cnt[l]) for l in labels] + [row('<b>Both rounds</b>', cnt['all'])]
+            + ['<tr><td colspan="5"><i>Both rounds, by phenomenon targeted</i></td></tr>']
+            + [row('&nbsp;&nbsp;' + k.replace('-', ' ').capitalize().replace('Pp ', 'PP '), cnt[k]) for k in order])
+    t = table([('Generated sentences', ''), ('Sentences', 'n'), ('Same meaning as ACE\'s parse', 'n'), ('Right, counting the judge\'s verdicts', 'n hl'),
                ('Any analysis', 'n')], rows)
-    a, d = vg['verdicts'], vd['verdicts']
+    vd = json.load(open(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json'))
     def jrow(name, v):
         n = sum(v.values())
         return (f'<tr><td>{name}</td>' + td(f'{n:,}') + td(pct(v['orca'], n), True) + td(pct(v['reference'], n), True)
-                + td(pct(v['both'], n)) + td(pct(v['neither'], n)) + '</tr>')
-    rows = [jrow('Generated sentences; the reference is ACE\'s first-ranked parse', a),
-            jrow('Dev sentences; the reference is the annotators\' gold', d)]
+                + td(pct(v.get('both', 0), n)) + td(pct(v.get('neither', 0), n)) + '</tr>')
+    rows = [jrow(f'{l}: generated; the reference is ACE\'s first-ranked parse', verdicts[l]['verdicts']) for l in labels]
+    rows.append(jrow('Dev sentences; the reference is the annotators\' gold', vd['verdicts']))
     t2 = table([('Sentences where Orca and the reference mean different things', ''), ('Sentences', 'n'), ('Orca\'s reading is right', 'n hl'),
                 ('The reference is right', 'n hl'), ('Both are acceptable', 'n'), ('Neither is right', 'n')], rows,
                group=[('', 2), ('The judge says', 4)])
-    body = (t + cap('Claude Sonnet wrote sentences for ten phenomena where Orca misses (20 calls, $1.71 API-equivalent, 1,982 sentences); '
-                    'ACE parsed 1,940 and 1,932 replay. Orca (forms as typed, from raw text) is compared with ACE\'s first-ranked parse, which nobody has checked. '
-                    'Right, counting the judge\'s verdicts: Orca agrees with ACE, or the judge (second table) prefers Orca\'s reading or accepts both. Percentages of each row.')
+    cost = sum(v['cost_usd'] for v in verdicts.values()) + vd['cost_usd']
+    sizes = '; '.join(f'{l}: {a:,} written, {b:,} parsed by ACE and replayable' for l, (a, b) in info.items())
+    body = (t + cap('Claude Sonnet wrote sentences for phenomena where Orca misses (round 1: ten phenomena; round 2: the seven hardest, '
+                    'with round 1\'s sentences excluded). ' + sizes + '. Orca (forms as typed, from raw text) is compared with ACE\'s first-ranked parse, '
+                    'which nobody has checked. Right, counting the judge\'s verdicts: Orca agrees with ACE, or the judge (second table) prefers Orca\'s '
+                    'reading or accepts both. Percentages of each row.')
             + t2 + cap(f'Judge: Claude Opus sees the two readings in random order, each by the DMRS predicates and links the other lacks, and answers A, B, both or neither '
-                       f'(${vg["cost_usd"] + vd["cost_usd"]:.2f} API-equivalent for both sets). On dev it sides with gold more often than with Orca, '
-                       'though it misses the treebank\'s conventions; on generated sentences it sides with Orca, and a sample read by hand bears it out '
+                       f'(${cost:.2f} API-equivalent for all sets). On dev it sides with gold more often than with Orca, '
+                       'though it misses the treebank\'s conventions; on generated sentences it sides with Orca in both rounds, and a sample read by hand bears it out '
                        '(ACE reads <i>that sound</i> with an adjective, <i>vacuum cleaner</i> with a comparative). ACE\'s first parse is a weak reference '
                        'outside the treebank\'s domains, so for training the judged reading is used, not ACE\'s.'))
     return fold('Generated sentences', 'Harder than dev; ACE\'s own parses of them are often wrong.', body)
