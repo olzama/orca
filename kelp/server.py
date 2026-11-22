@@ -18,14 +18,14 @@ import threading
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from kelp.docs import load_docs
+from kelp.docs import Lookup, load_docs
 from kelp.session import Session
 
 STATIC = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 _ITEM = re.compile(r'^/api/item/(\d+)$')
 
 
-def make_handler(session, docs):
+def make_handler(session, docs, lookup):
     class Handler(BaseHTTPRequestHandler):
         def _send(self, code, body, kind='application/json'):
             data = body if isinstance(body, bytes) else json.dumps(body).encode()
@@ -51,6 +51,11 @@ def make_handler(session, docs):
                     self._send(200, session.state(int(m.group(1)), int(query.get('show', ['0'])[0])))
                 elif path == '/api/docs':
                     self._send(200, docs)
+                elif path == '/api/lookup':
+                    if lookup is None:
+                        self._send(404, {'error': 'the server was started without a grammar'})
+                    else:
+                        self._send(200, lookup.get(query.get('name', [''])[0]))
                 else:
                     self._send(404, {'error': 'not found'})
             except KeyError:
@@ -84,12 +89,13 @@ def main():
     ap.add_argument('--author', help='the annotator name written to the profile (default: the login name)')
     ap.add_argument('--limit', type=int, default=150, help='list and check the trees of an item once at most this many remain')
     args = ap.parse_args()
-    engine, docs, lextypes = None, {}, None
+    engine, docs, lextypes, lookup = None, {}, None, None
     if args.grammar:
         print(f'Loading the grammar {args.grammar} ...', flush=True)
         from kelp.engine import Engine
         engine = Engine(args.grammar)
         docs = load_docs(os.path.dirname(os.path.abspath(args.grammar)))
+        lookup = Lookup(os.path.dirname(os.path.abspath(args.grammar)))
         lextypes = {name: d['type'] for name, d in docs.items() if d['type'].endswith('_le')}
     print(f'Loading {args.profile} ...', flush=True)
     session = Session(args.profile, engine=engine, limit=args.limit, lextypes=lextypes, author=args.author)
@@ -99,7 +105,7 @@ def main():
         threading.Thread(target=session.check_ahead, daemon=True).start()
     print(f'{len(session.items)} items. Journal: {session.journal}', flush=True)
     print(f'Kelp is at http://{args.host}:{args.port}/', flush=True)
-    ThreadingHTTPServer((args.host, args.port), make_handler(session, docs)).serve_forever()
+    ThreadingHTTPServer((args.host, args.port), make_handler(session, docs, lookup)).serve_forever()
 
 
 if __name__ == '__main__':

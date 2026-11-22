@@ -44,3 +44,51 @@ def load_docs(grammar_dir):
         doc, ex = docs.get(name) or docs.get(parent) or ('', [])
         out[name] = {'type': parent, 'doc': doc, 'ex': ex}
     return out
+
+
+_START = re.compile(r'^([^\s;:"]+)[ \t]*:[=+<]', re.M)
+_PRED = re.compile(r'PRED\s+"?(_[^\s",\]]+?)(?:_rel)?"?[\s,\]]')
+_WORD = re.compile(r'[A-Za-z_*][\w\-+*./]*')
+
+
+class Lookup:
+    """The grammar's definitions by name, and its lexical entries by predicate."""
+
+    def __init__(self, grammar_dir):
+        self.defs = {}              # name -> [(file, line number, text)]
+        self.entries = {}           # predicate -> [names of the lexical entries that have it]
+        self.info = load_docs(grammar_dir)
+        for path in sorted(glob.glob(os.path.join(grammar_dir, '*.tdl'))):
+            with open(path, encoding='utf-8', errors='replace') as f:
+                text = f.read()
+            starts = [m for m in _START.finditer(text)]
+            line, at = 1, 0
+            for m, nxt in zip(starts, starts[1:] + [None]):
+                body = text[m.start():nxt.start() if nxt else len(text)]
+                body = re.sub(r'(\n[ \t]*(;[^\n]*)?)+$', '', body)      # comments that lead to the next definition
+                line += text.count('\n', at, m.start())
+                at = m.start()
+                name = m.group(1).lower()
+                self.defs.setdefault(name, []).append((os.path.basename(path), line, body))
+                for p in _PRED.finditer(body):
+                    names = self.entries.setdefault(p.group(1).lower(), [])
+                    if name not in names:
+                        names.append(name)
+
+    def get(self, query):
+        """What the grammar has under a name: its definitions (each with the
+        names in it that can be looked up in turn) and, for a predicate, the
+        lexical entries that introduce it."""
+        q = query.strip().lower()
+        if q.endswith('_rel'):
+            q = q[:-4]
+        pred = q if q in self.entries else '_' + q if '_' + q in self.entries else None
+        out = {'query': query, 'definitions': [], 'predicate': pred,
+               'entries': [dict(self.info.get(e, {}), name=e) for e in self.entries.get(pred, [])] if pred else []}
+        for fname, line, text in self.defs.get(q, []):
+            shown = text if len(text) <= 6000 else text[:6000] + '\n...'
+            code = re.sub(r'""".*?"""|"[^"\n]*"|;[^\n]*', ' ', shown, flags=re.S)    # no documentation, strings, comments
+            names = sorted({w.lower() for w in _WORD.findall(code)
+                            if w.lower() in self.defs and w.lower() != q})
+            out['definitions'].append({'name': q, 'file': fname, 'line': line, 'text': shown, 'names': names})
+        return out

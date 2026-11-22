@@ -121,6 +121,17 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
 #help.on { display: flex; }
 #help div { background: var(--panel); border-radius: 10px; padding: 20px 26px; max-width: 560px; }
 #help table { border-collapse: collapse; } #help td { padding: 3px 12px 3px 0; vertical-align: top; }
+#lookup { position: fixed; top: 0; right: 0; bottom: 0; width: min(620px, 92vw); background: var(--panel);
+  border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0, 0, 0, .18); display: none; flex-direction: column; z-index: 5; }
+#lookup.on { display: flex; }
+#lookup header { padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; gap: 8px; align-items: center; }
+#lookup input { flex: 1; font: 14px var(--mono); padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--bg); color: var(--ink); }
+#lookupbody { overflow: auto; padding: 12px 14px; flex: 1; }
+#lookupbody pre { font: 12.5px/1.5 var(--mono); background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+  padding: 10px; overflow-x: auto; white-space: pre; margin: 4px 0 16px; }
+#lookupbody .src { color: var(--muted); font-size: 12px; }
+.lk { color: var(--accent); cursor: pointer; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 2px; }
 #error { position: fixed; bottom: 44px; left: 50%; transform: translateX(-50%); background: var(--no-soft);
   color: var(--no); padding: 8px 14px; border-radius: 6px; display: none; }
 </style>
@@ -165,6 +176,7 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
   <span><kbd>u</kbd> undo</span>
   <span><kbd>Enter</kbd> accept</span>
   <span><kbd>n</kbd><kbd>p</kbd> next, previous item</span>
+  <span><kbd>l</kbd> look up in the grammar</span>
   <span><kbd>?</kbd> all keys</span>
 </footer>
 
@@ -187,6 +199,7 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
     <tr><td><kbd>Enter</kbd></td><td>accept the item with the trees that remain, and go to the next item; with more than one tree, press it twice</td></tr>
     <tr><td><kbd>r</kbd></td><td>reject the item (no correct tree), and go to the next item</td></tr>
     <tr><td><kbd>n</kbd> <kbd>p</kbd></td><td>next, previous item</td></tr>
+    <tr><td><kbd>l</kbd></td><td>look up the node in focus in the grammar; rule names, types and predicates on the page can also be clicked</td></tr>
     <tr><td><kbd>?</kbd></td><td>show or hide this list</td></tr>
   </table>
   <p style="color:var(--muted);margin-bottom:0">A node drawn with a dashed border is open: the remaining trees differ there.
@@ -196,6 +209,11 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
   part with its rule name; hover over a dot for the others), and the trees that the
   selected choice would remove are faded. Click a small tree to see it in full, with its meaning.</p>
 </div></div>
+<aside id="lookup">
+  <header><input id="lookupq" placeholder="rule, type, lexical entry or predicate" spellcheck="false">
+    <button id="lookupback">Back</button><button id="lookupclose">Close <kbd>Esc</kbd></button></header>
+  <div id="lookupbody"></div>
+</aside>
 <div id="error"></div>
 
 <script>
@@ -268,6 +286,51 @@ function showError(msg) {
 }
 const words = (a, b) => state.words.slice(a, b).join(' ');
 const sameSpan = (x, y) => x && y && x.start === y.start && x.end === y.end;
+
+/* ---- grammar lookup ---- */
+const trail = [];
+function link(name, text) {
+  const a = el('span', {class: 'lk', title: 'look up in the grammar'}, text || name);
+  a.onclick = ev => { ev.stopPropagation(); lookUp(name); };
+  return a;
+}
+async function lookUp(name, back) {
+  if (!name) return;
+  $('lookup').classList.add('on');
+  $('lookupq').value = name;
+  const body = $('lookupbody'); body.replaceChildren();
+  let r;
+  try { r = await (await fetch('/api/lookup?name=' + encodeURIComponent(name))).json(); } catch (e) { r = {error: 'no answer'}; }
+  if (!back) trail.push(name);
+  if (r.error) { body.append(el('div', {class: 'empty'}, r.error)); return; }
+  if (r.predicate) {
+    body.append(el('div', {}, 'Lexical entries with the predicate ', el('b', {}, r.predicate), ':'));
+    const ul = el('ul', {});
+    for (const e of r.entries)
+      ul.append(el('li', {style: 'margin-bottom:6px'}, link(e.name), e.type ? ' — ' : '', e.type ? link(e.type) : '', e.doc ? ': ' + e.doc : '',
+        e.ex && e.ex.length ? el('span', {class: 'doc'}, el('span', {class: 'ex'}, '  e.g. ' + e.ex[0])) : ''));
+    body.append(ul);
+  }
+  for (const d of r.definitions) {
+    body.append(el('div', {class: 'src'}, d.file + ', line ' + d.line));
+    const pre = el('pre', {}), known = new Set(d.names);
+    for (const part of d.text.split(/([A-Za-z_*][\w\-+*.\/]*)/)) pre.append(known.has(part.toLowerCase()) ? link(part.toLowerCase(), part) : part);
+    body.append(pre);
+  }
+  if (!r.predicate && !r.definitions.length) body.append(el('div', {class: 'empty'}, 'The grammar has nothing under this name.'));
+}
+$('lookupclose').onclick = () => $('lookup').classList.remove('on');
+$('lookupback').onclick = () => { if (trail.length > 1) { trail.pop(); lookUp(trail[trail.length - 1], true); } };
+$('lookupq').addEventListener('keydown', ev => {
+  if (ev.key === 'Enter') lookUp($('lookupq').value.trim());
+  if (ev.key === 'Escape') $('lookup').classList.remove('on');
+  ev.stopPropagation();
+});
+function predLinks(key) {           // the predicates of a meaning statement, each one clickable
+  const [h, role, d] = key.split('|');
+  const one = p => /\(/.test(p) ? shortPred(p) : link(p, shortPred(p));
+  return h === 'TOP' ? ['main predicate: ', one(d)] : [one(h), ' — ' + role + ': ', one(d)];
+}
 
 /* ---- items ---- */
 async function loadItems() {
@@ -398,8 +461,10 @@ function renderChoices() {
     const n = nodeAt(focus);
     if (n) {
       line.append(el('div', {class: 'where', style: 'margin-top:8px'}, 'In the tree shown:'));
+      if (n.entry && n.entry !== n.labels[n.labels.length - 1])
+        line.append(el('div', {class: 'chainrow'}, el('span', {class: 'where'}, 'lexical entry '), el('span', {class: 'label'}, link(n.entry))));
       for (const l of n.labels) {
-        const row = el('div', {class: 'chainrow'}, el('span', {class: 'label'}, l));
+        const row = el('div', {class: 'chainrow'}, el('span', {class: 'label'}, link(l)));
         const doc = docFor(l); if (doc) row.append(doc);
         line.append(row);
       }
@@ -425,7 +490,10 @@ function renderChoices() {
     const yes = el('button', {title: 'yes'}, 'yes'), no = el('button', {title: 'no'}, 'no');
     yes.onclick = ev => { ev.stopPropagation(); decide(d, true); };
     no.onclick = ev => { ev.stopPropagation(); decide(d, false); };
-    const head = el('div', {}, el('span', {class: 'what'}, what + ' '), el('span', {class: 'label'}, label));
+    const lab = el('span', {class: 'label'});
+    if (isSem(d)) lab.append(...predLinks(d.value[0]));
+    else if (d.value.length) d.value.forEach((l, k) => lab.append(k ? ' › ' : '', link(l)));
+    const head = el('div', {}, el('span', {class: 'what'}, what + ' '), lab);
     if (!focus && !isSem(d)) head.append(el('div', {class: 'where'}, words(d.start, d.end)));
     if (!isSem(d) && (d.kind === 'present' || d.value.length === 1)) { const doc = docFor(d.value[0]); if (doc) head.append(doc); }
     const bar = el('div', {class: 'bar'}, el('i', {style: 'width:' + (100 * d.count / state.remaining) + '%'}));
@@ -659,6 +727,7 @@ document.addEventListener('keydown', ev => {
   if (waiting) { ev.preventDefault(); return; }       // one action at a time
   const k = ev.key;
   if ($('help').classList.contains('on')) { $('help').classList.remove('on'); return; }
+  if ($('lookup').classList.contains('on') && k === 'Escape') { $('lookup').classList.remove('on'); return; }
   let used = true;
   if (k.startsWith('Arrow')) moveTree(k);
   else if (k === 'Tab') moveOpen(ev.shiftKey ? -1 : 1);
@@ -681,6 +750,7 @@ document.addEventListener('keydown', ev => {
   else if (k === '{') stretch(-1, 0);
   else if (k === '}') stretch(1, 0);
   else if (k === 'Escape') setFocus(null);
+  else if (k === 'l') { const n = nodeAt(focus); if (n) lookUp(n.entry || n.labels[0]); else { $('lookup').classList.add('on'); $('lookupq').focus(); } }
   else if (k === '?') $('help').classList.add('on');
   else used = false;
   if (used) ev.preventDefault();
