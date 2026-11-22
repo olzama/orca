@@ -4,8 +4,8 @@ import random
 
 import pytest
 
-from kelp.discriminants import (ABSENT, CHAIN, PRESENT, SPAN, Chains, Constraint,
-                                satisfies, spans)
+from kelp.discriminants import (ABSENT, CHAIN, NOT_CHAIN, NOT_SPAN, PRESENT, SPAN, Chains,
+                                Constraint, satisfies, spans)
 from kelp.forest import LEXEME, LEXRULE, RULE, Edge, Forest, Token, load_forests
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -69,6 +69,8 @@ def check(forest, rng, rounds=5):
             counts = chains.count(constraints)
             assert counts.total == len(left)
             assert {t.key() for t in chains.trees(constraints)} == set(left)
+            node, _ = chains.pick(counts)
+            assert counts.using[node.id] > 0
             want = {}
             for sp in left.values():
                 for (i, j), labels in sp.items():
@@ -82,7 +84,7 @@ def check(forest, rng, rounds=5):
             if not found:
                 break
             c = rng.choice(sorted(found, key=repr))
-            if c.kind == PRESENT and rng.random() < 0.5:
+            if rng.random() < 0.5:
                 c = c.negated()
             constraints.append(c)
             left = {k: sp for k, sp in left.items() if satisfies(sp, c)}
@@ -105,6 +107,8 @@ def test_small_forest_constraints():
     assert chains.count([Constraint(ABSENT, 0, 3, ('s2',))]).total == 16
     assert chains.count([Constraint(CHAIN, 1, 3, ('bc',))]).total == 4
     assert chains.count([Constraint(SPAN, 0, 2), Constraint(SPAN, 1, 3)]).total == 0
+    assert chains.count([Constraint(NOT_SPAN, 0, 2), Constraint(NOT_SPAN, 1, 3)]).total == 8    # s3 only
+    assert chains.count([Constraint(NOT_CHAIN, 0, 3, ('u1', 's2'))]).total == 34
     assert chains.count([Constraint(ABSENT, 1, 2, ('lr',)), Constraint(SPAN, 0, 2)]).total == 4
 
 

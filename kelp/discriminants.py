@@ -8,13 +8,17 @@ binary rule or lexical entry at its bottom. In a tree of collapsed nodes no
 two nodes have the same span, so a statement about a span concerns exactly
 one node of the tree, and can be tested on each node by itself.
 
-Constraints. A constraint names a span and says one of four things:
+Constraints. A constraint names a span and says one of three things:
     CHAIN    the tree has a node over the span with exactly this chain
     PRESENT  the tree has a node over the span with this label in its chain
     SPAN     the tree has a node over the span
-    ABSENT   the tree has no node over the span with this label in its chain
+and each has an opposite, which holds in exactly the other trees:
+    ABSENT     no node over the span has this label in its chain
+    NOT_CHAIN  no node over the span has exactly this chain
+    NOT_SPAN   the tree has no node over the span
+FFTB has the first four; of these it cannot save SPAN.
 A node is ruled out when it is over the span and fails the test. For the
-first three kinds a node is also ruled out when its span crosses the span,
+three positive kinds a node is also ruled out when its span crosses the span,
 or when it contains the span and none of its daughters does: every tree of
 the remaining nodes then has a node over the span.
 
@@ -35,23 +39,22 @@ from typing import Callable, Dict, List, Tuple
 from kelp.forest import LEXEME, Forest, Tree
 
 CHAIN, PRESENT, SPAN, ABSENT = 'chain', 'present', 'span', 'absent'
+NOT_CHAIN, NOT_SPAN = 'not-chain', 'not-span'
+_OPPOSITE = {CHAIN: NOT_CHAIN, PRESENT: ABSENT, SPAN: NOT_SPAN}
+_OPPOSITE.update({v: k for k, v in list(_OPPOSITE.items())})
+_NEGATIVE = (ABSENT, NOT_CHAIN, NOT_SPAN)
 
 
 @dataclass(frozen=True)
 class Constraint:
-    kind: str                   # CHAIN, PRESENT, SPAN or ABSENT
+    kind: str                   # CHAIN, PRESENT, SPAN, or one of their opposites
     start: int
     end: int
-    value: Tuple[str, ...] = ()  # the chain for CHAIN; one label otherwise; empty for SPAN
+    value: Tuple[str, ...] = ()  # a chain, one label, or nothing, by kind
 
     def negated(self):
-        """The constraint that holds in exactly the trees where this one fails,
-        where one of the four kinds expresses that; otherwise None."""
-        if self.kind == PRESENT:
-            return Constraint(ABSENT, self.start, self.end, self.value)
-        if self.kind == ABSENT:
-            return Constraint(PRESENT, self.start, self.end, self.value)
-        return None
+        """The constraint that holds in exactly the trees where this one fails."""
+        return Constraint(_OPPOSITE[self.kind], self.start, self.end, self.value)
 
 
 @dataclass(eq=False)
@@ -75,8 +78,10 @@ class Node:
                 return c.value[0] in self.labels
             if c.kind == ABSENT:
                 return c.value[0] not in self.labels
-            return True
-        if c.kind == ABSENT or self.end <= c.start or c.end <= self.start:
+            if c.kind == NOT_CHAIN:
+                return self.labels != c.value
+            return c.kind == SPAN
+        if c.kind in _NEGATIVE or self.end <= c.start or c.end <= self.start:
             return True
         if c.start <= self.start and self.end <= c.end:
             return True                                     # inside the span
@@ -194,6 +199,21 @@ class Chains:
                 found[p] = found.get(p, 0) + k
         return {p: k for p, k in found.items() if k < counts.total}
 
+    def pick(self, counts):
+        """One remaining tree, as nested (node, daughters) pairs: wherever
+        nodes compete, the one that most remaining trees use. None when no
+        tree remains."""
+        if not counts.total:
+            return None
+
+        def most(nodes):
+            return max(nodes, key=lambda x: counts.using[x.id])
+
+        def walk(n):
+            return (n, [walk(most(slot)) for slot in n.slots])
+
+        return walk(most(self.roots))
+
     def trees(self, constraints=(), limit=None):
         """The remaining trees, as forest trees. Raises ValueError when there
         are more than `limit`."""
@@ -238,8 +258,9 @@ def spans(tree, lexlabel=lambda name: name):
 def satisfies(tree_spans, c):
     """Whether a tree, given as the result of `spans`, satisfies a constraint."""
     labels = tree_spans.get((c.start, c.end))
-    if c.kind == ABSENT:
-        return labels is None or c.value[0] not in labels
+    if c.kind in _NEGATIVE:
+        return labels is None or (c.kind == ABSENT and c.value[0] not in labels) \
+            or (c.kind == NOT_CHAIN and labels != c.value)
     if labels is None:
         return False
     if c.kind == CHAIN:
