@@ -124,8 +124,7 @@ def summary():
                      'compared with ACE\'s first-ranked parse, which nobody checked'),
                  row('&nbsp;&nbsp;Orca (DeBERTa-v3 large), from raw text', g['n'], pct(g['agree'], g['n']), na('not measured'), pct(g['agree'] + g['orca'] + g['both'], g['n']),
                      pct(g['mrs'], g['n']), na('not measured')),
-                 row('&nbsp;&nbsp;Orca (BERT-base), from raw text', gb['n'], pct(gb['agree'], gb['n']), na('not measured'), pct(gb['agree'] + gb['orca'] + gb['both'], gb['n']),
-                     pct(gb['mrs'], gb['n']), na('not measured')),
+                 row('&nbsp;&nbsp;Orca (BERT-base), from raw text', gb['n'], na('not re-run with the lookup fixes'), na('not measured'), na('not re-run'), na('not re-run'), na('not measured')),
                  row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], na('the reference'), na('the reference'),
                      f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), na('not measured'))]
     t = table([('Text and parser', ''), ('Sentences', 'n'), ('Same meaning as the reference', 'n hl'), ('… with tense, number and information structure too', 'n hl'),
@@ -456,7 +455,7 @@ def exp_encoders():
 GEN_ROUNDS = (('pilot1', 'Round 1'), ('round2', 'Round 2'), ('round3', 'Round 3'))
 
 
-def gen_counts(key=BEST_KEY):
+def gen_counts(key=f'{BEST_KEY}-normlocate'):
     """Per round, per phenomenon and overall: sentences, analyses, and how each sentence came out
     (agree with ACE; judge says orca / reference / both / neither; none = Orca no analysis; scope = differ only in scope)."""
     import collections
