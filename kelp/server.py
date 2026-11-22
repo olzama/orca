@@ -81,17 +81,19 @@ def main():
     ap.add_argument('--host', default='127.0.0.1')
     ap.add_argument('--port', type=int, default=8765)
     ap.add_argument('--grammar', help="the grammar's top TDL file; without it, no checks and no meanings")
+    ap.add_argument('--author', help='the annotator name written to the profile (default: the login name)')
     ap.add_argument('--limit', type=int, default=50, help='check trees with the grammar once at most this many remain')
     args = ap.parse_args()
-    engine, docs = None, {}
+    engine, docs, lextypes = None, {}, None
     if args.grammar:
         print(f'Loading the grammar {args.grammar} ...', flush=True)
         from kelp.engine import Engine
         engine = Engine(args.grammar)
         docs = load_docs(os.path.dirname(os.path.abspath(args.grammar)))
+        lextypes = {name: d['type'] for name, d in docs.items() if d['type'].endswith('_le')}
     print(f'Loading {args.profile} ...', flush=True)
-    session = Session(args.profile, engine=engine, limit=args.limit)
-    used = {label.lower() for it in session.items.values() for n in it.chains.nodes for label in n.chain}
+    session = Session(args.profile, engine=engine, limit=args.limit, lextypes=lextypes, author=args.author)
+    used = {label.lower() for it in session.items.values() for n in it.chains.nodes for label in n.chain + n.labels}
     docs = {name: d for name, d in docs.items() if name in used}
     if engine:
         threading.Thread(target=session.check_ahead, daemon=True).start()

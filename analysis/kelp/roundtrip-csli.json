@@ -1,0 +1,14 @@
+{
+ "totals": {
+  "gold items with one accepted tree": 921,
+  "accepted": 921,
+  "results read back": 921,
+  "same derivation and root as gold": 921,
+  "same MRS as gold, without variable properties": 921,
+  "same MRS as gold, with variable properties": 919,
+  "tree row says one active tree": 921,
+  "decision rows": 1814,
+  "items restored from the relations": 921
+ },
+ "problems": []
+}

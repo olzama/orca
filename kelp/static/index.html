@@ -58,6 +58,7 @@ kbd { font: 11px var(--mono); border: 1px solid var(--line); border-bottom-width
 #treewrap { flex: 1; overflow: auto; padding: 16px 20px; }
 #treenote { color: var(--muted); margin-bottom: 8px; }
 svg text { font: 12px var(--mono); fill: var(--ink); }
+svg text.entry { fill: var(--muted); font-style: italic; }
 svg .word-label { font: 14px system-ui, sans-serif; }
 svg .edge { stroke: var(--muted); stroke-width: 1; fill: none; }
 svg .drop { stroke: var(--line); stroke-dasharray: 2 3; }
@@ -176,7 +177,7 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
     <tr><td><kbd>s</kbd></td><td>keep only the tree shown</td></tr>
     <tr><td><kbd>g</kbd></td><td>show the overview of all trees at full height, or in a scrolling strip</td></tr>
     <tr><td><kbd>u</kbd></td><td>undo the last decision</td></tr>
-    <tr><td><kbd>Enter</kbd></td><td>accept the item with the trees that remain, and go to the next item</td></tr>
+    <tr><td><kbd>Enter</kbd></td><td>accept the item with the trees that remain, and go to the next item; with more than one tree, press it twice</td></tr>
     <tr><td><kbd>r</kbd></td><td>reject the item (no correct tree), and go to the next item</td></tr>
     <tr><td><kbd>n</kbd> <kbd>p</kbd></td><td>next, previous item</td></tr>
     <tr><td><kbd>?</kbd></td><td>show or hide this list</td></tr>
@@ -417,8 +418,9 @@ function renderTop() {
 /* ---- tree drawing ---- */
 const CH = 7.3, LH = 15, PADX = 8, PADY = 5, GAPX = 14, GAPY = 26;
 function measure(n) {
-  n.bw = Math.max(...n.labels.map(l => l.length)) * CH + 2 * PADX;
-  n.bh = n.labels.length * LH + 2 * PADY;
+  n.lines = n.entry && n.entry !== n.labels[n.labels.length - 1] ? n.labels.concat([n.entry]) : n.labels;
+  n.bw = Math.max(...n.lines.map(l => l.length)) * CH + 2 * PADX;
+  n.bh = n.lines.length * LH + 2 * PADY;
   n.word = n.children.length ? null : words(n.start, n.end);
   let inner = n.children.length ? -GAPX : (n.word.length * 8);
   for (const c of n.children) { measure(c); inner += c.w + GAPX; }
@@ -460,7 +462,8 @@ function renderTree() {
     const tip = n.labels.map(l => { const d = docs[l.toLowerCase()]; return l + (d && d.doc ? ': ' + d.doc : ''); }).join('\n');
     grp.append(svg('title', {}, tip));
     grp.append(svg('rect', {class: 'box', x: n.x - n.bw / 2, y: n.y, width: n.bw, height: n.bh, rx: 5}));
-    n.labels.forEach((l, i) => grp.append(svg('text', {x: n.x, y: n.y + PADY + 11 + i * LH, 'text-anchor': 'middle'}, l)));
+    n.lines.forEach((l, i) => grp.append(svg('text', {x: n.x, y: n.y + PADY + 11 + i * LH, 'text-anchor': 'middle',
+      class: i >= n.labels.length ? 'entry' : ''}, l)));
     grp.onclick = () => setFocus(n);
     g.append(grp);
     if (sameSpan(n, focus)) requestAnimationFrame(() => grp.scrollIntoView({block: 'nearest', inline: 'nearest'}));
@@ -507,7 +510,7 @@ function holds(tree, d) {            // does the tree satisfy a choice?
   if (d.kind === 'present') return n.labels.includes(d.value[0]);
   return true;
 }
-const clone = n => ({labels: n.labels, start: n.start, end: n.end, settled: n.settled, children: n.children.map(clone)});
+const clone = n => ({labels: n.labels, entry: n.entry, start: n.start, end: n.end, settled: n.settled, children: n.children.map(clone)});
 const MG = 9;
 function miniMeasure(n, under) {     // a label only on the highest open node of each open part
   n.tag = n.settled || under ? '' : n.labels[0] + (n.labels.length > 1 ? '+' : '');
@@ -561,7 +564,16 @@ $('b-undo').onclick = () => act('undo');
 $('b-reset').onclick = () => act('reset');
 $('b-accept').onclick = () => finish('accept');
 $('b-reject').onclick = () => finish('reject');
-async function finish(action) { await act(action); step(1); }
+let armed = 0;      // accepting several trees takes a second Enter
+async function finish(action) {
+  if (action === 'accept' && state.remaining > 1 && Date.now() - armed > 6000) {
+    armed = Date.now();
+    showError('Accept all ' + state.remaining + ' remaining trees as correct? Press Enter again to confirm.');
+    return;
+  }
+  armed = 0;
+  await act(action); step(1);
+}
 document.addEventListener('keydown', ev => {
   if (ev.metaKey || ev.ctrlKey || ev.altKey || !state) return;
   if (waiting) { ev.preventDefault(); return; }       // one action at a time

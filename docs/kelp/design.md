@@ -2,7 +2,15 @@
 
 Kelp (Keyboard-driven, Efficient, LLM-assisted Parse selection) is Orca's treebanking tool: a successor to the Full Forest Treebanker (FFTB; Packard 2015) for DELPH-IN grammars.
 
-Status: reviewed by Olga, 2026-11-22; her decisions are in section 11. Built so far: the forest reader (`kelp/forest.py`), the check in section 4, and the forest operations of section 3 (`kelp/discriminants.py`).
+Status, 2026-11-22: reviewed by Olga; her decisions are in section 11. Built so far:
+
+- the forest reader (`kelp/forest.py`) and the check in section 4;
+- the forest operations of section 3 (`kelp/discriminants.py`);
+- a first interface (`kelp/server.py`, `kelp/session.py`, `kelp/static/index.html`): sentence, tree, choices, keyboard operation, an overview of all remaining trees, the grammar's documentation of rules and lexical types, and the meaning of each tree as a DMRS;
+- Orca as the engine at annotation time (`kelp/engine.py`): once at most 50 trees remain, each is rebuilt, and the ones the grammar does not license are dropped;
+- reading and writing the profile relations (`kelp/profile.py`), with the round trip of section 8.
+
+Not built: proposals, semantic discriminants, update.
 
 ## 1. Priorities
 
@@ -91,7 +99,8 @@ The mouse still works for everything.
 
 Other points:
 
-- **Several correct trees.** More than one tree can be correct, and this is an ordinary outcome: `Enter` saves every remaining tree as active, and the screen shows how many there are. The profile format supports this (`t-active` is the number of active trees).
+- **Several correct trees.** The annotator chooses the reading the writer intended; a reading that is only grammatically possible is refused. Several trees are accepted only when the annotator cannot tell them apart in context. `Enter` then asks for a second `Enter`, naming the number of trees, so that accepting several is a deliberate act. The profile format supports this (`t-active` is the number of active trees).
+- **Seeing all trees.** Once the grammar has checked the remaining trees, all of them are shown side by side in small form, with the nodes where they differ marked; the trees that the selected choice would remove are faded. Any of them can be opened in full, with its meaning.
 - **List view.** Per item: status, number of trees, number of decisions, whether the proposers agree. Sortable, so easy items can be confirmed in a run.
 
 ## 6. Proposals
@@ -125,6 +134,12 @@ Kelp writes the same relations as FFTB, so that [incr tsdb()], PyDelphin, FFTB a
 - `tree`: status of the item (`t-active`: 1 or more accepted, 0 rejected, -1 unannotated), author, start and end time, comment.
 - `decision`: one row per decision, with the existing codes for kind and state (manual or inferred; FFTB's type 7 for full chains).
 - `preference` and `result`: the chosen tree or trees, with derivation and MRS.
+
+What is built, and how it was checked: for each of the 921 items of the gold CSLI profile that has an accepted tree, the gold tree was chosen in the forest profile through Kelp's own decisions, accepted and written (`scripts/kelp_roundtrip.py`; results in `analysis/kelp/roundtrip-csli.json`). Read back with PyDelphin, every stored derivation has the gold tree and root, and a new session restores every item from the relations alone.
+
+Three kinds of decision have no code in FFTB's format: a refused chain, "this span is a constituent", and its refusal. Kelp writes them with decision types of its own (8 and 9), which FFTB skips when it reads a profile.
+
+Not yet built from the list below: the history of versions (each save replaces the item's rows, as in FFTB; the journal keeps the history) and the relation for the sources of decisions.
 
 Differences from FFTB:
 

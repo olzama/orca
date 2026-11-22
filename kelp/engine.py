@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.join(HERE, '..', 'scripts'))
 sys.setrecursionlimit(20000)
 
 from delphin import dmrs  # noqa: E402
+from delphin.codecs import simplemrs  # noqa: E402
 
 from compare_mrs import to_pydelphin  # noqa: E402
 from orca.encoding import Leaf, Node  # noqa: E402
@@ -52,7 +53,7 @@ class Engine:
 
     def check(self, tree):
         """None when the grammar does not license the tree; otherwise the root
-        condition it meets and its meaning as a DMRS."""
+        condition it meets and its meaning, as a DMRS and as an MRS string."""
         fg = self.fg
         orca_tree, toks = to_orca(tree)
         for root in ROOTS:
@@ -69,9 +70,10 @@ class Engine:
                 fg.replay_tree(Node(NON_IDIOM, (Node(root, (orca_tree,)),)), toks)
             except ReplayFailure:
                 return None
+            m = to_pydelphin(meaning)
             try:
-                graph = _dmrs(to_pydelphin(meaning))
+                graph = _dmrs(m)
             except Exception:               # a meaning that has no DMRS form
                 graph = None
-            return {'root': root, 'dmrs': graph}
+            return {'root': root, 'dmrs': graph, 'mrs': simplemrs.encode(m)}
         return None

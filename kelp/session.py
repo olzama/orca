@@ -4,8 +4,10 @@ Holds, per item, the decisions made so far and the item's status. Every
 change is appended to a journal file at once, and the journal is read back
 at startup, so nothing is lost when the server stops.
 
-The journal is Kelp's own record. Writing the standard profile relations
-(`tree`, `decision`, `preference`, `result`) is a separate step.
+The journal is Kelp's own record and works without a grammar. With a
+grammar, every change is also written to the profile's own relations
+(`tree`, `decision`, `preference`, `result`; see kelp.profile), and what
+those relations hold is read at startup.
 
 With a grammar, the session works in two modes. While an item has more
 remaining trees than `limit`, it counts on the packed forest, which also
@@ -13,6 +15,7 @@ holds trees that the grammar does not license. At or below the limit it
 unpacks the remaining trees, has Orca check each one, and from then on works
 with the licensed trees only, each with its meaning.
 """
+import getpass
 import json
 import os
 import threading
@@ -22,6 +25,7 @@ from delphin import itsdb
 
 from kelp.discriminants import CHAIN, PRESENT, SPAN, Chains, Constraint, satisfies, spans
 from kelp.forest import load_forests
+from kelp.profile import Annotations, decision_fields, derivation, now
 
 ACCEPTED, REJECTED, OPEN = 'accepted', 'rejected', ''
 
@@ -35,9 +39,11 @@ def _from_json(d):
 
 
 class Item:
-    def __init__(self, pid, iid, text, forest):
+    def __init__(self, pid, iid, text, forest, lexlabel):
         self.pid, self.iid, self.text = pid, iid, text
-        self.chains = Chains(forest)
+        self.chains = Chains(forest, lexlabel)
+        self.lexical = {n.labels[-1] for n in self.chains.nodes if n.tokens}   # labels of lexical entries
+        self.started = None         # when the annotator first changed the item
         self.total = self.chains.count().total
         self.remaining = self.total
         self.constraints = []
@@ -64,29 +70,58 @@ def _props(tree_spans):
             yield Constraint(PRESENT, i, j, (label,))
 
 
-def _tree_json(t, settled):
+def _tree_json(t, settled, lexlabel):
     labels, top = [], t
     while len(t.children) == 1:
         labels.append(t.label)
         t = t.children[0]
-    labels.append(t.label)
+    labels.append(lexlabel(t.label) if t.lexical else t.label)
     return {'labels': labels, 'start': top.start, 'end': top.end,
+            'entry': t.label if t.lexical else None,
             'settled': settled(Constraint(CHAIN, top.start, top.end, tuple(labels))),
-            'children': [_tree_json(c, settled) for c in t.children]}
+            'children': [_tree_json(c, settled, lexlabel) for c in t.children]}
 
 
 class Session:
-    def __init__(self, profile, journal=None, engine=None, limit=50):
+    def __init__(self, profile, journal=None, engine=None, limit=50, lextypes=None, author=None):
+        """lextypes: {lexical entry name: lexical type}. With it, entries appear
+        in chains under their type, as in FFTB's decisions."""
         self.profile = profile
         self.journal = journal or os.path.join(profile, 'kelp-journal.jsonl')
         self.engine, self.limit = engine, limit
+        self.author = author or getpass.getuser()
+        lextypes = lextypes or {}
+        self.lexlabel = lambda name: lextypes.get(name.lower(), name)
+        self.store = Annotations(profile) if engine else None
         self.lock = threading.Lock()
         ts = itsdb.TestSuite(profile)
         parse = {r['parse-id']: r['i-id'] for r in ts['parse']}
         text = {r['i-id']: r['i-input'] for r in ts['item']}
-        self.items = {pid: Item(pid, parse[pid], text[parse[pid]], forest)
+        self.items = {pid: Item(pid, parse[pid], text[parse[pid]], forest, self.lexlabel)
                       for pid, forest in sorted(load_forests(profile).items())}
+        if self.store:
+            self._read_profile()
         self._replay_journal()
+
+    def _read_profile(self):
+        for item in self.items.values():
+            active, constraints = self.store.read(item.pid)
+            if active is None:
+                continue
+            remaining = item.chains.count(constraints).total
+            if remaining:                   # decisions that no longer fit the forest are skipped
+                item.constraints, item.remaining = constraints, remaining
+                item.status = ACCEPTED if active > 0 else REJECTED if active == 0 else OPEN
+
+    def _save(self, item, exact):
+        """Write the item to the profile's relations."""
+        words = lambda c: ' '.join(item.words[c.start:c.end])
+        decisions = [decision_fields(c, item.lexical) + (words(c), c.start, c.end) for c in item.constraints]
+        results = []
+        if item.status == ACCEPTED:
+            results = [(derivation(r['root'], t), r['mrs']) for t, _, r in exact]
+        active = len(results) if item.status == ACCEPTED else 0 if item.status == REJECTED else -1
+        self.store.save(item.pid, active, self.author, item.started or now(), now(), decisions, results)
 
     def check_ahead(self):
         """Check the trees of every small enough item, one tree at a time, so
@@ -114,7 +149,7 @@ class Session:
             if key not in item.checked:
                 item.checked[key] = self.engine.check(t)
             if item.checked[key] is not None:
-                exact.append((t, spans(t), item.checked[key]))
+                exact.append((t, spans(t, self.lexlabel), item.checked[key]))
         return counts, exact
 
     def _replay_journal(self):
@@ -164,6 +199,7 @@ class Session:
             def node(pair):
                 n, kids = pair
                 return {'labels': list(n.labels), 'start': n.start, 'end': n.end,
+                        'entry': n.chain[-1] if n.tokens else None,
                         'settled': counts.using[n.id] == counts.total,
                         'children': [node(k) for k in kids]}
 
@@ -179,7 +215,7 @@ class Session:
             if exact:
                 show = min(max(show, 0), len(exact) - 1)
                 tree, _, result = exact[show]
-                out['trees'] = [{'tree': _tree_json(t, lambda p: seen[p] == len(exact)),
+                out['trees'] = [{'tree': _tree_json(t, lambda p: seen[p] == len(exact), self.lexlabel),
                                  'root': r['root'], 'dmrs': r['dmrs']} for t, _, r in exact]
                 out.update(out['trees'][show], show=show)
         item.remaining = out['remaining']
@@ -191,21 +227,45 @@ class Session:
         return counts.total if exact is None else len(exact)
 
     def _only(self, item, show):
-        """Decisions that leave only the tree shown: its chains at the widest
-        spans where the remaining trees still differ."""
+        """Decisions that leave only the tree shown."""
         _, exact = self._view(item, item.constraints)
         if exact is None or not 0 <= show < len(exact):
             raise ValueError('a single tree can be chosen only among trees the grammar has checked')
-        target = exact[show][1]
-        left = [sp for _, sp, _ in exact]
-        while len(left) > 1:
-            for (i, j), labels in sorted(target.items(), key=lambda kv: (kv[0][0] - kv[0][1], kv[0])):
-                c = Constraint(CHAIN, i, j, labels)
-                kept = [sp for sp in left if satisfies(sp, c)]
-                if len(kept) < len(left):
-                    item.constraints.append(c)
-                    left = kept
-                    break
+        self._choose(item, exact[show][1])
+
+    def _choose(self, item, target):
+        """Decisions that leave the trees with the chains of `target`
+        ({span: chain}): its chains at the widest spans where the remaining
+        trees still differ. More than one tree is left when trees differ only
+        in lexical entries of one type."""
+        left = self._remaining(item, item.constraints)
+        for (i, j), labels in sorted(target.items(), key=lambda kv: (kv[0][0] - kv[0][1], kv[0])):
+            if left <= 1:
+                break
+            c = Constraint(CHAIN, i, j, tuple(labels))
+            kept = self._remaining(item, item.constraints + [c])
+            if not kept:
+                raise ValueError('the forest has no such tree')
+            if kept < left:
+                item.constraints.append(c)
+                left = kept
+
+    def choose(self, pid, target):
+        """Narrow an item down to the tree with the given chains, and return its new state."""
+        with self.lock:
+            item = self.items[pid]
+            item.started = item.started or now()
+            self._choose(item, target)
+            item.status = OPEN
+            return self._finish(item, 0)
+
+    def _finish(self, item, show):
+        state = self._state(item, show)
+        self._log(item)
+        if self.store:
+            _, exact = self._view(item, item.constraints)
+            self._save(item, exact)
+        return state
 
     def act(self, pid, action, constraint=None, show=0):
         """Apply one action to an item and return its new state.
@@ -213,6 +273,7 @@ class Session:
         reset, accept, reject, reopen."""
         with self.lock:
             item = self.items[pid]
+            item.started = item.started or now()
             if action == 'decide':
                 c = _from_json(constraint)
                 if not self._remaining(item, item.constraints + [c]):
@@ -229,6 +290,12 @@ class Session:
             elif action == 'reset':
                 item.constraints, item.status, show = [], OPEN, 0
             elif action == 'accept':
+                if self.engine:
+                    _, exact = self._view(item, item.constraints)
+                    if exact is None:
+                        raise ValueError(f'too many trees remain to accept: decide until at most {self.limit} are left')
+                    if not exact:
+                        raise ValueError('the grammar licenses none of the remaining trees: reject the item instead')
                 item.status = ACCEPTED
             elif action == 'reject':
                 item.status = REJECTED
@@ -236,6 +303,4 @@ class Session:
                 item.status = OPEN
             else:
                 raise ValueError(f'unknown action: {action}')
-            state = self._state(item, show)
-            self._log(item)
-            return state
+            return self._finish(item, show)
