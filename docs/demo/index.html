@@ -126,7 +126,9 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
 .fs .ty { color: var(--accent); font-weight: 500; grid-column: 1 / -1; }
 .fs .ft { color: var(--muted); text-transform: uppercase; white-space: nowrap; }
 .fs .val { min-width: 0; }
-.fs .tog { cursor: pointer; color: var(--accent); user-select: none; border: 0; background: none; font: inherit; padding: 0 3px 0 0; }
+.fs .tog { cursor: pointer; color: var(--accent); user-select: none; border: 0; background: none; font: inherit; font-size: 1rem; line-height: 1; padding: 2px 6px 2px 2px; }
+.fs .opener { cursor: pointer; border-radius: 4px; padding: 0 3px; }
+.fs .opener:hover { background: var(--accent-soft); }
 .fs .atom { color: var(--fg); }
 .fs .str { color: var(--chg); }
 .fs .tag { display: inline-block; font-size: 0.72rem; font-weight: 600; color: var(--lex); background: var(--lex-soft); border-radius: 4px; padding: 0 4px; margin-right: 4px; cursor: pointer; }
@@ -166,7 +168,7 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
 
     <section class="panel" id="fs-panel">
       <h2>Feature structure</h2>
-      <p class="small">The whole sign the grammar built, as an attribute–value matrix. Click ▸ to unfold a value and ▾ to fold it. Purple numbers mark shared values (the same structure reached by several paths); click one to light up every place it occurs. A path such as SYNSEM LOCAL CAT HEAD opens directly.</p>
+      <p class="small">The whole sign the grammar built, as an attribute–value matrix. Everything starts folded: click a type (or ▸) to unfold it and ▾ to fold it again. Purple numbers mark shared values (the same structure reached by several paths); click one to light up every place it occurs. A path such as SYNSEM LOCAL CAT HEAD opens directly.</p>
       <div class="fs-tools"><input id="fs-path" placeholder="SYNSEM LOCAL CAT HEAD" aria-label="Open a path"><button type="button" id="fs-open">Open path</button><button type="button" id="fs-fold">Fold all</button><span id="fs-size"></span></div>
       <div class="scroll pad"><div class="fs" id="fs"></div></div>
     </section>
@@ -450,7 +452,8 @@ function drawFs(fsv, box) {
       holder.replaceChildren(lst ? listBox(lst, path) : avm(id, path));
     };
     span._close = () => { tog.textContent = '▸'; tog.setAttribute('aria-expanded', 'false'); label.classList.remove('hidden'); holder.replaceChildren(); };
-    tog.addEventListener('click', e => { e.stopPropagation(); tog.getAttribute('aria-expanded') === 'true' ? span._close() : span._open(); });
+    const flip = e => { e.stopPropagation(); tog.getAttribute('aria-expanded') === 'true' ? span._close() : span._open(); };
+    tog.addEventListener('click', flip); label.addEventListener('click', flip); label.classList.add('opener'); label.title = 'click to unfold';
     span.dataset.path = path.join(' ');
     return span;
   }
@@ -467,12 +470,13 @@ function drawFs(fsv, box) {
     arcs.forEach(([f, v]) => { const ft = el('span', 'ft', esc(f)); d.append(ft, value(v, path.concat([f]))); });
     return d;
   }
-  const top = avm(fsv.root, []);
-  box.append(top);
+  const rootVal = value(fsv.root, []);
+  box.append(rootVal);
   $('fs-size').textContent = `${Object.keys(N).length.toLocaleString('en-US')} nodes${fsv.truncated ? ' (cut off)' : ''}`;
   const openPath = txt => {
     const feats = txt.trim().toUpperCase().split(/[\s.]+/).filter(Boolean);
-    let scope = top;
+    if (rootVal._open) rootVal._open();
+    let scope = rootVal.querySelector('.avm');
     for (const f of feats) {
       const fts = [...scope.children].filter(c => c.classList.contains('ft'));
       const ft = fts.find(c => c.textContent === f);
