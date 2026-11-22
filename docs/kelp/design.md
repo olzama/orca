@@ -61,6 +61,7 @@ FFTB rebuilds trees with ACE's own code. Kelp will use Orca's replay, so Orca mu
 | Same root condition | 668 | 23,528 |
 | Same MRS, without ICONS and variable properties | 668 | 23,528 |
 | Same MRS, without ICONS | 667 | 23,368 |
+| Same MRS, with ICONS | 667 | 23,368 |
 
 Four CSLI items with more than 2,000 trees each were left out. Per-item results are in `analysis/kelp/`.
 
@@ -68,7 +69,7 @@ Orca accepts the same trees as ACE, so Kelp does not need ACE at annotation time
 
 - **Root conditions.** A root record in the forest only says that the packed edge met a root condition. The particular tree may meet a different one. Kelp must test the grammar's root conditions on the rebuilt tree, in the order in which they are defined in the grammar, which is the order ACE uses.
 - **Idioms.** ACE drops readings that contain part of an idiom without the rest. Orca has no idiom rules yet. The check uses the grammar's non-idiom root condition instead, which also rejects a complete idiom: the trees that only ACE lists are all readings of "in order to". Orca needs the idiom rules before Kelp is used on real text.
-- **Information structure.** ACE's MRS has ICONS. Orca extracts them as well; on the MRS test suite the meanings agree with ICONS included (667 of 668 trees, the one difference being a variable property).
+- **Information structure.** ACE's MRS has ICONS. Orca extracts them as well, and including them in the comparison changes nothing: every difference that remains is in a variable property.
 - **Variable properties.** The structure of the meaning is the same for every shared tree. For a small share of trees a property of some variable differs (tense, mood and the like); the cause is not yet known.
 
 ## 5. Interface
