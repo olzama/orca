@@ -140,7 +140,7 @@ def summary():
              '<b>Losses are in proposing</b>, not ranking, and grow with length (<i>Where the wrong sentences go wrong</i>).',
              '<b>Bigger encoders help</b>, even with all the data (<i>Encoders</i>).',
              '<b>Training on judged generated sentences</b> helps on new generated text by the judge but not on dev, so far from one run each (<i>Generated sentences</i>).',
-             '<b>Another grammar works:</b> Orca replays every Hausa parse ACE finds (<i>Another grammar: Hausa</i>).',
+             '<b>Other grammars work:</b> Orca replays every Hausa parse ACE finds and nearly all of the Spanish treebank (<i>Another grammar: Hausa</i>, <i>Spanish</i>).',
              '<b>Faster than ACE</b>, but more sentences get no analysis (<i>Orca and ACE</i>).',
              '<b>Wrong agreement is turned down</b>; ACE finds strained readings instead (<i>Agreement after distracting material</i>).',
              '<b>LLMs help offline</b> (repair, judging), <b>not online</b> (<i>LLM repair</i>, <i>LLM choosing among readings</i>).']
@@ -606,6 +606,21 @@ def exp_edm():
     return fold('EDM, as published parsers report it', 'Orca is as precise as ACE; the gap is in recall, from sentences Orca does not analyze.', body)
 
 
+def exp_spanish():
+    rp, mr = load(f'{ORCA}/analysis/srg/replay-0.3.6.json'), load(f'{ORCA}/analysis/srg/mrs-0.3.6.json')
+    if not rp or not mr:
+        return ''
+    n = sum(v['sentences'] for v in rp.values()); r = sum(v['replayed'] for v in rp.values())
+    c = mr['counts']; m = c['sentences'] - c['treebank MRS unreadable']
+    rows = [f'<tr><td>Orca replays the gold derivation</td>' + td(f'{n:,}') + td(pct(r, n), True) + '</tr>',
+            f'<tr><td>&nbsp;&nbsp;… and its MRS equals the treebank\'s</td>' + td(f'{m:,}') + td(pct(c['same without properties'], m), True) + '</tr>',
+            f'<tr><td>&nbsp;&nbsp;… with properties and ICONS too</td>' + td(f'{m:,}') + td(pct(c['same with properties and ICONS'], m), True) + '</tr>']
+    t = table([('Spanish Resource Grammar treebank (release 0.3.6)', ''), ('Sentences', 'n'), ('Share', 'n hl')], rows)
+    body = t + notes('Gold derivations from 14 treebank profiles, preferred analysis only; grammar SRG 0.3.6 compiled with ACE. Treebank MRSs that PyDelphin cannot read are left out.',
+                     'Five more ERG-only assumptions removed on the way, among them inflection rules that match part-of-speech tags (SRG\'s input is tagged lemmas).')
+    return fold('Another grammar: Spanish', 'Orca replays the Spanish treebank and rebuilds its meanings; a Spanish tagger is next.', body)
+
+
 def exp_agreement():
     path = f'{ORCA}/analysis/agreement-attractors/score.json'
     if not os.path.exists(path):
@@ -680,7 +695,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_edm() + exp_generated() + exp_agreement() + exp_hausa() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_edm() + exp_generated() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
