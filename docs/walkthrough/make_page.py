@@ -66,7 +66,7 @@ def tiles():
     jd = load(BEST_JUDGE)
     t = [('main', f'{100 * c["same MRS"] / N:.1f}%', 'exactly the gold meaning, from raw text'),
          ('', f'{100 * (c["same MRS"] + jd["verdicts"]["orca"] + jd["verdicts"]["both"]) / N:.1f}%' if jd else '…',
-          'right, counting the judge' + ('' if jd else ' (being judged)')),
+          'right according to the LLM judge' + ('' if jd else ' (being judged)')),
          ('', f'{100 * c["with MRS"] / N:.1f}%', 'get a full analysis the grammar accepts'),
          ('', f'{BEST["sentences per second"]:.1f}', f'sentences per second (ACE: {ace_sps:.1f})')]
     return ('  <section class="stack">\n    <div class="tiles">\n'
@@ -115,9 +115,9 @@ def summary():
                  row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], na('the reference'), na('the reference'),
                      f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), na('not measured'))]
     t = table([('Text and parser', ''), ('Sentences', 'n'), ('Same meaning as the reference', 'n hl'), ('… with tense, number and other properties too', 'n'),
-               ('Right, counting the judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
+               ('Right according to the LLM judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
     c = notes('<b>Same meaning as the reference:</b> on dev the reference is gold; on generated text it is ACE\'s unchecked first parse.',
-              '<b>Right, counting the judge:</b> same meaning, or Claude Opus accepts this parser\'s reading where they differ.',
+              '<b>Right according to the LLM judge:</b> same meaning, or the judge (Claude Opus) accepts this parser\'s reading where they differ.',
               '<b>ACE on generated text:</b> a range; sentences the judge never saw count as wrong for the low end, right for the high end.',
               'Agreements between Orca and ACE count as right; checking them was inconclusive (<i>Generated sentences</i>).')
     finds = ['<b>Exact match understates Orca:</b> the judge often accepts Orca\'s reading where it differs (<i>Generated sentences</i>).',
@@ -472,7 +472,7 @@ def exp_generated():
     rows = ([row(f'<b>{l}</b>', cnt[l]) for l in labels] + [row('<b>All rounds</b>', cnt['all'])]
             + ['<tr><td colspan="5"><i>All rounds, by phenomenon targeted</i></td></tr>']
             + [row('&nbsp;&nbsp;' + k.replace('-', ' ').capitalize().replace('Pp ', 'PP '), cnt[k]) for k in order])
-    t = table([('Generated sentences', ''), ('Sentences', 'n'), ('Same meaning as ACE\'s parse', 'n'), ('Right, counting the judge\'s verdicts', 'n hl'),
+    t = table([('Generated sentences', ''), ('Sentences', 'n'), ('Same meaning as ACE\'s parse', 'n'), ('Right according to the LLM judge', 'n hl'),
                ('Any analysis', 'n')], rows)
     vd = json.load(open(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json'))
     def jrow(name, v):
