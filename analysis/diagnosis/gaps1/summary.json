@@ -1,0 +1,26 @@
+{
+ "items": 172,
+ "by kind and cause": {
+  "dev, no gold": {
+   "wrong tag only": 33,
+   "ungrammatical or robust input": 58,
+   "missing lexical entry": 13,
+   "other": 4,
+   "missing construction": 5,
+   "tokenization": 3,
+   "punctuation": 1
+  },
+  "generated": {
+   "wrong tag only": 33,
+   "missing lexical entry": 16,
+   "missing construction": 2,
+   "other": 3,
+   "tokenization": 1
+  },
+  "dev": {}
+ },
+ "dev: diagnosed as tagging error (correct, gold exists)": 0,
+ "dev: items": 0,
+ "dev: tagging diagnoses naming a truly wrong word": 0,
+ "cost_usd": 10.84
+}

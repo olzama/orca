@@ -1,0 +1,20 @@
+{
+ "dev, no gold": {
+  "candidates": 205,
+  "neither parses: diagnosed": 117,
+  "ACE parses": 2,
+  "Orca parses": 69,
+  "not diagnosable (no tokens, over 40 words, or the best guess replays)": 17
+ },
+ "dev, ACE fails": {
+  "candidates": 4,
+  "Orca parses": 2,
+  "not diagnosable (no tokens, over 40 words, or the best guess replays)": 2
+ },
+ "generated": {
+  "candidates": 171,
+  "Orca parses": 59,
+  "neither parses: diagnosed": 104,
+  "not diagnosable (no tokens, over 40 words, or the best guess replays)": 8
+ }
+}

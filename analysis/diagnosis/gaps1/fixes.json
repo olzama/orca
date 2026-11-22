@@ -1,0 +1,240 @@
+{
+ "diagnoses not blaming the tagger": 106,
+ "groups": [
+  {
+   "name": "Misspelled words in ill-formed input",
+   "cause": "ungrammatical or robust input",
+   "change": "No grammar change: correct the misspelled word (e.g. taht→that, teh→the, seel→sell) in the input or handle it with robust parsing.",
+   "ids": [
+    "ecpa/2201008",
+    "ecpa/2201509",
+    "ecpa/2202308",
+    "ecpa/2202909",
+    "ecpa/2204208",
+    "ecpa/2204609",
+    "ecpa/2205608",
+    "ecpa/2206408",
+    "ecpa/2206708",
+    "ecpa/2208608",
+    "ecpa/2213908",
+    "ecpa/2221708",
+    "ecpa/2230709",
+    "ecpa/2230809",
+    "ecpa/2231909",
+    "ecpa/2233308",
+    "ecpa/2234808",
+    "ecpa/2241708",
+    "ecpa/2253308",
+    "ecpa/2266409",
+    "ecpa/2269408",
+    "ecpa/2271008",
+    "ecpa/2282409",
+    "ecpa/2285308",
+    "ecpa/2288008",
+    "ecpa/2288808"
+   ],
+   "n": 26
+  },
+  {
+   "name": "Missing open-class or specific lexical entries",
+   "cause": "missing lexical entry",
+   "change": "Add the missing native lexical entry with the indicated type (e.g. loch_n1 := n_-_c_le, vegan_a1 := aj_-_i_le, gig/megapixel as n_-_c-meas_le, consider as v_np-prd_sor_le).",
+   "ids": [
+    "ecpa/2205908",
+    "ecpa/2219409",
+    "ecpa/2237908",
+    "ecpa/2242408",
+    "ecpa/2267708",
+    "ecpa/2287008",
+    "ecpa/2301608",
+    "ws212/1000007600740",
+    "gen-pilot1/1523",
+    "gen-pilot1/1589",
+    "gen-pilot1/1837",
+    "gen-round2/189",
+    "gen-round2/409",
+    "gen-round2/448",
+    "gen-round2/1501",
+    "gen-round2/1959",
+    "gen-round2/289",
+    "gen-round3/597"
+   ],
+   "n": 18
+  },
+  {
+   "name": "Missing, extra or malformed words in ill-formed input",
+   "cause": "ungrammatical or robust input",
+   "change": "No grammar change: treat as ill-formed input with a missing or duplicated word (copula, subject, noun, preposition) and correct it or use robust parsing.",
+   "ids": [
+    "ecpa/2202109",
+    "ecpa/2204809",
+    "ecpa/2211509",
+    "ecpa/2211709",
+    "ecpa/2215208",
+    "ecpa/2217108",
+    "ecpa/2243408",
+    "ecpa/2258109",
+    "ecpa/2269508",
+    "ecpa/2276008",
+    "ecpa/2278509",
+    "ecpa/2286009",
+    "ecpa/2291208",
+    "ecpa/2293108",
+    "ws212/1000007400710"
+   ],
+   "n": 15
+  },
+  {
+   "name": "Bare singular count NP (missing determiner)",
+   "cause": "ungrammatical or robust input",
+   "change": "No core grammar change: treat determinerless singular count NPs as robust input, or add a robust-mode bare singular count NP rule if such input should parse.",
+   "ids": [
+    "ecpa/2210610",
+    "ecpa/2211708",
+    "ecpa/2211908",
+    "ecpa/2211910",
+    "ecpa/2216309",
+    "ecpa/2232508",
+    "ecpa/2259908",
+    "ecpa/2272908"
+   ],
+   "n": 8
+  },
+  {
+   "name": "Informal or texting spellings",
+   "cause": "missing lexical entry",
+   "change": "Normalize nonstandard spellings (4→for, u→you, im→I'm, -in'→-ing, sooo→so, whatta) in preprocessing, or add marked nonstandard variant entries.",
+   "ids": [
+    "ecpa/2209708",
+    "ecpa/2214810",
+    "ecpa/2216408",
+    "ecpa/2219008",
+    "ecpa/2239508",
+    "ecpa/2239509",
+    "ecpa/2277408"
+   ],
+   "n": 7
+  },
+  {
+   "name": "Agreement errors",
+   "cause": "ungrammatical or robust input",
+   "change": "No grammar change: treat subject-verb or determiner-noun agreement errors as ill-formed input or use mal-rules.",
+   "ids": [
+    "ecpa/2202508",
+    "ecpa/2257808",
+    "ecpa/2275908",
+    "ws212/1000007201730"
+   ],
+   "n": 4
+  },
+  {
+   "name": "Inch mark / inch abbreviation as measure noun",
+   "cause": "missing lexical entry",
+   "change": "Add measure-noun abbreviation entries (n_-_c-meas-abb_le) for \" and 'in' meaning inch, so that number plus measure noun can modify a noun.",
+   "ids": [
+    "ecpa/2214708",
+    "ecpa/2260208",
+    "ecpa/2273108",
+    "ecpa/2231808"
+   ],
+   "n": 4
+  },
+  {
+   "name": "GML markup not stripped in WeScience",
+   "cause": "tokenization",
+   "change": "Fix gml.rpp preprocessing so GML link, template and IPA markup is fully removed and tokens keep their POS tags before lexical lookup.",
+   "ids": [
+    "ws212/1000007201830",
+    "ws212/1000007400020",
+    "ws212/1000007400990",
+    "ws212/1000007401020"
+   ],
+   "n": 4
+  },
+  {
+   "name": "Missing verb-particle entries",
+   "cause": "missing lexical entry",
+   "change": "Add verb-particle entries (v_p-np_le / v_p_le) for knock out, line up, hand out and pull over, with the matching _p_sel_rel particle.",
+   "ids": [
+    "gen-pilot1/1077",
+    "gen-pilot1/1683",
+    "gen-round2/1579",
+    "gen-round3/1667"
+   ],
+   "n": 4
+  },
+  {
+   "name": "Unknown word POS tag does not license generic entry",
+   "cause": "other",
+   "change": "Make preprocessing assign the correct PTB tag (NN/NNS/VB) to unknown words so the matching generic lexical entry unifies.",
+   "ids": [
+    "ecpa/2206608",
+    "gen-pilot1/1395",
+    "gen-round2/215",
+    "gen-round2/355"
+   ],
+   "n": 4
+  },
+  {
+   "name": "Gapping in clause coordination",
+   "cause": "missing construction",
+   "change": "Add a gapping construction that coordinates a full clause with a subject-plus-remnant conjunct sharing the elided verb.",
+   "ids": [
+    "ws212/1000007201950",
+    "ws212/1000007401840",
+    "gen-pilot1/1249"
+   ],
+   "n": 3
+  },
+  {
+   "name": "Noun ellipsis after adjectives",
+   "cause": "missing construction",
+   "change": "Add a construction for noun ellipsis that builds an NP from adjectives with an elided or shared head noun.",
+   "ids": [
+    "ws212/1000007202040",
+    "ws212/1000007600090"
+   ],
+   "n": 2
+  },
+  {
+   "name": "Straight ASCII double quotes",
+   "cause": "punctuation",
+   "change": "Map straight \" to directional quotes by position in preprocessing, or add \" to the pt_-_dqleft_le/pt_-_dqright_le entries.",
+   "ids": [
+    "ws212/1000007600430",
+    "gen-round3/1185"
+   ],
+   "n": 2
+  },
+  {
+   "name": "heads-up with clausal complement",
+   "cause": "missing lexical entry",
+   "change": "Add a heads-up entry of type n_cp_c-optc_le that takes an optional that-clause.",
+   "ids": [
+    "gen-pilot1/1561",
+    "gen-round2/171"
+   ],
+   "n": 2
+  },
+  {
+   "name": "Orca replay picks wrong or unindexed lexical entry",
+   "cause": "other",
+   "change": "Fix Orca's replay so it tries every lexicon entry of the proposed type and unescapes TDL string literals when indexing orthography.",
+   "ids": [
+    "ecpa/2217508",
+    "ecpa/2224708"
+   ],
+   "n": 2
+  },
+  {
+   "name": "Unlike-category predicative coordination",
+   "cause": "missing construction",
+   "change": "Allow coordination of unlike predicative categories, such as AP and NP, as the complement of copular be.",
+   "ids": [
+    "gen-pilot1/1304"
+   ],
+   "n": 1
+  }
+ ],
+ "cost_usd": 0.284184
+}

@@ -17,6 +17,7 @@ The model is not told which kind an item is.
 
 Usage:
   diagnose_rejections.py prepare --out DIR [--dev 30] [--generated 10] [--seed 1]
+  diagnose_rejections.py gaps --out DIR          (sentences neither ACE nor Orca parses)
   diagnose_rejections.py run --out DIR [--model claude-opus-5-5] [--parallel 4]
   diagnose_rejections.py score --out DIR
 """
@@ -122,6 +123,68 @@ def defs_for(names, idx, limit=40, max_defs=8):
     return out
 
 
+def make_item(P, idx, by_orth, gold, kind, sid, text):
+    """The tagger's best derivation for the sentence, replayed to its failure point, with what the
+    model needs to diagnose it; None if it replays or cannot be tokenized."""
+    from eval_trees import to_leaves
+    from orca.encoding import decode
+    from orca.tfs.grammar import ReplayFailure
+    from orca.tfs.lexicon import _leaf_range, replay_with_entries
+    from orca.tokens import lattice_path, token_chart
+    try:
+        path = lattice_path(token_chart(text, P.ace, P.dat), P.known)
+    except Exception:
+        return None
+    forms = [text[x:y] for _, _, (x, y) in path] if P.surface else [p[0] for p in path]
+    if not forms or len(forms) > 40:
+        return None
+    top = P.tag(forms)
+    leaf = [top['leaf'][j][0][0] for j in range(len(forms))]
+    tree = [top['tree'][j][0][0] for j in range(len(forms))]
+    t = decode(to_leaves(forms, leaf, tree))
+    P.fg.reset()
+    try:
+        replay_with_entries(P.fg, P.lx, t, [p[1] for p in path])
+        return None                    # the best guess replays: nothing to diagnose
+    except ReplayFailure as e:
+        where, cause = e.where, str(e.cause)
+    except Exception as e:
+        where, cause = '0', f'{type(e).__name__}: {e}'
+    addr = where.split()[0]
+    node = node_at(t, addr)
+    clash = re.findall(r'[\w*+-]+', cause.split(':', 1)[1]) if ':' in cause else []
+    names = [where.split()[1] if len(where.split()) > 1 else ''] + labels_under(node)[:12] + clash
+    # the words at and around the failure point
+    m = re.search(r'missing lexical entry for "(.*)"', cause)
+    if m:
+        js = [j for j, f0 in enumerate(forms) if f0 == m.group(1)] or [0]
+        lo, hi = js[0], js[0] + 1
+    else:
+        try:
+            rg = _leaf_range(t, addr)
+            lo, hi = rg.start, rg.stop
+        except Exception:
+            lo, hi = 0, len(forms)
+    window = range(max(0, lo - 2), min(len(forms), hi + 2))
+    alts = []
+    for j in window:
+        low = forms[j].lower().replace('\\', '')
+        alts.append({'word': forms[j], 'at failure': lo <= j < hi,
+                     'leaf': [[x[0], round(x[2], 3)] for x in top['leaf'][j][:3]],
+                     'tree': [[x[0], round(x[2], 3)] for x in top['tree'][j][:3]],
+                     'lexicon types for this spelling': sorted(by_orth.get(low, ()))[:12],
+                     'generic entry for the proposed type': sorted(P.lx.generic.get(leaf[j].split('|')[0].lower(), ()))})
+    item = {'kind': kind, 'id': sid, 'sentence': text, 'forms': forms, 'where': where, 'cause': cause, 'window': alts,
+            'derivation': '\n'.join(show_tree(t)), 'definitions': defs_for(names, idx),
+            'guess': {'leaf': leaf, 'tree': tree}}
+    if kind == 'dev' and sid in gold:
+        gf, gl, gt = gold[sid]
+        if len(gf) == len(forms):
+            item['wrong labels'] = [{'word': forms[j], 'guess': [leaf[j], tree[j]], 'gold': [gl[j], gt[j]]}
+                                    for j in range(len(forms)) if (leaf[j], tree[j]) != (gl[j], gt[j])]
+    return item
+
+
 def prepare(a):
     from delphin import itsdb
     from eval_trees import to_leaves
@@ -166,61 +229,83 @@ def prepare(a):
         for kind, sid, text in cands + gen:
             if got[kind] >= want[kind]:
                 continue
-            try:
-                path = lattice_path(token_chart(text, P.ace, P.dat), P.known)
-            except Exception:
+            item = make_item(P, idx, by_orth, gold, kind, sid, text)
+            if item is None:
                 continue
-            forms = [text[x:y] for _, _, (x, y) in path] if P.surface else [p[0] for p in path]
-            if not forms or len(forms) > 40:
-                continue
-            top = P.tag(forms)
-            leaf = [top['leaf'][j][0][0] for j in range(len(forms))]
-            tree = [top['tree'][j][0][0] for j in range(len(forms))]
-            t = decode(to_leaves(forms, leaf, tree))
-            P.fg.reset()
-            try:
-                replay_with_entries(P.fg, P.lx, t, [p[1] for p in path])
-                continue                       # the best guess replays: nothing to diagnose
-            except ReplayFailure as e:
-                where, cause = e.where, str(e.cause)
-            except Exception as e:
-                where, cause = '0', f'{type(e).__name__}: {e}'
-            addr = where.split()[0]
-            node = node_at(t, addr)
-            clash = re.findall(r'[\w*+-]+', cause.split(':', 1)[1]) if ':' in cause else []
-            names = [where.split()[1] if len(where.split()) > 1 else ''] + labels_under(node)[:12] + clash
-            # the words at and around the failure point
-            m = re.search(r'missing lexical entry for "(.*)"', cause)
-            if m:
-                js = [j for j, f0 in enumerate(forms) if f0 == m.group(1)] or [0]
-                lo, hi = js[0], js[0] + 1
-            else:
-                try:
-                    rg = _leaf_range(t, addr)
-                    lo, hi = rg.start, rg.stop
-                except Exception:
-                    lo, hi = 0, len(forms)
-            window = range(max(0, lo - 2), min(len(forms), hi + 2))
-            alts = []
-            for j in window:
-                low = forms[j].lower().replace('\\', '')
-                alts.append({'word': forms[j], 'at failure': lo <= j < hi,
-                             'leaf': [[x[0], round(x[2], 3)] for x in top['leaf'][j][:3]],
-                             'tree': [[x[0], round(x[2], 3)] for x in top['tree'][j][:3]],
-                             'lexicon types for this spelling': sorted(by_orth.get(low, ()))[:12],
-                             'generic entry for the proposed type': sorted(P.lx.generic.get(leaf[j].split('|')[0].lower(), ()))})
-            item = {'kind': kind, 'id': sid, 'sentence': text, 'forms': forms, 'where': where, 'cause': cause, 'window': alts,
-                    'derivation': '\n'.join(show_tree(t)), 'definitions': defs_for(names, idx),
-                    'guess': {'leaf': leaf, 'tree': tree}}
-            if kind == 'dev' and sid in gold:
-                gf, gl, gt = gold[sid]
-                if len(gf) == len(forms):
-                    item['wrong labels'] = [{'word': forms[j], 'guess': [leaf[j], tree[j]], 'gold': [gl[j], gt[j]]}
-                                            for j in range(len(forms)) if (leaf[j], tree[j]) != (gl[j], gt[j])]
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
             got[kind] += 1
             print(kind, sid, where, '|', cause[:80], flush=True)
     print(dict(got))
+
+
+def gaps(a):
+    """Items for real gaps: sentences neither ACE nor Orca parses (dev items without a gold analysis or that
+    ACE fails on, and generated sentences ACE could not parse)."""
+    from delphin import ace as A
+    from delphin import itsdb
+    from orca_parse import DEFAULTS, Parser
+    cands = []
+    ace_dev = json.load(open('analysis/mrs/dev-ace-final-as-eval.json'))['records']
+    ace_fail = {r['id'] for r in ace_dev if not r.get('mrs')}
+    for p in sorted(glob.glob('data/profiles-2025/dev/*/')):
+        name = p.rstrip('/').split('/')[-1]
+        ts = itsdb.TestSuite(p)
+        items = {r['i-id']: r['i-input'] for r in ts['item']}
+        nogold = {r['i-id'] for r in ts['parse'] if r['readings'] == 0}
+        for iid, text in items.items():
+            sid = f'{name}/{iid}'
+            if iid in nogold:
+                cands.append(('dev, no gold', sid, text, True))
+            elif sid in ace_fail:
+                cands.append(('dev, ACE fails', sid, text, False))
+    for rnd in ('pilot1', 'round2', 'round3'):
+        for p in glob.glob(f'data/generated/{rnd}/profiles/*/'):
+            ts = itsdb.TestSuite(p)
+            items = {r['i-id']: r['i-input'] for r in ts['item']}
+            for r in ts['parse']:
+                if r['readings'] == 0:
+                    cands.append(('generated', f'gen-{rnd}/{r["i-id"]}', items[r['i-id']], False))
+    P = Parser(tagger=TAGGER, device=a.device)
+    idx = tdl_index()
+    by_orth = collections.defaultdict(set)
+    for (lt, orth), _ in P.lx.by_type_orth.items():
+        by_orth[orth].add(lt)
+    opts = ['-1', '--timeout=60', '--max-chart-megabytes=4000', '--max-unpack-megabytes=5000']
+
+    def ace_parses(text):
+        try:
+            return bool(A.parse(DEFAULTS['dat'], text, executable=DEFAULTS['ace'], cmdargs=opts,
+                                stderr=open(os.devnull, 'w')).results())
+        except Exception:
+            return False
+    need = [c for c in cands if c[3]]
+    with concurrent.futures.ThreadPoolExecutor(3) as ex:
+        ace_ok = dict(zip([c[1] for c in need], ex.map(lambda c: ace_parses(c[2]), need)))
+    stats = collections.defaultdict(collections.Counter)
+    with open(os.path.join(a.out, 'items.jsonl'), 'w') as f:
+        for kind, sid, text, _ in cands:
+            st = stats[kind]
+            st['candidates'] += 1
+            if ace_ok.get(sid):
+                st['ACE parses'] += 1
+                continue
+            try:
+                out = P.parse(text, sid)
+            except Exception:
+                out = {}
+            if out.get('accepted derivations'):
+                st['Orca parses'] += 1
+                continue
+            item = make_item(P, idx, by_orth, {}, kind, sid, text)
+            if item is None:
+                st['not diagnosable (no tokens, over 40 words, or the best guess replays)'] += 1
+                continue
+            st['neither parses: diagnosed'] += 1
+            f.write(json.dumps(item, ensure_ascii=False) + '\n')
+            f.flush()
+            print(kind, sid, item['where'], '|', item['cause'][:70], flush=True)
+    json.dump({k: dict(v) for k, v in stats.items()}, open(os.path.join(a.out, 'candidates.json'), 'w'), indent=1)
+    print(json.dumps({k: dict(v) for k, v in stats.items()}, indent=1))
 
 
 def prompt_for(it, rich=False):
@@ -267,6 +352,7 @@ Choose one cause:
 Answer with JSON only:
 {{"cause": "...", "explanation": "two or three sentences, naming the constraint that fails and why",
  "fix": "the smallest change: which labels to change (for a tagging error), or which entry, type or rule to add or change in the grammar",
+ "gap": "if the grammar lacks something: a short name for it, worded the same way for the same gap in any sentence (e.g. \\"entry: creaky as aj_-_i-er_le\\", \\"construction: bare plural measure noun after a number\\"); empty for a tagging error",
  "confidence": 0.0}}"""
 
 
@@ -275,6 +361,11 @@ def run(a):
     items = [json.loads(l) for l in open(os.path.join(a.out, 'items.jsonl'))]
     outp = os.path.join(a.out, 'results.jsonl')
     done = {json.loads(l)['id'] for l in open(outp)} if os.path.exists(outp) else set()
+    if a.generated_cap is not None:                 # keep cost down: a random sample of the generated items
+        gen = [it for it in items if it['kind'] == 'generated']
+        random.Random(a.seed).shuffle(gen)
+        keep = {it['id'] for it in gen[:a.generated_cap]}
+        items = [it for it in items if it['kind'] != 'generated' or it['id'] in keep]
     todo = [it for it in items if it['id'] not in done]
 
     def one(it):
@@ -327,9 +418,34 @@ def score(a):
     print(json.dumps(s, indent=1))
 
 
+def fixes(a):
+    """Group the proposed grammar changes of a gaps run: by cause, then one model call merges the
+    'gap' names that describe the same change. Writes fixes.json."""
+    from llm_label import call
+    items = {json.loads(l)['id']: json.loads(l) for l in open(os.path.join(a.out, 'items.jsonl'))}
+    res = [json.loads(l) for l in open(os.path.join(a.out, 'results.jsonl'))]
+    gaps = [{'id': r['id'], 'sentence': items[r['id']]['sentence'], 'cause': r['answer'].get('cause'),
+             'gap': r['answer'].get('gap') or '', 'fix': r['answer'].get('fix', '')[:300]}
+            for r in res if r['answer'].get('cause') not in ('wrong tag only', 'error', 'unparsed')]
+    prompt = ('These are proposed changes to the English Resource Grammar, one per sentence it cannot parse. '
+              'Group the ones that describe the same change (same missing construction, same kind of missing entry, '
+              'same tokenization or punctuation problem). Answer with JSON only: {"groups": [{"name": "...", '
+              '"cause": "...", "change": "one sentence: the change to make", "ids": ["..."]}]}, largest groups first; '
+              'every id in exactly one group.\n\n' + '\n'.join(json.dumps(g, ensure_ascii=False) for g in gaps))
+    r = call(a.model, 'You consolidate grammar engineering notes. Answer with one JSON object only.', prompt, a.out)
+    txt = str(r.get('result', ''))
+    m = re.search(r'\{.*\}', txt, re.S)
+    groups = json.loads(m.group(0))['groups'] if m else []
+    out = {'diagnoses not blaming the tagger': len(gaps), 'groups': [{**g, 'n': len(g.get('ids', []))} for g in groups],
+           'cost_usd': r.get('total_cost_usd', 0)}
+    json.dump(out, open(os.path.join(a.out, 'fixes.json'), 'w'), indent=1, ensure_ascii=False)
+    for g in out['groups'][:15]:
+        print(g['n'], '|', g.get('cause'), '|', g.get('name'), '|', g.get('change', '')[:120])
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('step', choices=['prepare', 'run', 'score'])
+    ap.add_argument('step', choices=['prepare', 'gaps', 'run', 'score', 'fixes'])
     ap.add_argument('--out', required=True)
     ap.add_argument('--dev', type=int, default=30)
     ap.add_argument('--generated', type=int, default=10)
@@ -338,10 +454,11 @@ def main():
     ap.add_argument('--model', default='claude-opus-5-5')
     ap.add_argument('--parallel', type=int, default=4)
     ap.add_argument('--rich', action='store_true', help='round 2: add tagger alternatives, lexicon facts, notes on generic entries and markup')
+    ap.add_argument('--generated-cap', type=int, help='run: diagnose only this many generated items (random, --seed)')
     ap.add_argument('--compare', help='score: an earlier round\'s directory, to count causes before and after on the shared items')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
-    {'prepare': prepare, 'run': run, 'score': score}[a.step](a)
+    {'prepare': prepare, 'gaps': gaps, 'run': run, 'score': score, 'fixes': fixes}[a.step](a)
 
 
 if __name__ == '__main__':
