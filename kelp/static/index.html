@@ -204,10 +204,23 @@ const $ = id => document.getElementById(id);
 const OPPOSITE = {chain: 'not-chain', present: 'absent', span: 'not-span', sem: 'not-sem'};
 const isSem = d => d.kind === 'sem' || d.kind === 'not-sem';
 /* meaning statements: 'head|ROLE|dependent', or 'TOP||predicate' */
-function shortPred(p) {
+function lemma(p) {
   const m = p.match(/^(.*)\((.*)\)$/);
   if (m) return m[2];                                 // a name or number
   return p.startsWith('_') ? p.split('_')[1] : p;     // _show_v_1 -> show
+}
+let clash = new Set();      // short names that stand for more than one predicate in this item
+function findClashes() {
+  const full = {};
+  const note = p => { (full[lemma(p)] = full[lemma(p)] || new Set()).add(p); };
+  const each = key => { const [h, , d] = key.split('|'); if (h !== 'TOP') note(h); note(d); };
+  for (const t of state.trees) t.deps.forEach(each);
+  for (const d of state.discriminants.concat(state.decisions)) if (isSem(d)) each(d.value[0]);
+  clash = new Set(Object.keys(full).filter(k => full[k].size > 1));
+}
+function shortPred(p) {     // the lemma, or the whole predicate name where the lemma alone is ambiguous
+  const l = lemma(p);
+  return clash.has(l) ? p.replace(/^_/, '') : l;
 }
 function semText(key) {
   const [h, role, d] = key.split('|');
@@ -624,7 +637,7 @@ function schedulePoll() {
     render();
   }, 1500);
 }
-function render() { schedulePoll(); renderTop(); renderTree(); renderMeaning(); renderChoices(); renderGallery(); renderItems(); }
+function render() { findClashes(); schedulePoll(); renderTop(); renderTree(); renderMeaning(); renderChoices(); renderGallery(); renderItems(); }
 
 /* ---- keys and buttons ---- */
 $('b-undo').onclick = () => act('undo');
