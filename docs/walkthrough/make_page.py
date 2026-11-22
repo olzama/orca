@@ -64,7 +64,9 @@ def tiles():
     c = BEST['counts']
     ace_sps = N / (ACE_PASS + ACE_RETRY)
     jd = load(BEST_JUDGE)
-    t = [('main', f'{100 * c["same MRS"] / N:.1f}%', 'exactly the gold meaning, from raw text'),
+    pr = load(BEST_PROPS)
+    t = [('main', f'{100 * c["same MRS"] / N:.1f}%', 'exactly the gold meaning (predicates, arguments, scope), from raw text'),
+         ('', f'{100 * pr["same with properties"] / N:.1f}%' if pr else '…', 'the same, with tense, number and information structure too'),
          ('', f'{100 * (c["same MRS"] + jd["verdicts"]["orca"] + jd["verdicts"]["both"]) / N:.1f}%' if jd else '…',
           'right according to the LLM judge' + ('' if jd else ' (being judged)')),
          ('', f'{100 * c["with MRS"] / N:.1f}%', 'get a full analysis the grammar accepts'),
@@ -115,9 +117,10 @@ def summary():
                      pct(g['mrs'], g['n']), na('not measured')),
                  row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], na('the reference'), na('the reference'),
                      f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), na('not measured'))]
-    t = table([('Text and parser', ''), ('Sentences', 'n'), ('Same meaning as the reference', 'n hl'), ('… with tense, number and other properties too', 'n'),
+    t = table([('Text and parser', ''), ('Sentences', 'n'), ('Same meaning as the reference', 'n hl'), ('… with tense, number and information structure too', 'n hl'),
                ('Right according to the LLM judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
-    c = notes('<b>Same meaning as the reference:</b> on dev the reference is gold; on generated text it is ACE\'s unchecked first parse.',
+    c = notes('<b>… with tense, number and information structure too:</b> the variable properties (tense, aspect, mood, sentence force, number, person, gender) and ICONS must match as well; ICONS never break a match for either parser.',
+              '<b>Same meaning as the reference:</b> on dev the reference is gold; on generated text it is ACE\'s unchecked first parse.',
               '<b>Right according to the LLM judge:</b> same meaning, or the judge (Claude Opus) accepts this parser\'s reading where they differ.',
               '<b>ACE on generated text:</b> a range; sentences the judge never saw count as wrong for the low end, right for the high end.',
               'Agreements between Orca and ACE count as right; checking them was inconclusive (<i>Generated sentences</i>).')
