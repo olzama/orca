@@ -2,7 +2,7 @@
 
 Kelp (Keyboard-driven, Efficient, LLM-assisted Parse selection) is Orca's treebanking tool: a successor to the Full Forest Treebanker (FFTB; Packard 2015) for DELPH-IN grammars.
 
-Status: draft for review, 2026-11-22. Nothing here is built except the forest reader (`kelp/forest.py`) and the check in section 4.
+Status: reviewed by Olga, 2026-11-22; her decisions are in section 11. Built so far: the forest reader (`kelp/forest.py`), the check in section 4, and the forest operations of section 3 (`kelp/discriminants.py`).
 
 ## 1. Priorities
 
@@ -13,7 +13,7 @@ In order:
 3. Semantic discriminants next to the syntactic ones.
 4. Robust update after grammar changes.
 5. Proper saving, in profiles that existing DELPH-IN tools read.
-6. More than one correct tree per item, where the annotator wants that.
+6. More than one correct tree per item: several trees can be correct, and the annotator can accept several.
 
 Out of scope for now: several annotators on one profile, adjudication.
 
@@ -85,14 +85,13 @@ Everything is reachable from the keyboard:
 - arrow keys move the focus over tree nodes; `Tab` jumps to the next doubtful node;
 - number keys choose among the alternatives at the focus; `x` rejects one;
 - `[` and `]` shrink and grow a span selection over the words;
-- `Enter` accepts the item when one tree remains (or the marked set, see below); `r` rejects the item; `u` undoes the last decision, without limit; `n` and `p` move between items; `/` opens a comment.
+- `Enter` accepts the item with the trees that remain, one or several; `r` rejects the item; `u` undoes the last decision, without limit; `n` and `p` move between items; `/` opens a comment.
 
 The mouse still works for everything.
 
 Other points:
 
-- **Items without a correct analysis.** Rejection asks for a reason from a short list (no parse; no correct parse; ill-formed input; tokenization), stored in the comment field, since FFTB users maintain such lists by hand.
-- **Several correct trees.** `Enter` on a set of remaining trees asks for confirmation and saves all of them as active. The profile format supports this (`t-active` is the number of active trees).
+- **Several correct trees.** More than one tree can be correct, and this is an ordinary outcome: `Enter` saves every remaining tree as active, and the screen shows how many there are. The profile format supports this (`t-active` is the number of active trees).
 - **List view.** Per item: status, number of trees, number of decisions, whether the proposers agree. Sortable, so easy items can be confirmed in a run.
 
 ## 6. Proposals
@@ -157,13 +156,15 @@ FFTB applies the old decisions to the new forest and succeeds when exactly one t
 
 In Orca itself: idiom rules, node labels from `parse-nodes.tdl`.
 
-## 11. Questions
+## 11. Decisions
 
-1. Is the order in section 10 right, or should update (step 8) come earlier because of a pending grammar release?
-2. Which grammar and corpus will be treebanked first with Kelp: the ERG, the Spanish grammar, another?
-3. Rejection reasons (section 5): is a fixed short list acceptable, and which reasons?
-4. Several correct trees: one mark for all cases, or separate marks for "truly ambiguous in context" and "the grammar draws a distinction I cannot judge"?
-5. Where does the code live: `kelp/` inside the Orca repository (as now), or its own repository that depends on Orca?
+Olga's answers to the questions of the first draft (2026-11-22):
+
+1. The order in section 10 stays.
+2. The first pilot is on the ERG.
+3. Rejecting an item does not ask for a reason.
+4. Several correct trees need no special marking.
+5. The code lives in `kelp/` inside the Orca repository.
 
 ## References
 
