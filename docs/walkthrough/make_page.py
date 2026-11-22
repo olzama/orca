@@ -22,9 +22,14 @@ SPS = RAW['sentences per second']
 RAW_WITH = RAW['counts']['with MRS']
 ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext.json'))     # best tagger from raw text (forms as typed)
 BEST_KEY, BEST_NAME = 'debertav3large', 'DeBERTa-v3 large tagger, all data'
-BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext.json'))      # best tagger from raw text
-BEST_PROPS = f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-properties.json'
-BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-bothsurf-{BEST_KEY}/score.json'
+BEST_RUN = f'{BEST_KEY}-normlocate'          # with the lookup fixes (preprocessed forms, missing entries located at the word), now the parser's default
+BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-normlocate.json'))      # best tagger from raw text
+BEST_PROPS = f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_RUN}-properties.json'
+BEST_ICONS = f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_RUN}-icons.json'
+BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-bothsurf-{BEST_RUN}/score.json'
+BERT_NEW = f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext-normlocate.json'
+# Hausa: Orca's MRS against ACE's on the 357 parses of rounds 1-2 (commit 03fc7ea): same without properties, with properties and ICONS
+HAUSA_MRS = (357, 343, 343)
 ACE_JUDGE = f'{ORCA}/analysis/adjudicate/dev-ace/score.json'
 RAW_HALF = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothhalfsurf-rawtext.json'))
 OLD_ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothall-rawtext-oracle.json'))
@@ -90,6 +95,7 @@ def summary():
     oc = BEST['counts']
     jd, props, aj = load(BEST_JUDGE), load(BEST_PROPS), load(ACE_JUDGE)
     bj = load(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json')
+    bn, bp, bbj = load(BERT_NEW), load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-normlocate-properties.json'), load(f'{ORCA}/analysis/adjudicate/dev-bothsurf-normlocate/score.json')
     ace = T['ace']['all']
     grp = lambda text: f'<tr><td colspan="7"><i>{text}</i></td></tr>'
     row = lambda name, n, *cells: (f'<tr><td>{name}</td>' + td(f'{n:,}')
@@ -99,10 +105,11 @@ def summary():
                 pct(props['same with properties'], N) if props else na('running'),
                 pct(oc['same MRS'] + jd['verdicts']['orca'] + jd['verdicts']['both'], N) if jd else na('being judged'),
                 pct(oc['with MRS'], N), f"{BEST['sentences per second']:.1f}"),
-            row('&nbsp;&nbsp;Orca (BERT-base), from raw text', N, pct(ORACLE['counts']['same MRS'], N),
-                pct(load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-properties.json')['same with properties'], N),
-                pct(ORACLE['counts']['same MRS'] + bj['verdicts']['orca'] + bj['verdicts']['both'], N),
-                pct(ORACLE['counts']['with MRS'], N), f"{ORACLE['sentences per second']:.1f}"),
+            (row('&nbsp;&nbsp;Orca (BERT-base), from raw text', N, pct(bn['counts']['same MRS'], N),
+                 pct(bp['same with properties'], N) if bp else na('running'),
+                 pct(bn['counts']['same MRS'] + bbj['verdicts']['orca'] + bbj['verdicts']['both'], N) if bbj else na('being judged'),
+                 pct(bn['counts']['with MRS'], N), f"{bn['sentences per second']:.1f}") if bn else
+             row('&nbsp;&nbsp;Orca (BERT-base), from raw text', N, na('re-running with the lookup fixes'), na('re-running'), na('re-running'), na('re-running'), na('re-running'))),
             row('&nbsp;&nbsp;ACE, first-ranked parse', N, pct(ace['same MRS'], N),
                 pct(load(f'{ORCA}/analysis/mrs/dev-ace-properties.json')['same with properties'], N) if load(f'{ORCA}/analysis/mrs/dev-ace-properties.json') else na('not measured'),
                 pct(ace['same MRS'] + aj['verdicts']['orca'] + aj['verdicts']['both'], N) if aj else na('being judged'),
@@ -337,7 +344,7 @@ def exp_properties():
     p = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-properties.json'))
     n = p['sentences']
     pd = load(BEST_PROPS)
-    ic = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-icons.json')
+    ic = load(BEST_ICONS)
     rows = [f'<tr><td>Predicates, arguments and scope only</td>{td(pct(p["same without properties"], n), True)}'
             + td(pct(pd['same without properties'], n) if pd else na('running'), True) + '</tr>',
             f'<tr><td>… and also tense, aspect, mood, sentence force, number, person, gender</td>{td(pct(p["same with properties"], n), True)}'
@@ -567,10 +574,36 @@ def exp_hausa():
         rows.append(f'<tr><td>&nbsp;&nbsp;Round {i}</td>' + td(f'{w:,}') + td(pct(f['sentences'], w)) + td(pct(f['replayed'], f['sentences']), True) + '</tr>')
     rows.insert(0, '<tr><td><b>All</b></td>' + td(f"{tot['w']:,}") + td(pct(tot['p'], tot['w'])) + td(pct(tot['r'], tot['p']), True) + '</tr>')
     t = table([('Hausa sentences', ''), ('Written', 'n'), ('ACE finds a parse', 'n'), ('Orca replays ACE\'s parse', 'n hl')], rows)
+    n, a0, a1 = HAUSA_MRS
+    t2 = table([('Orca\'s MRS for ACE\'s Hausa parse equals ACE\'s', ''), ('Parses', 'n'), ('Share', 'n hl')],
+               [f'<tr><td>Predicates, arguments, scope</td>' + td(f'{n:,}') + td(pct(a0, n), True) + '</tr>',
+                f'<tr><td>&nbsp;&nbsp;… and properties (gender, tense–aspect …) and ICONS</td>' + td(f'{n:,}') + td(pct(a1, n), True) + '</tr>'])
+    t = t + t2
     body = t + notes('Grammar: HaG (Crysmann), built on the Grammar Matrix. Claude Sonnet wrote the sentences from HaG\'s lexicon, in plain spelling without tone marks.',
-                     'Replay: Orca rebuilds ACE\'s first parse from its labels, finding entries in HaG\'s lexicon from the plain words.',
+                     'Replay: Orca rebuilds ACE\'s first parse from its labels, finding entries in HaG\'s lexicon from the plain words. Properties use HaG\'s own mapping.',
+                     'The MRS differences are one homograph: plain <i>nama</i> is both meat and animal; lookup takes the first entry.',
                      'Before two fixes, Orca assumed ERG habits: lexical-rule names, spelling rules, and a shorthand in definitions that the ERG uses only for lists.')
     return fold('Another grammar: Hausa', 'Orca replays every Hausa parse ACE finds, after removing assumptions that held only for the ERG.', body)
+
+
+def exp_edm():
+    e = load(f'{ORCA}/analysis/edm/dev.json')
+    if not e:
+        return ''
+    S = e['systems']
+    def row(name, key, ind=False):
+        o, a = S['orca'][key], S['ace'][key]
+        cell = lambda x: f"{100 * x['p']:.1f} / {100 * x['r']:.1f} / <b>{100 * x['f']:.1f}</b>"
+        return f'<tr><td>{"&nbsp;&nbsp;" if ind else ""}{name}</td>' + td(cell(o)) + td(cell(a)) + '</tr>'
+    rows = [row('EDM: names, arguments, properties, tops', 'EDM' if 'EDM' in S['orca'] else 'all'),
+            row('EDM<sub>NA</sub>: names and arguments only', 'EDM_NA'),
+            row('Names (predicates)', 'names', True), row('Arguments', 'arguments', True),
+            row('Properties (tense, number … and names\' strings)', 'properties', True), row('Tops', 'tops', True)]
+    t = table([('Redwoods dev (2,062 sentences)', ''), (f'Orca ({BEST_NAME.split(" tagger")[0]}), from raw text', 'n hl'), ('ACE, first-ranked parse', 'n')], rows)
+    body = t + notes('Precision / recall / F1, in %, over elementary dependencies tied to character spans (Dridan and Oepen 2011), micro-averaged; mtool, the MRP scorer, gives the same numbers.',
+                     'A sentence without an analysis counts as an empty graph, which lowers recall only.',
+                     'Partial credit: a sentence with one wrong argument still scores on the rest, unlike exact match.')
+    return fold('EDM, as published parsers report it', 'Orca is as precise as ACE; the gap is in recall, from sentences Orca does not analyze.', body)
 
 
 def exp_agreement():
@@ -647,7 +680,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_generated() + exp_agreement() + exp_hausa() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_edm() + exp_generated() + exp_agreement() + exp_hausa() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
