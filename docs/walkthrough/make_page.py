@@ -100,7 +100,8 @@ def summary():
                 pct(load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-properties.json')['same with properties'], N),
                 pct(ORACLE['counts']['same MRS'] + bj['verdicts']['orca'] + bj['verdicts']['both'], N),
                 pct(ORACLE['counts']['with MRS'], N), f"{ORACLE['sentences per second']:.1f}"),
-            row('&nbsp;&nbsp;ACE, first-ranked parse', N, pct(ace['same MRS'], N), na('not measured'),
+            row('&nbsp;&nbsp;ACE, first-ranked parse', N, pct(ace['same MRS'], N),
+                pct(load(f'{ORCA}/analysis/mrs/dev-ace-properties.json')['same with properties'], N) if load(f'{ORCA}/analysis/mrs/dev-ace-properties.json') else na('not measured'),
                 pct(ace['same MRS'] + aj['verdicts']['orca'] + aj['verdicts']['both'], N) if aj else na('being judged'),
                 pct(ace['with MRS'], N), f'{N / (ACE_PASS + ACE_RETRY):.1f}')]
     cnt, verdicts, _, labels = gen_counts()
