@@ -317,7 +317,8 @@ async function lookUp(name, back) {
     const intro = el('div', {});
     if (r.predicate) intro.append('The predicate ', el('b', {}, r.predicate), ' comes from the highlighted ' +
         (asked.length > 1 ? 'entries' : 'entry') + '. ');
-    intro.append('All lexical entries of the grammar with the same spelling, for comparison:');
+    intro.append('All lexical entries of the grammar with the same spelling, for comparison. ' +
+      'The grammar numbers entry names and predicate names separately, so the numbers need not match.');
     body.append(intro);
     const table = el('table', {class: 'cmp'}, el('tr', {}, ...['Lexical entry', 'Predicate', 'Lexical type', 'What the type says', 'The type\u2019s example (any word)'].map(h => el('th', {}, h))));
     for (const e of r.same_spelling)
