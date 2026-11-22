@@ -302,6 +302,8 @@ def train(a):
             sel = tr[i:i + a.batch]
             bt = batch_tensors(sel, feats, tree_start, tl, cand_start, cc, gold, me, dev)
             loss, _, _ = nll(model, bt, len(sel))
+            if a.l2_touched:                 # L2 on the weights this batch uses
+                loss = loss + a.l2_touched * model.w.weight[torch.unique(bt[0])].pow(2).sum()
             opt.zero_grad()
             loss.backward()
             opt.step()
@@ -407,6 +409,7 @@ def main():
     ap.add_argument('--l2', type=float, default=0.0)
     ap.add_argument('--kbest')
     ap.add_argument('--no-me', action='store_true')
+    ap.add_argument('--l2-touched', type=float, default=0.0)
     ap.add_argument('--dev', help='dev shard from devprep: early stopping on picked-gold count there')
     ap.add_argument('--out')
     a = ap.parse_args()
