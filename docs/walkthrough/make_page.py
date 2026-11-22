@@ -528,8 +528,9 @@ def exp_agreement():
                    'non-agreeing form (experiment 1: <i>is/are</i> and <i>seems/seem</i>; experiment 2: <i>was/were</i>, as in the paper). '
                    'Orca: BERT-base tagger, all data, from raw text; the reference is ACE\'s first-ranked parse. '
                    'Orca turns down nearly every non-agreeing sentence. ACE, which searches the whole grammar, usually finds a strained '
-                   'reading in which the verb agrees with some other noun, for example the one in the clause before the subject '
-                   '(<i>A scientist or a mathematician who … said I thought the boys is lost</i> with <i>scientist or mathematician</i> as what is lost). '
+                   'reading in which the verb agrees with something else: in experiment 1 often another noun, for example the one in the clause before the subject '
+                   '(<i>A scientist or a mathematician who … said I thought the boys is lost</i> with <i>scientist or mathematician</i> as what is lost); '
+                   'in experiment 2 an implicit singular <i>whoever</i> (<i>It was the boys: [whoever] I think was lost</i>, the relative clause read without a head noun). '
                    'The tagger rarely proposes such readings. On agreeing sentences, a clause before the subject makes the first guess fail '
                    'more often, but a noun of the other number in it does not; the two sets of clauses also differ in wording, so this is not a clean contrast.')
     return fold('Agreement after distracting material', 'Wrong agreement is turned down; ACE finds strained readings that Orca does not.', body)
