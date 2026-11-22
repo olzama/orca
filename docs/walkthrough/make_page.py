@@ -86,7 +86,7 @@ def summary():
         g = cnt['all']
         lo = g['agree'] + g['reference'] + g['both']
         hi = lo + g['none'] + g['scope']
-        rows += [grp(f'Generated sentences on hard phenomena ({" and ".join(labels).lower().replace("round 1 and round 2", "rounds 1 and 2")}), '
+        rows += [grp(f'Generated sentences on hard phenomena (rounds 1 to {len(labels)}), '
                      'compared with ACE\'s first-ranked parse, which nobody checked'),
                  row('&nbsp;&nbsp;Orca, from raw text', g['n'], pct(g['agree'], g['n']), na('not measured'), pct(g['agree'] + g['orca'] + g['both'], g['n']),
                      pct(g['mrs'], g['n']), na('not measured')),
@@ -101,7 +101,7 @@ def summary():
             'on dev this overstates a little, since the judge does not know the treebank\'s conventions, and ACE\'s own differences from gold were not judged. '
             'For ACE on generated text: same as Orca or judged right, with the sentences the judge never saw (Orca had no analysis there) counted as wrong for the lower figure and as right for the upper. '
             'Generated sentences were kept only if ACE parsed them, so ACE analyzes all of them. '
-            'Where Orca and ACE agree on generated text, both are counted as right without a check; a judged check of 300 such sentences is queued.')
+            'Where Orca and ACE agree on generated text, both are counted as right; a judged check of 300 such sentences was inconclusive (see <i>Generated sentences</i>).')
     finds = ['<b>Exact match understates Orca.</b> Where Orca and gold differ on dev, the judge often accepts Orca\'s reading; on generated text it prefers Orca\'s reading to ACE\'s first parse far more often than the reverse (<i>Generated sentences</i>).',
              '<b>The losses are in proposing.</b> When the right meaning is among the analyses found, the ranking model nearly always picks it; what is missing is a right analysis to pick, more so in long sentences (<i>Where the wrong sentences go wrong</i>).',
              '<b>Data and encoder size both help.</b> A large encoder on the treebank alone comes close to BERT-base on seven times the data; the large encoders are now trained on all data, and their full evaluations are queued (<i>Training data</i>, <i>Encoders</i>).',
@@ -430,7 +430,7 @@ def exp_encoders():
     return fold('Encoders', 'XLM-R and DeBERTa large give the most exact meanings, nearly what BERT-base gets with seven times the data.', body)
 
 
-GEN_ROUNDS = (('pilot1', 'Round 1'), ('round2', 'Round 2'))
+GEN_ROUNDS = (('pilot1', 'Round 1'), ('round2', 'Round 2'), ('round3', 'Round 3'))
 
 
 def gen_counts():
@@ -465,6 +465,7 @@ def gen_counts():
 
 
 def exp_generated():
+    import collections
     cnt, verdicts, info, labels = gen_counts()
     if not verdicts:
         return ''
@@ -472,8 +473,8 @@ def exp_generated():
     order = sorted((k for k in cnt if k not in labels and k != 'all'), key=lambda k: cnt[k]['agree'] / cnt[k]['n'])
     row = lambda name, d: (f'<tr><td>{name}</td>' + td(f"{d['n']:,}") + td(pct(d['agree'], d['n']))
                            + td(pct(right(d), d['n']), True) + td(pct(d['mrs'], d['n'])) + '</tr>')
-    rows = ([row(f'<b>{l}</b>', cnt[l]) for l in labels] + [row('<b>Both rounds</b>', cnt['all'])]
-            + ['<tr><td colspan="5"><i>Both rounds, by phenomenon targeted</i></td></tr>']
+    rows = ([row(f'<b>{l}</b>', cnt[l]) for l in labels] + [row('<b>All rounds</b>', cnt['all'])]
+            + ['<tr><td colspan="5"><i>All rounds, by phenomenon targeted</i></td></tr>']
             + [row('&nbsp;&nbsp;' + k.replace('-', ' ').capitalize().replace('Pp ', 'PP '), cnt[k]) for k in order])
     t = table([('Generated sentences', ''), ('Sentences', 'n'), ('Same meaning as ACE\'s parse', 'n'), ('Right, counting the judge\'s verdicts', 'n hl'),
                ('Any analysis', 'n')], rows)
@@ -489,15 +490,42 @@ def exp_generated():
                group=[('', 2), ('The judge says', 4)])
     cost = sum(v['cost_usd'] for v in verdicts.values()) + vd['cost_usd']
     sizes = '; '.join(f'{l}: {a:,} written, {b:,} parsed by ACE and replayable' for l, (a, b) in info.items())
-    body = (t + cap('Claude Sonnet wrote sentences for phenomena where Orca misses (round 1: ten phenomena; round 2: the seven hardest, '
-                    'with round 1\'s sentences excluded). ' + sizes + '. Orca (forms as typed, from raw text) is compared with ACE\'s first-ranked parse, '
+    body = (t + cap('Claude Sonnet wrote sentences for phenomena where Orca misses (round 1: ten phenomena; round 2: the seven hardest; round 3: agreement across distracting nouns, control against raising, and four of the hardest; '
+                    'each round excludes the sentences of earlier ones). ' + sizes + '. Orca (forms as typed, from raw text) is compared with ACE\'s first-ranked parse, '
                     'which nobody has checked. Right, counting the judge\'s verdicts: Orca agrees with ACE, or the judge (second table) prefers Orca\'s '
                     'reading or accepts both. Percentages of each row.')
             + t2 + cap(f'Judge: Claude Opus sees the two readings in random order, each by the DMRS predicates and links the other lacks, and answers A, B, both or neither '
                        f'(${cost:.2f} API-equivalent for all sets). On dev it sides with gold more often than with Orca, '
-                       'though it misses the treebank\'s conventions; on generated sentences it sides with Orca in both rounds, and a sample read by hand bears it out '
+                       'though it misses the treebank\'s conventions; on generated sentences it sides with Orca in every round, and a sample read by hand bears it out '
                        '(ACE reads <i>that sound</i> with an adjective, <i>vacuum cleaner</i> with a comparative). ACE\'s first parse is a weak reference '
                        'outside the treebank\'s domains, so for training the judged reading is used, not ACE\'s.'))
+    ap = f'{ORCA}/analysis/agreements/gen-r12/score.json'
+    if os.path.exists(ap):
+        a = json.load(open(ap))
+        its = [json.loads(l) for l in open(f'{ORCA}/analysis/agreements/gen-r12/items.jsonl')]
+        bins = {'2 to 4': collections.Counter(), '5 to 8': collections.Counter()}
+        for it in its:
+            c = bins['2 to 4' if len(it['readings']) <= 4 else '5 to 8']
+            c['n'] += 1
+            c[a['by_id'].get(it['id'])] += 1
+        al = collections.Counter()
+        for c in bins.values():
+            al.update(c)
+        arow = lambda name, c: (f'<tr><td>{name}</td>' + td(f"{c['n']:,}") + td(pct(c['shared reading'], c['n']), True)
+                                + td(pct(c['another reading'], c['n'])) + td(pct(c['none right'], c['n'])) + '</tr>')
+        lr = json.load(open(f'{ORCA}/analysis/llm-rank/pilot1/score.json'))['by margin']['all']
+        rows = ([arow('<b>All</b>', al)] + [arow(f'&nbsp;&nbsp;… {k} readings shown', c) for k, c in bins.items()]
+                + [f'<tr><td>For comparison: dev, about {lr["readings"] / lr["sentences"]:.0f} readings shown, gold among them</td>' + td(f"{lr['sentences']:,}")
+                   + td(pct(lr['llm right'], lr['sentences']), True) + td(pct(lr['sentences'] - lr['llm right'], lr['sentences'])) + td(na('not offered')) + '</tr>'])
+        t3 = table([('Generated sentences where Orca and ACE agree, a random sample', ''), ('Sentences', 'n'),
+                    ('Judge picks the shared reading', 'n hl'), ('Judge picks another reading', 'n'), ('Judge says none is right', 'n')], rows)
+        body += ('    <h3>Checking the agreements</h3>\n' + t3
+                 + cap(f'Rounds 1 and 2. ACE\'s 30 best parses give each sentence\'s readings (up to eight distinct meanings, in random order); '
+                       f'the judge picks the right one or says none is (${a["cost_usd"]:.2f} API-equivalent). For comparison, the same kind of choice on dev, '
+                       'where the right reading is known (<i>LLM choosing among readings</i>; there the shared reading is the gold one). '
+                       'With few readings the judge mostly confirms the agreement; with many it often picks another, '
+                       'and on dev it is already unreliable with fewer readings, so this check is inconclusive: '
+                       'it does not show that agreements are often wrong, nor that they are right.'))
     return fold('Generated sentences', 'Harder than dev; ACE\'s own parses of them are often wrong.', body)
 
 
