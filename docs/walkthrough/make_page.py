@@ -65,7 +65,7 @@ def tiles():
     ace_sps = N / (ACE_PASS + ACE_RETRY)
     jd = load(BEST_JUDGE)
     pr = load(BEST_PROPS)
-    t = [('main', f'{100 * c["same MRS"] / N:.1f}%', 'exactly the gold meaning (predicates, arguments, scope), from raw text'),
+    t = [('main', f'{100 * c["same MRS"] / N:.1f}%', 'exactly the gold meaning (predicates, arguments, scope: the usual measure in parsing work), from raw text'),
          ('', f'{100 * pr["same with properties"] / N:.1f}%' if pr else '…', 'the same, with tense, number and information structure too'),
          ('', f'{100 * (c["same MRS"] + jd["verdicts"]["orca"] + jd["verdicts"]["both"]) / N:.1f}%' if jd else '…',
           'right according to the LLM judge' + ('' if jd else ' (being judged)')),
@@ -121,6 +121,7 @@ def summary():
                ('Right according to the LLM judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
     c = notes('<b>… with tense, number and information structure too:</b> the variable properties (tense, aspect, mood, sentence force, number, person, gender) and ICONS must match as well; ICONS never break a match for either parser.',
               '<b>Same meaning as the reference:</b> on dev the reference is gold; on generated text it is ACE\'s unchecked first parse.',
+              '<b>Comparing with other work:</b> most semantic parsing evaluation scores predicates and arguments only (SDP\'s DM, AMR\'s Smatch, CCG dependencies, EDM<sub>NA</sub>), as the first column does; full EDM and MRP\'s EDS score count properties too.',
               '<b>Right according to the LLM judge:</b> same meaning, or the judge (Claude Opus) accepts this parser\'s reading where they differ.',
               '<b>ACE on generated text:</b> a range; sentences the judge never saw count as wrong for the low end, right for the high end.',
               'Agreements between Orca and ACE count as right; checking them was inconclusive (<i>Generated sentences</i>).')
@@ -343,6 +344,7 @@ def exp_properties():
     rows = [f'<tr><td>{k}</td>{td(pct(v, lost))}</tr>' for k, v in sorted(p['differ by kind'].items(), key=lambda kv: -kv[1])]
     t2 = table([(f'Sentences that stop matching ({lost})', ''), ('Share', 'n')], rows)
     body = (t1 + notes('Properties: features on MRS variables (TENSE, SF, NUM …), mapped as ACE does.',
+                       'The first row is what most parsing work compares (SDP\'s DM, AMR\'s Smatch, CCG dependencies, EDM<sub>NA</sub>); the second is closer to full EDM and MRP\'s EDS score.',
                        f'ICONS: about one gold analysis in six has them ({ic["gold with ICONS"] if ic else "…"} of {n:,}). Requiring them loses no exact match: they follow from the derivation.' if ic else 'ICONS: being measured.')
             + t2 + cap('BERT-base. Each sentence counted once, under the first kind that differs. Sentence force: statement against question.'))
     return fold('Tense, number, information structure', 'Orca now outputs them; requiring them to match changes the headline little.', body)
