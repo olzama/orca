@@ -1,0 +1,89 @@
+;;; Proposed ERG lexical entries from Orca's gap diagnosis (analysis/diagnosis/gaps1).
+;;; Not part of the ERG: tested on a copy (scripts/test_erg_proposals.py). Each entry
+;;; is modelled on an existing one, named in the comment.
+
+;; "17 in screen" (ecpa/2214708); like foot_abb_n1
+inch_abb_n1 := n_-_c-meas-abb_le &
+ [ ORTH < "in" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_inch_n_1_rel",
+            LOCAL.AGR.PNG png-irreg,
+            PHON.ONSET voc ] ].
+
+;; "17" monitor" (ecpa/2260208, ecpa/2273108); ACE's preprocessing turns " into ”
+inch_abb_n2 := n_-_c-meas-abb_le &
+ [ ORTH < "”" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_inch_n_1_rel",
+            LOCAL.AGR.PNG png-irreg,
+            PHON.ONSET voc ] ].
+
+;; "20 gig disk", "a couple gigs of storage" (ecpa/2237908, ecpa/2224708); like megabyte_n1
+gig_n2 := n_-_c-meas_le &
+ [ ORTH < "gig" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_gigabyte_n_of_rel",
+            PHON.ONSET con ] ].
+
+;; "5 megapixel" (ecpa/2301608); like megabyte_n1
+megapixel_n2 := n_-_c-meas_le &
+ [ ORTH < "megapixel" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_megapixel_n_of_rel",
+            PHON.ONSET con ] ].
+
+;; "a heads-up that ..." (gen-pilot1/1561, gen-round2/171); like accident_n2
+heads-up_n1 := n_cp_c-optc_le &
+ [ ORTH < "heads-up" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_heads-up_n_1_rel",
+            PHON.ONSET con ] ].
+
+;; "Is the sauce vegan" (gen-round2/1501); like vegetarian_a1
+vegan_a1 := aj_-_i_le &
+ [ ORTH < "vegan" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_vegan_a_1_rel",
+            PHON.ONSET con ] ].
+
+;; "by the loch" (gen-round2/409)
+loch_n1 := n_-_c_le &
+ [ ORTH < "loch" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_loch_n_1_rel",
+            PHON.ONSET con ] ].
+
+;; "revelers" (gen-round2/189), US spelling
+reveler_n1 := n_-_c_le &
+ [ ORTH < "reveler" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_reveler_n_1_rel",
+            PHON.ONSET con ] ].
+
+;; "You advertize computers" (ecpa/2242408); spelling variant of advertise_v1
+advertize_v1 := v_np*_le &
+ [ ORTH < "advertize" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_advertise_v_1_rel",
+            PHON.ONSET voc ] ].
+
+;; "migrate the monolith to microservices" (gen-round2/289); transitive, beside migrate_v1
+migrate_v2 := v_np_le &
+ [ ORTH < "migrate" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_migrate_v_1_rel",
+            PHON.ONSET con ] ].
+
+;; "consider it likely for ..." (gen-round3/597); raising, beside consider_v2 (equi)
+consider_v9 := v_np-prd_sor_le &
+ [ ORTH < "consider" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_consider_v_1_rel",
+            PHON.ONSET con ] ].
+
+;; "cruel to the unprepared" (gen-pilot1/1837); like poor_n1
+unprepared_n1 := n_-_c-pl-def_le &
+ [ ORTH < "unprepared" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_unprepared_n_1_rel",
+            PHON.ONSET voc ] ].
+
+;; "This got bust" (ecpa/2219409)
+bust_a1 := aj_-_i_le &
+ [ ORTH < "bust" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_bust_a_1_rel",
+            PHON.ONSET con ] ].
+
+;; "the top of line camera" (ecpa/2205908); like top_of_the_line_a2
+top_of_line_a1 := aj_-_i_le &
+ [ ORTH < "top", "of", "line" >,
+   SYNSEM [ LKEYS.KEYREL.PRED "_top-of-the-line_a_1_rel",
+            PHON.ONSET con ] ].

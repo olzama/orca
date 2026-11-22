@@ -211,6 +211,28 @@ def _leaf_range(tree, where):
     return range(start, start + n_leaves(node))
 
 
+def _node(where):
+    """The node path of a replay failure's place ('0.1.0 label' -> (0, 1, 0))."""
+    try:
+        return tuple(int(x) for x in where.split()[0].split('.'))
+    except ValueError:
+        return (0,)
+
+
+def _completes_after(a, b):
+    """Whether node b is built after node a in replay (daughters left to right, then the mother)."""
+    if a == b:
+        return False
+    if b == a[:len(b)]:            # b dominates a
+        return True
+    if a == b[:len(a)]:            # a dominates b
+        return False
+    for x, y in zip(a, b):
+        if x != y:
+            return y > x
+    return False
+
+
 def _leaf_candidates(grammar, lexicon, tree, tokens, strict=True):
     """The leaves of a tree and, per leaf, the lexical entries that fit it (see replay_with_entries)."""
     from ..encoding import Leaf, Node
@@ -294,22 +316,27 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
 
         return walk(tree)
 
-    pick, tries, last, queue = {}, 0, None, None
+    # Try other entries of the words under the failing node. An entry that lets
+    # replay get further (the failure moves to a node completed later) is kept,
+    # and the search goes on from the new failure; the failure reported is the
+    # furthest one reached, so that repair works on the real obstacle.
+    pick, tries, best, queue = {}, 0, None, []
     while True:
         resolved = build(pick)
         try:
             fs, _ = grammar.replay_tree(resolved, tokens, cache=cache)
             return fs, resolved
         except ReplayFailure as e:
-            last = last or e
-            if queue is None:           # alternatives to try, nearest the failure first
+            if best is None or _completes_after(_node(best.where), _node(e.where)):
+                # progress: try the words under the new failure with these entries kept,
+                # before the alternatives still waiting from earlier failures
+                best = e
                 span = _leaf_range(resolved, e.where)
-                queue = [(i, r) for i in span for r in range(1, len(usable[i]))]
+                queue = [{**pick, i: r} for i in span if i not in pick for r in range(1, len(usable[i]))] + queue
             tries += 1
             if not queue or tries >= max_tries:
-                raise last from None
-            i, r = queue.pop(0)
-            pick = {i: r}
+                raise best from None
+            pick = queue.pop(0)
 
 
 def entry_variants(grammar, lexicon, tree, tokens, resolved, limit=16):

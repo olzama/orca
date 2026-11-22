@@ -1,0 +1,4 @@
+{"_comment": "Existing entries whose type the diagnosis would change (mass noun -> mass or count), tested on a copy of the ERG.",
+ "muslin_n1": ["n_-_m_le", "n_-_mc_le", "gen-pilot1/1523: a soft muslin"],
+ "ultrasound_n1": ["n_-_m_le", "n_-_mc_le", "gen-pilot1/1589: an ultrasound"],
+ "steel_n1": ["n_-_m_le", "n_-_mc_le", "gen-round2/1959: specialty steels"]}

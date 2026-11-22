@@ -1,0 +1,221 @@
+{
+ "motivating": [
+  {
+   "id": "ecpa/2214708",
+   "sentence": "i'd love a laptop with a 17 in screen.",
+   "readings before": 0,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "ecpa/2260208",
+   "sentence": "I want to get a 17\" monitor, probably a ViewSonic.",
+   "readings before": 1,
+   "readings after": 1,
+   "uses a proposal": false
+  },
+  {
+   "id": "ecpa/2273108",
+   "sentence": "Have any notebooks with a 12 \" screen for under $700.00?",
+   "readings before": 1,
+   "readings after": 1,
+   "uses a proposal": false
+  },
+  {
+   "id": "ecpa/2224708",
+   "sentence": "I'm looking for a Toshiba 12345 laptop with DVD drive, 17\" monitor, and 20 gig or bigger disk drive.",
+   "readings before": 1,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "ecpa/2237908",
+   "sentence": "I need a laptop with a couple gigs of storage and space for 512K of memory.",
+   "readings before": 1,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "ecpa/2301608",
+   "sentence": "I would appreciate if you could inform me as soon as the new Nikon digital camera with 5 megapixel is available.",
+   "readings before": 1,
+   "readings after": 1,
+   "uses a proposal": false
+  },
+  {
+   "id": "gen-pilot1/1561",
+   "sentence": "Hi team, just a quick heads-up that the Salesforce migration has been postponed until Monday.",
+   "readings before": 0,
+   "readings after": 0,
+   "uses a proposal": false
+  },
+  {
+   "id": "gen-round2/1501",
+   "sentence": "Is the sauce vegan or merely vegetarian?",
+   "readings before": 0,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "gen-round2/409",
+   "sentence": "He sat by the loch, sipping a dram of Laphroaig and watching the gloaming settle.",
+   "readings before": 0,
+   "readings after": 0,
+   "uses a proposal": false
+  },
+  {
+   "id": "gen-round2/189",
+   "sentence": "Revelers douse one another with colored powder.",
+   "readings before": 1,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "ecpa/2242408",
+   "sentence": "You advertize computers on your website.",
+   "readings before": 1,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "gen-round2/289",
+   "sentence": "This quarter, our team will migrate the legacy monolith to microservices.",
+   "readings before": 0,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "gen-round3/597",
+   "sentence": "Analysts now consider it likely that the two companies will merge.",
+   "readings before": 1,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "gen-pilot1/1837",
+   "sentence": "Anyone who has lived in Chicago in January knows that the wind off the lake is cruel to the unprepared.",
+   "readings before": 0,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "ecpa/2219409",
+   "sentence": "This got bust, so I got a Panasonic model instead.",
+   "readings before": 0,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "ecpa/2205908",
+   "sentence": "What is the top of line digital camera that you sell?",
+   "readings before": 0,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "gen-pilot1/1523",
+   "sentence": "He swaddled the baby in a soft muslin.",
+   "readings before": 0,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "gen-pilot1/1589",
+   "sentence": "She ordered an ultrasound and a full bloodwork panel.",
+   "readings before": 0,
+   "readings after": 1,
+   "uses a proposal": true
+  },
+  {
+   "id": "gen-round2/1959",
+   "sentence": "By 1960 the mill was producing specialty steels for bridges.",
+   "readings before": 0,
+   "readings after": 1,
+   "uses a proposal": true
+  }
+ ],
+ "dev regression": {
+  "n": 300,
+  "same readings and first MRS": 294,
+  "changed": [
+   {
+    "id": "ecpa/2283510",
+    "sentence": "it is the one with 3.3 megapixels in a case the size of a credit card.",
+    "readings": [
+     1,
+     1
+    ],
+    "first MRS same": false,
+    "errors": [
+     null,
+     null
+    ]
+   },
+   {
+    "id": "ecpa/2274608",
+    "sentence": "Tell me you have the Canon 131313 in stock.",
+    "readings": [
+     1,
+     1
+    ],
+    "first MRS same": false,
+    "errors": [
+     null,
+     null
+    ]
+   },
+   {
+    "id": "ecpa/2242408",
+    "sentence": "You advertize computers on your website.",
+    "readings": [
+     1,
+     1
+    ],
+    "first MRS same": false,
+    "errors": [
+     null,
+     null
+    ]
+   },
+   {
+    "id": "ecpa/2224708",
+    "sentence": "I'm looking for a Toshiba 12345 laptop with DVD drive, 17\" monitor, and 20 gig or bigger disk drive.",
+    "readings": [
+     1,
+     1
+    ],
+    "first MRS same": false,
+    "errors": [
+     null,
+     null
+    ]
+   },
+   {
+    "id": "ws212/1000007600790",
+    "sentence": "In a network created by people analyzing their understanding of the word (such as ⌊>Wordnet>⌋) the links and decomposition structures of the network are few in number and kind; and include \"part of\", \"kind of\", and similar links.",
+    "readings": [
+     1,
+     1
+    ],
+    "first MRS same": false,
+    "errors": [
+     null,
+     null
+    ]
+   },
+   {
+    "id": "ecpa/2231808",
+    "sentence": "How much do you charge for the Panasonic 32 in' direct-view TV, and do you have it in stock?",
+    "readings": [
+     1,
+     1
+    ],
+    "first MRS same": false,
+    "errors": [
+     null,
+     null
+    ]
+   }
+  ]
+ }
+}

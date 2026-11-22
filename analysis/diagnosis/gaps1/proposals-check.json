@@ -1,0 +1,575 @@
+{
+ "counts": {
+  "confirmed gap": 27,
+  "unclear": 4,
+  "already in grammar": 5
+ },
+ "proposals": [
+  {
+   "id": "ecpa/2205908",
+   "kind": "entry",
+   "proposal": "top of line",
+   "type": "aj_-_i-att_le",
+   "particle": null,
+   "note": "",
+   "existing": [],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ecpa/2214708",
+   "kind": "entry",
+   "proposal": "in",
+   "type": "n_-_c-meas-abb_le",
+   "particle": null,
+   "note": "inch",
+   "existing": [
+    "in (p_np_i-reg_le)",
+    "in_pp (pp_-_i-dir-nomodn_le)",
+    "in_ppcomp (p_pp_i-coprd_le)",
+    "in_prtcl (p_np_ptcl_le)",
+    "in_temp (p_np_i-tmp_le, non_day_or_deg_rel)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ecpa/2214810",
+   "kind": "entry",
+   "proposal": "4",
+   "type": "p_np_i_le",
+   "particle": null,
+   "note": "texting spelling of \"for\"",
+   "existing": [
+    "four_digit_hour (n_-_pn-hour_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ecpa/2219409",
+   "kind": "entry",
+   "proposal": "bust",
+   "type": "aj_-_i_le",
+   "particle": null,
+   "note": "broken",
+   "existing": [
+    "bust_n1 (n_-_c_le)",
+    "bust_open_v1 (v_p-np_le, _open_a_sel_rel)",
+    "bust_open_v2 (v_p_le, _open_a_sel_rel)",
+    "bust_up_v1 (v_p-np_le, _up_p_sel_rel)",
+    "bust_up_v2 (v_p_le, _up_p_sel_rel)",
+    "bust_v1 (v_np_noger_le)",
+    "bust_v2 (v_-_unacc_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ecpa/2237908",
+   "kind": "entry",
+   "proposal": "gig",
+   "type": "n_-_c-meas_le",
+   "particle": null,
+   "note": "gigabyte",
+   "existing": [
+    "gig_n1 (n_-_c_le)",
+    "gig_v1 (v_np*_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ecpa/2239508",
+   "kind": "construction",
+   "proposal": "g-dropped -in'",
+   "type": "v_prp_olr variant",
+   "particle": null,
+   "note": "lookin'",
+   "similar rules": [],
+   "verdict": "unclear",
+   "why": "nonstandard spelling: preprocessing rather than grammar"
+  },
+  {
+   "id": "ecpa/2239509",
+   "kind": "entry",
+   "proposal": "whatta",
+   "type": null,
+   "particle": null,
+   "note": "what do/have",
+   "existing": [],
+   "type exists": null,
+   "verdict": "unclear",
+   "why": "no type proposed (nonstandard form; a preprocessing or robustness question)"
+  },
+  {
+   "id": "ecpa/2242408",
+   "kind": "entry",
+   "proposal": "advertize",
+   "type": "v_np*_le",
+   "particle": null,
+   "note": "spelling variant",
+   "existing": [],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ecpa/2260208",
+   "kind": "entry",
+   "proposal": "”",
+   "type": "n_-_c-meas-abb_le",
+   "particle": null,
+   "note": "inch mark (ACE preprocessing turns \" into ”)",
+   "existing": [
+    "dqright_pct (pt_-_dqright_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ecpa/2267708",
+   "kind": "entry",
+   "proposal": "might",
+   "type": "av_-_s-vp_le",
+   "particle": null,
+   "note": "\"might could\"",
+   "existing": [
+    "might_aux_pos (v_vp_mdl-p-sv_le)",
+    "might_n1 (n_-_m_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ecpa/2273108",
+   "kind": "entry",
+   "proposal": "”",
+   "type": "n_-_c-meas-abb_le",
+   "particle": null,
+   "note": "inch mark",
+   "existing": [
+    "dqright_pct (pt_-_dqright_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ecpa/2287008",
+   "kind": "entry",
+   "proposal": "portable",
+   "type": "n_-_c_le",
+   "particle": null,
+   "note": "noun",
+   "existing": [
+    "portable_a1 (aj_-_i_le)",
+    "portable_n1 (n_-_c_le)"
+   ],
+   "type exists": true,
+   "verdict": "already in grammar",
+   "why": "entry exists: portable_n1"
+  },
+  {
+   "id": "ecpa/2301608",
+   "kind": "entry",
+   "proposal": "megapixel",
+   "type": "n_-_c-meas_le",
+   "particle": null,
+   "note": "measure",
+   "existing": [
+    "megapixel_n1 (n_pp_c-of_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "ws212/1000007201950",
+   "kind": "construction",
+   "proposal": "gapping",
+   "type": "gap",
+   "particle": null,
+   "note": "",
+   "similar rules": [
+    "cl_rc-fin-modgap_c",
+    "cl_rc-inf-modgap_c",
+    "vp_np-ger-gap_c"
+   ],
+   "verdict": "confirmed gap",
+   "why": "no gapping rule (only relative-clause \"modgap\" rules)"
+  },
+  {
+   "id": "ws212/1000007202040",
+   "kind": "construction",
+   "proposal": "noun ellipsis after adjective",
+   "type": "elid|ellip",
+   "particle": null,
+   "note": "",
+   "similar rules": [
+    "hd-cl_fr-rel-ellip_c"
+   ],
+   "verdict": "confirmed gap",
+   "why": "no rule for an adjective heading an elliptical noun phrase"
+  },
+  {
+   "id": "ws212/1000007401840",
+   "kind": "construction",
+   "proposal": "gapping",
+   "type": "gap",
+   "particle": null,
+   "note": "",
+   "similar rules": [
+    "cl_rc-fin-modgap_c",
+    "cl_rc-inf-modgap_c",
+    "vp_np-ger-gap_c"
+   ],
+   "verdict": "confirmed gap",
+   "why": "no gapping rule (only relative-clause \"modgap\" rules)"
+  },
+  {
+   "id": "ws212/1000007600090",
+   "kind": "construction",
+   "proposal": "noun ellipsis in a from-to range",
+   "type": "elid|ellip",
+   "particle": null,
+   "note": "",
+   "similar rules": [
+    "hd-cl_fr-rel-ellip_c"
+   ],
+   "verdict": "confirmed gap",
+   "why": "no rule for an adjective heading an elliptical noun phrase"
+  },
+  {
+   "id": "ws212/1000007600740",
+   "kind": "entry",
+   "proposal": "s.a.",
+   "type": null,
+   "particle": null,
+   "note": "see also",
+   "existing": [
+    "s_a_cmpd_n1 (n_-_c-cpd_le)",
+    "s_a_cmpd_n3 (n_-_c-cpd_le)",
+    "s_a_post_ttl_1 (n_-_tt-post-npt_le)"
+   ],
+   "type exists": null,
+   "verdict": "unclear",
+   "why": "no type proposed (nonstandard form; a preprocessing or robustness question)"
+  },
+  {
+   "id": "gen-pilot1/1077",
+   "kind": "entry",
+   "proposal": "knock",
+   "type": "v_p-np_le",
+   "particle": "out",
+   "note": "",
+   "existing": [
+    "knock_down_v1 (v_p-np_le, _down_p_sel_rel)",
+    "knock_n1 (n_-_c_le)",
+    "knock_off_v1 (v_p-np_le, _off_p_sel_rel)",
+    "knock_out_v1 (v_p-np_le, _out_p_sel_rel)",
+    "knock_over_v1 (v_p-np_le, _over_p_sel_rel)",
+    "knock_up_v1 (v_p-np_le, _up_p_sel_rel)",
+    "knock_v1 (v_np*_le)",
+    "knock_v2 (v_np-pp_prop_le)",
+    "knock_v3 (v_np-prd_oeq_le)"
+   ],
+   "type exists": true,
+   "verdict": "already in grammar",
+   "why": "entry exists: knock_out_v1"
+  },
+  {
+   "id": "gen-pilot1/1249",
+   "kind": "construction",
+   "proposal": "gapping",
+   "type": "gap",
+   "particle": null,
+   "note": "",
+   "similar rules": [
+    "cl_rc-fin-modgap_c",
+    "cl_rc-inf-modgap_c",
+    "vp_np-ger-gap_c"
+   ],
+   "verdict": "confirmed gap",
+   "why": "no gapping rule (only relative-clause \"modgap\" rules)"
+  },
+  {
+   "id": "gen-pilot1/1304",
+   "kind": "construction",
+   "proposal": "unlike-category predicative coordination",
+   "type": "j-n_crd|jpr-.*_crd|n-j_crd",
+   "particle": null,
+   "note": "AP and NP",
+   "similar rules": [
+    "j-n_crd-t_c",
+    "j-n_crd-m_c",
+    "n-j_crd-t_c",
+    "n-j_crd-m_c",
+    "jpr-jpr_crd-t_c",
+    "jpr-jpr_crd-m_c",
+    "jpr-jpr_crd-im_c",
+    "jpr-vpr_crd-t_c",
+    "jpr-vpr_crd-m_c",
+    "jpr-vpr_crd-im_c"
+   ],
+   "verdict": "unclear",
+   "why": "the ERG has adjective-noun coordination rules (j-n_crd, n-j_crd); whether they cover AP and pronoun NP as a predicate needs a test"
+  },
+  {
+   "id": "gen-pilot1/1523",
+   "kind": "entry",
+   "proposal": "muslin",
+   "type": "n_-_mc_le",
+   "particle": null,
+   "note": "",
+   "existing": [
+    "muslin_n1 (n_-_m_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-pilot1/1561",
+   "kind": "entry",
+   "proposal": "heads-up",
+   "type": "n_cp_c-optc_le",
+   "particle": null,
+   "note": "with a that-clause",
+   "existing": [],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-pilot1/1589",
+   "kind": "entry",
+   "proposal": "ultrasound",
+   "type": "n_-_mc_le",
+   "particle": null,
+   "note": "",
+   "existing": [
+    "ultrasound_n1 (n_-_m_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-pilot1/1683",
+   "kind": "entry",
+   "proposal": "line",
+   "type": "v_p-np_le",
+   "particle": "up",
+   "note": "",
+   "existing": [
+    "line_i_n1 (n_-_c-brno_le)",
+    "line_n1 (n_-_c-ed-ns_le)",
+    "line_n2 (n_pp_c-of-obl_le)",
+    "line_out_v1 (v_p-np_le, _out_p_sel_rel)",
+    "line_out_v2 (v_p_le, _out_p_sel_rel)",
+    "line_up_v1 (v_p-np_le, _up_p_sel_rel)",
+    "line_up_v2 (v_p_le, _up_p_sel_rel)",
+    "line_v1 (v_np_le)"
+   ],
+   "type exists": true,
+   "verdict": "already in grammar",
+   "why": "entry exists: line_up_v1"
+  },
+  {
+   "id": "gen-pilot1/1837",
+   "kind": "entry",
+   "proposal": "unprepared",
+   "type": "n_-_c-pl-def_le",
+   "particle": null,
+   "note": "\"the unprepared\"",
+   "existing": [],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-round2/171",
+   "kind": "entry",
+   "proposal": "heads-up",
+   "type": "n_cp_c-optc_le",
+   "particle": null,
+   "note": "with a that-clause",
+   "existing": [],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-round2/189",
+   "kind": "entry",
+   "proposal": "reveler",
+   "type": "n_-_c_le",
+   "particle": null,
+   "note": "US spelling",
+   "existing": [],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-round2/289",
+   "kind": "entry",
+   "proposal": "migrate",
+   "type": "v_np_le",
+   "particle": null,
+   "note": "transitive",
+   "existing": [
+    "migrate_v1 (v_pp*_dir_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-round2/409",
+   "kind": "entry",
+   "proposal": "loch",
+   "type": "n_-_c_le",
+   "particle": null,
+   "note": "",
+   "existing": [
+    "loch_post_ttl (n_-_tt-post_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-round2/448",
+   "kind": "entry",
+   "proposal": "builder 's",
+   "type": "aj_-_i-cmpd_le",
+   "particle": null,
+   "note": "builder's tea",
+   "existing": [],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-round2/1501",
+   "kind": "entry",
+   "proposal": "vegan",
+   "type": "aj_-_i_le",
+   "particle": null,
+   "note": "",
+   "existing": [],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-round2/1579",
+   "kind": "entry",
+   "proposal": "hand",
+   "type": "v_p-np_le",
+   "particle": "out",
+   "note": "",
+   "existing": [
+    "hand_down_v1 (v_p-np_le, _down_p_sel_rel)",
+    "hand_down_v2 (v_p-np-pp_to_le, _down_p_sel_rel)",
+    "hand_i_n1 (n_-_c-brno_le)",
+    "hand_in_v1 (v_p-np_le, _in_p_sel_rel)",
+    "hand_n1 (n_-_c-ed_le)",
+    "hand_off_v1 (v_p-np_le, _off_p_sel_rel)",
+    "hand_out_v1 (v_p-np_le, _out_p_sel_rel)",
+    "hand_over_v1 (v_p-np_le, _over_p_sel_rel)",
+    "hand_up_v1 (v_p-np_le, _up_p_sel_rel)",
+    "hand_v1 (v_np-np_le)"
+   ],
+   "type exists": true,
+   "verdict": "already in grammar",
+   "why": "entry exists: hand_out_v1"
+  },
+  {
+   "id": "gen-round2/1959",
+   "kind": "entry",
+   "proposal": "steel",
+   "type": "n_-_mc_le",
+   "particle": null,
+   "note": "mass-count",
+   "existing": [
+    "steel_n1 (n_-_m_le)",
+    "steel_v1 (v_np_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-round3/597",
+   "kind": "entry",
+   "proposal": "consider",
+   "type": "v_np-prd_sor_le",
+   "particle": null,
+   "note": "raising",
+   "existing": [
+    "consider_as_v1 (v_np-pp_e_le)",
+    "consider_v1 (v_np-vp_sor_le)",
+    "consider_v2 (v_np-prd_oeq_le)",
+    "consider_v3 (v_np-np_only_le)",
+    "consider_v5 (v_np*_le)",
+    "consider_v6 (v_vp_seq-prp_le)",
+    "consider_v7 (v_cp_le)",
+    "consider_v8 (v_it-np-vp_aeq_le)"
+   ],
+   "type exists": true,
+   "verdict": "confirmed gap",
+   "why": "no entry of this type for this spelling"
+  },
+  {
+   "id": "gen-round3/1667",
+   "kind": "entry",
+   "proposal": "pull",
+   "type": "v_p_le",
+   "particle": "over",
+   "note": "",
+   "existing": [
+    "pull_across_v1 (v_p-np_le, _across_p_sel_rel)",
+    "pull_ahead_v1 (v_p-np_le, _ahead_p_sel_rel)",
+    "pull_ahead_v2 (v_p_le, _ahead_p_sel_rel)",
+    "pull_apart_v1 (v_p-np_le, _apart_a_sel_rel)",
+    "pull_apart_v2 (v_p_le, _apart_a_sel_rel)",
+    "pull_away_v1 (v_p-np_le, _away_p_sel_rel)",
+    "pull_away_v2 (v_p_le, _away_p_sel_rel)",
+    "pull_back_v1 (v_p-np_le, _back_p_sel_rel)",
+    "pull_back_v2 (v_p_le, _back_p_sel_rel)",
+    "pull_down_v1 (v_p-np_le, _down_p_sel_rel)",
+    "pull_in_v1 (v_p-np_le, _in_p_sel_rel)",
+    "pull_in_v2 (v_p_le, _in_p_sel_rel)",
+    "pull_n1 (n_-_mc_le)",
+    "pull_off_v1 (v_p-np_le, _off_p_sel_rel)",
+    "pull_on_v1 (v_p-np_le, _on_p_sel_rel)",
+    "pull_open_v1 (v_p-np_le, _open_a_sel_rel)",
+    "pull_open_v2 (v_p_le, _open_a_sel_rel)",
+    "pull_out_of_v1 (v_p-pp_e_le, _out_p_sel_rel)",
+    "pull_out_v1 (v_p-np_le, _out_p_sel_rel)",
+    "pull_out_v2 (v_p_le, _out_p_sel_rel)",
+    "pull_over_v1 (v_p-np_le, _over_p_sel_rel)",
+    "pull_over_v2 (v_p_le, _over_p_sel_rel)",
+    "pull_through_v2 (v_p_le, _through_p_sel_rel)",
+    "pull_together_v1 (v_p-np_le, _together_p_sel_rel)",
+    "pull_up_v1 (v_p-np_le, _up_p_sel_rel)",
+    "pull_up_v2 (v_p_le, _up_p_sel_rel)",
+    "pull_v1 (v_np*_le)",
+    "pull_v2 (v_np-pp_prop_le)"
+   ],
+   "type exists": true,
+   "verdict": "already in grammar",
+   "why": "entry exists: pull_over_v2"
+  }
+ ]
+}
