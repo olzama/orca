@@ -581,7 +581,7 @@ def exp_hausa():
     t = t + t2
     body = t + notes('Grammar: HaG (Crysmann), built on the Grammar Matrix. Claude Sonnet wrote the sentences from HaG\'s lexicon, in plain spelling without tone marks.',
                      'Replay: Orca rebuilds ACE\'s first parse from its labels, finding entries in HaG\'s lexicon from the plain words. Properties use HaG\'s own mapping.',
-                     'The MRS differences are one homograph: plain <i>nama</i> is both meat and animal; lookup takes the first entry.',
+                     'The MRS differences are one homograph: plain <i>nama</i> is both meat and animal. HaG\'s build has no ranking model, so ACE\'s choice between them is arbitrary; Orca offers both readings.',
                      'Before two fixes, Orca assumed ERG habits: lexical-rule names, spelling rules, and a shorthand in definitions that the ERG uses only for lists.')
     return fold('Another grammar: Hausa', 'Orca replays every Hausa parse ACE finds, after removing assumptions that held only for the ERG.', body)
 
