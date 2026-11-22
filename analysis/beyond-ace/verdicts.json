@@ -1,0 +1,559 @@
+{
+ "verdicts": {
+  "ecpa/2200408": [
+   "WRONG",
+   "\"Have you get\" read as causative have; intended \"have got\" (possess) is lost."
+  ],
+  "ecpa/2201308": [
+   "PARTLY",
+   "Existential and relative clause right; \"your store\" garbled, with \"taht\" parsed as a noun."
+  ],
+  "ecpa/2202908": [
+   "WRONG",
+   "\"told you\" treated as a reduced relative; the service has camcorders and tells nobody."
+  ],
+  "ecpa/2204008": [
+   "WRONG",
+   "\"youn\" parsed as an adverb, so have_v_1 has no subject."
+  ],
+  "ecpa/2204808": [
+   "PARTLY",
+   "Buy, cousin and scanner are right; the source becomes \"your week\" and the store is lost."
+  ],
+  "ecpa/2206208": [
+   "PARTLY",
+   "a_q wrongly quantifies \"information\"; spurious list–information MOD link"
+  ],
+  "ecpa/2206309": [
+   "RIGHT",
+   "\"in white instead of brown\" correctly modifies have via instead_of coordination"
+  ],
+  "ecpa/2206808": [
+   "RIGHT",
+   "Want/know/availble chain correct; \"or not\" and \"now\" attach to availble"
+  ],
+  "ecpa/2209808": [
+   "RIGHT",
+   "Connect, person in charge of answering questions about availability correct"
+  ],
+  "ecpa/2210008": [
+   "RIGHT",
+   "Order takes IBM ThinkPad 1200 compound as object; structure fine"
+  ],
+  "ecpa/2210009": [
+   "RIGHT",
+   "ship(you, it, me); \"as soon as possible\" analyzed correctly as a temporal modifier."
+  ],
+  "ecpa/2210108": [
+   "RIGHT",
+   "order(I, IBM ThinkPad 1600) with an acceptable compound chain."
+  ],
+  "ecpa/2210308": [
+   "RIGHT",
+   "order(I, phone) with Nokia and cell as compound modifiers."
+  ],
+  "ecpa/2210408": [
+   "RIGHT",
+   "order(I, phone) with Sony and cell as compound modifiers."
+  ],
+  "ecpa/2211009": [
+   "PARTLY",
+   "\"to Japan\" and \"by DHL\" attach to phone, not send; by_p_loc is wrong."
+  ],
+  "ecpa/2212309": [
+   "RIGHT",
+   "Locative PP on find is plausible; the degree modifier and compound are correct."
+  ],
+  "ecpa/2213408": [
+   "RIGHT",
+   "Need takes the speaker and the IBM Thinkpad compound name correctly."
+  ],
+  "ecpa/2213709": [
+   "RIGHT",
+   "Typo \"thins\" is treated as an unknown plural noun object; buy-from structure correct."
+  ],
+  "ecpa/2214008": [
+   "RIGHT",
+   "Offer takes \"you\" and the IBM Thinkpad compound correctly."
+  ],
+  "ecpa/2214108": [
+   "PARTLY",
+   "Structure correct, but the named entity wrongly absorbs the junk punctuation \">?>\"."
+  ],
+  "ecpa/2216208": [
+   "RIGHT",
+   "look-for with pronoun subject and IBM-Thinkpad compound object is correct."
+  ],
+  "ecpa/2216308": [
+   "PARTLY",
+   "\"In your advertisement\" should modify the seeing, not be a small-clause complement."
+  ],
+  "ecpa/2217208": [
+   "PARTLY",
+   "\"In blue\" should modify Thinkpad as a colour noun, not modify require."
+  ],
+  "ecpa/2217308": [
+   "RIGHT",
+   "Temporal wh-question with stock(you, new IBM Thinkpad) is correct."
+  ],
+  "ecpa/2217508": [
+   "WRONG",
+   "Relative clause \"you had\" is misanalysed as an elliptical subordinate clause."
+  ],
+  "ecpa/2217608": [
+   "RIGHT",
+   "Imperative require with Thinkpad object; before-Christmas modifies require correctly."
+  ],
+  "ecpa/2218608": [
+   "RIGHT",
+   "Typo unknowns ave/latop/rnage get the intended have-laptop-in-range structure."
+  ],
+  "ecpa/2223908": [
+   "RIGHT",
+   "Coordinated list as object of sell; for-phrase attachment is plausible."
+  ],
+  "ecpa/2227509": [
+   "RIGHT",
+   "Modal tell with me, embedded whether-question carry it."
+  ],
+  "ecpa/2228008": [
+   "PARTLY",
+   "Check takes only carry; second embedded question coordinated oddly via MOD."
+  ],
+  "ecpa/2228308": [
+   "PARTLY",
+   "\"what models\" wrongly read as verb model_v_1 with \"what\" as subject."
+  ],
+  "ecpa/2228508": [
+   "PARTLY",
+   "Carry/or structure fine; \"that model one\" wrongly merged into one compound NP."
+  ],
+  "ecpa/2229110": [
+   "PARTLY",
+   "\"in stock\" attached to \"those\" rather than to \"have\"."
+  ],
+  "ecpa/2229408": [
+   "RIGHT",
+   "Give, information on availability, Toshiba laptops all correctly linked."
+  ],
+  "ecpa/2229509": [
+   "RIGHT",
+   "Tell embeds have-predicative with \"one available\"; \"whether or not\" acceptably absorbed."
+  ],
+  "ecpa/2229708": [
+   "PARTLY",
+   "\"that\" read as demonstrative sayer; intended elided \"he\" (friend) says"
+  ],
+  "ecpa/2229710": [
+   "RIGHT",
+   "check on availability of Whistlers for me, correctly structured"
+  ],
+  "ecpa/2232509": [
+   "PARTLY",
+   "Structure right, but carry_v_sound is wrong sense; intended stock/sell"
+  ],
+  "ecpa/2238209": [
+   "RIGHT",
+   "it in stock, currently modifying, correct"
+  ],
+  "ecpa/2240009": [
+   "PARTLY",
+   "\"in a way\" attached to offer rather than tell"
+  ],
+  "ecpa/2244908": [
+   "RIGHT",
+   "Relative clause, on battery, duration, and without recharging are all attached correctly."
+  ],
+  "ecpa/2255508": [
+   "RIGHT",
+   "find out about takes cell phone; the article typo is handled."
+  ],
+  "ecpa/2258708": [
+   "PARTLY",
+   "Main structure is right, but \"hard\" gets the hard_a_for (difficult) sense."
+  ],
+  "ecpa/2266609": [
+   "WRONG",
+   "Waddya is treated as a name; the \"what\" object and \"you\" subject are missing."
+  ],
+  "ecpa/2270408": [
+   "WRONG",
+   "Parsed as a noun-compound fragment; \"I\" and \"need\" are not subject and verb."
+  ],
+  "ecpa/2271709": [
+   "WRONG",
+   "\"yal\" (y'all) is the subject but is parsed as an adverb; carry lacks ARG1."
+  ],
+  "ecpa/2273009": [
+   "WRONG",
+   "\"yal\" is parsed as an adverb, not the subject; carry has no ARG1."
+  ],
+  "ecpa/2274208": [
+   "PARTLY",
+   "have(laptop) is right, but the relative clause's subject is generic_entity, not laptop."
+  ],
+  "ecpa/2276109": [
+   "PARTLY",
+   "Relative clause and od(thing, that) are right; \"line up\" is split, not read as lineup."
+  ],
+  "ecpa/2276508": [
+   "RIGHT",
+   "Lookout-for-phone, the relative clause and the comparative with 4inches are all correct."
+  ],
+  "ecpa/2277209": [
+   "PARTLY",
+   "\"to\" read as to_p_state, not as tired's \"of\" complement; rest fine"
+  ],
+  "ecpa/2277909": [
+   "WRONG",
+   "weigh's subject is a nominalized clause rather than the available thing"
+  ],
+  "ecpa/2278808": [
+   "RIGHT",
+   "have(you, Siemens S40) with correct compound"
+  ],
+  "ecpa/2279709": [
+   "RIGHT",
+   "for-use attaches to phone, in-Bay-Area to use; structure correct"
+  ],
+  "ecpa/2282909": [
+   "RIGHT",
+   "have(you, it) with in-stock state modifier"
+  ],
+  "ecpa/2283009": [
+   "PARTLY",
+   "\"within 24 hours\" attached to \"one\" rather than to shipping"
+  ],
+  "ecpa/2289009": [
+   "PARTLY",
+   "\"with\" taken as modifier; \"what\" should be provide's theme"
+  ],
+  "ecpa/2290308": [
+   "RIGHT",
+   "inform with as-to complement; have-for-sale structure is correct"
+  ],
+  "ecpa/2290408": [
+   "RIGHT",
+   "tell with whether-complement; laptops for sale is correct"
+  ],
+  "ecpa/2291908": [
+   "WRONG",
+   "whether_x coordinates clauses; have-clause should be inform's complement"
+  ],
+  "ecpa/2292108": [
+   "WRONG",
+   "\"Darn/doggone it\" misparsed; darn modifies go, which takes unknown \"it\""
+  ],
+  "ecpa/2294108": [
+   "RIGHT",
+   "Modal request, send(you, list, me), relative clause \"you sell\" all correct"
+  ],
+  "ecpa/2295708": [
+   "RIGHT",
+   "Compound \"cell phone models\", have-in-stock predicative reading, which_q correct"
+  ],
+  "ecpa/2296908": [
+   "PARTLY",
+   "\"in stock\" modifies StarTac nominally rather than predicative have-in-stock"
+  ],
+  "ecpa/2300510": [
+   "PARTLY",
+   "\"3 megapixel\" as compound, not cardinal; odd neg MOD link to want"
+  ],
+  "ecpa/2300608": [
+   "RIGHT",
+   "have_v_prd with \"left\" as secondary predicate; many-question on Presario is correct."
+  ],
+  "ecpa/2301009": [
+   "RIGHT",
+   "The \"whichever\" free relative is apposed to \"Palm or Microsoft\"; care, be and give are correct."
+  ],
+  "ws212/1000007202300": [
+   "PARTLY",
+   "Main influence/colon structure is right, but the (1)(2)(3) enumeration labels are mis-nested."
+  ],
+  "ws212/1000007202380": [
+   "RIGHT",
+   "Product-name coordination, the \"learning/data mining\" compound and \"some of the options\" are correct."
+  ],
+  "ws212/1000007400750": [
+   "RIGHT",
+   "Fragmentary although-clause handled; percentages, locations and the \"less than\" coordination are correct."
+  ],
+  "ws212/1000007401550": [
+   "WRONG",
+   "\"Russian\" is parsed as the object of encompass, not as a modifier of grammar."
+  ],
+  "ws212/1000007600340": [
+   "RIGHT",
+   "Truncated passive, with challenge correctly as ARG2 of motivate."
+  ],
+  "ws212/1000007600840": [
+   "PARTLY",
+   "Psychiatrist is apposed to Agency instead of Giannini; the main report structure is correct."
+  ],
+  "gen-pilot1/66": [
+   "RIGHT",
+   "All clauses, relatives, the complement and the \"though\" linkage are correctly attached."
+  ],
+  "gen-pilot1/291": [
+   "RIGHT",
+   "Parents of children, the speak arguments, \"first week of term\" and the since-clause are correct."
+  ],
+  "gen-pilot1/493": [
+   "PARTLY",
+   "\"in the dark\" attaches to help rather than to wait."
+  ],
+  "gen-pilot1/890": [
+   "RIGHT",
+   "Expectation, saving, dropping, compounds and possessives all correctly analyzed."
+  ],
+  "gen-pilot1/1065": [
+   "PARTLY",
+   "Salutation \"Dear\" parsed as a verb; the assignment structure is correct."
+  ],
+  "gen-pilot1/1069": [
+   "RIGHT",
+   "Capture, appositive, ending clause and lasting relative are correctly analyzed."
+  ],
+  "gen-pilot1/1077": [
+   "PARTLY",
+   "\"led by coordinator\" attaches to Red Cross; it should modify volunteers."
+  ],
+  "gen-pilot1/1463": [
+   "PARTLY",
+   "\"fast-moving\" analyzed as nominalized compound; \"Pyroclastic\" as proper name."
+  ],
+  "gen-pilot1/1489": [
+   "PARTLY",
+   "\"wake to find\" read as a purpose clause (in order to)."
+  ],
+  "gen-pilot1/1628": [
+   "PARTLY",
+   "Salutation \"Dear Mr. Patel\" analyzed as verb dear_v_1 with \"I\" as subject."
+  ],
+  "gen-pilot1/1673": [
+   "RIGHT",
+   "Fire spread, spent hours battling, before-clause, and storing paper all correct."
+  ],
+  "gen-pilot1/1674": [
+   "RIGHT",
+   "Coordination, though-clause, need/replace, and the list of picked-up items are reasonable."
+  ],
+  "gen-pilot1/1688": [
+   "PARTLY",
+   "\"gave her space\" read as possessive \"her space\"; ARG3 recipient missing"
+  ],
+  "gen-pilot1/1877": [
+   "PARTLY",
+   "\"though\" clause attached to \"complained\" rather than the \"promised\" conjunct"
+  ],
+  "gen-round2/56": [
+   "WRONG",
+   "\"the weekend yak-shaving\" parsed as a single compound object of spend"
+  ],
+  "gen-round2/183": [
+   "PARTLY",
+   "\"walk back\" as literal walking plus locative, not the retract idiom"
+  ],
+  "gen-round2/268": [
+   "PARTLY",
+   "\"from his hands\" attached to grease instead of wipe"
+  ],
+  "gen-round2/394": [
+   "RIGHT",
+   "Question coordination, relative clause, let/tax, and with-PP on stall are correct."
+  ],
+  "gen-round2/468": [
+   "PARTLY",
+   "\"upward\" is treated as an implicit place location; the main clauses are right."
+  ],
+  "gen-round2/530": [
+   "RIGHT",
+   "Imperative coordination is right, with yak-shaving as a nominalized compound object."
+  ],
+  "gen-round2/583": [
+   "RIGHT",
+   "Appositives, naming, spend+catalogue, swear complement and smell-of structure are correct."
+  ],
+  "gen-round2/674": [
+   "PARTLY",
+   "\"lead engineer\" is read as the metal-noun compound lead_n_1; the rest is fine."
+  ],
+  "gen-round2/681": [
+   "RIGHT",
+   "Coordination, expect/review/complete, compounds and possessives are all correct."
+  ],
+  "gen-round2/693": [
+   "PARTLY",
+   "The relative clause \"that benefited\" attaches to pattern rather than deals."
+  ],
+  "gen-round2/768": [
+   "PARTLY",
+   "Main structure is fine, but \"bathroom ceiling water damage\" is misbracketed."
+  ],
+  "gen-round2/794": [
+   "RIGHT",
+   "Prompt/pack, coordination, possessives and \"public comment session\" are all correct."
+  ],
+  "gen-round2/975": [
+   "PARTLY",
+   "\"living\" is read as a verb modifying bulbs, and \"LED\" as lead_v_1."
+  ],
+  "gen-round2/984": [
+   "RIGHT",
+   "Advise-control and coordinated infinitives are correct; \"with\" and \"before\" attachments are plausible."
+  ],
+  "gen-round2/993": [
+   "PARTLY",
+   "Main clauses are right, but \"more than half a million\" is misanalyzed as comparing with households."
+  ],
+  "gen-round2/996": [
+   "PARTLY",
+   "Main structure is right; \"second\" modifies the room, misbracketing \"second floor conference room\"."
+  ],
+  "gen-round2/1083": [
+   "RIGHT",
+   "Quoted directions, until-clause, resultative \"painted red\" and pointing adjunct are analyzed correctly."
+  ],
+  "gen-round2/1164": [
+   "WRONG",
+   "Cracks are made subject of reopen and found takes the negated clause; the bridge is lost."
+  ],
+  "gen-round2/1294": [
+   "RIGHT",
+   "Clauses, reduced relatives, comparative and modifier attachments are all correct."
+  ],
+  "gen-round2/1378": [
+   "PARTLY",
+   "\"gathering\" is conjoined with \"washed\", so debris gathers nets; it should join \"clearing\"."
+  ],
+  "gen-round2/1579": [
+   "RIGHT",
+   "Three coordinated predicates, subjects, objects and locative modifiers are correctly analyzed."
+  ],
+  "gen-round2/1861": [
+   "PARTLY",
+   "\"but\" conjoins inside the said-complement, and \"that brick\" is read as demonstrative."
+  ],
+  "gen-round2/1870": [
+   "PARTLY",
+   "Quote continuation is conjoined with \"said\" rather than placed inside Marit's quote."
+  ],
+  "gen-round2/2052": [
+   "PARTLY",
+   "Relative clause \"that shaped\" attaches to sovereignty, not principles."
+  ],
+  "gen-round2/2161": [
+   "PARTLY",
+   "\"at least\" modifies provide, not \"two weeks\"; \"in advance\" attaches to weeks."
+  ],
+  "gen-round2/2165": [
+   "RIGHT",
+   "Main clause, participial adjuncts, control and until-clause are all correct."
+  ],
+  "gen-round3/575": [
+   "PARTLY",
+   "\"a run for governor\" is misread: plan takes governor, and run is a verb."
+  ],
+  "gen-round3/578": [
+   "PARTLY",
+   "Quoted \"promise\" is analyzed as the noun promise_n_of, not a quoted word."
+  ],
+  "gen-round3/589": [
+   "RIGHT",
+   "Film proved a hit and theaters scrambled; relatives and dismiss-as are correct."
+  ],
+  "gen-round3/595": [
+   "PARTLY",
+   "\"for so long\" is wrongly read as search's object (ARG3), not a duration."
+  ],
+  "gen-round3/670": [
+   "PARTLY",
+   "\"though\" attaches to the buy/hope clause instead of the turned-out clause."
+  ],
+  "gen-round3/693": [
+   "RIGHT",
+   "Expect, so-clause, comparative with ellipsis, and as-though structure are all plausible."
+  ],
+  "gen-round3/694": [
+   "RIGHT",
+   "Quote, spend-pretend-care-leave chain and farm relative clause are correct."
+  ],
+  "gen-round3/701": [
+   "PARTLY",
+   "Overall structure right, but lowercase \"marina\" is wrongly treated as the proper name Marina."
+  ],
+  "gen-round3/702": [
+   "PARTLY",
+   "\"the proposal passing\" is a compound nominalization, not proposal as subject of passing."
+  ],
+  "gen-round3/874": [
+   "PARTLY",
+   "\"a decision\" is in apposition to factories, not to the closing event."
+  ],
+  "gen-round3/875": [
+   "RIGHT",
+   "Coordination, subordinate clauses, find/impossible/refuse and no-time-to-practice are all correct."
+  ],
+  "gen-round3/884": [
+   "PARTLY",
+   "\"which shows\" attaches to \"auxiliary\" instead of the whole preceding clause."
+  ],
+  "gen-round3/887": [
+   "PARTLY",
+   "\"fire burning\" misread as a compound nominalization; glad/keep wrongly predicated of the coordination."
+  ],
+  "gen-round3/893": [
+   "RIGHT",
+   "Ask/memorize, those told to imagine, and prove-likely-recall structure all correct."
+  ],
+  "gen-round3/964": [
+   "PARTLY",
+   "\"another week\" is treated as a temporal adjunct, not allow's second object."
+  ],
+  "gen-round3/994": [
+   "RIGHT",
+   "When-clause, pretend-not-notice, and the professor's coordinated stop/wait structure are correct."
+  ],
+  "gen-round3/1055": [
+   "RIGHT",
+   "Copula, PP on the fiddle, and coordinated \"hall knew it\" are correct."
+  ],
+  "gen-round3/1063": [
+   "RIGHT",
+   "Coordination, ellipsis, compounds and descale arguments all correctly analysed."
+  ],
+  "gen-round3/1156": [
+   "RIGHT",
+   "Truth of passive build with subordinate \"using wattle and daub\" is correct."
+  ],
+  "gen-round3/1158": [
+   "PARTLY",
+   "Main structure fine, but \"serpentine\" is wrongly treated as a proper name."
+  ],
+  "gen-round3/1189": [
+   "PARTLY",
+   "Main structure fine, but \"olive\" is wrongly treated as the name \"Olive\"."
+  ],
+  "gen-round3/1458": [
+   "WRONG",
+   "Oil and patience coordinated with \"house\" under \"behind\", not objects of \"calls for\"."
+  ],
+  "gen-round3/1474": [
+   "RIGHT",
+   "Order, coordinated infinitives, voyage, storage and storm modifiers correct; unload decomposed compositionally."
+  ],
+  "gen-round3/1478": [
+   "PARTLY",
+   "Structure right, but \"working on the third floor\" read as work_v_on, not location."
+  ],
+  "gen-round3/1546": [
+   "PARTLY",
+   "\"on the north side\" attached to restore, not hospital; \"by midnight\" read as means."
+  ]
+ },
+ "cost_usd": 1.7953320000000001,
+ "calls": 28,
+ "model": "claude-opus-5-5"
+}

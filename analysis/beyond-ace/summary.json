@@ -1,0 +1,40 @@
+{
+ "by source": {
+  "dev, no gold": {
+   "n": 71,
+   "ACE parsed": 66,
+   "WRONG": 12,
+   "ACE parsed, same MRS as Orca": 52,
+   "PARTLY": 24,
+   "RIGHT": 35,
+   "ACE no parse": 4,
+   "ACE memory limit": 1
+  },
+  "all": {
+   "n": 138,
+   "ACE parsed": 81,
+   "WRONG": 15,
+   "ACE parsed, same MRS as Orca": 58,
+   "PARTLY": 60,
+   "RIGHT": 63,
+   "ACE no parse": 10,
+   "ACE memory limit": 47
+  },
+  "dev, ACE fails": {
+   "n": 2,
+   "ACE memory limit": 2,
+   "RIGHT": 2
+  },
+  "generated": {
+   "n": 65,
+   "ACE memory limit": 44,
+   "RIGHT": 26,
+   "PARTLY": 36,
+   "ACE no parse": 6,
+   "WRONG": 3,
+   "ACE parsed": 15,
+   "ACE parsed, same MRS as Orca": 6
+  }
+ },
+ "cost_usd": 1.7953320000000001
+}
