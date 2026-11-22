@@ -283,7 +283,10 @@ def main():
         lextype_counts[l.split('|')[0]] += c
     vocabs = ((leaf_itos, leaf_stoi), (tree_itos, tree_stoi))
     with open(os.path.join(args.out, 'labels.json'), 'w') as f:
-        json.dump({'leaf': leaf_itos, 'tree': tree_itos, 'encoder': args.encoder}, f)
+        meta = {'leaf': leaf_itos, 'tree': tree_itos, 'encoder': args.encoder}
+        if 'surface' in os.path.basename(os.path.normpath(args.data)):
+            meta['forms'] = 'surface'      # trained on text as typed: the parser must feed it the same (orca_parse.py)
+        json.dump(meta, f)
     print(f'train {len(train)} dev {len(dev)} test {len(test)} | leaf labels {len(leaf_itos)} '
           f'tree labels {len(tree_itos)}', flush=True)
 
