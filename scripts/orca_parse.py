@@ -50,7 +50,7 @@ def dmrs_json(m):
 class Parser:
     def __init__(self, grammar=DEFAULTS['grammar'], tagger=DEFAULTS['tagger'], ace=DEFAULTS['ace'],
                  dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.005, device=None,
-                 all_mrs=False):
+                 all_mrs=False, commit=False, commit_min=0, root_focus=False):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -63,7 +63,8 @@ class Parser:
         self.torch, self.repair = torch, repair
         self.ace, self.dat, self.k = ace, dat, k
         self.all_mrs = all_mrs                          # also read off the MRS of every accepted derivation
-        self.args = SimpleNamespace(cache=True, kbest=kbest, budget=budget, fanout=fanout, min_prob=min_prob)
+        self.args = SimpleNamespace(cache=True, kbest=kbest, budget=budget, fanout=fanout, min_prob=min_prob,
+                                    commit=commit, commit_min=commit_min, root_focus=root_focus)
         self.device = torch.device(device or ('cuda' if torch.cuda.is_available() else 'cpu'))
         labels = json.load(open(os.path.join(tagger, 'labels.json')))
         self.itos = {'leaf': labels['leaf'], 'tree': labels['tree']}
@@ -164,6 +165,7 @@ class Parser:
         except Exception:
             out['dmrs'] = None
         out['_mrs_obj'] = m
+        out['_fs'] = fs                    # the whole sign; valid until the next parse resets the grammar's memory
         if self.all_mrs:
             out['_all_mrs'] = []
             for _, t2, _ in scored:
@@ -204,7 +206,7 @@ def ace_parse(text, ace=DEFAULTS['ace'], dat=DEFAULTS['dat'], timeout=30):
         return {'seconds': time.perf_counter() - t, 'mrs': None, 'error': str(e)[:200]}
 
 
-def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False):
+def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False, min_tokens=0):
     """Raw-text run over a split, scored by exact MRS against the treebank."""
     import collections
     import glob
@@ -224,7 +226,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False)
                 rec = tsdb.split(line)
                 if rec[names.index('derivation')]:
                     gold[f"{os.path.basename(prof)}/{rec[names.index('parse-id')]}"] = rec[names.index('mrs')]
-    sents = read(gold_path)[:limit]
+    sents = [s for s in read(gold_path) if len(s['forms']) >= min_tokens][:limit]
     parser.parse('The dog barked.')                     # warm up GPU and caches
     c, secs = collections.Counter(), collections.Counter()
     recs = []
@@ -232,6 +234,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False)
     for s in sents:
         r = parser.parse(raw[s['id']], s['id'])
         m = r.pop('_mrs_obj', None)
+        r.pop('_fs', None)
         g = normalized(simplemrs.decode(gold[s['id']]))
 
         def is_gold(x):
@@ -254,7 +257,8 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False)
                      'gold among accepted': among if parser.all_mrs and m is not None else None,
                      **({'mrs': r.get('mrs'), 'labels': r.get('labels')} if save_mrs else {})})
     wall = time.perf_counter() - t0
-    res = {'tagger': parser.tagger_name, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
+    res = {'tagger': parser.tagger_name, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget,
+           'commit': parser.args.commit, 'commit_min': parser.args.commit_min, 'root_focus': parser.args.root_focus, 'min_tokens': min_tokens, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
     with open(out_path, 'w') as f:
         json.dump(res, f, indent=1)
@@ -274,14 +278,20 @@ def main():
     ap.add_argument('--k', type=int, default=5, help='tagger labels per word')
     ap.add_argument('--kbest', type=int, default=30, help='stop after this many accepted derivations')
     ap.add_argument('--budget', type=int, default=600, help='at most this many replays per sentence')
+    ap.add_argument('--commit', action='store_true', help='repair: keep a fix once the failure moves to another part of the tree (scripts/repair.py)')
+    ap.add_argument('--root-focus', action='store_true', help='repair: on a failure at the root, search the top of the tree and the head path first (scripts/repair.py)')
+    ap.add_argument('--commit-min', type=int, default=0, help='with --commit: only for sentences of at least this many tokens')
+    ap.add_argument('--min-tokens', type=int, default=0, help='with --eval: only sentences of at least this many tokens')
     args = ap.parse_args()
-    p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget)
+    p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget,
+               commit=args.commit, commit_min=args.commit_min, root_focus=args.root_focus)
     if args.eval:
-        evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs)
+        evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
         return
     for text in args.sentences:
         r = p.parse(text)
         r.pop('_mrs_obj', None)
+        r.pop('_fs', None)
         print(json.dumps(r, indent=1, ensure_ascii=False))
 
 

@@ -65,6 +65,25 @@ def mrs_view(m):
             'vars': {v: {k.upper(): str(x) for k, x in props.items()} for v, props in m.variables.items()}}
 
 
+def fs_view(fg, root, limit=150000):
+    """The whole feature structure as a node table for the page to unfold:
+    {root, nodes: {id: [type, [[feature, id], ...]]}}; shared nodes appear once."""
+    from orca.tfs import _fastdag as C
+    nodes, todo = {}, [root]
+    while todo and len(nodes) < limit:
+        n = C.deref(todo.pop())
+        if n in nodes:
+            continue
+        try:
+            n2 = fg._check(C.expand(n))
+        except Exception:
+            n2 = n
+        arcs = [(f, C.deref(v)) for f, v in fg.arcs(n2)]
+        nodes[n] = [fg.type(n2), [[f, v] for f, v in arcs]]
+        todo.extend(v for _, v in arcs)
+    return {'root': C.deref(root), 'nodes': nodes, 'truncated': bool(todo)}
+
+
 def same_mrs(a, b):
     from delphin import mrs as M
     from compare_mrs import normalized
@@ -136,6 +155,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 r = PARSER.parse(text)
                 m = r.pop('_mrs_obj', None)
                 r['mrs_view'] = mrs_view(m)
+                fs = r.pop('_fs', None)
+                r['fs'] = fs_view(PARSER.fg, fs) if fs is not None else None
                 if req.get('ace'):
                     a = ace_parse(text, timeout=ACE_TIMEOUT)
                     am = a.pop('_mrs_obj', None)

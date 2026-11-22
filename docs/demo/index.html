@@ -117,6 +117,22 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
 .mv-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--muted); align-items: center; }
 .mv-legend .mv-pred { cursor: default; }
 .mv-cons { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--muted); align-items: center; }
+/* feature structure */
+.fs-tools { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 0.85rem; color: var(--muted); }
+.fs-tools input { font: 0.85rem var(--mono); padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--well); color: var(--fg); min-width: 260px; }
+.fs-tools button { font: 0.82rem var(--body); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.fs { font: 0.8rem/1.55 var(--mono); }
+.fs .avm { display: inline-grid; grid-template-columns: max-content auto; column-gap: 10px; border-left: 2px solid var(--line); padding: 1px 0 1px 8px; margin: 1px 0; vertical-align: top; }
+.fs .ty { color: var(--accent); font-weight: 500; grid-column: 1 / -1; }
+.fs .ft { color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+.fs .val { min-width: 0; }
+.fs .tog { cursor: pointer; color: var(--accent); user-select: none; border: 0; background: none; font: inherit; padding: 0 3px 0 0; }
+.fs .atom { color: var(--fg); }
+.fs .str { color: var(--chg); }
+.fs .tag { display: inline-block; font-size: 0.72rem; font-weight: 600; color: var(--lex); background: var(--lex-soft); border-radius: 4px; padding: 0 4px; margin-right: 4px; cursor: pointer; }
+.fs .tag.on { outline: 2px solid var(--lex); }
+.fs .list { color: var(--muted); }
+.fs .hit > .ft { background: var(--chg-soft); color: var(--chg); }
 </style>
 </head>
 <body>
@@ -146,6 +162,13 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
       <div id="mrsview"></div>
       <details><summary>As a DMRS graph</summary><p class="small" id="dmrs-caption" style="margin-top:10px">Predicates and the links between them (dashed links are scope).</p><div id="dmrs"></div></details>
       <details><summary>MRS as text</summary><div class="scroll pad" style="margin-top:10px"><pre id="mrs"></pre></div></details>
+    </section>
+
+    <section class="panel" id="fs-panel">
+      <h2>Feature structure</h2>
+      <p class="small">The whole sign the grammar built, as an attribute–value matrix. Click ▸ to unfold a value and ▾ to fold it. Purple numbers mark shared values (the same structure reached by several paths); click one to light up every place it occurs. A path such as SYNSEM LOCAL CAT HEAD opens directly.</p>
+      <div class="fs-tools"><input id="fs-path" placeholder="SYNSEM LOCAL CAT HEAD" aria-label="Open a path"><button type="button" id="fs-open">Open path</button><button type="button" id="fs-fold">Fold all</button><span id="fs-size"></span></div>
+      <div class="scroll pad"><div class="fs" id="fs"></div></div>
     </section>
 
     <section class="panel">
@@ -392,6 +415,80 @@ function drawMrs(mv, text, tokens) {
   root.append(sent, head, grid, cons, info, legend);
   return root;
 }
+
+function drawFs(fsv, box) {
+  box.replaceChildren();
+  if (!fsv) { box.append(el('p', 'small', 'No analysis.')); return; }
+  const N = fsv.nodes, inc = {};
+  Object.values(N).forEach(([, arcs]) => arcs.forEach(([, v]) => { inc[v] = (inc[v] || 0) + 1; }));
+  const tags = {}; let nt = 0;
+  const tagOf = id => (inc[id] > 1 ? (tags[id] = tags[id] || ++nt) : 0);
+  // a list (FIRST/REST chain ending in a null type) shown as < ... >
+  const asList = id => {
+    const items = []; let cur = id, guard = 0;
+    while (N[cur] && guard++ < 500) {
+      const a = Object.fromEntries(N[cur][1]);
+      if ('FIRST' in a && 'REST' in a && N[cur][1].length === 2) { items.push(a.FIRST); cur = a.REST; }
+      else break;
+    }
+    return items.length && N[cur] && N[cur][1].length === 0 ? {items, end: N[cur][0]} : null;
+  };
+  function value(id, path) {
+    const span = el('span', 'val');
+    const [type, arcs] = N[id] || ['?', []];
+    const t = tagOf(id);
+    if (t) { const g = el('span', 'tag', String(t)); g.dataset.id = id; g.title = 'shared value: click to show every place it occurs'; g.addEventListener('click', e => { e.stopPropagation(); const on = !g.classList.contains('on'); box.querySelectorAll('.tag').forEach(x => x.classList.toggle('on', on && x.dataset.id === g.dataset.id)); }); span.append(g); }
+    if (!arcs.length) { span.append(el('span', type.startsWith('"') ? 'str' : 'atom', esc(type))); return span; }
+    const tog = el('button', 'tog', '▸'); tog.type = 'button'; tog.setAttribute('aria-expanded', 'false');
+    const lst = asList(id);
+    const label = el('span', 'atom', esc(type) + (lst ? ` <span class="list">&lt; ${lst.items.length} item${lst.items.length === 1 ? '' : 's'} &gt;</span>` : ` <span class="list">[${arcs.length}]</span>`));
+    const holder = el('span');
+    span.append(tog, label, holder);
+    span._open = () => {
+      if (tog.getAttribute('aria-expanded') === 'true') return;
+      tog.textContent = '▾'; tog.setAttribute('aria-expanded', 'true'); label.classList.add('hidden');
+      holder.replaceChildren(lst ? listBox(lst, path) : avm(id, path));
+    };
+    span._close = () => { tog.textContent = '▸'; tog.setAttribute('aria-expanded', 'false'); label.classList.remove('hidden'); holder.replaceChildren(); };
+    tog.addEventListener('click', e => { e.stopPropagation(); tog.getAttribute('aria-expanded') === 'true' ? span._close() : span._open(); });
+    span.dataset.path = path.join(' ');
+    return span;
+  }
+  function listBox(lst, path) {
+    const d = el('span', 'avm');
+    d.append(el('span', 'ty', '&lt; list &gt;'));
+    lst.items.forEach((it, i) => { d.append(el('span', 'ft', String(i + 1))); d.append(value(it, path.concat(['#' + (i + 1)]))); });
+    return d;
+  }
+  function avm(id, path) {
+    const [type, arcs] = N[id];
+    const d = el('span', 'avm');
+    d.append(el('span', 'ty', esc(type)));
+    arcs.forEach(([f, v]) => { const ft = el('span', 'ft', esc(f)); d.append(ft, value(v, path.concat([f]))); });
+    return d;
+  }
+  const top = avm(fsv.root, []);
+  box.append(top);
+  $('fs-size').textContent = `${Object.keys(N).length.toLocaleString('en-US')} nodes${fsv.truncated ? ' (cut off)' : ''}`;
+  const openPath = txt => {
+    const feats = txt.trim().toUpperCase().split(/[\s.]+/).filter(Boolean);
+    let scope = top;
+    for (const f of feats) {
+      const fts = [...scope.children].filter(c => c.classList.contains('ft'));
+      const ft = fts.find(c => c.textContent === f);
+      if (!ft) { $('fs-size').textContent = `No feature ${f} here.`; return; }
+      const val = ft.nextElementSibling;
+      if (val._open) val._open();
+      ft.parentElement.querySelectorAll(':scope > .ft').forEach(x => x.parentElement.classList.remove('hit'));
+      scope = val.querySelector('.avm') || val;
+      ft.scrollIntoView({block: 'nearest'});
+      ft.style.background = 'var(--chg-soft)'; setTimeout(() => { ft.style.background = ''; }, 1500);
+    }
+  };
+  $('fs-open').onclick = () => openPath($('fs-path').value);
+  $('fs-path').onkeydown = e => { if (e.key === 'Enter') openPath($('fs-path').value); };
+  $('fs-fold').onclick = () => drawFs(fsv, box);
+}
 const ms = s => s < 0.01 ? (s * 1000).toFixed(1) : Math.round(s * 1000).toLocaleString('en-US');
 const STEPS = [['tokens', 'Tokens (grammar preprocessing, in ACE)'], ['tag', 'Tagger'], ['repair', 'Replay and repair'], ['rank', 'Ranking'], ['mrs', 'Meaning (MRS)']];
 
@@ -411,6 +508,7 @@ function show(r) {
   $('dmrs-caption').textContent = 'The meaning as a DMRS graph: predicates and the links between them (dashed links are scope).' + (r.ace && r.ace.dmrs ? ' Orange marks what ACE’s analysis does not have.' : '');
   $('mrsview').replaceChildren(drawMrs(r.mrs_view, r.input || $('input').value, r.tokens));
   $('mrs').textContent = r.mrs || '';
+  drawFs(r.fs, $('fs'));
   $('tree').replaceChildren(r.derivation ? drawTree(toRaw(r.derivation)) : el('p', 'small', 'No derivation.'));
 
   let t = '<tr><th>Step</th><th class="n">ms</th></tr>';
