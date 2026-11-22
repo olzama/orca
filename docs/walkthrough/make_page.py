@@ -62,6 +62,11 @@ def tiles():
             + '  </section>\n')
 
 
+def na(text):
+    """A cell with no number yet: say why (queued, running, not measured, ...)."""
+    return f'<span class="na">{text}</span>'
+
+
 def summary():
     """One table across the evaluations, then the main findings in words (numbers stay in the table)."""
     oc = ORACLE['counts']
@@ -74,7 +79,7 @@ def summary():
     rows = [grp('Redwoods dev (e-mails, Wikipedia), compared with the annotators\' gold'),
             row('&nbsp;&nbsp;Orca, from raw text', N, pct(oc['same MRS'], N), pct(props['same with properties'], N),
                 pct(oc['same MRS'] + vd['orca'] + vd['both'], N), pct(oc['with MRS'], N), f"{ORACLE['sentences per second']:.1f}"),
-            row('&nbsp;&nbsp;ACE, first-ranked parse', N, pct(ace['same MRS'], N), '', '', pct(ace['with MRS'], N),
+            row('&nbsp;&nbsp;ACE, first-ranked parse', N, pct(ace['same MRS'], N), na('not measured'), na('not judged yet'), pct(ace['with MRS'], N),
                 f'{N / (ACE_PASS + ACE_RETRY):.1f}')]
     cnt, verdicts, _, labels = gen_counts()
     if verdicts:
@@ -83,10 +88,10 @@ def summary():
         hi = lo + g['none'] + g['scope']
         rows += [grp(f'Generated sentences on hard phenomena ({" and ".join(labels).lower().replace("round 1 and round 2", "rounds 1 and 2")}), '
                      'compared with ACE\'s first-ranked parse, which nobody checked'),
-                 row('&nbsp;&nbsp;Orca, from raw text', g['n'], pct(g['agree'], g['n']), '', pct(g['agree'] + g['orca'] + g['both'], g['n']),
-                     pct(g['mrs'], g['n']), ''),
-                 row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], '', '',
-                     f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), '')]
+                 row('&nbsp;&nbsp;Orca, from raw text', g['n'], pct(g['agree'], g['n']), na('not measured'), pct(g['agree'] + g['orca'] + g['both'], g['n']),
+                     pct(g['mrs'], g['n']), na('not measured')),
+                 row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], na('the reference'), na('the reference'),
+                     f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), na('not measured'))]
     t = table([('Text and parser', ''), ('Sentences', 'n'), ('Exact meaning', 'n hl'), ('Exact, tense, number and other properties too', 'n'),
                ('Right, counting the judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
     c = cap('Orca: BERT-base tagger trained on all data with forms as typed, from raw text. '
@@ -97,7 +102,7 @@ def summary():
             'Generated sentences were kept only if ACE parsed them, so ACE analyzes all of them.')
     finds = ['<b>Exact match understates Orca.</b> Where Orca and gold differ on dev, the judge often accepts Orca\'s reading; on generated text it prefers Orca\'s reading to ACE\'s first parse far more often than the reverse (<i>Generated sentences</i>).',
              '<b>The losses are in proposing.</b> When the right meaning is among the analyses found, the ranking model nearly always picks it; what is missing is a right analysis to pick, more so in long sentences (<i>Where the wrong sentences go wrong</i>).',
-             '<b>Data and encoder size both help.</b> A large encoder on the treebank alone comes close to BERT-base on seven times the data; the large encoders trained on all data are being evaluated (<i>Training data</i>, <i>Encoders</i>).',
+             '<b>Data and encoder size both help.</b> A large encoder on the treebank alone comes close to BERT-base on seven times the data; the large encoders are now trained on all data, and their full evaluations are queued (<i>Training data</i>, <i>Encoders</i>).',
              '<b>Faster than ACE, but more sentences get no analysis</b>, especially long ones; ACE remains the better fallback (<i>Orca and ACE</i>, <i>LLM repair</i>).',
              '<b>Tense, number and other properties</b> are now in Orca\'s output; requiring them to match changes the headline little (<i>Tense, number and other properties</i>).',
              '<b>LLMs help offline, not online.</b> Claude repairs about half of what the tagger can\'t and judges disagreements usefully, but it is slow and picks among readings worse than the grammar\'s ranking model (<i>LLM repair</i>, <i>LLM choosing among readings</i>).']
@@ -217,10 +222,11 @@ def results():
                     + td(p1(a['preds']['f1'])) + td(p1(a['links']['f1'])) + td(pct(a['same tree'], N)) + '</tr>')
     c = RAW['counts']
     oc = ORACLE['counts']
+    nm = td(na('not measured')) * 3
     rows.insert(-1, '<tr><td>… the same, from raw text</td>' + td(pct(c['same MRS'], N), True) + td(pct(c['with MRS'], N))
-                + td('') + td('') + td('') + '</tr>')
+                + nm + '</tr>')
     rows.insert(-1, '<tr><td>… tagger trained on forms as typed, from raw text</td>' + td(pct(oc['same MRS'], N), True)
-                + td(pct(oc['with MRS'], N)) + td('') + td('') + td('') + '</tr>')
+                + td(pct(oc['with MRS'], N)) + nm + '</tr>')
     t1 = table([('System', ''), ('Exact meaning', 'n hl'), ('Any analysis', 'n'),
                 ('Predicates (F1)', 'n'), ('Links (F1)', 'n'), ('Exact tree', 'n')], rows)
     # where each sentence ends up
@@ -342,7 +348,7 @@ def exp_ace():
             f'<tr><td>Orca</td>{td(sps(N / full1), True)}{td("1 GPU, 1 core")}{td("about 2 GB")}{td(miss("best"))}</tr>',
             f'<tr><td>Orca</td>{td(sps(N / full6), True)}{td("1 GPU, 6 cores")}{td("about 2 GB")}{td(miss("best"))}</tr>',
             f'<tr><td>Orca, from raw text</td>{td(format(SPS, ".1f"), True)}{td("1 GPU, 1 core")}{td("about 2 GB")}{td(pct(N - RAW_WITH, N))}</tr>',
-            f'<tr><td>Orca + LLM repair</td>{td(sps(N / (full1 + LLM_SECS / STREAMS)), True)}{td(f"+ {STREAMS} model calls at a time")}{td("")}{td(miss("best_llm"))}</tr>']
+            f'<tr><td>Orca + LLM repair</td>{td(sps(N / (full1 + LLM_SECS / STREAMS)), True)}{td(f"+ {STREAMS} model calls at a time")}{td("about 2 GB, plus the API")}{td(miss("best_llm"))}</tr>']
     speed = table([('System', ''), ('Sentences per second', 'n hl'), ('Hardware', 'n'), ('Memory', 'n'), ('Sentences with no analysis', 'n')], rows)
     rows = []
     for key, name in SYSTEMS[2:]:
@@ -394,26 +400,31 @@ ENCODERS = (('bertbase', 'BERT-base (cased)', '110M'), ('robertalarge', 'RoBERTa
 
 def exp_encoders():
     rows = []
-    for key, name, size in ENCODERS:
-        mp = f'{ORCA}/data/models/tagger-2025surf-{key}/metrics.json'
-        if not os.path.exists(mp):
-            continue
-        d = json.load(open(mp))['dev']
-        rp = f'{ORCA}/analysis/mrs/dev-2025surf-{key}-rawtext.json'
-        if os.path.exists(rp):
-            rc = json.load(open(rp))['counts']
-            raw = td(pct(rc['same MRS'], N), True) + td(pct(rc['with MRS'], N)) + td(pct(rc['gold MRS among accepted'], N))
-        else:
-            raw = td('running') + td('') + td('')
-        rows.append(f'<tr><td>{name}</td>' + td(size) + td(p1(100 * d['leaf_acc'])) + td(p1(100 * d['tree_acc']))
-                    + td(p1(100 * d['exact_match'])) + raw + '</tr>')
-    if not rows:
-        return ''
+    for data, model, run, title in (('surf', '2025surf-{}', 'dev-2025surf-{}-rawtext.json', 'Redwoods treebank only (86,278 sentences)'),
+                                    ('all', '2025bothsurf-{}', 'dev-2025bothsurf-{}-rawtext.json', 'All data (590,721 sentences)')):
+        rows.append(f'<tr><td colspan="8"><i>{title}</i></td></tr>')
+        for key, name, size in ENCODERS:
+            k = 'bert' if (data == 'all' and key == 'bertbase') else key
+            mp = f'{ORCA}/data/models/tagger-{model.format(k)}/metrics.json'
+            rp = f'{ORCA}/analysis/mrs/' + ('dev-2025bothsurf-rawtext.json' if k == 'bert' else run.format(k))
+            if os.path.exists(mp):
+                d = json.load(open(mp))['dev']
+                tag = td(p1(d['leaf_acc'])) + td(p1(d['tree_acc'])) + td(p1(d['exact_match']))
+            else:
+                tag = td(na('training')) + td('') + td('')
+            if os.path.exists(rp):
+                rc = json.load(open(rp))['counts']
+                among = pct(rc['gold MRS among accepted'], N) if 'gold MRS among accepted' in rc else na('not measured')
+                raw = td(pct(rc['same MRS'], N), True) + td(pct(rc['with MRS'], N)) + td(among)
+            else:
+                raw = td(na('evaluation queued')) + td(na('queued')) + td(na('queued'))
+            rows.append(f'<tr><td>&nbsp;&nbsp;{name}</td>' + td(size) + tag + raw + '</tr>')
     t = table([('Encoder', ''), ('Parameters', 'n'), ('Leaf labels right (%)', 'n'), ('Tree labels right (%)', 'n'),
                ('Every label of the sentence right (%)', 'n'), ('Right meaning chosen', 'n hl'), ('Any analysis', 'n'), ('Right meaning among the analyses found', 'n')],
               rows, group=[('', 2), ('Tagging, dev', 3), ('Full pipeline from raw text, dev', 3)])
-    body = t + cap('Same recipe for every encoder: Redwoods treebank only (86,278 sentences), forms as typed, 6 epochs, batch 32; '
-                   'learning rate 3e-5 for BERT-base, 2e-5 for the large encoders. One run each. For comparison, BERT-base trained on all 590,721 sentences gets ' + pct(ORACLE['counts']['same MRS'], N) + ' from raw text. DeBERTa (best tagging, most analyses) is now being trained on all the data; XLM-R follows.')
+    body = t + cap('Same recipe for every encoder: forms as typed, 6 epochs on the treebank alone, batch 32; '
+                   'learning rate 3e-5 for BERT-base, 2e-5 for the large encoders. One run each. All data: the treebank plus the silver data '
+                   '(grammar-licensed parses of Wikipedia, literature and news). The large all-data taggers are trained; their full-pipeline evaluations on dev are queued.')
     return fold('Encoders', 'XLM-R and DeBERTa large give the most exact meanings, nearly what BERT-base gets with seven times the data.', body)
 
 
@@ -540,6 +551,8 @@ def rebuild(s):
         s = s.replace('</style>', CSS + '</style>', 1)
     if 'ul.finds' not in s:
         s = s.replace('</style>', 'ul.finds { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }\n</style>', 1)
+    if 'span.na' not in s:
+        s = s.replace('</style>', 'span.na { color: var(--muted); font-style: italic; font-size: 0.85em; }\n</style>', 1)
     return s
 
 
