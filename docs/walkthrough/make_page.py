@@ -240,9 +240,10 @@ def exp_training():
     for name, r in (('all silver (590,721 sentences)', ORACLE), ('half of the silver (338,269)', RAW_HALF)):
         rc = r['counts']
         rows.append(f'<tr><td>{name}</td>' + td(pct(rc['same MRS'], N), True) + td(pct(rc['with MRS'], N))
-                    + td(f"{rc['gold MRS among accepted']:,}") + '</tr>')
-    t2 = table([('Forms as typed, from raw text', ''), ('Exact meaning', 'n hl'), ('Any analysis', 'n'), ('Gold among accepted', 'n')], rows)
-    t = t + cap('Treebank forms, from treebank tokens.') + t2 + cap('All of the treebank in both; half of the silver sentences chosen at random. Halving the silver data costs little, so more text of the same kind is unlikely to help much.')
+                    + td(pct(rc['gold MRS among accepted'], N)) + '</tr>')
+    t2 = table([('Forms as typed, from raw text; tagger trained on', ''), ('Right meaning chosen', 'n hl'), ('Any analysis', 'n'),
+                ('Right meaning among the analyses found', 'n')], rows)
+    t = t + cap('Treebank forms, from treebank tokens. Percentages of all dev sentences.') + t2 + cap('All of the treebank in both; half of the silver sentences chosen at random. Halving the silver data costs little, so more text of the same kind is unlikely to help much.')
     body = t + cap('Silver data: ACE\'s first-ranked parses of a literary corpus (novels 1838 to 1921, with LLM-written matched '
                    'excerpts) and a news corpus (NYT 2023 and 2025, with 11 LLM-written sets), kept only if they replay. '
                    'One run each; seed variation not yet measured.')
@@ -250,8 +251,8 @@ def exp_training():
 
 
 def exp_rawtext():
-    rows = [f'<tr><td>{k}</td>{td(format(v, ","), True)}</tr>' for k, v in RAW_CHECK]
-    t1 = table([(f'Check on {N:,} dev sentences', ''), ('Sentences', 'n hl')], rows)
+    rows = [f'<tr><td>{k}</td>{td(pct(v, N), True)}</tr>' for k, v in RAW_CHECK]
+    t1 = table([(f'Check on all {N:,} dev sentences', ''), ('Share of sentences', 'n hl')], rows)
     steps = [('Tokens (ACE preprocessing, separate process)', 'tokens'), ('Tagger (GPU)', 'tag'),
              ('Replay and repair (one core)', 'repair'), ('Ranking', 'rank'), ('MRS', 'mrs')]
     rows = [f'<tr><td>{n}</td>{td(format(ms(k), ".1f"))}</tr>' for n, k in steps]
@@ -275,20 +276,20 @@ def exp_ace():
                     ('ACE', 'n'), ('Orca', 'n'), ('Orca + LLM', 'n')], rows,
                    group=[('', 2), ('Exact meaning', 3), ('Any analysis', 3)])
     full1, full6 = TAG + REPAIR1_K30 + RANK, TAG + REPAIR6_K30 + RANK
-    miss = lambda k: f"{N - T[k]['all']['with MRS']:,}"
+    miss = lambda k: pct(N - T[k]['all']['with MRS'], N)
     rows = [f'<tr><td>ACE</td>{td(sps(N / (ACE_PASS + ACE_RETRY)), True)}{td("1 CPU core")}{td("up to 28 GB")}{td(miss("ace"))}</tr>',
             f'<tr><td>Orca</td>{td(sps(N / full1), True)}{td("1 GPU, 1 core")}{td("about 2 GB")}{td(miss("best"))}</tr>',
             f'<tr><td>Orca</td>{td(sps(N / full6), True)}{td("1 GPU, 6 cores")}{td("about 2 GB")}{td(miss("best"))}</tr>',
-            f'<tr><td>Orca, from raw text</td>{td(format(SPS, ".1f"), True)}{td("1 GPU, 1 core")}{td("about 2 GB")}{td(format(N - RAW_WITH, ","))}</tr>',
+            f'<tr><td>Orca, from raw text</td>{td(format(SPS, ".1f"), True)}{td("1 GPU, 1 core")}{td("about 2 GB")}{td(pct(N - RAW_WITH, N))}</tr>',
             f'<tr><td>Orca + LLM repair</td>{td(sps(N / (full1 + LLM_SECS / STREAMS)), True)}{td(f"+ {STREAMS} model calls at a time")}{td("")}{td(miss("best_llm"))}</tr>']
-    speed = table([('System', ''), ('Sentences per second', 'n hl'), ('Hardware', 'n'), ('Memory', 'n'), ('No analysis', 'n')], rows)
+    speed = table([('System', ''), ('Sentences per second', 'n hl'), ('Hardware', 'n'), ('Memory', 'n'), ('Sentences with no analysis', 'n')], rows)
     rows = []
     for key, name in SYSTEMS[2:]:
         a = T[key]['all']
         rows.append(f'<tr><td>{name}</td>' + td(f"{a['with MRS']:,}") + td(pct(a['same MRS'], a['with MRS']), True)
                     + td(p1(a['preds']['precision'])) + td(p1(a['links']['precision'])) + '</tr>')
-    prec = table([('System', ''), ('With an analysis', 'n'), ('Exact meaning', 'n hl'),
-                  ('Predicates in gold (%)', 'n'), ('Links in gold (%)', 'n')], rows)
+    prec = table([('System', ''), ('Sentences it analyzes', 'n'), ('Right meaning, of those', 'n hl'),
+                  ('Its predicates that are in gold (%)', 'n'), ('Its links that are in gold (%)', 'n')], rows)
     body = (by_len + cap('Treebank tokens, treebank-only tagger. Orca loses accuracy with length faster than ACE, mostly by finding no analysis.')
             + speed + cap('Dev sentences average about 12 words. ACE\'s time includes retries of its 14 hardest sentences with more memory.')
             + prec + cap('Restricted to the sentences each system analyzes: Orca\'s analyses are as precise as ACE\'s.'))
@@ -297,9 +298,9 @@ def exp_ace():
 
 def exp_llm():
     llm = open(os.path.join(HERE, 'llm-table.html')).read()
-    rows = ['<tr><td>LLM repair (Claude Opus)</td>' + td('188') + td('89', True) + td(sps(LLM_SENTS / LLM_SECS)) + td('about $0.35 per sentence') + '</tr>',
-            '<tr><td>ACE</td>' + td('388') + td('270', True) + td(sps(390 / 1315.0)) + td('none') + '</tr>']
-    fb = table([('Fallback on the 390 sentences repair leaves', ''), ('Analyses', 'n'), ('Exact meaning', 'n hl'),
+    rows = ['<tr><td>LLM repair (Claude Opus)</td>' + td(pct(188, 390)) + td(pct(89, 390), True) + td(sps(LLM_SENTS / LLM_SECS)) + td('about $0.35 per sentence') + '</tr>',
+            '<tr><td>ACE</td>' + td(pct(388, 390)) + td(pct(270, 390), True) + td(sps(390 / 1315.0)) + td('none') + '</tr>']
+    fb = table([('Fallback on the 390 sentences repair leaves', ''), ('Any analysis', 'n'), ('Right meaning', 'n hl'),
                 ('Sentences per second', 'n'), ('Cost', 'n')], rows)
     body = (llm + cap('Claude Opus sees the rejected derivation, every failure point (feature path, clashing types), the grammar\'s '
                       'definitions of the rules and types involved, and the lexicon\'s options per word; the grammar replays every answer. '
@@ -314,12 +315,12 @@ def exp_llm_rank():
         return ''
     r = json.load(open(path))
     rows = []
-    for key, name in (('all', 'All'), ('margin under 1', 'MaxEnt margin under 1'), ('1 to 3', 'Margin 1 to 3'), ('3 and over', 'Margin 3 and over')):
+    for key, name in (('all', 'All'), ('margin under 1', '&nbsp;&nbsp;… of which the ranking model is unsure (score margin under 1)'), ('1 to 3', '&nbsp;&nbsp;… margin 1 to 3'), ('3 and over', '&nbsp;&nbsp;… margin 3 or more (the ranking model is sure)')):
         c = r['by margin'][key]
         rows.append(f'<tr><td>{name}</td>' + td(f"{c['sentences']:,}") + td(f"{c['readings'] / c['sentences']:.1f}")
                     + td(pct(c['maxent right'], c['sentences']), True) + td(pct(c['llm right'], c['sentences']), True) + '</tr>')
-    t = table([('Dev sentences with 2+ readings, gold among them', ''), ('Sentences', 'n'), ('Readings shown', 'n'),
-               ('MaxEnt picks gold', 'n hl'), ('LLM picks gold', 'n hl')], rows)
+    t = table([('Dev sentences with two or more readings, the right one among them', ''), ('Sentences', 'n'), ('Readings per sentence', 'n'),
+               ('Ranking model picks the right one', 'n hl'), ('LLM picks the right one', 'n hl')], rows)
     body = t + cap(f'A random 300 of the 622 such sentences. Each reading is shown only by the DMRS predicates and links that not '
                    f'every reading has; Claude Opus picks one ({r["calls"]} calls, ${r["cost_usd"]:.2f} API-equivalent). '
                    'Many of its misses are the grammar\'s conventions (which predicate or rule the treebank uses), not misreadings.')
@@ -340,7 +341,7 @@ def exp_encoders():
         rp = f'{ORCA}/analysis/mrs/dev-2025surf-{key}-rawtext.json'
         if os.path.exists(rp):
             rc = json.load(open(rp))['counts']
-            raw = td(pct(rc['same MRS'], N), True) + td(pct(rc['with MRS'], N)) + td(f"{rc['gold MRS among accepted']:,}")
+            raw = td(pct(rc['same MRS'], N), True) + td(pct(rc['with MRS'], N)) + td(pct(rc['gold MRS among accepted'], N))
         else:
             raw = td('running') + td('') + td('')
         rows.append(f'<tr><td>{name}</td>' + td(size) + td(p1(100 * d['leaf_acc'])) + td(p1(100 * d['tree_acc']))
@@ -348,7 +349,7 @@ def exp_encoders():
     if not rows:
         return ''
     t = table([('Encoder', ''), ('Parameters', 'n'), ('Leaf labels right (%)', 'n'), ('Tree labels right (%)', 'n'),
-               ('All labels of the sentence right (%)', 'n'), ('Exact meaning', 'n hl'), ('Any analysis', 'n'), ('Gold among accepted', 'n')],
+               ('Every label of the sentence right (%)', 'n'), ('Right meaning chosen', 'n hl'), ('Any analysis', 'n'), ('Right meaning among the analyses found', 'n')],
               rows, group=[('', 2), ('Tagging, dev', 3), ('Full pipeline from raw text, dev', 3)])
     body = t + cap('Same recipe for every encoder: Redwoods treebank only (86,278 sentences), forms as typed, 6 epochs, batch 32; '
                    'learning rate 3e-5 for BERT-base, 2e-5 for the large encoders. One run each. For comparison, BERT-base trained on all 590,721 sentences gets ' + pct(ORACLE['counts']['same MRS'], N) + ' from raw text. DeBERTa (best tagging, most analyses) is now being trained on all the data; XLM-R follows.')
@@ -382,18 +383,21 @@ def exp_generated():
     row = lambda name, d: (f'<tr><td>{name}</td>' + td(f"{d['n']:,}") + td(pct(d['agree'], d['n']))
                            + td(pct(right(d), d['n']), True) + td(pct(d['mrs'], d['n'])) + '</tr>')
     rows = [row(k.replace('-', ' ').capitalize(), cnt[k]) for k in order] + [row('<b>All generated</b>', cnt['all'])]
-    t = table([('Phenomenon targeted', ''), ('Sentences', 'n'), ('Same MRS as ACE', 'n'), ('Right, with the judge', 'n hl'),
+    t = table([('Phenomenon targeted', ''), ('Sentences', 'n'), ('Same meaning as ACE\'s parse', 'n'), ('Right, counting the judge\'s verdicts', 'n hl'),
                ('Any analysis', 'n')], rows)
     a, d = vg['verdicts'], vd['verdicts']
-    rows = [f'<tr><td>Generated: reference is ACE\'s first parse</td>' + td(f"{sum(a.values()):,}") + td(f"{a['orca']:,}", True)
-            + td(f"{a['reference']:,}", True) + td(f"{a['both']:,}") + td(f"{a['neither']:,}") + '</tr>',
-            f'<tr><td>Dev: reference is the annotators\' gold</td>' + td(f"{sum(d.values()):,}") + td(f"{d['orca']:,}", True)
-            + td(f"{d['reference']:,}", True) + td(f"{d['both']:,}") + td(f"{d['neither']:,}") + '</tr>']
-    t2 = table([('Orca and the reference disagree', ''), ('Sentences', 'n'), ('Judge: Orca right', 'n hl'), ('Judge: reference right', 'n hl'),
-                ('Both acceptable', 'n'), ('Neither', 'n')], rows)
+    def jrow(name, v):
+        n = sum(v.values())
+        return (f'<tr><td>{name}</td>' + td(f'{n:,}') + td(pct(v['orca'], n), True) + td(pct(v['reference'], n), True)
+                + td(pct(v['both'], n)) + td(pct(v['neither'], n)) + '</tr>')
+    rows = [jrow('Generated sentences; the reference is ACE\'s first-ranked parse', a),
+            jrow('Dev sentences; the reference is the annotators\' gold', d)]
+    t2 = table([('Sentences where Orca and the reference mean different things', ''), ('Sentences', 'n'), ('Orca\'s reading is right', 'n hl'),
+                ('The reference is right', 'n hl'), ('Both are acceptable', 'n'), ('Neither is right', 'n')], rows,
+               group=[('', 2), ('The judge says', 4)])
     body = (t + cap('Claude Sonnet wrote sentences for ten phenomena where Orca misses (20 calls, $1.71 API-equivalent, 1,982 sentences); '
                     'ACE parsed 1,940 and 1,932 replay. Orca (forms as typed, from raw text) is compared with ACE\'s first-ranked parse, which nobody has checked. '
-                    'Right, with the judge: Orca agrees with ACE, or the judge below prefers Orca\'s reading or accepts both.')
+                    'Right, counting the judge\'s verdicts: Orca agrees with ACE, or the judge (second table) prefers Orca\'s reading or accepts both. Percentages of each row.')
             + t2 + cap(f'Judge: Claude Opus sees the two readings in random order, each by the DMRS predicates and links the other lacks, and answers A, B, both or neither '
                        f'(${vg["cost_usd"] + vd["cost_usd"]:.2f} API-equivalent for both sets). On dev it sides with gold more often than with Orca, '
                        'though it misses the treebank\'s conventions; on generated sentences it sides with Orca, and a sample read by hand bears it out '
