@@ -135,6 +135,12 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
 .fs .tag.on { outline: 2px solid var(--lex); }
 .fs .list { color: var(--muted); }
 .fs .hit > .ft { background: var(--chg-soft); color: var(--chg); }
+.fs-crumbs { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; margin-bottom: 8px; font: 0.8rem var(--mono); color: var(--muted); }
+.fs-crumbs .crumb { font: inherit; border: 1px solid var(--line); background: var(--surface); color: var(--accent); border-radius: 4px; padding: 1px 6px; cursor: pointer; }
+.fs .ft.zoom { cursor: zoom-in; }
+.fs .ft.zoom:hover { color: var(--accent); text-decoration: underline; }
+.fs .opener { color: var(--muted); }
+.fs .opener::first-line { color: var(--fg); }
 </style>
 </head>
 <body>
@@ -168,8 +174,8 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
 
     <section class="panel" id="fs-panel">
       <h2>Feature structure</h2>
-      <p class="small">The whole sign the grammar built, as an attribute–value matrix. Everything starts folded: click a type (or ▸) to unfold it and ▾ to fold it again. Purple numbers mark shared values (the same structure reached by several paths); click one to light up every place it occurs. A path such as SYNSEM LOCAL CAT HEAD opens directly.</p>
-      <div class="fs-tools"><input id="fs-path" placeholder="SYNSEM LOCAL CAT HEAD" aria-label="Open a path"><button type="button" id="fs-open">Open path</button><button type="button" id="fs-fold">Fold all</button><span id="fs-size"></span></div>
+      <p class="small">The whole sign the grammar built. A folded value shows a summary of what is inside; click it to unfold one level, ▾ to fold. Click a feature name to show only that value (the path above leads back). Values with nothing specified (bool, luk …) are hidden unless you ask. Purple numbers mark shared values; click one to light up where it occurs. A path such as SYNSEM LOCAL CAT HEAD opens directly.</p>
+      <div class="fs-tools"><input id="fs-path" placeholder="SYNSEM LOCAL CAT HEAD" aria-label="Open a path"><button type="button" id="fs-open">Open path</button><button type="button" id="fs-fold">Back to the whole sign</button><label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="fs-vague">show values with nothing specified</label><span id="fs-size"></span></div>
       <div class="scroll pad"><div class="fs" id="fs"></div></div>
     </section>
 
@@ -425,73 +431,101 @@ function drawFs(fsv, box) {
   Object.values(N).forEach(([, arcs]) => arcs.forEach(([, v]) => { inc[v] = (inc[v] || 0) + 1; }));
   const tags = {}; let nt = 0;
   const tagOf = id => (inc[id] > 1 ? (tags[id] = tags[id] || ++nt) : 0);
-  // a list (FIRST/REST chain ending in a null type) shown as < ... >
+  // values that say nothing: the most general type a feature can have
+  const VAGUE = new Set(['bool', 'luk', 'na', '*top*', 'avm', '*avm*', 'sort', '*sort*', 'string', 'list', '*list*', 'atom', 'semsort', 'predsort', 'cat_min', 'mod_relation', 'basic_ctxt', 'ctxt_min', '*diff-list*', 'non-local_min', 'local_min', 'synsem_min', 'icons_min']);
+  const atomic = id => !N[id] || !N[id][1].length;
+  const vague = id => atomic(id) && VAGUE.has(N[id][0]) && !(inc[id] > 1);
+  let showVague = false, focus = [];       // focus: the path of the node shown on top
   const asList = id => {
     const items = []; let cur = id, guard = 0;
     while (N[cur] && guard++ < 500) {
       const a = Object.fromEntries(N[cur][1]);
-      if ('FIRST' in a && 'REST' in a && N[cur][1].length === 2) { items.push(a.FIRST); cur = a.REST; }
-      else break;
+      if ('FIRST' in a && 'REST' in a && N[cur][1].length === 2) { items.push(a.FIRST); cur = a.REST; } else break;
     }
-    return items.length && N[cur] && N[cur][1].length === 0 ? {items, end: N[cur][0]} : null;
+    return items.length && N[cur] && N[cur][1].length === 0 ? items : null;
   };
+  const shown = id => N[id][1].filter(([, v]) => showVague || !vague(v));
+  function preview(id, depth = 0) {
+    const [type, arcs] = N[id];
+    if (!arcs.length) return type;
+    const lst = asList(id);
+    if (lst) return '< ' + lst.map(x => N[x] ? N[x][0] : '?').join(', ') + ' >';
+    const parts = shown(id).slice(0, 6).map(([f, v]) => f + ' ' + (atomic(v) ? N[v][0] : (depth < 0 ? preview(v, depth + 1) : N[v][0])));
+    if (!parts.length) return type + ' (nothing specified inside)';
+    return type + ': ' + parts.join(', ') + (shown(id).length > 6 ? ', …' : '');
+  }
   function value(id, path) {
     const span = el('span', 'val');
     const [type, arcs] = N[id] || ['?', []];
     const t = tagOf(id);
-    if (t) { const g = el('span', 'tag', String(t)); g.dataset.id = id; g.title = 'shared value: click to show every place it occurs'; g.addEventListener('click', e => { e.stopPropagation(); const on = !g.classList.contains('on'); box.querySelectorAll('.tag').forEach(x => x.classList.toggle('on', on && x.dataset.id === g.dataset.id)); }); span.append(g); }
+    if (t) { const g = el('span', 'tag', String(t)); g.dataset.id = id; g.title = 'shared value: click to light up every place it occurs'; g.addEventListener('click', e => { e.stopPropagation(); const on = !g.classList.contains('on'); box.querySelectorAll('.tag').forEach(x => x.classList.toggle('on', on && x.dataset.id === g.dataset.id)); }); span.append(g); }
     if (!arcs.length) { span.append(el('span', type.startsWith('"') ? 'str' : 'atom', esc(type))); return span; }
     const tog = el('button', 'tog', '▸'); tog.type = 'button'; tog.setAttribute('aria-expanded', 'false');
-    const lst = asList(id);
-    const label = el('span', 'atom', esc(type) + (lst ? ` <span class="list">&lt; ${lst.items.length} item${lst.items.length === 1 ? '' : 's'} &gt;</span>` : ` <span class="list">[${arcs.length}]</span>`));
+    const pv = preview(id);
+    const label = el('span', 'atom opener', esc(pv.length > 120 ? pv.slice(0, 117) + '…' : pv));
+    label.title = 'click to unfold';
     const holder = el('span');
     span.append(tog, label, holder);
     span._open = () => {
       if (tog.getAttribute('aria-expanded') === 'true') return;
       tog.textContent = '▾'; tog.setAttribute('aria-expanded', 'true'); label.classList.add('hidden');
+      const lst = asList(id);
       holder.replaceChildren(lst ? listBox(lst, path) : avm(id, path));
     };
     span._close = () => { tog.textContent = '▸'; tog.setAttribute('aria-expanded', 'false'); label.classList.remove('hidden'); holder.replaceChildren(); };
     const flip = e => { e.stopPropagation(); tog.getAttribute('aria-expanded') === 'true' ? span._close() : span._open(); };
-    tog.addEventListener('click', flip); label.addEventListener('click', flip); label.classList.add('opener'); label.title = 'click to unfold';
-    span.dataset.path = path.join(' ');
+    tog.addEventListener('click', flip); label.addEventListener('click', flip);
     return span;
   }
-  function listBox(lst, path) {
+  function listBox(items, path) {
     const d = el('span', 'avm');
     d.append(el('span', 'ty', '&lt; list &gt;'));
-    lst.items.forEach((it, i) => { d.append(el('span', 'ft', String(i + 1))); d.append(value(it, path.concat(['#' + (i + 1)]))); });
+    items.forEach((it, i) => { d.append(el('span', 'ft', String(i + 1))); d.append(value(it, path.concat([['#' + (i + 1), it]]))); });
     return d;
   }
   function avm(id, path) {
-    const [type, arcs] = N[id];
+    const [type] = N[id];
     const d = el('span', 'avm');
     d.append(el('span', 'ty', esc(type)));
-    arcs.forEach(([f, v]) => { const ft = el('span', 'ft', esc(f)); d.append(ft, value(v, path.concat([f]))); });
+    const arcs = shown(id);
+    arcs.forEach(([f, v]) => {
+      const ft = el('span', 'ft zoom', esc(f));
+      ft.title = 'click to show only this value';
+      ft.addEventListener('click', e => { e.stopPropagation(); focus = path.concat([[f, v]]); render(); });
+      d.append(ft, value(v, path.concat([[f, v]])));
+    });
+    const hidden = N[id][1].length - arcs.length;
+    if (hidden) { d.append(el('span', 'ft', ''), el('span', 'small', `${hidden} more with nothing specified`)); }
     return d;
   }
-  const rootVal = value(fsv.root, []);
-  box.append(rootVal);
+  function render() {
+    box.replaceChildren();
+    const crumbs = el('div', 'fs-crumbs');
+    const home = el('button', 'crumb', 'whole sign'); home.type = 'button'; home.onclick = () => { focus = []; render(); };
+    crumbs.append(home);
+    focus.forEach(([f], i) => { const b = el('button', 'crumb', esc(f)); b.type = 'button'; b.onclick = () => { focus = focus.slice(0, i + 1); render(); }; crumbs.append(el('span', '', '›'), b); });
+    box.append(crumbs);
+    const id = focus.length ? focus[focus.length - 1][1] : fsv.root;
+    const top = value(id, focus);
+    box.append(top);
+    if (top._open) top._open();
+  }
   $('fs-size').textContent = `${Object.keys(N).length.toLocaleString('en-US')} nodes${fsv.truncated ? ' (cut off)' : ''}`;
   const openPath = txt => {
     const feats = txt.trim().toUpperCase().split(/[\s.]+/).filter(Boolean);
-    if (rootVal._open) rootVal._open();
-    let scope = rootVal.querySelector('.avm');
+    let id = fsv.root; const path = [];
     for (const f of feats) {
-      const fts = [...scope.children].filter(c => c.classList.contains('ft'));
-      const ft = fts.find(c => c.textContent === f);
-      if (!ft) { $('fs-size').textContent = `No feature ${f} here.`; return; }
-      const val = ft.nextElementSibling;
-      if (val._open) val._open();
-      ft.parentElement.querySelectorAll(':scope > .ft').forEach(x => x.parentElement.classList.remove('hit'));
-      scope = val.querySelector('.avm') || val;
-      ft.scrollIntoView({block: 'nearest'});
-      ft.style.background = 'var(--chg-soft)'; setTimeout(() => { ft.style.background = ''; }, 1500);
+      const arc = (N[id] || [, []])[1].find(([g]) => g === f);
+      if (!arc) { $('fs-size').textContent = `No feature ${f} under ${path.length ? path[path.length - 1][0] : 'the sign'}.`; return; }
+      id = arc[1]; path.push([f, id]);
     }
+    focus = path; render();
   };
   $('fs-open').onclick = () => openPath($('fs-path').value);
   $('fs-path').onkeydown = e => { if (e.key === 'Enter') openPath($('fs-path').value); };
-  $('fs-fold').onclick = () => drawFs(fsv, box);
+  $('fs-fold').onclick = () => { focus = []; render(); };
+  const vg = $('fs-vague'); if (vg) vg.onchange = () => { showVague = vg.checked; render(); };
+  render();
 }
 const ms = s => s < 0.01 ? (s * 1000).toFixed(1) : Math.round(s * 1000).toLocaleString('en-US');
 const STEPS = [['tokens', 'Tokens (grammar preprocessing, in ACE)'], ['tag', 'Tagger'], ['repair', 'Replay and repair'], ['rank', 'Ranking'], ['mrs', 'Meaning (MRS)']];
