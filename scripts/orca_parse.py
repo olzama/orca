@@ -51,7 +51,7 @@ class Parser:
     def __init__(self, grammar=DEFAULTS['grammar'], tagger=DEFAULTS['tagger'], ace=DEFAULTS['ace'],
                  dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.005, device=None,
                  all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
-                 normalized_lookup=True):
+                 normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -65,6 +65,11 @@ class Parser:
         self.ace, self.dat, self.k = ace, dat, k
         self.normalized_lookup = normalized_lookup     # replay with the preprocessed token forms (ACE's +FORM), tag the text as typed
         self.all_mrs = all_mrs                          # also read off the MRS of every accepted derivation
+        self.patterns = None                            # learned repair patterns (scripts/repair_patterns.py)
+        if patterns:
+            from repair_patterns import Patterns
+            self.patterns = Patterns(patterns, weight=pattern_weight, only_new=pattern_only_new)
+            self.patterns_name = os.path.basename(patterns)
         self.args = SimpleNamespace(cache=True, kbest=kbest, budget=budget, fanout=fanout, min_prob=min_prob,
                                     commit=commit, commit_min=commit_min, root_focus=root_focus)
         self.device = torch.device(device or ('cuda' if torch.cuda.is_available() else 'cpu'))
@@ -130,6 +135,8 @@ class Parser:
             out['outcome'] = 'no tokens'
             return out
         top = self.tag(forms)
+        if self.patterns is not None:
+            self.patterns.augment(top)
         lap('tag')
         out['first guess'] = {'leaf': [top['leaf'][j][0][0] for j in range(len(forms))],
                               'tree': [top['tree'][j][0][0] for j in range(len(forms))]}
@@ -262,7 +269,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False,
                      **({'mrs': r.get('mrs'), 'labels': r.get('labels')} if save_mrs else {})})
     wall = time.perf_counter() - t0
     res = {'tagger': parser.tagger_name, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget,
-           'commit': parser.args.commit, 'commit_min': parser.args.commit_min, 'root_focus': parser.args.root_focus, 'locate_missing': parser.lx.locate_missing, 'normalized_lookup': parser.normalized_lookup, 'min_tokens': min_tokens, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
+           'commit': parser.args.commit, 'commit_min': parser.args.commit_min, 'root_focus': parser.args.root_focus, 'locate_missing': parser.lx.locate_missing, 'normalized_lookup': parser.normalized_lookup, 'patterns': getattr(parser, 'patterns_name', None) if parser.patterns is not None else None, 'min_tokens': min_tokens, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
     with open(out_path, 'w') as f:
         json.dump(res, f, indent=1)
@@ -288,10 +295,14 @@ def main():
     ap.add_argument('--root-focus', action='store_true', help='repair: on a failure at the root, search the top of the tree and the head path first (scripts/repair.py)')
     ap.add_argument('--commit-min', type=int, default=0, help='with --commit: only for sentences of at least this many tokens')
     ap.add_argument('--min-tokens', type=int, default=0, help='with --eval: only sentences of at least this many tokens')
+    ap.add_argument('--patterns', help='repair: also try learned label substitutions (scripts/repair_patterns.py mine)')
+    ap.add_argument('--pattern-weight', type=float, default=1.0, help='with --patterns: scale of their pseudo-probabilities')
+    ap.add_argument('--pattern-only-new', action='store_true', help='with --patterns: only add labels the tagger did not list')
     args = ap.parse_args()
     p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget,
                commit=args.commit, commit_min=args.commit_min, root_focus=args.root_focus,
-               locate_missing=args.locate_missing, normalized_lookup=args.normalized_lookup)
+               locate_missing=args.locate_missing, normalized_lookup=args.normalized_lookup,
+               patterns=args.patterns, pattern_weight=args.pattern_weight, pattern_only_new=args.pattern_only_new)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
         return
