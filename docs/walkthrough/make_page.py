@@ -95,7 +95,7 @@ def summary():
     oc = BEST['counts']
     jd, props, aj = load(BEST_JUDGE), load(BEST_PROPS), load(ACE_JUDGE)
     bj = load(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json')
-    bn, bp, bbj = load(BERT_NEW), load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-normlocate-properties.json'), load(f'{ORCA}/analysis/adjudicate/dev-bothsurf-normlocate/score.json')
+    bn, bp, bbj = load(BERT_NEW), load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-normlocate-rootcheck-properties.json'), load(f'{ORCA}/analysis/adjudicate/dev-bothsurf-normlocate/score.json')
     ace = T['ace']['all']
     grp = lambda text: f'<tr><td colspan="7"><i>{text}</i></td></tr>'
     row = lambda name, n, *cells: (f'<tr><td>{name}</td>' + td(f'{n:,}')
