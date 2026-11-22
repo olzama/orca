@@ -20,6 +20,7 @@ The founding word order principle was never stated. The Constituent Order Princi
 - Continuous constituents with argument attraction and head movement: Hinrichs and Nakazawa 1994; Müller 2005, 2021 (Ch. 10, Section 8, pp. 403-404).
 - Continuous constituents with non-cancellation of arguments: Bender 2008 on Wambaya (Ch. 10, Section 7, pp. 402-403; Ch. 30, pp. 1423-1424). Both this and domains add a level beyond the tree: a DOM list, or a persistent valence list that acts like an LFG f-structure (Ch. 30, p. 1424).
 - Whether phenogrammar and tectogrammar can be cleanly separated at all is disputed (Kubota 2014; Ch. 29, Section 3.3.1, pp. 1356-1357).
+- Continuous binary right-branching structures whose runs of same-category nodes are typed as lists, with order stated as list sorts (topological fields as types): Oliva 1992 (COLING, pp. 184-190). Local and continuous, but it orders only within one head's level, so it does not address discontinuity, and it keeps an empty end-of-level element (notes in `reading/notes/oliva-1992-word-order-binary-lists.md`).
 
 ## Consequence for our parser and grammars
 

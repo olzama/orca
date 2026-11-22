@@ -20,6 +20,7 @@ With binary branching only sisters can be ordered, so a clause-initial finite ve
 - A flat auxiliary-initial construction: Sag et al. 2020; Fillmore 1999 (Ch. 10, Section 5.2, pp. 386-387; Ch. 12, Section 4.1, p. 524; Ch. 30, Section 5, p. 1407).
 - An auxiliary entry with two complements and no subject: Sag, Wasow and Bender 2003 (Ch. 12, fn. 25).
 - Empty heads, unary projections, and lexical rules can do the same work (Ch. 28, fn. 27, p. 1284).
+- Field order as types of lists over a binary right-branching backbone: the finite verb is an ordinary element of the clause-level list, and verb-first, verb-second, and verb-last clauses are list sorts; no movement and no SLASH for verb position. The cost is an empty end-of-level element in every phrase and set-valued SUBCAT with union (Oliva 1992, COLING, pp. 187-190, fn. 12; notes in `reading/notes/oliva-1992-word-order-binary-lists.md`). Verbal complexes and multiple fronting are not treated there.
 
 ## Consequence for our parser and grammars
 

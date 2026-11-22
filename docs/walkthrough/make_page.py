@@ -92,13 +92,14 @@ def summary():
                      pct(g['mrs'], g['n']), na('not measured')),
                  row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], na('the reference'), na('the reference'),
                      f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), na('not measured'))]
-    t = table([('Text and parser', ''), ('Sentences', 'n'), ('Exact meaning', 'n hl'), ('Exact, tense, number and other properties too', 'n'),
+    t = table([('Text and parser', ''), ('Sentences', 'n'), ('Same meaning as the reference', 'n hl'), ('… with tense, number and other properties too', 'n'),
                ('Right, counting the judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
     c = cap('Orca: BERT-base tagger trained on all data with forms as typed, from raw text. '
-            '<b>Exact meaning:</b> the whole MRS matches the reference (gold on dev; ACE\'s parse on generated text, so ACE has no entry there). '
-            '<b>Right, counting the judge:</b> exact, or Claude Opus, shown the two readings where they differ, says Orca\'s reading is right or both are; '
+            '<b>Same meaning as the reference:</b> the whole MRS matches the reference. On dev the reference is the annotators\' gold, so this is accuracy; '
+            'on generated text it is ACE\'s first-ranked parse, which nobody checked, so this is only agreement with ACE. '
+            '<b>Right, counting the judge:</b> same meaning as the reference, or Claude Opus, shown the two readings where they differ, says Orca\'s reading is right or both are; '
             'on dev this overstates a little, since the judge does not know the treebank\'s conventions, and ACE\'s own differences from gold were not judged. '
-            'For ACE on generated text: exact or judged right, with the sentences the judge never saw (Orca had no analysis there) counted as wrong for the lower figure and as right for the upper. '
+            'For ACE on generated text: same as Orca or judged right, with the sentences the judge never saw (Orca had no analysis there) counted as wrong for the lower figure and as right for the upper. '
             'Generated sentences were kept only if ACE parsed them, so ACE analyzes all of them.')
     finds = ['<b>Exact match understates Orca.</b> Where Orca and gold differ on dev, the judge often accepts Orca\'s reading; on generated text it prefers Orca\'s reading to ACE\'s first parse far more often than the reverse (<i>Generated sentences</i>).',
              '<b>The losses are in proposing.</b> When the right meaning is among the analyses found, the ranking model nearly always picks it; what is missing is a right analysis to pick, more so in long sentences (<i>Where the wrong sentences go wrong</i>).',

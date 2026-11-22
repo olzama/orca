@@ -16,6 +16,7 @@ The canonical formalism of Pollard and Sag (1994) is model-theoretic: total, sor
 - Four competing model theories; two of them fail their intended one-to-one correspondence between utterances and structures (Ch. 3, Section 6, pp. 117-122).
 - Theory is shaped by platforms, and analyses are sometimes chosen for parser efficiency (Ch. 3, pp. 89-91; Ch. 25, pp. 1109-1110). TRALE lets engineers implement a wider range of proposals directly than the LKB (Melnik 2007; Ch. 25, p. 1117).
 - The formalism is Turing-complete; tractability is left to the particular grammar (Ch. 25, p. 1108; Ch. 28, p. 1305).
+- The gap is old. Carroll (1993, PhD thesis, Section 1.3.1, pp. 5-6) says the declarative theories of the 1980s "tend not to be well suited to practical parsing with large grammars" because they rely on the conceptually simultaneous application of principles, and that wide-coverage projects therefore adopted simpler formalisms with straightforward computational interpretations, partly because a direct implementation of one theory would soon become obsolete (Boguraev et al. 1988). No system had used an unmodified implementation of GPSG, LFG, or ID/LP format (pp. 14-15). Notes in `reading/notes/carroll-1993-ch1-introduction.md`.
 
 ## Competing analyses
 

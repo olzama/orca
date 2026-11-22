@@ -13,6 +13,7 @@ The same alternation (extraction, clitic realization, argument drop, passive) ca
 - Lexical rules have a direction; causative/inchoative alternations may not (Ch. 4, p. 159; Ch. 9, Section 5.2, p. 344).
 - Online type construction derives passive without a rule; Müller, and Müller and Wechsler, are "highly sceptical", since rules feed each other and Turkish causatives apply more than once (Ch. 21, Section 2.3, pp. 952-954, fn. 3).
 - Valence was SUBCAT, then SUBJ/SPR/COMPS, then ARG-ST was reintroduced for binding, and the ARG-ST/valence relation "was soon loosened" (Ch. 9, Section 2, pp. 317-319; Ch. 1, p. 17, fn. 23).
+- Miller and Sag 1997 (primary source, read 2026-11-21): French pronominal affixation is a type constraint on cliticized words that shuffles a list of *aff* synsems into ARG-ST, credited to Bouma as an alternative to lexical rules (NLLT 15, (20), p. 587, fn. 18, p. 586), while nonlocal *en* and floated quantifiers use lexical rules (ENLR (89), p. 621; LTLR (99), p. 627); the paper gives no criterion for the split. Which arguments are affixes is fixed by the word form through the morphological function, not by any rule (pp. 593-597). Notes in `reading/notes/miller-sag-1997-french-clitics.md`.
 - In implemented grammars lexical rules are unary-branching rules: ERG, CoreGram, Grammix (Ch. 4, p. 156); LKB (Ch. 21, pp. 958-959).
 
 ## Competing analyses
