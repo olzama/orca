@@ -20,3 +20,4 @@ __pycache__/
 
 # Cached ranking model
 *.mem.pkl
+tools/mtool/
