@@ -100,7 +100,8 @@ def summary():
             '<b>Right, counting the judge:</b> same meaning as the reference, or Claude Opus, shown the two readings where they differ, says Orca\'s reading is right or both are; '
             'on dev this overstates a little, since the judge does not know the treebank\'s conventions, and ACE\'s own differences from gold were not judged. '
             'For ACE on generated text: same as Orca or judged right, with the sentences the judge never saw (Orca had no analysis there) counted as wrong for the lower figure and as right for the upper. '
-            'Generated sentences were kept only if ACE parsed them, so ACE analyzes all of them.')
+            'Generated sentences were kept only if ACE parsed them, so ACE analyzes all of them. '
+            'Where Orca and ACE agree on generated text, both are counted as right without a check; a judged check of 300 such sentences is queued.')
     finds = ['<b>Exact match understates Orca.</b> Where Orca and gold differ on dev, the judge often accepts Orca\'s reading; on generated text it prefers Orca\'s reading to ACE\'s first parse far more often than the reverse (<i>Generated sentences</i>).',
              '<b>The losses are in proposing.</b> When the right meaning is among the analyses found, the ranking model nearly always picks it; what is missing is a right analysis to pick, more so in long sentences (<i>Where the wrong sentences go wrong</i>).',
              '<b>Data and encoder size both help.</b> A large encoder on the treebank alone comes close to BERT-base on seven times the data; the large encoders are now trained on all data, and their full evaluations are queued (<i>Training data</i>, <i>Encoders</i>).',
