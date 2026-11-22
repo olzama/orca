@@ -51,6 +51,20 @@ def measured_note():
             f"{r['sentences per second']:.1f} sentences per second.")
 
 
+def mrs_view(m):
+    """The MRS as plain JSON for the page's interactive view."""
+    if m is None:
+        return None
+    eps = []
+    for ep in m.rels:
+        eps.append({'label': ep.label, 'pred': str(ep.predicate), 'from': ep.cfrom, 'to': ep.cto, 'carg': ep.carg,
+                    'args': [[r, str(x)] for r, x in ep.args.items() if r != 'CARG']})
+    return {'top': m.top, 'index': m.index, 'eps': eps,
+            'hcons': [[h.hi, h.relation, h.lo] for h in m.hcons],
+            'icons': [[i.left, i.relation, i.right] for i in (m.icons or [])],
+            'vars': {v: {k.upper(): str(x) for k, x in props.items()} for v, props in m.variables.items()}}
+
+
 def same_mrs(a, b):
     from delphin import mrs as M
     from compare_mrs import normalized
@@ -121,9 +135,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
             with LOCK:
                 r = PARSER.parse(text)
                 m = r.pop('_mrs_obj', None)
+                r['mrs_view'] = mrs_view(m)
                 if req.get('ace'):
                     a = ace_parse(text, timeout=ACE_TIMEOUT)
                     am = a.pop('_mrs_obj', None)
+                    a['mrs_view'] = mrs_view(am)
                     a['same as orca'] = same_mrs(m, am) if m is not None and am is not None else None
                     r['ace'] = a
             self._send(200, json.dumps(r, ensure_ascii=False), 'application/json')

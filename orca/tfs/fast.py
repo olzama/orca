@@ -350,6 +350,13 @@ def extract(fg, fs):
         roles = [r for r in ROLES_FIRST if r in arcs] + sorted(
             r for r in arcs if r not in ROLES_FIRST and r not in SKIP)
         out['rels'].append((pred, {r: var(arcs[r]) for r in roles}))
+        span = []                                  # character span, for display (comparisons ignore it)
+        for f in ('CFROM', 'CTO'):
+            try:
+                span.append(int(fg.type(arcs[f]).strip('"').replace('\\', '')))
+            except Exception:
+                span.append(-1)
+        out.setdefault('lnk', []).append(tuple(span))
     for q in items(fg.get(cont, 'HCONS')):
         arcs = dict(fg.arcs(q))
         out['hcons'].append((var(arcs['HARG']), fg.type(q), var(arcs['LARG'])))

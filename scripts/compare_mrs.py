@@ -33,13 +33,19 @@ from orca.tfs.lexicon import Lexicon, replay_with_entries  # noqa: E402
 from orca.tfs.mrs import extract  # noqa: E402
 
 
+from delphin.lnk import Lnk  # noqa: E402
+
+
 def to_pydelphin(m):
     """Our extracted MRS as a PyDelphin MRS, with the top handle that the
     root contributes (a handle related to the local top by qeq)."""
     rels = []
-    for pred, roles in m['rels']:
+    lnks = m.get('lnk') or []
+    for i, (pred, roles) in enumerate(m['rels']):
         args = {r: (v.strip('"') if r == 'CARG' else v) for r, v in roles.items() if r != 'LBL'}
-        rels.append(dmrs_mrs.EP(predicate.normalize(pred), roles['LBL'], args=args))
+        a, b = lnks[i] if i < len(lnks) else (-1, -1)
+        lnk = Lnk.charspan(a, b) if a >= 0 and b >= 0 else None
+        rels.append(dmrs_mrs.EP(predicate.normalize(pred), roles['LBL'], args=args, lnk=lnk))
     hcons = [dmrs_mrs.HCons('h0', 'qeq', m['top'])]
     hcons += [dmrs_mrs.HCons(a, 'qeq', b) for a, rel, b in m['hcons']]
     variables = {v: _vpm().apply(v, p)[1] for v, p in m.get('props', {}).items()}

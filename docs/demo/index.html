@@ -84,6 +84,39 @@ svg text.pred { font-size: 11.5px; }
 svg rect.pred { fill: var(--surface); stroke: var(--line); }
 svg rect.pred.top { stroke: var(--accent); stroke-width: 2; }
 svg rect.pred.diff { stroke: var(--chg); stroke-width: 2; }
+/* interactive MRS */
+:root { --vx: #1f5fbf; --vx-soft: #e1ebfa; --ve: #1d7a4f; --ve-soft: #dff1e7; --vh: #6a4c93; --vh-soft: #ece6f4; --vi: #556775; --vi-soft: #e9eef2;
+  --pn: #1f5fbf; --pv: #1d7a4f; --pa: #9a6400; --pp: #0f6c8c; --pq: #6a4c93; --pg: #556775; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --vx: #8bb4f0; --vx-soft: #1b2c45; --ve: #5fcf97; --ve-soft: #153526; --vh: #b79be0; --vh-soft: #2a2140; --vi: #9db0bd; --vi-soft: #22323d;
+  --pn: #8bb4f0; --pv: #5fcf97; --pa: #e8b454; --pp: #5fbddb; --pq: #b79be0; --pg: #9db0bd; } }
+:root[data-theme="dark"] { --vx: #8bb4f0; --vx-soft: #1b2c45; --ve: #5fcf97; --ve-soft: #153526; --vh: #b79be0; --vh-soft: #2a2140; --vi: #9db0bd; --vi-soft: #22323d;
+  --pn: #8bb4f0; --pv: #5fcf97; --pa: #e8b454; --pp: #5fbddb; --pq: #b79be0; --pg: #9db0bd; }
+.mv { display: flex; flex-direction: column; gap: 12px; }
+.mv-sent { display: flex; flex-wrap: wrap; gap: 4px 2px; font: 500 1.1rem/1.6 var(--display); }
+.mv-sent span { padding: 0 3px; border-radius: 4px; cursor: pointer; border-bottom: 2px solid transparent; }
+.mv-sent span.on { background: var(--accent-soft); border-bottom-color: var(--accent); }
+.mv-head { font-size: 0.9rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.mv-eps { display: grid; grid-template-columns: max-content max-content 1fr; gap: 4px 12px; align-items: center; font-size: 0.88rem; }
+.mv-ep { display: contents; }
+.mv-ep > * { padding: 3px 0; }
+.mv-ep.on > *, .mv-ep.hit > * { background: var(--well); }
+.mv-ep.dim > * { opacity: 0.35; }
+.mv-pred { font: 500 0.9rem var(--mono); cursor: pointer; white-space: nowrap; }
+.mv-pred .lem { font-weight: 600; }
+.mv-pred.n { color: var(--pn); } .mv-pred.v { color: var(--pv); } .mv-pred.a { color: var(--pa); } .mv-pred.p { color: var(--pp); } .mv-pred.q { color: var(--pq); } .mv-pred.g { color: var(--pg); font-style: italic; }
+.mv-args { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+.mv-arg { display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; color: var(--muted); }
+.mv-carg { font: 0.85rem var(--mono); color: var(--fg); background: var(--well); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+button.v { font: 600 0.8rem var(--mono); border: 1px solid transparent; border-radius: 10px; padding: 1px 8px; cursor: pointer; line-height: 1.5; }
+button.v.x { color: var(--vx); background: var(--vx-soft); } button.v.e { color: var(--ve); background: var(--ve-soft); }
+button.v.h { color: var(--vh); background: var(--vh-soft); } button.v.i, button.v.u, button.v.p { color: var(--vi); background: var(--vi-soft); }
+button.v.on { border-color: currentColor; box-shadow: 0 0 0 2px currentColor; }
+button.v.rel { border-color: currentColor; border-style: dashed; }
+.mv-info { min-height: 1.6em; font-size: 0.88rem; padding: 8px 12px; border-radius: 6px; background: var(--well); border: 1px solid var(--line); }
+.mv-info b { font-weight: 600; }
+.mv-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--muted); align-items: center; }
+.mv-legend .mv-pred { cursor: default; }
+.mv-cons { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--muted); align-items: center; }
 </style>
 </head>
 <body>
@@ -109,9 +142,10 @@ svg rect.pred.diff { stroke: var(--chg); stroke-width: 2; }
   <div id="results" class="hidden" style="display:flex;flex-direction:column;gap:28px">
     <section class="panel">
       <h2>Meaning</h2>
-      <p class="small" id="dmrs-caption">The meaning as a DMRS graph: predicates and the links between them (dashed links are scope).</p>
-      <div id="dmrs"></div>
-      <details><summary>MRS</summary><div class="scroll pad" style="margin-top:10px"><pre id="mrs"></pre></div></details>
+      <p class="small">The meaning as MRS: one row per predicate, ordered by the words it comes from. Click a variable to see everywhere it occurs and what is known about it; click a predicate or a word to link the two.</p>
+      <div id="mrsview"></div>
+      <details><summary>As a DMRS graph</summary><p class="small" id="dmrs-caption" style="margin-top:10px">Predicates and the links between them (dashed links are scope).</p><div id="dmrs"></div></details>
+      <details><summary>MRS as text</summary><div class="scroll pad" style="margin-top:10px"><pre id="mrs"></pre></div></details>
     </section>
 
     <section class="panel">
@@ -137,8 +171,9 @@ svg rect.pred.diff { stroke: var(--chg); stroke-width: 2; }
     <section class="panel hidden" id="ace-panel">
       <h2>ACE, for comparison</h2>
       <div id="ace-verdict" class="verdict"></div>
-      <div id="ace-dmrs"></div>
-      <details><summary>ACE's MRS</summary><div class="scroll pad" style="margin-top:10px"><pre id="ace-mrs"></pre></div></details>
+      <div id="ace-mrsview"></div>
+      <details><summary>As a DMRS graph</summary><div id="ace-dmrs" style="margin-top:10px"></div></details>
+      <details><summary>ACE's MRS as text</summary><div class="scroll pad" style="margin-top:10px"><pre id="ace-mrs"></pre></div></details>
     </section>
   </div>
 </div>
@@ -260,6 +295,100 @@ function toRaw(n) {
   if (n.children) return { l: n.label, c: n.children.map(toRaw) };
   return { l: n.type || n.entry, w: n.forms.join(' ') };
 }
+
+const SORT = {x: 'an individual (entity)', e: 'an event or state', h: 'a handle (a scope position)', i: 'unspecified (individual or event)', u: 'unspecified', p: 'a label or individual'};
+const POS = {n: 'noun', v: 'verb', a: 'adjective or adverb', p: 'preposition', q: 'quantifier', c: 'conjunction', x: 'other word'};
+const ROLE = {ARG0: 'the predicate’s own variable', RSTR: 'the quantifier’s restriction', BODY: 'the quantifier’s body', L_INDEX: 'left conjunct', R_INDEX: 'right conjunct', L_HNDL: 'left conjunct’s scope', R_HNDL: 'right conjunct’s scope'};
+function predParts(pred) {
+  const p = String(pred).replace(/^"|"$/g, '');
+  if (!p.startsWith('_')) return {cls: p.endsWith('_q') ? 'q' : 'g', lemma: p, pos: '', sense: '', abstract: true};
+  const parts = p.slice(1).split('_');
+  const lemma = parts[0], pos = parts[1] || '', sense = parts.slice(2).join('_');
+  return {cls: {n: 'n', v: 'v', a: 'a', p: 'p', q: 'q'}[pos] || 'g', lemma, pos, sense, abstract: false};
+}
+function drawMrs(mv, text, tokens) {
+  const root = el('div', 'mv');
+  if (!mv) { root.append(el('p', 'small', 'No analysis.')); return root; }
+  const sortOf = v => (v.match(/^[a-z]+/) || ['u'])[0];
+  const qeq = {}; mv.hcons.forEach(([hi, , lo]) => { qeq[hi] = lo; qeq[lo] = hi; });
+  const chips = [];
+  const vchip = (v, extra) => { const b = el('button', 'v ' + sortOf(v), esc(v)); b.type = 'button'; b.dataset.v = v; if (extra) b.title = extra; chips.push(b); b.addEventListener('click', e => { e.stopPropagation(); select({kind: 'var', v}); }); return b; };
+  // sentence
+  const sent = el('div', 'mv-sent');
+  const words = (tokens || []).map(tk => { const sp = el('span', '', esc(text.slice(tk.from, tk.to) || tk.form)); sp.dataset.from = tk.from; sp.dataset.to = tk.to; sp.addEventListener('click', e => { e.stopPropagation(); select({kind: 'word', from: tk.from, to: tk.to}); }); sent.append(sp); return sp; });
+  // head line
+  const head = el('div', 'mv-head');
+  head.append(el('span', '', 'Top'), vchip(mv.top, 'the top scope'), el('span', '', 'Index'), vchip(mv.index, 'the main event'));
+  // predicates
+  const eps = mv.eps.map((ep, i) => ({...ep, i})).sort((a, b) => (a.from - b.from) || (b.to - a.to));
+  const grid = el('div', 'mv-eps');
+  const rows = eps.map(ep => {
+    const row = el('div', 'mv-ep'); row.dataset.label = ep.label;
+    const lab = el('div'); lab.append(vchip(ep.label, 'the label: the scope position this predicate sits in'));
+    const pp = predParts(ep.pred);
+    const pr = el('div', 'mv-pred ' + pp.cls);
+    pr.innerHTML = pp.abstract ? `<span class="lem">${esc(pp.lemma)}</span>` : `_<span class="lem">${esc(pp.lemma)}</span>${pp.pos ? '_' + esc(pp.pos) : ''}${pp.sense ? '_' + esc(pp.sense) : ''}`;
+    pr.title = pp.abstract ? 'a predicate the grammar introduces (no word of its own)' : `the word “${pp.lemma}” as a ${POS[pp.pos] || 'word'}${pp.sense ? ', sense ' + pp.sense : ''}`;
+    pr.addEventListener('click', e => { e.stopPropagation(); select({kind: 'ep', ep}); });
+    const args = el('div', 'mv-args');
+    ep.args.forEach(([role, v]) => { const a = el('span', 'mv-arg', esc(role)); a.title = ROLE[role] || 'an argument'; a.append(vchip(v)); args.append(a); });
+    if (ep.carg) { const a = el('span', 'mv-arg', 'CARG'); a.append(el('span', 'mv-carg', esc(ep.carg))); args.append(a); }
+    row.append(lab, pr, args); grid.append(row);
+    return {row, ep};
+  });
+  // constraints
+  const cons = el('div', 'mv-cons');
+  if (mv.hcons.length) { cons.append(el('span', '', 'Scope (qeq):')); mv.hcons.forEach(([hi, rel, lo]) => { const g = el('span', 'mv-arg'); g.append(vchip(hi), el('span', '', ' =q '), vchip(lo)); cons.append(g); }); }
+  if (mv.icons.length) { cons.append(el('span', '', 'Information structure:')); mv.icons.forEach(([l, rel, r]) => { const g = el('span', 'mv-arg'); g.append(vchip(l), el('span', '', ' ' + esc(rel) + ' '), vchip(r)); cons.append(g); }); }
+  const info = el('div', 'mv-info', 'Click a variable, a predicate or a word.');
+  const legend = el('div', 'mv-legend');
+  legend.innerHTML = 'Variables: <button class="v x" tabindex="-1">x</button> individual <button class="v e" tabindex="-1">e</button> event <button class="v h" tabindex="-1">h</button> scope <button class="v i" tabindex="-1">i</button> unspecified &nbsp; Predicates: <span class="mv-pred n">noun</span> <span class="mv-pred v">verb</span> <span class="mv-pred a">adjective</span> <span class="mv-pred p">preposition</span> <span class="mv-pred q">quantifier</span> <span class="mv-pred g">grammar’s own</span>';
+  function clear() { chips.forEach(c => c.classList.remove('on', 'rel')); rows.forEach(r => r.row.classList.remove('on', 'hit', 'dim')); words.forEach(w => w.classList.remove('on')); }
+  function markWords(from, to) { words.forEach(w => { if (+w.dataset.from < to && +w.dataset.to > from) w.classList.add('on'); }); }
+  function describeVar(v) {
+    const props = mv.vars[v] || {};
+    const ps = Object.entries(props).map(([k, x]) => `${k.toLowerCase()} ${x}`).join(', ');
+    const uses = eps.filter(ep => ep.label === v || ep.args.some(([, a]) => a === v));
+    const owner = eps.find(ep => ep.args.some(([r, a]) => r === 'ARG0' && a === v));
+    let txt = `<b>${esc(v)}</b>: ${SORT[sortOf(v)] || 'a variable'}`;
+    if (owner) txt += `, introduced by <b>${esc(owner.pred)}</b>`;
+    if (ps) txt += `. Properties: ${esc(ps)}`;
+    if (qeq[v]) txt += `. Scope: ${esc(v)} is qeq-linked to <b>${esc(qeq[v])}</b>`;
+    txt += `. Occurs in ${uses.length} predicate${uses.length === 1 ? '' : 's'}.`;
+    return txt;
+  }
+  let current = null;
+  function select(s) {
+    clear();
+    if (current && JSON.stringify(current) === JSON.stringify(s)) { current = null; info.innerHTML = 'Click a variable, a predicate or a word.'; return; }
+    current = s;
+    if (s.kind === 'var') {
+      const v = s.v, linked = qeq[v];
+      chips.forEach(c => { if (c.dataset.v === v) c.classList.add('on'); else if (linked && c.dataset.v === linked) c.classList.add('rel'); });
+      rows.forEach(r => {
+        const uses = r.ep.label === v || r.ep.args.some(([, a]) => a === v) || (linked && r.ep.label === linked);
+        r.row.classList.add(uses ? 'hit' : 'dim');
+        if (uses) markWords(r.ep.from, r.ep.to);
+      });
+      info.innerHTML = describeVar(v);
+    } else if (s.kind === 'ep') {
+      const ep = s.ep;
+      rows.forEach(r => r.row.classList.add(r.ep === ep ? 'on' : 'dim'));
+      ep.args.forEach(([, v]) => chips.forEach(c => { if (c.dataset.v === v) c.classList.add('rel'); }));
+      markWords(ep.from, ep.to);
+      const pp = predParts(ep.pred);
+      info.innerHTML = `<b>${esc(ep.pred)}</b>: ${pp.abstract ? 'a predicate the grammar introduces, with no word of its own' : `“${esc(pp.lemma)}” as a ${POS[pp.pos] || 'word'}${pp.sense ? ' (sense ' + esc(pp.sense) + ')' : ''}`}, from “${esc(text.slice(ep.from, ep.to))}”. ` + ep.args.map(([r, v]) => `${esc(r)} ${esc(v)}${ROLE[r] ? ' (' + ROLE[r] + ')' : ''}`).join('; ') + (ep.carg ? `; name or constant “${esc(ep.carg)}”` : '') + '.';
+    } else if (s.kind === 'word') {
+      const hits = rows.filter(r => r.ep.from < s.to && r.ep.to > s.from);
+      rows.forEach(r => r.row.classList.add(hits.includes(r) ? 'hit' : 'dim'));
+      markWords(s.from, s.to);
+      info.innerHTML = `“${esc(text.slice(s.from, s.to))}” contributes ${hits.length} predicate${hits.length === 1 ? '' : 's'}${hits.length ? ': ' + hits.map(r => '<b>' + esc(r.ep.pred) + '</b>').join(', ') : ''}.`;
+    }
+  }
+  root.addEventListener('click', () => { clear(); current = null; info.innerHTML = 'Click a variable, a predicate or a word.'; });
+  root.append(sent, head, grid, cons, info, legend);
+  return root;
+}
 const ms = s => s < 0.01 ? (s * 1000).toFixed(1) : Math.round(s * 1000).toLocaleString('en-US');
 const STEPS = [['tokens', 'Tokens (grammar preprocessing, in ACE)'], ['tag', 'Tagger'], ['repair', 'Replay and repair'], ['rank', 'Ranking'], ['mrs', 'Meaning (MRS)']];
 
@@ -277,6 +406,7 @@ function show(r) {
   }
   $('dmrs').replaceChildren(r.dmrs ? drawDmrs(r.dmrs, r.ace && r.ace.dmrs) : el('p', 'small', 'No analysis.'));
   $('dmrs-caption').textContent = 'The meaning as a DMRS graph: predicates and the links between them (dashed links are scope).' + (r.ace && r.ace.dmrs ? ' Orange marks what ACE’s analysis does not have.' : '');
+  $('mrsview').replaceChildren(drawMrs(r.mrs_view, r.input || $('input').value, r.tokens));
   $('mrs').textContent = r.mrs || '';
   $('tree').replaceChildren(r.derivation ? drawTree(toRaw(r.derivation)) : el('p', 'small', 'No derivation.'));
 
@@ -304,6 +434,7 @@ function show(r) {
     else if (!r.mrs) { v.className = 'verdict chg'; v.innerHTML = '<b>Only ACE found an analysis.</b>'; }
     else { v.className = 'verdict chg'; v.innerHTML = '<b>Different meaning.</b> ACE’s first-ranked analysis differs from Orca’s; orange marks what Orca’s analysis does not have.'; }
     $('ace-dmrs').replaceChildren(r.ace.dmrs ? drawDmrs(r.ace.dmrs, r.dmrs) : el('span'));
+    $('ace-mrsview').replaceChildren(r.ace.mrs_view ? drawMrs(r.ace.mrs_view, r.input || $('input').value, r.tokens) : el('span'));
     $('ace-mrs').textContent = r.ace.mrs || '';
   } else ap.classList.add('hidden');
 }
