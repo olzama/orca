@@ -50,7 +50,8 @@ def dmrs_json(m):
 class Parser:
     def __init__(self, grammar=DEFAULTS['grammar'], tagger=DEFAULTS['tagger'], ace=DEFAULTS['ace'],
                  dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.005, device=None,
-                 all_mrs=False, commit=False, commit_min=0, root_focus=False):
+                 all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=False,
+                 normalized_lookup=False):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -62,6 +63,7 @@ class Parser:
         from train_tagger import Tagger
         self.torch, self.repair = torch, repair
         self.ace, self.dat, self.k = ace, dat, k
+        self.normalized_lookup = normalized_lookup     # replay with the preprocessed token forms (ACE's +FORM), tag the text as typed
         self.all_mrs = all_mrs                          # also read off the MRS of every accepted derivation
         self.args = SimpleNamespace(cache=True, kbest=kbest, budget=budget, fanout=fanout, min_prob=min_prob,
                                     commit=commit, commit_min=commit_min, root_focus=root_focus)
@@ -77,6 +79,7 @@ class Parser:
         gdir = os.path.dirname(grammar)
         g = Grammar(grammar)
         self.lx = Lexicon(g, gdir)
+        self.lx.locate_missing = locate_missing
         self.known = known_words(self.lx)
         self.me = MaxEnt(os.path.join(gdir, 'redwoods.mem'))
         self.generic = lambda e: g.status.get(e) == 'generic-lex-entry'
@@ -131,7 +134,8 @@ class Parser:
         out['first guess'] = {'leaf': [top['leaf'][j][0][0] for j in range(len(forms))],
                               'tree': [top['tree'][j][0][0] for j in range(len(forms))]}
         r = self.repair
-        s = {'id': sid, 'forms': forms, 'leaf': [None] * len(forms), 'tree': [None] * len(forms)}
+        rforms = [p[0] for p in path] if self.normalized_lookup else forms
+        s = {'id': sid, 'forms': rforms, 'leaf': [None] * len(forms), 'tree': [None] * len(forms)}
         r._WORK = (self.fg, [s], [top], {sid: [p[1] for p in path]}, self.args, self.lx)
         r.GOLD_MRS.clear()
         outcome, leaf, tree, n_replays, _, _, kbest = r.search(0)
@@ -143,7 +147,7 @@ class Parser:
             return out
         scored = []
         for c in kbest:
-            tr = with_entries(decode(to_leaves(forms, c['leaf'], c['tree'])), c['entries'])
+            tr = with_entries(decode(to_leaves(rforms, c['leaf'], c['tree'])), c['entries'])
             scored.append((self.me.score(tr, self.lx.type_of.get, self.generic), tr, c))
         best = max(range(len(scored)), key=lambda i: scored[i][0])
         score, tr, c = scored[best]
@@ -258,7 +262,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False,
                      **({'mrs': r.get('mrs'), 'labels': r.get('labels')} if save_mrs else {})})
     wall = time.perf_counter() - t0
     res = {'tagger': parser.tagger_name, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget,
-           'commit': parser.args.commit, 'commit_min': parser.args.commit_min, 'root_focus': parser.args.root_focus, 'min_tokens': min_tokens, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
+           'commit': parser.args.commit, 'commit_min': parser.args.commit_min, 'root_focus': parser.args.root_focus, 'locate_missing': parser.lx.locate_missing, 'normalized_lookup': parser.normalized_lookup, 'min_tokens': min_tokens, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
     with open(out_path, 'w') as f:
         json.dump(res, f, indent=1)
@@ -279,12 +283,15 @@ def main():
     ap.add_argument('--kbest', type=int, default=30, help='stop after this many accepted derivations')
     ap.add_argument('--budget', type=int, default=600, help='at most this many replays per sentence')
     ap.add_argument('--commit', action='store_true', help='repair: keep a fix once the failure moves to another part of the tree (scripts/repair.py)')
+    ap.add_argument('--locate-missing', action='store_true', help='repair: a word with no lexical entry for its tag fails at that word, not at the root (orca/tfs/lexicon.py)')
+    ap.add_argument('--normalized-lookup', action='store_true', help='replay and look up words in their preprocessed form (ACE\'s +FORM); the tagger still sees the text as typed')
     ap.add_argument('--root-focus', action='store_true', help='repair: on a failure at the root, search the top of the tree and the head path first (scripts/repair.py)')
     ap.add_argument('--commit-min', type=int, default=0, help='with --commit: only for sentences of at least this many tokens')
     ap.add_argument('--min-tokens', type=int, default=0, help='with --eval: only sentences of at least this many tokens')
     args = ap.parse_args()
     p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget,
-               commit=args.commit, commit_min=args.commit_min, root_focus=args.root_focus)
+               commit=args.commit, commit_min=args.commit_min, root_focus=args.root_focus,
+               locate_missing=args.locate_missing, normalized_lookup=args.normalized_lookup)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
         return

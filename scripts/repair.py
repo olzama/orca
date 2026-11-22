@@ -63,6 +63,48 @@ def failing_tokens(tree, where, leaf_labels):
     return out
 
 
+def head_index(label):
+    """Head daughter of an ERG-style binary rule, read off its name (sb-hd_mc_c: 1)."""
+    parts = label.lower().split('_')[0].split('-')
+    for i, x in enumerate(parts):
+        if x.startswith('hd'):
+            return min(i, 1)
+    return 0
+
+
+def top_tokens(tree, leaf_labels, levels=2):
+    """Token positions that shape the top of the tree: the split points of the
+    binary nodes in its top `levels` levels and all along the head path, and the
+    head word itself. Used when the whole sentence fails at the root, where
+    failing_tokens gives no locality."""
+    picked = set()
+
+    def walk(node, start, lvl, on_head):
+        if isinstance(node, Leaf):
+            if on_head:
+                picked.add(start)
+            return
+        kids = node.children
+        if len(kids) == 1:
+            walk(kids[0], start, lvl, on_head)
+            return
+        left = n_leaves(kids[0])
+        if lvl <= levels or on_head:
+            picked.add(start + left - 1)            # the token whose tree label makes this node
+        h = head_index(node.label)
+        walk(kids[0], start, lvl + 1, on_head and h == 0)
+        walk(kids[1], start + left, lvl + 1, on_head and h == 1)
+
+    walk(tree, 0, 0, True)
+    out, li = [], -1
+    for j, l in enumerate(leaf_labels):
+        if not l.startswith(CONT):
+            li += 1
+        if li in picked:
+            out.append(j)
+    return out
+
+
 _WORK = None
 
 
@@ -94,7 +136,10 @@ def search(index):
                 accepted_info.append((fs, resolved))
             return None
         except ReplayFailure as e:
-            return failing_tokens(t, e.where, leaf) or list(range(n))
+            span = failing_tokens(t, e.where, leaf) or list(range(n))
+            if root_focus and len(span) == n:
+                span = top_tokens(t, leaf) or span
+            return span
         finally:
             del g.u.trail[mark:]
 
@@ -108,16 +153,37 @@ def search(index):
     def right(leaf, tree):
         return leaf == s['leaf'] and tree[:-1] == s['tree'][:-1]
 
-    heap, seen, counter, n_replays = [(0.0, 0, ())], {()}, 1, 0
+    # Each entry carries the failing span of the state it was expanded from. With
+    # args.commit (long sentences): when a change makes the failure move to tokens
+    # disjoint from that span, the change fixed its region and another error is now
+    # visible. The search then keeps that state as its new base and looks only for
+    # fixes of the new region, instead of crossing every fix of the first region with
+    # every fix of the second; the earlier frontier is kept on a stack to fall back to.
+    commit = getattr(args, 'commit', False) and n >= getattr(args, 'commit_min', 0)
+    root_focus = getattr(args, 'root_focus', False) and n >= getattr(args, 'commit_min', 0)
+    heap, seen, counter, n_replays = [(0.0, 0, (), None)], {()}, 1, 0
+    stack, commits = [], 0
     accepted, first_right = None, None
     accepted_info, kbest = [], []
-    while heap and n_replays < args.budget:
-        cost, _, state = heapq.heappop(heap)
+    while n_replays < args.budget:
+        if not heap:
+            if not stack:
+                break
+            heap = stack.pop()
+            continue
+        cost, _, state, parent_span = heapq.heappop(heap)
         leaf, tree = assignment(state)
         if first_right is None:
             first_right = right(leaf, tree)
         n_replays += 1
         span = replay(leaf, tree)
+        if getattr(args, 'trace', None) is not None:
+            args.trace.append((len(state), None if span is None else (min(span), max(span), len(span)), round(cost, 2)))
+        if (commit and span is not None and accepted is None and parent_span is not None
+                and not parent_span.intersection(span)):
+            stack.append(heap)
+            heap = []
+            commits += 1
         if span is None:
             if accepted is None:
                 accepted = (leaf, tree, state)
@@ -145,7 +211,7 @@ def search(index):
                 new = tuple(sorted(state + ((kind, j, r),)))
                 if new not in seen:
                     seen.add(new)
-                    heapq.heappush(heap, (cost + top[kind][j][0][1] - logp, counter, new))
+                    heapq.heappush(heap, (cost + top[kind][j][0][1] - logp, counter, new, frozenset(span)))
                     counter += 1
     if accepted is None:
         outcome = 'rejected, budget used' if n_replays >= args.budget else 'rejected, nothing left to try'
@@ -211,6 +277,8 @@ def main():
                     help='replay with lexical entries found in the lexicon')
     ap.add_argument('--no-cache', dest='cache', action='store_false',
                     help='rebuild every subtree on every replay')
+    ap.add_argument('--root-focus', action='store_true', help='a failure at the root: search the top of the tree and the head path first')
+    ap.add_argument('--commit', action='store_true', help='long sentences: keep a fix once the failure moves elsewhere')
     ap.add_argument('--pred-out')
     args = ap.parse_args()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

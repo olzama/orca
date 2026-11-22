@@ -209,20 +209,22 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
     from .grammar import ReplayFailure
     memo = getattr(grammar, 'leaf_memo', None)
     leaves = []                       # (leaf, lexical rules above it, first token)
+    paths = []                        # each leaf's node path, as replay failures name nodes ('0.1.0')
     position = [0]
 
-    def collect(t, rules):
+    def collect(t, rules, path):
         if isinstance(t, Leaf):
             leaves.append((t, rules, position[0]))
+            paths.append(path)
             position[0] += len(t.forms)
         else:
             lex = len(t.children) == 1 and is_lexrule(lexicon, t.label)
-            for c in t.children:
-                collect(c, rules + (t.label.lower(),) if lex else ())
+            for i, c in enumerate(t.children):
+                collect(c, rules + (t.label.lower(),) if lex else (), f'{path}.{i}')
 
-    collect(tree, ())
+    collect(tree, (), '0')
     usable = []
-    for leaf, rules, pos in leaves:
+    for (leaf, rules, pos), leaf_path in zip(leaves, paths):
         key = (leaf, rules, pos)
         cands = memo.get(key) if memo is not None else None
         if cands is None:
@@ -245,7 +247,9 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
             if memo is not None:
                 memo[key] = cands
         if not cands and strict and not leaf.entry.startswith('entry:'):
-            where = '0'                 # a word the lexicon does not license with this type
+            # a word the lexicon does not license with this type: name the leaf, so that
+            # repair reconsiders that word (with locate_missing), or the whole tree
+            where = leaf_path if getattr(lexicon, 'locate_missing', False) else '0'
             raise ReplayFailure(f'{where} {leaf.entry}', f'missing lexical entry for "{" ".join(leaf.forms)}"')
         usable.append(cands)
 
