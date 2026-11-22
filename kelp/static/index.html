@@ -121,7 +121,7 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
 #help.on { display: flex; }
 #help div { background: var(--panel); border-radius: 10px; padding: 20px 26px; max-width: 560px; }
 #help table { border-collapse: collapse; } #help td { padding: 3px 12px 3px 0; vertical-align: top; }
-#lookup { position: fixed; top: 0; right: 0; bottom: 0; width: min(620px, 92vw); background: var(--panel);
+#lookup { position: fixed; top: 0; right: 0; bottom: 0; width: min(860px, 94vw); background: var(--panel);
   border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0, 0, 0, .18); display: none; flex-direction: column; z-index: 5; }
 #lookup.on { display: flex; }
 #lookup header { padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; gap: 8px; align-items: center; }
@@ -131,6 +131,12 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
 #lookupbody pre { font: 12.5px/1.5 var(--mono); background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
   padding: 10px; overflow-x: auto; white-space: pre; margin: 4px 0 16px; }
 #lookupbody .src { color: var(--muted); font-size: 12px; }
+table.cmp { border-collapse: collapse; margin: 8px 0 18px; font-size: 13px; }
+table.cmp th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; padding: 4px 10px 4px 6px; border-bottom: 1px solid var(--line); }
+table.cmp td { padding: 5px 10px 5px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.cmp td:nth-child(-n+3) { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+table.cmp td.ex { color: var(--muted); font-style: italic; }
+table.cmp tr.asked { background: var(--focus-soft); }
 .lk { color: var(--accent); cursor: pointer; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 2px; }
 #error { position: fixed; bottom: 44px; left: 50%; transform: translateX(-50%); background: var(--no-soft);
   color: var(--no); padding: 8px 14px; border-radius: 6px; display: none; }
@@ -294,6 +300,9 @@ function link(name, text) {
   a.onclick = ev => { ev.stopPropagation(); lookUp(name); };
   return a;
 }
+function plain(doc) {     // the ERG's shorthand in its type descriptions, spelled out where it is unambiguous
+  return doc.replace(/^Cmps\b/, 'Complements:').replace(/\(opt\)/g, ' (optional)').replace(/,(?=\S)/g, ', ');
+}
 async function lookUp(name, back) {
   if (!name) return;
   $('lookup').classList.add('on');
@@ -303,13 +312,17 @@ async function lookUp(name, back) {
   try { r = await (await fetch('/api/lookup?name=' + encodeURIComponent(name))).json(); } catch (e) { r = {error: 'no answer'}; }
   if (!back) trail.push(name);
   if (r.error) { body.append(el('div', {class: 'empty'}, r.error)); return; }
-  if (r.predicate) {
-    body.append(el('div', {}, 'Lexical entries with the predicate ', el('b', {}, r.predicate), ':'));
-    const ul = el('ul', {});
-    for (const e of r.entries)
-      ul.append(el('li', {style: 'margin-bottom:6px'}, link(e.name), e.type ? ' — ' : '', e.type ? link(e.type) : '', e.doc ? ': ' + e.doc : '',
-        e.ex && e.ex.length ? el('span', {class: 'doc'}, el('span', {class: 'ex'}, '  e.g. ' + e.ex[0])) : ''));
-    body.append(ul);
+  if (r.same_spelling.length) {
+    const asked = r.same_spelling.filter(e => e.asked).map(e => e.name);
+    body.append(el('div', {}, r.predicate ? ['The predicate ', el('b', {}, r.predicate), ' comes from the highlighted ' +
+        (asked.length > 1 ? 'entries' : 'entry') + '. '] : '',
+      'All lexical entries of the grammar with the same spelling, for comparison:'));
+    const table = el('table', {class: 'cmp'}, el('tr', {}, ...['Lexical entry', 'Predicate', 'Lexical type', 'What the type says', 'The type\u2019s example (any word)'].map(h => el('th', {}, h))));
+    for (const e of r.same_spelling)
+      table.append(el('tr', {class: e.asked ? 'asked' : ''}, el('td', {}, link(e.name)),
+        el('td', {}, e.predicate ? link(e.predicate) : ''), el('td', {}, e.type ? link(e.type) : ''),
+        el('td', {}, plain(e.doc)), el('td', {class: 'ex'}, e.ex.length ? e.ex[0] : '')));
+    body.append(table);
   }
   for (const d of r.definitions) {
     body.append(el('div', {class: 'src'}, d.file + ', line ' + d.line));

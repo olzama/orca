@@ -48,6 +48,7 @@ def load_docs(grammar_dir):
 
 _START = re.compile(r'^([^\s;:"]+)[ \t]*:[=+<]', re.M)
 _PRED = re.compile(r'PRED\s+"?(_[^\s",\]]+?)(?:_rel)?"?[\s,\]]')
+_ORTH = re.compile(r'ORTH\s*<([^>]*)>')
 _WORD = re.compile(r'[A-Za-z_*][\w\-+*./]*')
 
 
@@ -58,6 +59,8 @@ class Lookup:
         self.defs = {}              # name -> [(file, line number, text)]
         self.entries = {}           # predicate -> [names of the lexical entries that have it]
         self.info = load_docs(grammar_dir)
+        self.spelled = {}           # spelling -> [names of the lexical entries spelled so]
+        self.of = {}                # lexical entry -> (spelling, predicate)
         for path in sorted(glob.glob(os.path.join(grammar_dir, '*.tdl'))):
             with open(path, encoding='utf-8', errors='replace') as f:
                 text = f.read()
@@ -70,10 +73,16 @@ class Lookup:
                 at = m.start()
                 name = m.group(1).lower()
                 self.defs.setdefault(name, []).append((os.path.basename(path), line, body))
-                for p in _PRED.finditer(body):
-                    names = self.entries.setdefault(p.group(1).lower(), [])
+                preds = [p.group(1).lower() for p in _PRED.finditer(body)]
+                for pred in preds:
+                    names = self.entries.setdefault(pred, [])
                     if name not in names:
                         names.append(name)
+                o = _ORTH.search(body)
+                if o and name not in self.of:
+                    spelling = ' '.join(re.findall(r'"([^"]*)"', o.group(1))).lower()
+                    self.of[name] = (spelling, preds[0] if preds else '')
+                    self.spelled.setdefault(spelling, []).append(name)
 
     def get(self, query):
         """What the grammar has under a name: its definitions (each with the
@@ -83,8 +92,14 @@ class Lookup:
         if q.endswith('_rel'):
             q = q[:-4]
         pred = q if q in self.entries else '_' + q if '_' + q in self.entries else None
-        out = {'query': query, 'definitions': [], 'predicate': pred,
-               'entries': [dict(self.info.get(e, {}), name=e) for e in self.entries.get(pred, [])] if pred else []}
+        mine = self.entries.get(pred, []) if pred else [q] if q in self.of else []
+        spellings = sorted({self.of[e][0] for e in mine if e in self.of})
+        # every lexical entry with the same spelling: what the entries asked about must be told apart from
+        same = [{'name': e, 'spelling': sp, 'predicate': self.of[e][1], 'asked': e in mine,
+                 'type': self.info.get(e, {}).get('type', ''), 'doc': self.info.get(e, {}).get('doc', ''),
+                 'ex': self.info.get(e, {}).get('ex', [])}
+                for sp in spellings for e in self.spelled[sp]]
+        out = {'query': query, 'definitions': [], 'predicate': pred, 'same_spelling': same}
         for fname, line, text in self.defs.get(q, []):
             shown = text if len(text) <= 6000 else text[:6000] + '\n...'
             code = re.sub(r'""".*?"""|"[^"\n]*"|;[^\n]*', ' ', shown, flags=re.S)    # no documentation, strings, comments
