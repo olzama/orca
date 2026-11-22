@@ -4,6 +4,7 @@ Replay takes one derivation (rule names over lexical entries, with the token
 feature structures of the leaves) and applies the grammar to it bottom-up:
 one copy of the rule per node, one unification per daughter. No search.
 """
+import os
 import re
 from typing import Dict, Optional
 
@@ -27,8 +28,26 @@ class ReplayFailure(Exception):
         self.where, self.cause = where, cause
 
 
+def find_vpm(top_file):
+    """The grammar's variable property mapping: the file its ACE config names
+    (variable-property-mapping), else semi.vpm beside the top file, else None."""
+    gdir = os.path.dirname(os.path.abspath(top_file))
+    cfg = os.path.join(gdir, 'ace', 'config.tdl')
+    if os.path.exists(cfg):
+        with open(cfg, encoding='utf-8', errors='replace') as f:
+            m = re.search(r'^\s*variable-property-mapping\s*:=\s*"([^"]+)"', f.read(), re.M)
+        if m:
+            path = os.path.normpath(os.path.join(gdir, 'ace', m.group(1)))
+            if os.path.exists(path):
+                return path
+    path = os.path.join(gdir, 'semi.vpm')
+    return path if os.path.exists(path) else None
+
+
 class Grammar:
     def __init__(self, top_file):
+        self.top_file = os.path.abspath(top_file)
+        self.vpm_path = find_vpm(top_file)          # grammar-internal properties -> MRS properties
         self.h = Hierarchy()
         self.instances: Dict[str, object] = {}       # name -> tdl definition
         self.status: Dict[str, Optional[str]] = {}

@@ -52,6 +52,8 @@ def extract(grammar, fs):
         out['rels'].append((pred, {r: var(ep.arcs[r]) for r in roles}))
     for q in items(u.get(cont, 'HCONS')):
         out['hcons'].append((var(q.arcs['HARG']), q.type, var(q.arcs['LARG'])))
+    if getattr(grammar, 'vpm_path', None):
+        out['vpm'] = grammar.vpm_path
     return out
 
 

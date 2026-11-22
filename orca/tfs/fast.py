@@ -36,6 +36,7 @@ class FastGrammar:
     def __init__(self, grammar):
         self.g = grammar
         self.h = grammar.h
+        self.vpm_path = getattr(grammar, 'vpm_path', None)
         self.u = _Unifier()
         self.type_ids, self.type_names = {}, []
         self.feat_ids, self.feat_names = {}, []
@@ -342,6 +343,8 @@ def extract(fg, fs):
     cont = fg.get(fs, 'SYNSEM', 'LOCAL', 'CONT')
     out = {'top': var(fg.get(cont, 'HOOK', 'LTOP')), 'index': var(fg.get(cont, 'HOOK', 'INDEX')),
            'rels': [], 'hcons': []}
+    if getattr(fg, 'vpm_path', None):
+        out['vpm'] = fg.vpm_path                  # which property mapping applies (compare_mrs.to_pydelphin)
     for ep in items(fg.get(cont, 'RELS')):
         arcs = dict(fg.arcs(ep))
         pred = fg.type(arcs['PRED']) if 'PRED' in arcs else fg.type(ep)
@@ -372,67 +375,86 @@ def extract(fg, fs):
     # variable properties (number, person, tense, ...) as grammar feature paths;
     # the grammar's VPM maps them to MRS property names (see compare_mrs.to_pydelphin)
     out['props'] = {}
+    sections = _vpm_sections(getattr(fg, 'vpm_path', None))
+    paths = {q for feats, _ in sections for q in feats}
     for n, name in list(names.items()):
         if name[0] in 'hu':
             continue
-        props = {}
+        raw = {}
 
         def walk(node, path):
             node = fg._check(C.expand(node))
             for f, v in fg.arcs(node):
                 p = path + (f,)
-                if '.'.join(p) in PROP_PATHS:
-                    val = _vpm_value(h, '.'.join(p), fg.type(C.deref(v)))
-                    if val is not None:
-                        props['.'.join(p)] = val
-                elif any(q.startswith('.'.join(p) + '.') for q in PROP_PATHS):
+                key = '.'.join(p)
+                if key in paths:
+                    raw[key] = fg.type(C.deref(v))
+                elif any(q.startswith(key + '.') for q in paths):
                     walk(v, p)
         try:
             walk(n, ())
         except Exception:       # an unreadable index keeps no properties
             pass
+        props = {}
+        for feats, rows in sections:
+            props.update(_vpm_match(h, feats, rows, raw))
         if props:
             out['props'][name] = props
     return out
 
 
-# feature paths under a variable that the ERG's semi.vpm maps to MRS properties
-PROP_PATHS = {'PNG.PN', 'PNG.GEN', 'IND', 'PT', 'SF', 'E.TENSE', 'E.MOOD',
-              'E.ASPECT.PROGR', 'E.ASPECT.PRF', 'SEMPOS'}
-_VPM_LHS = {}
+# The grammar's variable property mapping (semi.vpm), read for extraction: which
+# feature paths under a variable it maps, and the left-hand sides of its forward
+# rules (<> and >>) in file order. The ERG's file is the default.
+_VPM_SECTIONS = {}
 
 
-def _vpm_lhs():
-    """For each grammar feature path in semi.vpm, the left-hand values of its
-    forward rules (<> and >>), in file order."""
-    if not _VPM_LHS:
-        import os
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data/erg/2025/semi.vpm')
-        feat = None
-        for line in open(path):
+def _vpm_sections(path=None):
+    """[(feature paths, [left-hand value tuples])] for each section of the VPM."""
+    import os
+    path = os.path.normpath(path or os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data/erg/2025/semi.vpm'))
+    if path not in _VPM_SECTIONS:
+        sections = []
+        for line in open(path, encoding='utf-8', errors='replace'):
             line = line.split(';')[0].strip()
             if not line:
                 continue
             if ' : ' in line:
-                feat = line.split(' : ')[0].strip()
-                _VPM_LHS.setdefault(feat, [])
-            elif feat and ('<>' in line or '>>' in line):
+                feats = tuple(line.split(' : ')[0].split())
+                if all(f[0] not in '[' for f in feats):
+                    sections.append((feats, []))
+            elif sections and ('<>' in line or '>>' in line):
                 op = '<>' if '<>' in line else '>>'
-                _VPM_LHS[feat].append(line.split(op)[0].strip())
-    return _VPM_LHS
+                lhs = tuple(line.split(op)[0].split())
+                if len(lhs) == len(sections[-1][0]):
+                    sections[-1][1].append(lhs)
+        _VPM_SECTIONS[path] = sections
+    return _VPM_SECTIONS[path]
 
 
-def _vpm_value(h, feat, val):
-    """The grammar value as the VPM sees it, matching by subsumption as ACE does:
-    the first rule's left-hand type that subsumes the value, the value itself for a
-    wildcard rule, or None when no forward rule applies."""
-    for lhs in _vpm_lhs().get(feat, []):
-        if lhs == val:
-            return val
-        if lhs == '*':
-            return val
-        if lhs[0] in '![':
-            continue
-        if lhs in h.code and val in h.code and h.subsumes(lhs, val):
-            return lhs
-    return None
+def _vpm_match(h, feats, rows, raw):
+    """The grammar values of one VPM section as the VPM sees them, matching rows by
+    subsumption as ACE does: the first row whose every left-hand value equals,
+    subsumes, or is a wildcard for the variable's value. Returns {path: value}
+    (the row's value, or the variable's own for a wildcard); {} if no row applies."""
+    vals = [raw.get(f) for f in feats]
+    if all(v is None for v in vals):
+        return {}
+    for row in rows:
+        out, ok = {}, True
+        for f, lhs, val in zip(feats, row, vals):
+            if lhs == '!':
+                ok = val is None
+            elif val is None or lhs[0] == '[':
+                ok = False
+            elif lhs == val or lhs == '*':
+                out[f] = val
+            elif lhs in h.code and val in h.code and h.subsumes(lhs, val):
+                out[f] = lhs
+            else:
+                ok = False
+            if not ok:
+                break
+        if ok:
+            return out
+    return {}

@@ -36,9 +36,11 @@ from orca.tfs.mrs import extract  # noqa: E402
 from delphin.lnk import Lnk  # noqa: E402
 
 
-def to_pydelphin(m):
+def to_pydelphin(m, vpm_path=None):
     """Our extracted MRS as a PyDelphin MRS, with the top handle that the
-    root contributes (a handle related to the local top by qeq)."""
+    root contributes (a handle related to the local top by qeq). Variable
+    properties go through the parsed grammar's VPM (`vpm_path`, else the one
+    the extraction names, else the ERG's)."""
     rels = []
     lnks = m.get('lnk') or []
     for i, (pred, roles) in enumerate(m['rels']):
@@ -48,21 +50,24 @@ def to_pydelphin(m):
         rels.append(dmrs_mrs.EP(predicate.normalize(pred), roles['LBL'], args=args, lnk=lnk))
     hcons = [dmrs_mrs.HCons('h0', 'qeq', m['top'])]
     hcons += [dmrs_mrs.HCons(a, 'qeq', b) for a, rel, b in m['hcons']]
-    variables = {v: _vpm().apply(v, p)[1] for v, p in m.get('props', {}).items()}
+    mapping = _vpm(vpm_path or m.get('vpm'))
+    variables = {v: mapping.apply(v, p)[1] for v, p in m.get('props', {}).items()}
     icons = [dmrs_mrs.ICons(a, rel, b) for a, rel, b in m.get('icons', [])]
     return dmrs_mrs.MRS('h0', m['index'], rels, hcons, icons=icons, variables=variables)
 
 
-_VPM = []
+_VPM = {}
+ERG_VPM = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data/erg/2025/semi.vpm')
 
 
-def _vpm():
-    """The ERG's variable property mapping (grammar feature paths to MRS properties)."""
-    if not _VPM:
+def _vpm(path=None):
+    """A grammar's variable property mapping (grammar feature paths to MRS
+    properties), loaded once per file; the ERG's by default."""
+    path = os.path.normpath(path or ERG_VPM)
+    if path not in _VPM:
         from delphin import vpm
-        _VPM.append(vpm.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..',
-                                          'data/erg/2025/semi.vpm')))
-    return _VPM[0]
+        _VPM[path] = vpm.load(path)
+    return _VPM[path]
 
 
 def normalized(m, icons=False):
