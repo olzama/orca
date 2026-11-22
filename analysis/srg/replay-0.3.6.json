@@ -1,0 +1,102 @@
+{
+ "srg-agreement": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 16,
+  "sentences": 16,
+  "train": 16
+ },
+ "srg-new_mrs": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 102,
+  "sentences": 102,
+  "train": 102
+ },
+ "srg-tbdb01": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 65,
+  "sentences": 65,
+  "train": 65
+ },
+ "srg-tbdb02": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 168,
+  "sentences": 168,
+  "train": 168
+ },
+ "srg-tbdb03": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 166,
+  "sentences": 166,
+  "train": 166
+ },
+ "srg-tbdb04": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 199,
+  "sentences": 199,
+  "train": 199
+ },
+ "srg-tbdb05": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 207,
+  "sentences": 207,
+  "train": 207
+ },
+ "srg-tbdb06": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 190,
+  "sentences": 190,
+  "train": 190
+ },
+ "srg-tbdb07": {
+  "failed": {
+   "ReplayFailure": 1
+  },
+  "held out": 0,
+  "replayed": 211,
+  "sentences": 212,
+  "train": 211
+ },
+ "srg-tbdb08": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 231,
+  "sentences": 231,
+  "train": 231
+ },
+ "srg-tbdb09": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 257,
+  "sentences": 257,
+  "train": 257
+ },
+ "srg-tbdb10": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 273,
+  "sentences": 273,
+  "train": 273
+ },
+ "srg-tbdb11": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 276,
+  "sentences": 276,
+  "train": 276
+ },
+ "srg-tbdb12": {
+  "failed": {},
+  "held out": 0,
+  "replayed": 305,
+  "sentences": 305,
+  "train": 305
+ }
+}

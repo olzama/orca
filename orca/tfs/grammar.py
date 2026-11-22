@@ -19,6 +19,7 @@ ARGS = 'ARGS'
 DELETED_DAUGHTERS = ('ARGS', 'HD-DTR', 'NH-DTR', 'LCONJ-DTR', 'RCONJ-DTR', 'DTR',
                      'DTR1', 'DTR2', 'DTRA', 'DTRB')
 TOKENS_LIST, TOKENS_LAST = ('TOKENS', '+LIST'), ('TOKENS', '+LAST')
+UNESCAPE = re.compile(r'\\(.)')
 DAG_TOKEN = re.compile(r'\[|\]|"(?:\\.|[^"\\])*"|#\d+=?|[^\s\[\]"]+')
 
 
@@ -44,6 +45,9 @@ def find_vpm(top_file):
     return path if os.path.exists(path) else None
 
 
+ENTRY_SUFFIX = '#entry'     # key of a lexical entry whose name a rule also has
+
+
 class Grammar:
     def __init__(self, top_file):
         self.top_file = os.path.abspath(top_file)
@@ -59,6 +63,15 @@ class Grammar:
                 for event, obj, _ in tdl.iterparse(path, encoding='utf-8'):
                     if event in ('TypeDefinition', 'LexicalRuleDefinition'):
                         name = obj.identifier.lower()
+                        # lexical entries and rules are separate namespaces (ACE keeps them apart);
+                        # the SRG has a generic entry and a tag rule both called ao0fs00
+                        is_entry = status in ('lex-entry', 'generic-lex-entry')
+                        if name in self.instances and (self.status[name] in ('lex-entry', 'generic-lex-entry')) != is_entry:
+                            if is_entry:
+                                name = name + ENTRY_SUFFIX
+                            else:                    # a rule arrives after an entry of the same name: move the entry
+                                self.instances[name + ENTRY_SUFFIX] = self.instances[name]
+                                self.status[name + ENTRY_SUFFIX] = self.status[name]
                         self.instances[name] = obj
                         self.status[name] = status
         self.h.finalize()
@@ -296,6 +309,14 @@ class Grammar:
 
     # -- instances -------------------------------------------------------
 
+    def entry_name(self, name):
+        """The key of lexical entry NAME (see ENTRY_SUFFIX)."""
+        if name.endswith(ENTRY_SUFFIX):
+            return name
+        if self.status.get(name) in ('lex-entry', 'generic-lex-entry'):
+            return name
+        return name + ENTRY_SUFFIX if name + ENTRY_SUFFIX in self.instances else name
+
     def instance(self, name) -> Node:
         """The feature structure of a rule, lexical rule or lexical entry."""
         fs = self._fs.get(name)
@@ -322,7 +343,7 @@ class Grammar:
             return self.u.copy(cached)
         if len(self._tokens) > 20000:
             self._tokens.clear()
-        toks = DAG_TOKEN.findall(text.replace('\\"', '"'))
+        toks = DAG_TOKEN.findall(UNESCAPE.sub(r'\1', text))   # one level of escaping: \" is a quote, \\ a backslash
         pos = 0
         tags = {}
 
@@ -421,7 +442,7 @@ class Grammar:
             if isinstance(tree, Leaf):
                 name = tree.entry.lower()
                 if name.startswith('entry:'):
-                    fs = u.copy(self.instance(name[6:]))
+                    fs = u.copy(self.instance(self.entry_name(name[6:])))
                 else:
                     if name not in self.h.code or not name.endswith('_le'):
                         raise KeyError(name)

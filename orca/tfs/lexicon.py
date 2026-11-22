@@ -13,6 +13,13 @@ from typing import Dict, List
 from delphin import tdl
 
 
+def _unquote(s):
+    """A spelling as written in TDL: drop enclosing quotes, undo backslash escapes (\\" is a quotation mark)."""
+    if len(s) >= 2 and s[0] == s[-1] == '"':
+        s = s[1:-1]
+    return re.sub(r'\\(.)', r'\1', s)
+
+
 def _orth(definition) -> List[str]:
     for term in definition.conjunction.terms:
         if isinstance(term, tdl.AVM):
@@ -21,7 +28,7 @@ def _orth(definition) -> List[str]:
                     terms = value.terms if isinstance(value, tdl.Conjunction) else [value]
                     for t in terms:
                         if isinstance(t, tdl.ConsList):
-                            return [str(v).strip('"').lower() for v in t.values()]
+                            return [_unquote(str(v)).lower() for v in t.values()]
     return []
 
 
@@ -46,6 +53,7 @@ class Lexicon:
         self.lexrules = {n.lower() for n, s in grammar.status.items() if s == 'lex-rule'}
         self.undo: Dict[str, list] = {}          # rule -> [(regex on the word, stem ending)]
         letter_sets, wild_cards = {}, {}
+        identity = {}
         affix_files = [n for n in ('inflr.tdl', 'lexrinst.tdl', 'lexrinst-tok.tdl') if os.path.exists(os.path.join(grammar_dir, n))]
         if not affix_files:                      # other grammars: any file that defines spelling changes
             for n in sorted(os.listdir(grammar_dir)):
@@ -61,9 +69,17 @@ class Lexicon:
                 elif event == 'WildCard':
                     wild_cards[obj.var] = obj.characters
                 elif event == 'LexicalRuleDefinition' and obj.patterns:
-                    self.undo[obj.identifier.lower()] = [
+                    target = self.undo
+                    if all(m == r and '!' not in m and '?' not in m for m, r in obj.patterns):
+                        target = identity   # spells nothing: the ERG's irregular-only rules (xxirreg), SRG's tag rules (da0ms0)
+                    target[obj.identifier.lower()] = [
                         self._invert(m, r, letter_sets, obj.affix_type == 'prefix', wild_cards)
                         for m, r in obj.patterns]
+        # grammars whose spelling rules rewrite tags rather than words (the SRG with FreeLing input):
+        # most patterns are identities on letter strings that never occur at the end of a lemma
+        self.tag_rules = len(identity) > len(self.undo)
+        if not self.tag_rules:
+            self.undo.update(identity)      # the ERG: irregular forms (irregs.tab) are found through these rules
         self.irregular: Dict[tuple, List[str]] = collections.defaultdict(list)
         irregs = os.path.join(grammar_dir, 'irregs.tab')
         if os.path.exists(irregs):
@@ -136,7 +152,10 @@ class Lexicon:
                     for i, w in enumerate(sp):
                         for stem in self.stems(w, rule):
                             new.add(sp[:i] + (stem,) + sp[i + 1:])
-                spellings = new
+                if new or not self.tag_rules:
+                    spellings = new
+                # else: SRG-style rules match the POS tag (%suffix (vmm03p vmm03p0)), not the word, which is
+                # already the lemma: a pattern that cannot apply leaves the spelling as it is
         found = []
         for sp in spellings:
             found += self.by_type_orth.get((lextype, ' '.join(sp)), [])

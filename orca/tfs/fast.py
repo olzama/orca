@@ -139,8 +139,8 @@ class FastGrammar:
         return C.copy(master)
 
     def _build_token(self, text):
-        from .grammar import DAG_TOKEN
-        toks = DAG_TOKEN.findall(text.replace('\\"', '"'))
+        from .grammar import DAG_TOKEN, UNESCAPE
+        toks = DAG_TOKEN.findall(UNESCAPE.sub(r'\1', text))   # one level of escaping: \" is a quote, \\ a backslash
         pos, tags = 0, {}
 
         def value():                      # parse into [type, [(feat, child)], node id]
@@ -211,7 +211,7 @@ class FastGrammar:
             if isinstance(tree, Leaf):
                 name = tree.entry.lower()
                 if name.startswith('entry:'):
-                    fs = self.instance(name[6:])
+                    fs = self.instance(self.g.entry_name(name[6:]))
                 else:
                     if name not in self.h.code or not name.endswith('_le'):
                         raise KeyError(name)
@@ -294,7 +294,7 @@ class FastGrammar:
             mark = C.mark()
             try:
                 if name.startswith('entry:'):
-                    fs = self.instance(name[6:])
+                    fs = self.instance(self.g.entry_name(name[6:]))
                 else:
                     if name not in self.h.code or not name.endswith('_le'):
                         raise KeyError(name)
@@ -358,7 +358,13 @@ def extract(fg, fs):
         pred = pred[:-4] if pred.endswith('_rel') else pred
         roles = [r for r in ROLES_FIRST if r in arcs] + sorted(
             r for r in arcs if r not in ROLES_FIRST and r not in SKIP)
-        out['rels'].append((pred, {r: var(arcs[r]) for r in roles}))
+        vals = {}
+        for r in roles:
+            if r == 'CARG' and not fg.type(arcs[r]).startswith('"'):
+                vals[r] = fg.type(arcs[r])        # an unfilled constant: its type, as ACE prints it (CARG: string)
+            else:
+                vals[r] = var(arcs[r])
+        out['rels'].append((pred, vals))
         span = []                                  # character span, for display (comparisons ignore it)
         for f in ('CFROM', 'CTO'):
             try:

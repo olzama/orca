@@ -30,11 +30,22 @@ CONT = '<cont>'   # label of the second and later tokens of a multi-token leaf
 LEXICON_FILES = ('lexicon.tdl', 'gle.tdl', 'gle-gen.tdl', 'ple.tdl', 'lexicon-rbst.tdl')
 
 
+def lexicon_files(top_file):
+    """The files a grammar loads with status lex-entry or generic-lex-entry (any grammar)."""
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+    from orca.tfs.hierarchy import load_plan
+    return [path for path, section, status in load_plan(top_file)
+            if section == 'instance' and status in ('lex-entry', 'generic-lex-entry')]
+
+
 def entry_types(erg_dir):
+    """Lexical entry -> its type. Given a grammar directory, the ERG's lexicon files;
+    given a grammar's top .tdl file, the files it loads as lexical entries."""
     mapping = {}
     pat = re.compile(r'^([^\s;:]+)\s*:=\s*([^\s&.]+)', re.M)
-    for name in LEXICON_FILES:
-        path = os.path.join(erg_dir, name)
+    files = lexicon_files(erg_dir) if erg_dir.endswith('.tdl') else [os.path.join(erg_dir, n) for n in LEXICON_FILES]
+    for path in files:
         if os.path.exists(path):
             with open(path, encoding='utf-8', errors='replace') as f:
                 for m in pat.finditer(f.read()):

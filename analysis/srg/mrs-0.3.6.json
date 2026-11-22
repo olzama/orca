@@ -1,0 +1,16 @@
+{
+ "counts": {
+  "sentences": 2666,
+  "same without properties": 2622,
+  "same with properties": 2622,
+  "same with properties and ICONS": 2622,
+  "treebank MRS unreadable": 43
+ },
+ "examples": [
+  {
+   "id": "srg-tbdb07/14918",
+   "same": false,
+   "with properties": false
+  }
+ ]
+}
