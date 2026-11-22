@@ -62,6 +62,49 @@ def tiles():
             + '  </section>\n')
 
 
+def summary():
+    """One table across the evaluations, then the main findings in words (numbers stay in the table)."""
+    oc = ORACLE['counts']
+    vd = json.load(open(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json'))['verdicts']
+    props = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-properties.json'))
+    ace = T['ace']['all']
+    grp = lambda text: f'<tr><td colspan="7"><i>{text}</i></td></tr>'
+    row = lambda name, n, *cells: (f'<tr><td>{name}</td>' + td(f'{n:,}')
+                                   + ''.join(td(c, i in (0, 2)) for i, c in enumerate(cells)) + '</tr>')
+    rows = [grp('Redwoods dev (e-mails, Wikipedia), compared with the annotators\' gold'),
+            row('&nbsp;&nbsp;Orca, from raw text', N, pct(oc['same MRS'], N), pct(props['same with properties'], N),
+                pct(oc['same MRS'] + vd['orca'] + vd['both'], N), pct(oc['with MRS'], N), f"{ORACLE['sentences per second']:.1f}"),
+            row('&nbsp;&nbsp;ACE, first-ranked parse', N, pct(ace['same MRS'], N), '', '', pct(ace['with MRS'], N),
+                f'{N / (ACE_PASS + ACE_RETRY):.1f}')]
+    cnt, verdicts, _, labels = gen_counts()
+    if verdicts:
+        g = cnt['all']
+        lo = g['agree'] + g['reference'] + g['both']
+        hi = lo + g['none'] + g['scope']
+        rows += [grp(f'Generated sentences on hard phenomena ({" and ".join(labels).lower().replace("round 1 and round 2", "rounds 1 and 2")}), '
+                     'compared with ACE\'s first-ranked parse, which nobody checked'),
+                 row('&nbsp;&nbsp;Orca, from raw text', g['n'], pct(g['agree'], g['n']), '', pct(g['agree'] + g['orca'] + g['both'], g['n']),
+                     pct(g['mrs'], g['n']), ''),
+                 row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], '', '',
+                     f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), '')]
+    t = table([('Text and parser', ''), ('Sentences', 'n'), ('Exact meaning', 'n hl'), ('Exact, tense, number and other properties too', 'n'),
+               ('Right, counting the judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
+    c = cap('Orca: BERT-base tagger trained on all data with forms as typed, from raw text. '
+            '<b>Exact meaning:</b> the whole MRS matches the reference (gold on dev; ACE\'s parse on generated text, so ACE has no entry there). '
+            '<b>Right, counting the judge:</b> exact, or Claude Opus, shown the two readings where they differ, says Orca\'s reading is right or both are; '
+            'on dev this overstates a little, since the judge does not know the treebank\'s conventions, and ACE\'s own differences from gold were not judged. '
+            'For ACE on generated text: exact or judged right, with the sentences the judge never saw (Orca had no analysis there) counted as wrong for the lower figure and as right for the upper. '
+            'Generated sentences were kept only if ACE parsed them, so ACE analyzes all of them.')
+    finds = ['<b>Exact match understates Orca.</b> Where Orca and gold differ on dev, the judge often accepts Orca\'s reading; on generated text it prefers Orca\'s reading to ACE\'s first parse far more often than the reverse (<i>Generated sentences</i>).',
+             '<b>The losses are in proposing.</b> When the right meaning is among the analyses found, the ranking model nearly always picks it; what is missing is a right analysis to pick, more so in long sentences (<i>Where the wrong sentences go wrong</i>).',
+             '<b>Data and encoder size both help.</b> A large encoder on the treebank alone comes close to BERT-base on seven times the data; the large encoders trained on all data are being evaluated (<i>Training data</i>, <i>Encoders</i>).',
+             '<b>Faster than ACE, but more sentences get no analysis</b>, especially long ones; ACE remains the better fallback (<i>Orca and ACE</i>, <i>LLM repair</i>).',
+             '<b>Tense, number and other properties</b> are now in Orca\'s output; requiring them to match changes the headline little (<i>Tense, number and other properties</i>).',
+             '<b>LLMs help offline, not online.</b> Claude repairs about half of what the tagger can\'t and judges disagreements usefully, but it is slow and picks among readings worse than the grammar\'s ranking model (<i>LLM repair</i>, <i>LLM choosing among readings</i>).']
+    return ('  <section class="stack">\n    <h2>Where Orca stands</h2>\n' + t + c
+            + '    <ul class="finds">\n' + ''.join(f'      <li>{x}</li>\n' for x in finds) + '    </ul>\n  </section>\n')
+
+
 def box(x, y, w, h, title, sub, cls='', ms_=None):
     out = f'<rect class="bx {cls}" x="{x}" y="{y}" width="{w}" height="{h}" rx="8"/>'
     out += f'<text class="bt" x="{x + w / 2}" y="{y + 24}" text-anchor="middle">{title}</text>'
@@ -377,7 +420,9 @@ def exp_encoders():
 GEN_ROUNDS = (('pilot1', 'Round 1'), ('round2', 'Round 2'))
 
 
-def exp_generated():
+def gen_counts():
+    """Per round, per phenomenon and overall: sentences, analyses, and how each sentence came out
+    (agree with ACE; judge says orca / reference / both / neither; none = Orca no analysis; scope = differ only in scope)."""
     import collections
     cnt = collections.defaultdict(collections.Counter)
     verdicts, info = {}, {}
@@ -403,9 +448,13 @@ def exp_generated():
                 cnt[k]['n'] += 1
                 cnt[k]['mrs'] += bool(int(r['accepted'] or 0))
                 cnt[k][x] += 1
+    return cnt, verdicts, info, [l for _, l in GEN_ROUNDS if l in verdicts]
+
+
+def exp_generated():
+    cnt, verdicts, info, labels = gen_counts()
     if not verdicts:
         return ''
-    labels = [l for _, l in GEN_ROUNDS if l in verdicts]
     right = lambda d: d['agree'] + d['orca'] + d['both']
     order = sorted((k for k in cnt if k not in labels and k != 'all'), key=lambda k: cnt[k]['agree'] / cnt[k]['n'])
     row = lambda name, d: (f'<tr><td>{name}</td>' + td(f"{d['n']:,}") + td(pct(d['agree'], d['n']))
@@ -469,6 +518,7 @@ svg.diag .lt { fill: var(--fg); }
 svg.diag .ar { stroke: var(--muted); stroke-width: 1.4; fill: none; }
 svg.diag .ah { fill: var(--muted); }
 svg.diag .dot { fill: var(--lex); }
+ul.finds { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
 .specs { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; font-size: 0.9rem; }
 .specs > span:nth-child(odd) { font-family: var(--body); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
 '''
@@ -483,11 +533,13 @@ def rebuild(s):
                  'feature structure and the MRS.</p>') + s[j:]
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
-    body = ('\n' + tiles() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
+    body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
             + exp_training() + exp_encoders() + exp_generated() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
+    if 'ul.finds' not in s:
+        s = s.replace('</style>', 'ul.finds { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }\n</style>', 1)
     return s
 
 
