@@ -349,9 +349,12 @@ function drawMrs(mv, text, tokens) {
     const props = mv.vars[v] || {};
     const ps = Object.entries(props).map(([k, x]) => `${k.toLowerCase()} ${x}`).join(', ');
     const uses = eps.filter(ep => ep.label === v || ep.args.some(([, a]) => a === v));
-    const owner = eps.find(ep => ep.args.some(([r, a]) => r === 'ARG0' && a === v));
+    const intro = eps.filter(ep => ep.args.some(([r, a]) => r === 'ARG0' && a === v));
+    const owner = intro.find(ep => !String(ep.pred).endsWith('_q')) || intro[0];
+    const quant = intro.find(ep => String(ep.pred).endsWith('_q') && ep !== owner);
     let txt = `<b>${esc(v)}</b>: ${SORT[sortOf(v)] || 'a variable'}`;
     if (owner) txt += `, introduced by <b>${esc(owner.pred)}</b>`;
+    if (quant) txt += `, bound by <b>${esc(quant.pred)}</b>`;
     if (ps) txt += `. Properties: ${esc(ps)}`;
     if (qeq[v]) txt += `. Scope: ${esc(v)} is qeq-linked to <b>${esc(qeq[v])}</b>`;
     txt += `. Occurs in ${uses.length} predicate${uses.length === 1 ? '' : 's'}.`;
