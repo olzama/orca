@@ -193,20 +193,28 @@ def results():
         cnt[b][k] += 1
         cnt[b][4] += 1
     tot = [sum(cnt[b][i] for b in cnt) for i in range(4)]
-    rows = [f'<tr><td>Treebank forms, from treebank tokens, all</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(TREEBANK_SPLIT)) + '</tr>',
-            '<tr><td>Treebank forms, from raw text, all</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(split(OLD_ORACLE))) + '</tr>',
-            f'<tr><td>Forms as typed, from raw text, all</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(tot)) + '</tr>']
-    rows += [f'<tr><td>Forms as typed, from raw text, {b} words ({cnt[b][4]:,})</td>' + ''.join(td(f'{v:,}', i == 0) for i, v in enumerate(cnt[b][:4])) + '</tr>'
-             for _, _, b in bands]
-    t2 = table([('Sentences', ''), ('Exact meaning', 'n hl'), ('Gold accepted, ranking picks another', 'n'),
-                ('Gold never accepted', 'n'), ('No analysis', 'n')], rows)
+
+    def mrow(name, v):
+        n = sum(v[:4])
+        return f'<tr><td>{name}</td>' + td(f'{n:,}') + ''.join(td(pct(x, n), i == 0) for i, x in enumerate(v[:4])) + '</tr>'
+    rows = [mrow('Treebank tokens, tagger trained on treebank word forms', TREEBANK_SPLIT),
+            mrow('Raw text, tagger trained on treebank word forms', split(OLD_ORACLE)),
+            mrow('<b>Raw text, tagger trained on forms as typed</b>', tot)]
+    say = {'under 10': 'under 10 words', '10 to 19': '10 to 19 words', '20 to 29': '20 to 29 words', '30 and over': '30 words or more'}
+    rows += [mrow(f'&nbsp;&nbsp;… of which sentences of {say[b]}', cnt[b]) for _, _, b in bands]
+    t2 = table([('Input and tagger', ''), ('Sentences', 'n'), ('Right meaning chosen', 'n hl'), ('Right meaning found, another chosen', 'n'),
+                ('Analyses found, none right', 'n'), ('No analysis', 'n')], rows,
+               group=[('', 2), ('Right meaning', 2), ('Wrong or missing', 2)])
     return ('  <section class="stack">\n    <h2>Results</h2>\n' + t1
             + cap(f'All {N:,} development sentences, counts in parentheses. Exact meaning: the whole MRS matches gold. '
                   'F1: share of gold predicates and semantic links found, balanced against extra ones. '
                   'Replaying the annotators\' own derivations gives the gold MRS for every sentence, so every loss comes from the proposed derivations.')
-            + '    <h3>Where the misses are (best tagger)</h3>\n' + t2
-            + cap('Best BERT-base tagger of each kind. Ranking loses few sentences. Most of the gap is in proposing: the gold analysis is never among the accepted '
-                  'derivations, or nothing is accepted. Long sentences lose most.')
+            + '    <h3>Where the wrong sentences go wrong</h3>\n' + t2
+            + cap('Every dev sentence falls in exactly one of the four columns; each row adds up to 100%. '
+                  '<b>Right meaning found, another chosen:</b> the grammar accepted an analysis with the gold meaning, but the ranking model preferred another (a ranking error). '
+                  '<b>Analyses found, none right:</b> the tagger never proposed the gold analysis (a proposing error). '
+                  '<b>No analysis:</b> the grammar rejected everything proposed. '
+                  'BERT-base taggers trained on all data. Ranking loses few sentences; most of the loss is in proposing, and it grows with sentence length.')
             + '  </section>\n')
 
 
