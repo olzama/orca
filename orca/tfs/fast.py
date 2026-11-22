@@ -233,7 +233,13 @@ class FastGrammar:
             name = tree.label.lower()
             if name.startswith('root_'):
                 fs, tokens = self.replay_tree(tree.children[0], tokens, where + '.0', cache)
-                self._check(C.unify(self.instance(name), fs, [self.fid('<root>')]))
+                # a root condition is a check, as in ACE: the MRS is read from the structure without it
+                # (unified in, it would add e.g. SF prop and make an index an event)
+                mark = C.mark()
+                try:
+                    self._check(C.unify(self.instance(name), fs, [self.fid('<root>')]))
+                finally:
+                    C.undo(mark)
                 return fs, tokens
             built = []
             try:
