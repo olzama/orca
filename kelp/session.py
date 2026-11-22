@@ -157,7 +157,7 @@ class Session:
                'total': item.total, 'status': item.status,
                'decisions': [_to_json(c) for c in item.constraints],
                'checked': exact is not None, 'forest': counts.total,
-               'tree': None, 'show': 0, 'root': None, 'dmrs': None}
+               'tree': None, 'show': 0, 'root': None, 'dmrs': None, 'trees': []}
         if exact is None:
             found = item.chains.discriminants(item.constraints, counts)
 
@@ -179,8 +179,9 @@ class Session:
             if exact:
                 show = min(max(show, 0), len(exact) - 1)
                 tree, _, result = exact[show]
-                out.update(show=show, root=result['root'], dmrs=result['dmrs'],
-                           tree=_tree_json(tree, lambda p: seen[p] == len(exact)))
+                out['trees'] = [{'tree': _tree_json(t, lambda p: seen[p] == len(exact)),
+                                 'root': r['root'], 'dmrs': r['dmrs']} for t, _, r in exact]
+                out.update(out['trees'][show], show=show)
         item.remaining = out['remaining']
         out['discriminants'] = [dict(_to_json(c), count=k) for c, k in found.items()]
         return out
