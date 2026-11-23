@@ -22,11 +22,11 @@ SPS = RAW['sentences per second']
 RAW_WITH = RAW['counts']['with MRS']
 ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext.json'))     # best tagger from raw text (forms as typed)
 BEST_KEY, BEST_NAME = 'debertav3large', 'DeBERTa-v3 large tagger, all data'
-BEST_RUN = f'{BEST_KEY}-current'   # current parser defaults: lookup fixes, MRS read without the root condition (as ACE does), lookup retry fix, faster repair
-BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-current.json'))      # best tagger from raw text
+BEST_RUN = f'{BEST_KEY}-minprob001'   # current parser defaults (lookup fixes, MRS read as ACE does, faster repair, repair cutoff 0.001)
+BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-minprob001.json'))
 BEST_PROPS = f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_RUN}-properties.json'
 BEST_ICONS = f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_RUN}-icons.json'
-BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-bothsurf-{BEST_KEY}-normlocate/score.json'   # same predicate-argument analyses as the rootcheck run
+BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-bothsurf-{BEST_RUN}/score.json'
 BERT_NEW = f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext-normlocate.json'
 # Hausa: Orca's MRS against ACE's on the 357 parses of rounds 1-2 (commit 03fc7ea): same without properties, with properties and ICONS
 HAUSA_MRS = (357, 343, 343)
@@ -508,7 +508,7 @@ def exp_generated():
             + [row('&nbsp;&nbsp;' + k.replace('-', ' ').capitalize().replace('Pp ', 'PP '), cnt[k]) for k in order])
     t = table([('Generated sentences', ''), ('Sentences', 'n'), ('Same meaning as ACE\'s parse', 'n'), ('Right according to the LLM judge', 'n hl'),
                ('Any analysis', 'n')], rows)
-    vd = json.load(open(BEST_JUDGE))
+    vd = load(BEST_JUDGE) or load(f'{ORCA}/analysis/adjudicate/dev-bothsurf-{BEST_KEY}-normlocate/score.json')   # the previous run's verdicts while the current one is judged
     def jrow(name, v):
         n = sum(v.values())
         return (f'<tr><td>{name}</td>' + td(f'{n:,}') + td(pct(v['orca'], n), True) + td(pct(v['reference'], n), True)
@@ -832,5 +832,6 @@ def rebuild(s):
 if __name__ == '__main__':
     for p in sys.argv[1:]:
         s = open(p).read()
-        open(p, 'w').write(rebuild(s))
+        out = rebuild(s)                # build first, so a failure leaves the page untouched
+        open(p, 'w').write(out)
         print('rebuilt', p)
