@@ -1,0 +1,107 @@
+{
+ "sentences": 2062,
+ "orca exact": 1506,
+ "full ACE exact": 1767,
+ "restricted ACE alone (one process)": {
+  "exact": 1616,
+  "parsed": 1954,
+  "sentences per second": 4.55
+ },
+ "curves": {
+  "restricted": [
+   {
+    "sent": 156,
+    "exact": 1568,
+    "sentences per second": 5.36
+   },
+   {
+    "sent": 256,
+    "exact": 1585,
+    "sentences per second": 4.18
+   },
+   {
+    "sent": 356,
+    "exact": 1602,
+    "sentences per second": 3.69
+   },
+   {
+    "sent": 456,
+    "exact": 1612,
+    "sentences per second": 3.48
+   },
+   {
+    "sent": 556,
+    "exact": 1620,
+    "sentences per second": 3.34
+   },
+   {
+    "sent": 756,
+    "exact": 1628,
+    "sentences per second": 3.19
+   },
+   {
+    "sent": 956,
+    "exact": 1635,
+    "sentences per second": 3.11
+   },
+   {
+    "sent": 1156,
+    "exact": 1636,
+    "sentences per second": 3.05
+   },
+   {
+    "sent": 2062,
+    "exact": 1616,
+    "sentences per second": 2.84
+   }
+  ],
+  "cascade": [
+   {
+    "sent": 156,
+    "exact": 1586,
+    "sentences per second": 3.33
+   },
+   {
+    "sent": 256,
+    "exact": 1607,
+    "sentences per second": 2.78
+   },
+   {
+    "sent": 356,
+    "exact": 1628,
+    "sentences per second": 2.53
+   },
+   {
+    "sent": 456,
+    "exact": 1645,
+    "sentences per second": 2.41
+   },
+   {
+    "sent": 556,
+    "exact": 1658,
+    "sentences per second": 2.32
+   },
+   {
+    "sent": 756,
+    "exact": 1675,
+    "sentences per second": 2.23
+   },
+   {
+    "sent": 956,
+    "exact": 1689,
+    "sentences per second": 2.17
+   },
+   {
+    "sent": 1156,
+    "exact": 1696,
+    "sentences per second": 2.12
+   },
+   {
+    "sent": 2062,
+    "exact": 1692,
+    "sentences per second": 1.99
+   }
+  ]
+ },
+ "note": "restricted ACE times measured per sentence; full ACE in the cascade: measured on no-analysis sentences, dev mean elsewhere"
+}
