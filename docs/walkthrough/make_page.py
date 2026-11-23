@@ -279,7 +279,11 @@ def results():
     def mrow(name, v):
         n = sum(v[:4])
         return f'<tr><td>{name}</td>' + td(f'{n:,}') + ''.join(td(pct(x, n), i == 0) for i, x in enumerate(v[:4])) + '</tr>'
-    rows = [mrow('BERT-base tagger', split(ORACLE)),
+    bb = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-bert-current-breakdown.json')
+    bv = [0, 0, 0, 0]
+    for x in (bb or {}).get('records', []):
+        bv[3 if not x['accepted'] else 2 if not x['gold among accepted'] else 0 if x['same MRS'] else 1] += 1
+    rows = [mrow('BERT-base tagger', bv) if bb else f'<tr><td>BERT-base tagger</td>' + td(na('re-running with the current parser')) * 5 + '</tr>',
             mrow('<b>DeBERTa-v3 large tagger</b>', tot)]
     say = {'under 10': 'under 10 words', '10 to 19': '10 to 19 words', '20 to 29': '20 to 29 words', '30 and over': '30 words or more'}
     rows += [mrow(f'&nbsp;&nbsp;… of which sentences of {say[b]}', cnt[b]) for _, _, b in bands]
