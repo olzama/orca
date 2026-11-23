@@ -274,7 +274,7 @@ def gaps(a):
 
     def ace_parses(text):
         try:
-            return bool(A.parse(DEFAULTS['dat'], text, executable=DEFAULTS['ace'], cmdargs=opts,
+            return bool(A.parse(DEFAULTS['dat'], text, executable=DEFAULTS['ace'], cmdargs=list(opts),   # pydelphin appends to the list it is given
                                 stderr=open(os.devnull, 'w')).results())
         except Exception:
             return False

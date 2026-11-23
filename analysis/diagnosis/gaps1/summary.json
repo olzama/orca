@@ -22,5 +22,6 @@
  "dev: diagnosed as tagging error (correct, gold exists)": 0,
  "dev: items": 0,
  "dev: tagging diagnoses naming a truly wrong word": 0,
- "cost_usd": 10.84
+ "cost_usd": 10.84,
+ "correction (ACE recheck)": "The ACE check that selected dev candidates reused one cmdargs list across calls (pydelphin appends to it), so every call after the first raised an error that was counted as 'ACE fails'. Rechecked with correct calls (ace-recheck.json): of the 117 diagnosed dev items (all without a gold analysis in the treebank), ACE parses 73 and fails on 44. So 73 are not sentences 'neither ACE nor Orca parses': ACE finds readings, but the annotators accepted none. Generated items were not affected (selected from ACE's own profile results), nor were the later ACE checks of drafted entries (test_erg_proposals.py builds a new list per call)."
 }
