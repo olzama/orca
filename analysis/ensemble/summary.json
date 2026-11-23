@@ -1,0 +1,90 @@
+{
+ "repair (replay mode, cutoff 0.001)": {
+  "s1-top5": {
+   "search": {
+    "mode": "local",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.001,
+    "fanout": 8
+   },
+   "gold among accepted": 1637,
+   "replays": 360507,
+   "sentences": 2062,
+   "repair seconds": 223.7427539061755,
+   "repair seconds per sentence": 0.10850764010968744,
+   "any analysis": 1924,
+   "patterns": null,
+   "pattern_weight": null,
+   "pattern_only_new": null,
+   "exact": 1524
+  },
+  "ens2": {
+   "search": {
+    "mode": "local",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.001,
+    "fanout": 8
+   },
+   "gold among accepted": 1661,
+   "replays": 363978,
+   "sentences": 2062,
+   "repair seconds": 223.07905764039606,
+   "repair seconds per sentence": 0.10818576995169547,
+   "any analysis": 1952,
+   "patterns": null,
+   "pattern_weight": null,
+   "pattern_only_new": null,
+   "exact": 1537
+  },
+  "ens7": {
+   "search": {
+    "mode": "local",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.001,
+    "fanout": 8
+   },
+   "gold among accepted": 1697,
+   "replays": 455135,
+   "sentences": 2062,
+   "repair seconds": 265.29561044368893,
+   "repair seconds per sentence": 0.12865936490964547,
+   "any analysis": 1966,
+   "patterns": null,
+   "pattern_weight": null,
+   "pattern_only_new": null,
+   "exact": 1547
+  }
+ },
+ "chart mode (restricted ACE, cutoff 0.001)": {
+  "s1-top5": {
+   "sentences": 2062,
+   "parsed": 1954,
+   "same MRS": 1616,
+   "ace seconds per sentence": 0.2807067958737437,
+   "prep seconds per sentence": 0.004610803148101303,
+   "k": 5,
+   "min_prob": 0.001,
+   "wall seconds": 325.1965470314026
+  },
+  "ens7": {
+   "sentences": 2062,
+   "parsed": 1974,
+   "same MRS": 1635,
+   "ace seconds per sentence": 0.33251341538563384,
+   "prep seconds per sentence": 0.005266785274768315,
+   "k": 5,
+   "min_prob": 0.001,
+   "wall seconds": 379.01497507095337
+  }
+ },
+ "tagging accuracy": "file\twords\tleaf\ttree\tboth\tsentences all right\ns1.pkl\t25815\t95.32\t91.07\t89.20\t57.98 (1195/2061)\nseed2.pkl\t25815\t95.29\t90.89\t89.04\t58.52 (1206/2061)\ncv0.pkl\t25815\t94.87\t90.27\t88.14\t54.20 (1117/2061)\ncv1.pkl\t25815\t95.12\t90.73\t88.68\t56.23 (1159/2061)\ncv2.pkl\t25815\t94.92\t90.37\t88.20\t54.54 (1124/2061)\ncv3.pkl\t25815\t95.22\t90.44\t88.57\t56.14 (1157/2061)\ncv4.pkl\t25815\t95.10\t90.47\t88.50\t56.04 (1155/2061)\nens2.pkl\t25815\t95.41\t91.15\t89.34\t59.24 (1221/2061)\nens7.pkl\t25815\t95.45\t91.11\t89.32\t58.81 (1212/2061)\n"
+}
