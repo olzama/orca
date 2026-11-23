@@ -131,6 +131,7 @@ def summary():
                ('Right according to the LLM judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
     c = notes('<b>… with tense, number and information structure too:</b> the variable properties (tense, aspect, mood, sentence force, number, person, gender) and ICONS must match as well; ICONS never break a match for either parser.',
               '<b>Same meaning as the reference:</b> on dev the reference is gold; on generated text it is ACE\'s unchecked first parse.',
+              '<b>Run-to-run spread:</b> a second training run of the same tagger, with another random seed, gets about one point less exact meaning on dev (<i>Generated sentences</i>).',
               '<b>Comparing with other work:</b> most semantic parsing evaluation scores predicates and arguments only (SDP\'s DM, AMR\'s Smatch, CCG dependencies, EDM<sub>NA</sub>), as the first column does; full EDM and MRP\'s EDS score count properties too.',
               '<b>Right according to the LLM judge:</b> same meaning, or the judge (Claude Opus) accepts this parser\'s reading where they differ.',
               '<b>ACE on generated text:</b> a range; sentences the judge never saw count as wrong for the low end, right for the high end.',
@@ -138,7 +139,7 @@ def summary():
     finds = ['<b>Exact match understates Orca:</b> the judge often accepts Orca\'s reading where it differs (<i>Generated sentences</i>).',
              '<b>Losses are in proposing</b>, not ranking, and grow with length (<i>Where the wrong sentences go wrong</i>).',
              '<b>Bigger encoders help</b>, even with all the data (<i>Encoders</i>).',
-             '<b>Training on judged generated sentences</b> helps on new generated text by the judge but not on dev, so far from one run each (<i>Generated sentences</i>).',
+             '<b>Training on judged generated sentences</b> makes no difference beyond what a second run of the same setup does (<i>Generated sentences</i>).',
              '<b>Other grammars work:</b> Orca replays every Hausa parse ACE finds and nearly all of the Spanish treebank (<i>Another grammar: Hausa</i>, <i>Spanish</i>).',
              '<b>Faster than ACE</b>, but more sentences get no analysis (<i>Orca and ACE</i>).',
              '<b>Where ACE runs out of memory</b>, Orca still gives a right or partly right reading almost every time (<i>Where ACE fails</i>).',
@@ -534,7 +535,8 @@ def exp_generated():
                    group=[('', 1), (f'Redwoods dev ({N:,})', 3), ('Round 3, unseen in training', 3)])
         body += ('    <h3>Training on the judged sentences</h3>\n' + t4
                  + notes('Judged training data: ACE\'s reading unless the judge preferred Orca\'s; sentences judged wrong both ways dropped.',
-                         'One training run each; a second run of the first row, with another random seed, is under way to show how much runs differ.'))
+                         'One training run each, measured before the lookup fixes; the table below compares runs with the current defaults.'))
+        body += exp_seeds()
     ap = f'{ORCA}/analysis/agreements/gen-r12/score.json'
     if os.path.exists(ap):
         a = json.load(open(ap))
@@ -648,6 +650,34 @@ def exp_beyond_ace():
     return fold('Where ACE fails', 'On generated text, ACE mostly fails by running out of memory; Orca\'s reading is then right or partly right almost every time.', body)
 
 
+def exp_replay_rate():
+    c = collections.Counter(r['outcome'] for r in BEST['records'])
+    first, after = c['accepted at first try'], c['accepted after repair']
+    rows = [f'<tr><td>Orca, ERG (Redwoods dev, raw text): first guess accepted</td>' + td(f'{N:,}') + td(pct(first, N), True) + '</tr>',
+            f'<tr><td>&nbsp;&nbsp;… or after repair (up to 600 replays)</td>' + td(f'{N:,}') + td(pct(first + after, N), True) + '</tr>',
+            '<tr><td>Matsuzaki et al. 2007, Enju (WSJ dev): first CFG-filtered sequence accepted</td>' + td(na('not stated')) + td('94.9%', True) + '</tr>',
+            '<tr><td>&nbsp;&nbsp;… or within 111 sequences</td>' + td(na('not stated')) + td('97.6%', True) + '</tr>']
+    t = table([('Proposed derivation accepted by the grammar', ''), ('Sentences', 'n'), ('Share', 'n hl')], rows)
+    body = t + notes('Enju is an HPSG derived from the Penn Treebank (12 schemata, lexical templates); its candidates pass a context-free approximation of the grammar before the check, and its supertagger proposes lexical entries only. Orca proposes lexical and rule labels and checks them directly.',
+                     'Published rates for this kind of check exist only for treebank-derived grammars; these are the first for a large hand-built HPSG with full semantics.')
+    return fold('Replay rate, compared with CFG filtering', 'Orca\'s first guess passes the ERG less often than Enju\'s filtered guess passes Enju; repair closes most of the gap.', body)
+
+
+def exp_seeds():
+    runs = [('DeBERTa-v3 large, all data, run 1 (the headline)', 'dev-2025bothsurf-debertav3large-rawtext-normlocate-rootcheck.json'),
+            ('DeBERTa-v3 large, all data, run 2 (another random seed)', 'dev-2025bothsurf-debertav3large-seed2-rawtext.json'),
+            ('DeBERTa-v3 large, all data and the judged generated sentences', 'dev-2025bothsurf-debertav3large-gen12-rawtext-normlocate.json')]
+    rows = []
+    for name, f in runs:
+        x = load(f'{ORCA}/analysis/mrs/{f}')
+        if not x:
+            return ''
+        rows.append(f'<tr><td>{name}</td>' + td(pct(x['counts']['same MRS'], N), True) + td(pct(x['counts']['with MRS'], N)) + '</tr>')
+    t = table([('Tagger', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n')], rows)
+    return ('    <h3>How much two runs differ</h3>\n' + t
+            + notes('Redwoods dev, raw text, current parser defaults. The two runs differ only in the random seed; the run with the judged sentences falls between them.'))
+
+
 def exp_agreement():
     path = f'{ORCA}/analysis/agreement-attractors/score.json'
     if not os.path.exists(path):
@@ -722,7 +752,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_edm() + exp_generated() + exp_beyond_ace() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_edm() + exp_replay_rate() + exp_generated() + exp_beyond_ace() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
