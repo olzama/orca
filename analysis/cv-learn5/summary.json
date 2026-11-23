@@ -1,0 +1,52 @@
+{
+ "dev": "Redwoods dev, 2,062 sentences; candidates from the current defaults (repair cutoff 0.001; analysis/cv-learn5/dev-cands-minprob001.jsonl), 1,924 with candidates",
+ "training data": "all five cross-validation folds (86,278 held-out Redwoods training sentences; 35,981 with gold among several candidates used for ranking); fold 4 reflagged for ICONS on 2026-11-23 (gold among candidates 6,969 -> 11,337)",
+ "ranking (gold MRS chosen on dev; best epoch)": {
+  "first found": 1404,
+  "ERG MaxEnt": 1524,
+  "oracle (gold among accepted)": 1637,
+  "ERG templates + ERG score, lr 0.05": 1484,
+  "ERG templates + ERG score, lr 0.005, L2 1e-7": 1515,
+  "all templates + ERG score, lr 0.05": 1453,
+  "all templates + ERG score, lr 0.005, min count 20": 1511,
+  "ERG templates, no ERG score": 1211,
+  "all templates, no ERG score": 1222
+ },
+ "held-out fold sentences, gold picked (ERG MaxEnt in-sample: 0.8216)": {
+  "ERG templates + ERG score, lr 0.005, L2": 0.8305,
+  "all templates + ERG score, lr 0.005, min count 20": 0.8299
+ },
+ "repair patterns (data/repair-patterns/cv5.json: 71,722 leaf and 165,134 tree errors; exact / any / gold among accepted / repair ms per sentence, five runs in parallel)": {
+  "none": [
+   1524,
+   1924,
+   1637,
+   83.3
+  ],
+  "weight 1.0": [
+   1511,
+   1918,
+   1615,
+   105.0
+  ],
+  "weight 0.3": [
+   1523,
+   1927,
+   1633,
+   100.2
+  ],
+  "weight 0.1": [
+   1528,
+   1927,
+   1638,
+   95.6
+  ],
+  "only new labels": [
+   1515,
+   1921,
+   1623,
+   99.9
+  ]
+ },
+ "two folds (analysis/cv-learn/summary.json, old defaults, baseline 1,505)": "best ranker 1,496; best patterns 1,508 (+3)"
+}
