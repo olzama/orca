@@ -1,0 +1,32 @@
+{
+ "0.01": {
+  "sentences": 2062,
+  "parsed": 1931,
+  "same MRS": 1584,
+  "ace seconds per sentence": 0.1682200651511073,
+  "prep seconds per sentence": 0.0025559501897699038,
+  "k": 5,
+  "min_prob": 0.01,
+  "wall seconds": 140.9790859222412
+ },
+ "0.001": {
+  "sentences": 2062,
+  "parsed": 1954,
+  "same MRS": 1616,
+  "ace seconds per sentence": 0.21723585945096094,
+  "prep seconds per sentence": 0.0025785376329542247,
+  "k": 5,
+  "min_prob": 0.001,
+  "wall seconds": 175.294269323349
+ },
+ "0.0001": {
+  "sentences": 2062,
+  "parsed": 1980,
+  "same MRS": 1629,
+  "ace seconds per sentence": 0.30090725202218177,
+  "prep seconds per sentence": 0.002570561710546366,
+  "k": 5,
+  "min_prob": 0.0001,
+  "wall seconds": 233.44409132003784
+ }
+}
