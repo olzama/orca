@@ -89,24 +89,51 @@ def encode(tree: Tree) -> List[LeafLabel]:
     return leaves
 
 
-def decode(leaves: List[LeafLabel]) -> Tree:
+def interner(table: Optional[dict] = None):
+    """Constructors for Node and Leaf that return one shared object per distinct
+    subtree (hash-consing). With a table kept across many trees (repair replays
+    hundreds of near-identical trees per sentence), each subtree's cached hash and
+    leaf count are computed once. Equal trees are equal either way; only object
+    identity is shared. Without a table: the plain constructors."""
+    if table is None:
+        return Node, Leaf
+
+    def node(label, children):
+        key = ('N', label, children)
+        t = table.get(key)
+        if t is None:
+            t = table[key] = Node(label, children)
+        return t
+
+    def leaf(entry, forms):
+        key = ('L', entry, forms)
+        t = table.get(key)
+        if t is None:
+            t = table[key] = Leaf(entry, forms)
+        return t
+    return node, leaf
+
+
+def decode(leaves: List[LeafLabel], intern: Optional[dict] = None) -> Tree:
     """Rebuild the tree. Any depth sequence decodes: a span is split at its
-    shallowest ancestor, the leftmost one if several tie."""
+    shallowest ancestor, the leftmost one if several tie. With `intern` (a dict
+    kept by the caller), identical subtrees are shared objects (see interner)."""
     if not leaves:
         raise EncodingError('no leaves')
+    mk_node, mk_leaf = interner(intern)
 
     def wrap(t: Tree, chain: Tuple[str, ...]) -> Tree:
         for label in reversed(chain):
-            t = Node(label, (t,))
+            t = mk_node(label, (t,))
         return t
 
     def build(lo: int, hi: int) -> Tree:
         if lo == hi:
             leaf = leaves[lo]
-            return wrap(Leaf(leaf.entry, leaf.forms), leaf.chain)
+            return wrap(mk_leaf(leaf.entry, leaf.forms), leaf.chain)
         split = min(range(lo, hi), key=lambda i: (leaves[i].depth, i))
         node = leaves[split].node
-        binary = Node(node[-1], (build(lo, split), build(split + 1, hi)))
+        binary = mk_node(node[-1], (build(lo, split), build(split + 1, hi)))
         return wrap(binary, node[:-1])
 
     for leaf in leaves[:-1]:

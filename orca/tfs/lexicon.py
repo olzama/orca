@@ -301,7 +301,9 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
     generic entry) makes the derivation fail, as it would in the parser."""
     from ..encoding import Leaf, Node
     from .grammar import ReplayFailure
+    from ..encoding import interner
     leaves, usable = _leaf_candidates(grammar, lexicon, tree, tokens, strict)
+    mk_node, mk_leaf = interner(getattr(grammar, 'node_intern', None))   # shared subtrees, if the caller keeps a table
 
     def build(pick):
         it = iter(range(len(leaves)))
@@ -310,9 +312,9 @@ def replay_with_entries(grammar, lexicon, tree, tokens, cache=None, max_tries=12
             if isinstance(t, Leaf):
                 i = next(it)
                 if usable[i]:
-                    return Leaf('entry:' + usable[i][pick.get(i, 0)], t.forms)
+                    return mk_leaf('entry:' + usable[i][pick.get(i, 0)], t.forms)
                 return t
-            return Node(t.label, tuple(walk(c) for c in t.children))
+            return mk_node(t.label, tuple(walk(c) for c in t.children))
 
         return walk(tree)
 

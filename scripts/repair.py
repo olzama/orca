@@ -118,12 +118,14 @@ def search(index):
     _CURRENT[0] = s['id']
     if hasattr(g, 'reset'):
         g.reset()                       # compiled core: new arena per sentence
+    intern = {}                         # one shared object per distinct subtree, for this sentence's replays
+    g.node_intern = intern
 
     def replay(leaf, tree):
         """None if accepted, else the token positions to reconsider."""
         mark = g.u.mark()
         try:
-            t = decode(to_leaves(forms, leaf, tree))
+            t = decode(to_leaves(forms, leaf, tree), intern)
         except Exception:
             return list(range(n))
         try:

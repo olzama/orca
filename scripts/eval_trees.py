@@ -21,22 +21,38 @@ from orca.encoding import Leaf, LeafLabel, Node, absolute_depths, decode  # noqa
 CONT = '<cont>'
 
 
-def to_leaves(forms, leaf_labels, tree_labels):
-    """Token-level label strings to leaf labels; continuation tokens are merged."""
-    leaves, deltas = [], []
-    for form, ll, tl in zip(forms, leaf_labels, tree_labels):
+_PARSED = {}
+
+
+def _parse_labels(ll, tl):
+    """(entry, chain, delta, node) of one token's leaf and tree label strings; cached,
+    since repair decodes the same label strings hundreds of times per sentence."""
+    key = (ll, tl)
+    p = _PARSED.get(key)
+    if p is None:
         parts = (ll.split('|') + ['', ''])[:3]
-        if parts[0] == CONT and leaves:
-            last = leaves[-1]
-            leaves[-1] = LeafLabel(last.entry, last.forms + (form,), last.chain, node=last.node)
-            continue
         chain = tuple(parts[2].split()) + tuple(parts[1].split())
         delta, _, node = tl.partition('|')
         try:
             delta = int(delta)
         except ValueError:          # <none> or <unk> where a tree label is needed
             delta, node = 0, '<unk>'
-        leaves.append(LeafLabel(parts[0], (form,), chain, node=tuple(node.split()) or ('<unk>',)))
+        p = (parts[0], chain, delta, tuple(node.split()) or ('<unk>',))
+        if len(_PARSED) < 1_000_000:
+            _PARSED[key] = p
+    return p
+
+
+def to_leaves(forms, leaf_labels, tree_labels):
+    """Token-level label strings to leaf labels; continuation tokens are merged."""
+    leaves, deltas = [], []
+    for form, ll, tl in zip(forms, leaf_labels, tree_labels):
+        entry, chain, delta, node = _parse_labels(ll, tl)
+        if entry == CONT and leaves:
+            last = leaves[-1]
+            leaves[-1] = LeafLabel(last.entry, last.forms + (form,), last.chain, node=last.node)
+            continue
+        leaves.append(LeafLabel(entry, (form,), chain, node=node))
         deltas.append(delta)
     deltas[-1] = None
     leaves[-1].node = None
