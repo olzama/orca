@@ -1,0 +1,2459 @@
+{
+ "tagger": "tagger-srg036-xlmrlarge",
+ "grammar": "/mnt/kesha/grammars/srg-build/src/srg.tdl",
+ "split": "data/encoded-srg-036/dev.jsonl",
+ "k": 5,
+ "kbest": 30,
+ "budget": 600,
+ "seconds": 53.4,
+ "counts": {
+  "sentences": 247,
+  "comparable": 244,
+  "first guess accepted": 94,
+  "any analysis": 164,
+  "same MRS": 124,
+  "same MRS with properties": 124,
+  "gold MRS among accepted": 135,
+  "treebank MRS unreadable": 3
+ },
+ "no analysis, by cause": {
+  "gold label never seen in training": 50,
+  "gold label seen but outside top 5": 26,
+  "gold reachable, not found": 4
+ },
+ "by length": {
+  "5-9": {
+   "n": 76,
+   "first": 14,
+   "any": 30,
+   "same": 25
+  },
+  "under 5": {
+   "n": 168,
+   "first": 80,
+   "any": 134,
+   "same": 99
+  }
+ },
+ "records": [
+  {
+   "id": "srg-agreement/1",
+   "n": 5,
+   "outcome": "accepted at first try, right",
+   "replays": 6,
+   "accepted": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/2",
+   "n": 5,
+   "outcome": "accepted at first try, wrong",
+   "replays": 6,
+   "accepted": 1,
+   "leaf gold outside top 5": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/3",
+   "n": 5,
+   "outcome": "accepted at first try, wrong",
+   "replays": 6,
+   "accepted": 1,
+   "leaf gold outside top 5": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/4",
+   "n": 5,
+   "outcome": "accepted at first try, wrong",
+   "replays": 6,
+   "accepted": 1,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/5",
+   "n": 5,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/6",
+   "n": 5,
+   "outcome": "accepted at first try, right",
+   "replays": 4,
+   "accepted": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/7",
+   "n": 5,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 1,
+   "leaf gold outside top 5": 4,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/8",
+   "n": 5,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 1,
+   "leaf gold outside top 5": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/9",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 10,
+   "accepted": 2,
+   "leaf gold outside top 5": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/10",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 10,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/11",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 10,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/12",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 10,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/13",
+   "n": 5,
+   "outcome": "accepted after repair, wrong",
+   "replays": 15,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/14",
+   "n": 5,
+   "outcome": "accepted after repair, wrong",
+   "replays": 15,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/15",
+   "n": 5,
+   "outcome": "accepted after repair, wrong",
+   "replays": 18,
+   "accepted": 2,
+   "leaf gold outside top 5": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-agreement/16",
+   "n": 5,
+   "outcome": "accepted after repair, wrong",
+   "replays": 18,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/580",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 25,
+   "accepted": 4,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/679",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 2,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/1148",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 10,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/1490",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 10,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/2029",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/2706",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 30,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/2890",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 20,
+   "accepted": 8,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/3023",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 20,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/3024",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 10,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/3049",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb01/3056",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 10,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/3060",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/3289",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 2,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/6358",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 10,
+   "accepted": 7,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/9177",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 5,
+   "accepted": 3,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10365",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 15,
+   "accepted": 8,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10693",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 10,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb01/10797",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10806",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10807",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10814",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10822",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10823",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 15,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10829",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10835",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/10838",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 5,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/11039",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/11064",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 20,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/11189",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 1,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/11276",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 5,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/11440",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 12,
+   "accepted": 1,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/11868",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 25,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb01/12046",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 10,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/12064",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 5,
+   "accepted": 1,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb01/12242",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/12276",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 10,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/12281",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 3,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/12287",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 2,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/12288",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 20,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/12462",
+   "n": 3,
+   "outcome": "rejected, nothing left to try",
+   "replays": 10,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb01/12588",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/12603",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/12760",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 2,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/13122",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/13139",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 3,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/13147",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 2,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/13175",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 20,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/13194",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 20,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/13276",
+   "n": 2,
+   "outcome": "rejected, nothing left to try",
+   "replays": 25,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb01/13478",
+   "n": 2,
+   "outcome": "rejected, nothing left to try",
+   "replays": 20,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb01/13854",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 3,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/13871",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 3,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/14215",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 12,
+   "accepted": 3,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb01/14234",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 20,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/14257",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 10,
+   "accepted": 8,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/15001",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 2,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb01/15343",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 3,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/16078",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 6,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb01/16089",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 12,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/16185",
+   "n": 2,
+   "outcome": "rejected, nothing left to try",
+   "replays": 4,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb01/16188",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 2,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/16337",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 15,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/16543",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 8,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/16547",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 3,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb01/16564",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 20,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/538",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 25,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 2
+  },
+  {
+   "id": "srg-tbdb03/610",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 122,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 2,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/683",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 486,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 2,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/684",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 68,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 2,
+   "tree gold label unseen in training": 2
+  },
+  {
+   "id": "srg-tbdb03/695",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 100,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/712",
+   "n": 5,
+   "outcome": "accepted after repair, right",
+   "replays": 17,
+   "accepted": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/724",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 6,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/746",
+   "n": 5,
+   "outcome": "accepted at first try, right",
+   "replays": 6,
+   "accepted": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/828",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 45,
+   "accepted": 8,
+   "leaf gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/882",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 8,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/883",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 23,
+   "accepted": 0,
+   "leaf gold outside top 5": 3,
+   "leaf gold label unseen in training": 3
+  },
+  {
+   "id": "srg-tbdb03/922",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 457,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/944",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 6,
+   "accepted": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/1045",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 18,
+   "accepted": 2,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/1077",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 100,
+   "accepted": 9,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/1124",
+   "n": 6,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 3,
+   "tree gold label unseen in training": 2
+  },
+  {
+   "id": "srg-tbdb03/1153",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 10,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/1166",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 45,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/1384",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 306,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 2,
+   "tree gold outside top 5": 2
+  },
+  {
+   "id": "srg-tbdb03/1397",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 12,
+   "accepted": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/1404",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 18,
+   "accepted": 0,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/1475",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 19,
+   "accepted": 4,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/1488",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 520,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/1592",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 14,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/1757",
+   "n": 5,
+   "outcome": "accepted after repair, wrong",
+   "replays": 570,
+   "accepted": 20,
+   "leaf gold outside top 5": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/2163",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 45,
+   "accepted": 1,
+   "leaf gold outside top 5": 3,
+   "tree gold outside top 5": 2,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/2164",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 5,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/2514",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 45,
+   "accepted": 6,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/2600",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 6,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/2694",
+   "n": 6,
+   "outcome": "rejected, nothing left to try",
+   "replays": 180,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/2752",
+   "n": 5,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/2933",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 20,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/2935",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 8,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/2997",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 12,
+   "accepted": 1,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/2999",
+   "n": 6,
+   "outcome": "accepted after repair, wrong",
+   "replays": 48,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/3000",
+   "n": 3,
+   "outcome": "accepted at first try, wrong",
+   "replays": 4,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/3001",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 12,
+   "accepted": 1,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/3028",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 40,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/3036",
+   "n": 6,
+   "outcome": "accepted at first try, wrong",
+   "replays": 36,
+   "accepted": 8,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/3067",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 24,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 2
+  },
+  {
+   "id": "srg-tbdb03/3099",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 189,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/3100",
+   "n": 5,
+   "outcome": "accepted at first try, wrong",
+   "replays": 32,
+   "accepted": 12,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/3146",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 6,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/3204",
+   "n": 4,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/3219",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 30,
+   "accepted": 12,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/3233",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 12,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/3270",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 16,
+   "accepted": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/3288",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 6,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/3290",
+   "n": 5,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/3343",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 4,
+   "accepted": 1,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/3422",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 174,
+   "accepted": 0,
+   "tree gold outside top 5": 2,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/3474",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 25,
+   "accepted": 0,
+   "leaf gold outside top 5": 3,
+   "leaf gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/4268",
+   "n": 6,
+   "outcome": "accepted after repair, wrong",
+   "replays": 600,
+   "accepted": 3,
+   "tree gold outside top 5": 3,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/4269",
+   "n": 6,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "tree gold outside top 5": 3,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/4627",
+   "n": 5,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "tree gold outside top 5": 4,
+   "tree gold label unseen in training": 2
+  },
+  {
+   "id": "srg-tbdb03/4636",
+   "n": 3,
+   "outcome": "rejected, nothing left to try",
+   "replays": 8,
+   "accepted": 0,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/4638",
+   "n": 3,
+   "outcome": "rejected, nothing left to try",
+   "replays": 24,
+   "accepted": 0,
+   "tree gold outside top 5": 2,
+   "tree gold label unseen in training": 2
+  },
+  {
+   "id": "srg-tbdb03/5561",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 200,
+   "accepted": 20,
+   "tree gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/8651",
+   "n": 8,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 3
+  },
+  {
+   "id": "srg-tbdb03/9170",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 5,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/9263",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 15,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/9270",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 70,
+   "accepted": 3,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 2,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/9323",
+   "n": 5,
+   "outcome": "accepted after repair, wrong",
+   "replays": 25,
+   "accepted": 5,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/9714",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 13,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "tree gold outside top 5": 3,
+   "tree gold label unseen in training": 2
+  },
+  {
+   "id": "srg-tbdb03/9735",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 3,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/9893",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 25,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/9927",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 25,
+   "accepted": 0,
+   "leaf gold outside top 5": 2
+  },
+  {
+   "id": "srg-tbdb03/10226",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 150,
+   "accepted": 5,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/10332",
+   "n": 8,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/10353",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 40,
+   "accepted": 20,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/10617",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 21,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/10657",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 272,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/10665",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 27,
+   "accepted": 6,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/10672",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 6,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/10673",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 25,
+   "accepted": 6,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/10676",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 30,
+   "accepted": 0
+  },
+  {
+   "id": "srg-tbdb03/10719",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 10,
+   "accepted": 1,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/10821",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 15,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/10852",
+   "n": 6,
+   "outcome": "accepted after repair, wrong",
+   "replays": 390,
+   "accepted": 16,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/10903",
+   "n": 4,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/10938",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 160,
+   "accepted": 8,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/10943",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 183,
+   "accepted": 12,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/11036",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 8,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/11040",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 14,
+   "accepted": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/11043",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 25,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/11063",
+   "n": 8,
+   "outcome": "rejected, nothing left to try",
+   "replays": 4,
+   "accepted": 0
+  },
+  {
+   "id": "srg-tbdb03/11072",
+   "n": 8,
+   "outcome": "rejected, nothing left to try",
+   "replays": 42,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/11105",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 15,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/11144",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 40,
+   "accepted": 0,
+   "leaf gold outside top 5": 2
+  },
+  {
+   "id": "srg-tbdb03/11159",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 25,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/11273",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 132,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/11290",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 25,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/11410",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 486,
+   "accepted": 0
+  },
+  {
+   "id": "srg-tbdb03/11447",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 24,
+   "accepted": 10,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/11533",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 25,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/11536",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 25,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/11560",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 15,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/11648",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 12,
+   "accepted": 4,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/11826",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 10,
+   "accepted": 1,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/11942",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 69,
+   "accepted": 3,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/11946",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 63,
+   "accepted": 0,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/12087",
+   "n": 5,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "tree gold outside top 5": 2
+  },
+  {
+   "id": "srg-tbdb03/12222",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 512,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/12255",
+   "n": 7,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/12266",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 24,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/12275",
+   "n": 7,
+   "outcome": "accepted after repair, wrong",
+   "replays": 516,
+   "accepted": 12,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 2,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/12280",
+   "n": 7,
+   "outcome": "rejected, nothing left to try",
+   "replays": 40,
+   "accepted": 0,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/12312",
+   "n": 4,
+   "outcome": "accepted after repair, right",
+   "replays": 66,
+   "accepted": 8,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/12315",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 14,
+   "accepted": 2,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/12448",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 45,
+   "accepted": 6,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/12530",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 9,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/12550",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 10,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/12553",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 70,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/12556",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 3,
+   "accepted": 0,
+   "leaf gold outside top 5": 2
+  },
+  {
+   "id": "srg-tbdb03/12602",
+   "n": 7,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/12706",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 70,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/12722",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 45,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/12732",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 15,
+   "accepted": 3,
+   "leaf gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/12843",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 10,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/12871",
+   "n": 2,
+   "outcome": "accepted after repair, wrong",
+   "replays": 16,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/12936",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 10,
+   "accepted": 0,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/13002",
+   "n": 6,
+   "outcome": "rejected, nothing left to try",
+   "replays": 172,
+   "accepted": 0,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/13105",
+   "n": 2,
+   "outcome": "accepted at first try, wrong",
+   "replays": 2,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/13114",
+   "n": 5,
+   "outcome": "accepted at first try, wrong",
+   "replays": 80,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/13121",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 200,
+   "accepted": 0,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/13134",
+   "n": 5,
+   "outcome": "accepted at first try, wrong",
+   "replays": 90,
+   "accepted": 6,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/13196",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 32,
+   "accepted": 0,
+   "tree gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/13211",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 25,
+   "accepted": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/13256",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 30,
+   "accepted": 14,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/13562",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 3,
+   "accepted": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/13857",
+   "n": 8,
+   "outcome": "rejected, nothing left to try",
+   "replays": 52,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/14066",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 600,
+   "accepted": 4,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/14076",
+   "n": 6,
+   "outcome": "accepted after repair, wrong",
+   "replays": 470,
+   "accepted": 4,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/14080",
+   "n": 8,
+   "outcome": "rejected, nothing left to try",
+   "replays": 5,
+   "accepted": 0,
+   "leaf gold outside top 5": 2,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 3,
+   "tree gold label unseen in training": 2
+  },
+  {
+   "id": "srg-tbdb03/14202",
+   "n": 5,
+   "outcome": "accepted after repair, wrong",
+   "replays": 15,
+   "accepted": 2,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/14278",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 125,
+   "accepted": 16,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/14390",
+   "n": 5,
+   "outcome": "accepted at first try, right",
+   "replays": 2,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/14425",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 60,
+   "accepted": 6,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/14609",
+   "n": 4,
+   "outcome": "accepted at first try, right",
+   "replays": 80,
+   "accepted": 16,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/14636",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 206,
+   "accepted": 0,
+   "leaf gold outside top 5": 1
+  },
+  {
+   "id": "srg-tbdb03/14772",
+   "n": 4,
+   "outcome": "accepted after repair, right",
+   "replays": 32,
+   "accepted": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/14806",
+   "n": 4,
+   "outcome": "accepted after repair, right",
+   "replays": 32,
+   "accepted": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/14861",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 175,
+   "accepted": 18,
+   "leaf gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/15065",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 12,
+   "accepted": 0
+  },
+  {
+   "id": "srg-tbdb03/15083",
+   "n": 6,
+   "outcome": "rejected, nothing left to try",
+   "replays": 464,
+   "accepted": 0,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/15126",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 15,
+   "accepted": 6,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/15142",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 15,
+   "accepted": 6,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/15325",
+   "n": 3,
+   "outcome": "accepted at first try, right",
+   "replays": 12,
+   "accepted": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/15326",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 31,
+   "accepted": 3,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/15401",
+   "n": 7,
+   "outcome": "accepted after repair, wrong",
+   "replays": 146,
+   "accepted": 30,
+   "tree gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/16170",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 45,
+   "accepted": 8,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/16311",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 14,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/16392",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 9,
+   "accepted": 2,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/16414",
+   "n": 5,
+   "outcome": "accepted after repair, wrong",
+   "replays": 210,
+   "accepted": 15,
+   "tree gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/16458",
+   "n": 4,
+   "outcome": "accepted after repair, wrong",
+   "replays": 24,
+   "accepted": 3,
+   "leaf gold outside top 5": 1,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/16585",
+   "n": 5,
+   "outcome": "accepted after repair, wrong",
+   "replays": 160,
+   "accepted": 8,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": false
+  },
+  {
+   "id": "srg-tbdb03/16590",
+   "n": 5,
+   "outcome": "rejected, budget used",
+   "replays": 600,
+   "accepted": 0,
+   "tree gold outside top 5": 2,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/16603",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 15,
+   "accepted": 9,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/16659",
+   "n": 4,
+   "outcome": "accepted at first try, wrong",
+   "replays": 30,
+   "accepted": 9,
+   "tree gold outside top 5": 1,
+   "same": false,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/16804",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 253,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "leaf gold label unseen in training": 1,
+   "tree gold outside top 5": 2,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/16809",
+   "n": 4,
+   "outcome": "accepted after repair, right",
+   "replays": 50,
+   "accepted": 3,
+   "same": true,
+   "gold among accepted": true
+  },
+  {
+   "id": "srg-tbdb03/16936",
+   "n": 4,
+   "outcome": "rejected, nothing left to try",
+   "replays": 52,
+   "accepted": 0,
+   "leaf gold outside top 5": 1,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  },
+  {
+   "id": "srg-tbdb03/17242",
+   "n": 5,
+   "outcome": "rejected, nothing left to try",
+   "replays": 120,
+   "accepted": 0,
+   "tree gold outside top 5": 1,
+   "tree gold label unseen in training": 1
+  }
+ ]
+}
