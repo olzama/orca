@@ -224,17 +224,59 @@ def cmd_judgeeval(a):
     print(len(recs))
 
 
+def cmd_judgeitems(a):
+    """Judge items for a pair of systems where both have an analysis and differ:
+    --pair chart-replay or chart-ace. The first system is the 'orca' side of adjudicate.py."""
+    from compare_mrs import normalized
+    from delphin.codecs import simplemrs
+    from llm_rank import facts
+    s, texts = load_sample(a.out)
+    first, second = a.pair.split('-')
+    runs = {m: {r['id']: r for r in json.load(open(os.path.join(a.out, f'run-{m}.json')))['records']} for m in {first, second} - {'ace'}}
+    def mrs_of(sys_, sid):
+        if sys_ == 'ace':
+            return texts[sid][1]
+        return runs[sys_][sid]['mrs']
+    rng = random.Random(23)
+    cand = []
+    for x in s:
+        sid = x['id']
+        m1, m2 = mrs_of(first, sid), mrs_of(second, sid)
+        if not m1 or not m2:
+            continue
+        try:
+            f1, f2 = facts(normalized(simplemrs.decode(m1))), facts(normalized(simplemrs.decode(m2)))
+        except Exception:
+            continue
+        o, b = sorted((f1 - f2).elements()), sorted((f2 - f1).elements())
+        if o or b:
+            cand.append((sid, o, b))
+    rng.shuffle(cand)
+    d = os.path.join(a.out, f'judge-{a.pair}')
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, 'items.jsonl'), 'w') as f:
+        for sid, o, b in cand[:a.max]:
+            first_a = rng.random() < 0.5
+            f.write(json.dumps({'id': sid, 'sentence': texts[sid][0], 'A': o if first_a else b, 'B': b if first_a else o,
+                                'orca': 'A' if first_a else 'B'}, ensure_ascii=False) + '\n')
+    json.dump({'pair': a.pair, 'orca side': first, 'reference side': second, 'disagreements': len(cand), 'judged': min(a.max, len(cand))},
+              open(os.path.join(d, 'prepare.json'), 'w'), indent=1)
+    print(a.pair, 'disagreements', len(cand), 'to judge', min(a.max, len(cand)))
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=('sample', 'replay', 'run', 'score', 'judgeeval'))
+    ap.add_argument('cmd', choices=('sample', 'replay', 'run', 'score', 'judgeeval', 'judgeitems'))
     ap.add_argument('--out', default=os.path.join(ROOT, 'analysis/corpus-modes'))
     ap.add_argument('--novels', type=int, default=1000)
     ap.add_argument('--news', type=int, default=1000)
     ap.add_argument('--mode', default='replay')
     ap.add_argument('--chart-min-prob', type=float, default=0.001)
     ap.add_argument('--workers', type=int, default=3)
+    ap.add_argument('--pair', default='chart-replay')
+    ap.add_argument('--max', type=int, default=150)
     a = ap.parse_args()
-    {'sample': cmd_sample, 'replay': cmd_replay, 'run': cmd_run, 'score': cmd_score, 'judgeeval': cmd_judgeeval}[a.cmd](a)
+    {'sample': cmd_sample, 'replay': cmd_replay, 'run': cmd_run, 'score': cmd_score, 'judgeeval': cmd_judgeeval, 'judgeitems': cmd_judgeitems}[a.cmd](a)
 
 
 if __name__ == '__main__':
