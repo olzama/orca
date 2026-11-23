@@ -49,7 +49,7 @@ def dmrs_json(m):
 
 class Parser:
     def __init__(self, grammar=DEFAULTS['grammar'], tagger=DEFAULTS['tagger'], ace=DEFAULTS['ace'],
-                 dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.005, device=None,
+                 dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.001, device=None,
                  all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
                  normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False,
                  fragments=False):
