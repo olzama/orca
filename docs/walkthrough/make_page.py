@@ -138,7 +138,7 @@ def summary():
               'Agreements between Orca and ACE count as right; checking them was inconclusive (<i>Generated sentences</i>).')
     finds = ['<b>Exact match understates Orca:</b> the judge often accepts Orca\'s reading where it differs (<i>Generated sentences</i>).',
              '<b>Losses are in proposing</b>, not ranking, and grow with length (<i>Where the wrong sentences go wrong</i>).',
-             '<b>The tagger plus a chart</b> (ACE restricted to the tagger\'s lexical entries) beats replay by about five points, at over three times ACE\'s speed (<i>The tagger plus a chart</i>).',
+             '<b>The tagger plus a chart</b> (ACE restricted to the tagger\'s lexical entries) beats replay by about five points, at almost three times ACE\'s speed (<i>The tagger plus a chart</i>).',
              '<b>ACE as a fallback</b> where Orca finds nothing lifts exact meaning by five points, still over twice ACE\'s speed (<i>Orca with ACE as a fallback</i>).',
              '<b>Bigger encoders help</b>, even with all the data (<i>Encoders</i>).',
              '<b>Training on judged generated sentences</b> makes no difference beyond what a second run of the same setup does (<i>Generated sentences</i>).',
@@ -733,14 +733,20 @@ def exp_supertag_ace():
     rows = [f'<tr><td>Orca (replay of the tagger\'s labels, repair, ranking)</td>' + td(pct(BEST['counts']['same MRS'], N), True) + td(pct(BEST['counts']['with MRS'], N)) + td(f"{BEST['sentences per second']:.1f}") + '</tr>']
     for cut in ('0.01', '0.001', '0.0001'):
         x = c[cut]
+        run = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-chart-{cut}.json')
+        speed = f"{run['sentences per second']:.1f}" if run else f"{1 / (x['ace seconds per sentence'] + tag_s):.1f} (estimate)"
         rows.append(f'<tr><td>ACE restricted to the tagger\'s lexical entries (top 5, probability ≥ {cut})</td>' + td(pct(x['same MRS'], N), True) + td(pct(x['parsed'], N))
-                    + td(f"{1 / (x['ace seconds per sentence'] + tag_s):.1f}") + '</tr>')
+                    + td(speed) + '</tr>')
+    fb = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-fallback-0.001.json')
+    if fb:
+        rows.append(f'<tr><td>Orca, and restricted ACE (≥ 0.001) where Orca finds no analysis</td>' + td(pct(fb['counts']['same MRS'], N), True) + td(pct(fb['counts']['with MRS'], N))
+                    + td(f"{fb['sentences per second']:.1f}") + '</tr>')
     rows.append(f'<tr><td>ACE, full lexicon</td>' + td(pct(T['ace']['all']['same MRS'], N), True) + td(pct(T['ace']['all']['with MRS'], N)) + td(f'{N / (ACE_PASS + ACE_RETRY):.1f}') + '</tr>')
     t = table([('Redwoods dev, raw text', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
     body = t + notes('Restricted ACE: the DeBERTa tagger\'s lexical labels become lexical entries (Orca\'s lookup); every other lexeme that could match a word is switched off (ACE -L), so ACE\'s chart and the ERG\'s ranking model work only with the tagger\'s choices. Tree labels are not used.',
-                     'Speed: ACE\'s measured time plus Orca\'s tokenization and tagging (GPU); estimated, not measured end to end.',
+                     'Speed measured end to end on one kesha GPU (tagging) and one CPU core (ACE), while other jobs ran; the 0.01 row is an estimate.',
                      'The tagger gets lexical types right far more often than tree labels; the chart finds trees that label-by-label replay misses.')
-    return fold('The tagger plus a chart: ACE restricted to the tagger\'s words', 'More accurate than replay (about five points) at less than half Orca\'s speed and over three times ACE\'s.', body)
+    return fold('The tagger plus a chart: ACE restricted to the tagger\'s words', 'More accurate than replay (about five points) at less than half Orca\'s speed and almost three times ACE\'s.', body)
 
 
 def exp_ensemble():
