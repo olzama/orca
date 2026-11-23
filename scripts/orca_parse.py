@@ -52,7 +52,7 @@ class Parser:
                  dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.001, device=None,
                  all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
                  normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False,
-                 fragments=False):
+                 fragments=False, mode='replay', chart_k=5, chart_min_prob=0.001, chart_timeout=60):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -95,6 +95,13 @@ class Parser:
             if status in ('rule', 'lex-rule'):
                 self.fg.instance(name)
         self.tagger_name = os.path.basename(os.path.normpath(tagger))
+        # mode: 'replay' (the tagger's labels replayed and repaired), 'chart' (ACE restricted to the
+        # tagger's lexical entries, scripts/supertag_ace.py), or 'fallback' (replay; chart where replay finds nothing)
+        assert mode in ('replay', 'chart', 'fallback'), mode
+        self.mode, self.chart_k, self.chart_min_prob, self.chart_timeout = mode, chart_k, chart_min_prob, chart_timeout
+        if mode != 'replay':
+            from supertag_ace import chart_index
+            self.chart_orth, self.chart_generic = chart_index(self.lx)
 
     def fragment_output(self, rforms, forms, path, first):
         """Partial analysis from the tagger's first guess (scripts/fragments.py), as output:
@@ -156,8 +163,10 @@ class Parser:
         lap('tag')
         out['first guess'] = {'leaf': [top['leaf'][j][0][0] for j in range(len(forms))],
                               'tree': [top['tree'][j][0][0] for j in range(len(forms))]}
-        r = self.repair
         rforms = [p[0] for p in path] if self.normalized_lookup else forms
+        if self.mode == 'chart':
+            return self.chart_parse(text, path, top, rforms, forms, out, lap)
+        r = self.repair
         s = {'id': sid, 'forms': rforms, 'leaf': [None] * len(forms), 'tree': [None] * len(forms)}
         r._WORK = (self.fg, [s], [top], {sid: [p[1] for p in path]}, self.args, self.lx)
         r.GOLD_MRS.clear()
@@ -166,6 +175,8 @@ class Parser:
         out['outcome'] = outcome.replace(', wrong', '').replace(', right', '')
         out['replays'] = n_replays
         out['accepted derivations'] = len(kbest)
+        if not kbest and self.mode == 'fallback':
+            return self.chart_parse(text, path, top, rforms, forms, out, lap, after_replay=True)
         if not kbest:
             if self.fragments:
                 out['fragments'] = self.fragment_output(rforms, forms, path, out['first guess'])
@@ -205,6 +216,49 @@ class Parser:
                     out['_all_mrs'].append(to_pydelphin(extract(self.fg, f2)))
                 except Exception:
                     out['_all_mrs'].append(None)
+        return out
+
+    def chart_parse(self, text, path, top, rforms, forms, out, lap, after_replay=False):
+        """ACE restricted to the tagger's lexical entries (top chart_k labels per token, probability
+        >= chart_min_prob after the first): ACE's chart and the grammar's ranking model decide."""
+        from delphin import derivation as D
+        from delphin.codecs import simplemrs
+        from encode_treebank import to_tree
+        from supertag_ace import allowed_and_disabled, run_restricted
+        allowed, disabled, unresolved = allowed_and_disabled({'path': path, 'top': top}, self.chart_k, self.chart_min_prob,
+                                                             self.lx, self.chart_orth, self.chart_generic)
+        mrs_s, deriv_s, _ = run_restricted(text, disabled, self.chart_timeout, self.ace, self.dat, trees=True)
+        lap('chart')
+        out['chart'] = {'allowed entries': len(allowed), 'disabled entries': len(disabled), 'unresolved labels': unresolved,
+                        'after replay': after_replay}
+        if mrs_s is None:
+            out['outcome'] = ('replay found nothing; ' if after_replay else '') + 'chart found nothing'
+            out['accepted derivations'] = 0
+            if self.fragments:
+                out['fragments'] = self.fragment_output(rforms, forms, path, out['first guess'])
+                lap('fragments')
+            return out
+        m = simplemrs.decode(mrs_s)
+        lap('mrs')
+        out['outcome'] = ('replay found nothing; ' if after_replay else '') + 'chart analysis'
+        out['accepted derivations'] = 1
+        out['mrs'] = simplemrs.encode(m, indent=True)
+        out['eps'] = [{'pred': ep.predicate, 'label': ep.label,
+                       'args': {k: v for k, v in ep.args.items()}, 'carg': ep.carg} for ep in m.rels]
+        out['hcons'] = [[h.hi, h.relation, h.lo] for h in m.hcons]
+        out['top'], out['index'] = m.top, m.index
+        if deriv_s:
+            try:
+                out['derivation'] = self.tree_json(to_tree(D.from_string(deriv_s)))
+            except Exception:
+                out['derivation'] = None
+        try:
+            out['dmrs'] = dmrs_json(m)
+        except Exception:
+            out['dmrs'] = None
+        out['_mrs_obj'] = m
+        if self.all_mrs:
+            out['_all_mrs'] = [m]
         return out
 
     def tree_json(self, t):
@@ -287,7 +341,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False,
                      'gold among accepted': among if parser.all_mrs and m is not None else None,
                      **({'mrs': r.get('mrs'), 'labels': r.get('labels')} if save_mrs else {})})
     wall = time.perf_counter() - t0
-    res = {'tagger': parser.tagger_name, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget,
+    res = {'tagger': parser.tagger_name, 'mode': parser.mode, 'chart_k': parser.chart_k, 'chart_min_prob': parser.chart_min_prob, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget,
            'commit': parser.args.commit, 'commit_min': parser.args.commit_min, 'root_focus': parser.args.root_focus, 'locate_missing': parser.lx.locate_missing, 'normalized_lookup': parser.normalized_lookup, 'patterns': getattr(parser, 'patterns_name', None) if parser.patterns is not None else None, 'min_tokens': min_tokens, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
     with open(out_path, 'w') as f:
@@ -317,13 +371,18 @@ def main():
     ap.add_argument('--patterns', help='repair: also try learned label substitutions (scripts/repair_patterns.py mine)')
     ap.add_argument('--pattern-weight', type=float, default=1.0, help='with --patterns: scale of their pseudo-probabilities')
     ap.add_argument('--pattern-only-new', action='store_true', help='with --patterns: only add labels the tagger did not list')
+    ap.add_argument('--mode', choices=('replay', 'chart', 'fallback'), default='replay',
+                    help='replay: the tagger\'s labels replayed and repaired (default); chart: ACE restricted to the tagger\'s lexical entries; fallback: replay, and chart where replay finds nothing')
+    ap.add_argument('--chart-k', type=int, default=5, help='chart: tagger lexical labels per token')
+    ap.add_argument('--chart-min-prob', type=float, default=0.001, help='chart: drop labels below this probability (the first is always kept)')
     ap.add_argument('--no-fragments', dest='fragments', action='store_false', help='parsing sentences: give no fragments when there is no full analysis (never used in --eval)')
     args = ap.parse_args()
     p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget,
                commit=args.commit, commit_min=args.commit_min, root_focus=args.root_focus,
                locate_missing=args.locate_missing, normalized_lookup=args.normalized_lookup,
                patterns=args.patterns, pattern_weight=args.pattern_weight, pattern_only_new=args.pattern_only_new,
-               fragments=args.fragments and not args.eval)
+               fragments=args.fragments and not args.eval, mode=args.mode, chart_k=args.chart_k,
+               chart_min_prob=args.chart_min_prob)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
         return

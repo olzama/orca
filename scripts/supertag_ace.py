@@ -35,25 +35,34 @@ ERG = os.path.join(ROOT, 'data/erg/2025')
 _LX = _ORTH = _ALLGEN = _GOLD = None
 
 
+def chart_index(lx):
+    """For a Lexicon: orth word -> [(entry, all orth words)], and the set of generic entries."""
+    import collections
+    orth = collections.defaultdict(list)
+    for (lt, o), names in lx.by_type_orth.items():
+        ws = tuple(o.split())
+        for w in set(ws):
+            for n in names:
+                orth[w].append((n, ws))
+    return orth, {n for ns in lx.generic.values() for n in ns}
+
+
 def _init(gold_dir):
     global _LX, _ORTH, _ALLGEN, _GOLD
-    import collections
     from orca.tfs.grammar import Grammar
     from orca.tfs.lexicon import Lexicon
     from repair_bench import load_gold
     g = Grammar(os.path.join(ERG, 'english.tdl'))
     _LX = Lexicon(g, ERG)
-    _ORTH = collections.defaultdict(list)            # orth word -> [(entry, all orth words)]
-    for (lt, orth), names in _LX.by_type_orth.items():
-        ws = tuple(orth.split())
-        for w in set(ws):
-            for n in names:
-                _ORTH[w].append((n, ws))
-    _ALLGEN = {n for ns in _LX.generic.values() for n in ns}
+    _ORTH, _ALLGEN = chart_index(_LX)
     _GOLD = load_gold(gold_dir) if gold_dir else {}
 
 
-def allowed_and_disabled(item, k, min_prob):
+def allowed_and_disabled(item, k, min_prob, lx=None, orth=None, allgen=None):
+    """Entries the tagger proposes (top k labels per token, probability >= min_prob after
+    the first) and the entries to disable with ACE's -L. item: {'path', 'top'} as in
+    orca_parse (path: the token lattice path; top: the tagger's k-best labels)."""
+    _LX, _ORTH, _ALLGEN = (lx, orth, allgen) if lx is not None else (globals()['_LX'], globals()['_ORTH'], globals()['_ALLGEN'])
     words = [p[0].lower() for p in item['path']]
     allowed, unresolved = set(), 0
     for i, labels in enumerate(item['top']['leaf']):
@@ -88,6 +97,27 @@ def allowed_and_disabled(item, k, min_prob):
     return allowed, disabled, unresolved
 
 
+def run_restricted(text, disabled, timeout=60, ace=ACE, dat=DAT, trees=False):
+    """ACE's first-ranked analysis with the given lexemes disabled: (mrs, derivation, seconds);
+    mrs and derivation are strings (derivation only with trees=True), None when ACE finds nothing."""
+    cmd = [ace, '-g', dat, '-1', f'--timeout={timeout}', '--max-chart-megabytes=6000', '--max-unpack-megabytes=7000']
+    if not trees:
+        cmd.append('-T')
+    if disabled:
+        cmd += ['-L', ' '.join(sorted(disabled))]
+    t1 = time.time()
+    p = subprocess.run(cmd, input=text + '\n', capture_output=True, text=True, timeout=timeout + 30)
+    secs = time.time() - t1
+    line = next((l for l in p.stdout.splitlines() if l.startswith('[')), None)
+    if line is None:
+        return None, None, secs
+    if trees:
+        i = line.find('] ; ')
+        if i >= 0:
+            return line[:i + 1].strip(), line[i + 4:].strip() or None, secs
+    return line, None, secs
+
+
 def parse_one(args):
     sid, item, k, min_prob, timeout = args
     from delphin import mrs as M
@@ -96,13 +126,7 @@ def parse_one(args):
     t0 = time.time()
     allowed, disabled, unresolved = allowed_and_disabled(item, k, min_prob)
     prep = time.time() - t0
-    cmd = [ACE, '-g', DAT, '-1', '-T', f'--timeout={timeout}', '--max-chart-megabytes=6000', '--max-unpack-megabytes=7000']
-    if disabled:
-        cmd += ['-L', ' '.join(sorted(disabled))]
-    t1 = time.time()
-    p = subprocess.run(cmd, input=item['text'] + '\n', capture_output=True, text=True, timeout=timeout + 30)
-    ace_s = time.time() - t1
-    mrs_line = next((l for l in p.stdout.splitlines() if l.startswith('[')), None)
+    mrs_line, _, ace_s = run_restricted(item['text'], disabled, timeout)
     same = None
     if mrs_line and sid in _GOLD:
         try:
