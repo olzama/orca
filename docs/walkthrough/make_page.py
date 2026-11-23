@@ -138,6 +138,7 @@ def summary():
               'Agreements between Orca and ACE count as right; checking them was inconclusive (<i>Generated sentences</i>).')
     finds = ['<b>Exact match understates Orca:</b> the judge often accepts Orca\'s reading where it differs (<i>Generated sentences</i>).',
              '<b>Losses are in proposing</b>, not ranking, and grow with length (<i>Where the wrong sentences go wrong</i>).',
+             '<b>ACE as a fallback</b> where Orca finds nothing lifts exact meaning by five points, still over twice ACE\'s speed (<i>Orca with ACE as a fallback</i>).',
              '<b>Bigger encoders help</b>, even with all the data (<i>Encoders</i>).',
              '<b>Training on judged generated sentences</b> makes no difference beyond what a second run of the same setup does (<i>Generated sentences</i>).',
              '<b>Other grammars work:</b> Orca replays every Hausa parse ACE finds and nearly all of the Spanish treebank (<i>Another grammar: Hausa</i>, <i>Spanish</i>).',
@@ -700,6 +701,24 @@ def exp_seeds():
             + notes('Redwoods dev, raw text, current parser defaults. The two runs differ only in the random seed; the run with the judged sentences falls between them.'))
 
 
+def exp_hybrid():
+    r = load(f'{ORCA}/analysis/ace-fallback/route.json')
+    if not r:
+        return ''
+    keep = (156, 256, 356, 556, 956)
+    rows = [f'<tr><td>Orca alone</td>' + td('0') + td(pct(r['orca exact'], N), True) + td(f"{BEST['sentences per second']:.1f}") + '</tr>']
+    for c in r['curve']:
+        if c['sent to ACE'] in keep:
+            name = 'Orca, ACE where Orca finds no analysis' if c['sent to ACE'] == 156 else '&nbsp;&nbsp;… and ACE for the least certain of the rest'
+            rows.append(f'<tr><td>{name}</td>' + td(f"{c['sent to ACE']:,}") + td(pct(c['exact'], N), True) + td(f"{c['sentences per second']:.2f}") + '</tr>')
+    rows.append(f'<tr><td>ACE alone</td>' + td(f'{N:,}') + td(pct(r['ace exact'], N), True) + td(f'{N / (ACE_PASS + ACE_RETRY):.1f}') + '</tr>')
+    t = table([('Redwoods dev, raw text', ''), ('Sentences sent to ACE', 'n'), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n')], rows)
+    body = t + notes(f'Which of the rest go to ACE: a logistic model on Orca\'s own signals (tagger probabilities, replays, candidates), cross-validated on dev (AUC {r["cv AUC (Orca wrong)"]:.2f} for spotting Orca\'s errors).',
+                     'ACE time on the no-analysis sentences is measured (3.7 s each, ACE\'s slow ones too); for the rest it is ACE\'s dev mean, an estimate.',
+                     'A different system from Orca alone, so it sits beside the headline, not in it.')
+    return fold('Orca with ACE as a fallback', 'Sending only the sentences Orca cannot analyze to ACE gains five points and stays more than twice as fast as ACE.', body)
+
+
 def exp_agreement():
     path = f'{ORCA}/analysis/agreement-attractors/score.json'
     if not os.path.exists(path):
@@ -774,7 +793,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_edm() + exp_replay_rate() + exp_generated() + exp_beyond_ace() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_hybrid() + exp_edm() + exp_replay_rate() + exp_generated() + exp_beyond_ace() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
