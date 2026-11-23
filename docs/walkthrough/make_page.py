@@ -722,14 +722,17 @@ def exp_hybrid():
     orca = f"{base['sentences per second']:.2f}"
     rows = ['<tr><td>0 (Orca alone)</td>' + (td(pct(r['orca exact'], N), True) + td(orca)) * 3 + '</tr>']
     for n in ns:
-        name = f'{n:,}' + (' (where Orca finds no analysis)' if n == 156 else ' (all sentences)' if n == N else '')
+        name = f'{n:,}' + (' (where Orca finds no analysis)' if n == 156 else ' (all sentences, after Orca)' if n == N else '')
         rows.append(f'<tr><td>{name}</td>' + cells(full.get(n)) + cells(rest.get(n)) + cells(casc.get(n)) + '</tr>')
+    ace_sps = f'{N / (ACE_PASS + ACE_RETRY):.2f}'
+    rows.append('<tr><td><b>ACE alone</b>, full lexicon (the baseline)</td>' + (td(pct(r['ace exact'], N), True) + td(ace_sps)) * 3 + '</tr>')
     t = table([('Sentences sent to the fallback', ''), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n'),
                ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n'), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n')], rows,
               group=[('', 1), ('Full ACE', 2), ('Restricted ACE (tagger\'s entries, ≥ 0.001)', 2), ('Restricted ACE, then full ACE if it finds nothing', 2)])
     body = t + notes('Redwoods dev, raw text, 2,062 sentences. First the sentences where Orca finds no analysis (156), then Orca\'s least certain ones, by a logistic model on Orca\'s own signals (tagger probabilities, replays, candidates), cross-validated on dev (AUC ' + f'{r["cv AUC (Orca wrong)"]:.2f}' + ' for spotting Orca\'s errors).',
                      'Speed includes Orca\'s whole run. Full ACE time is measured on the no-analysis sentences (3.7 s each) and ACE\'s dev mean elsewhere; restricted ACE time is measured. Orca here is the run before the repair cutoff change (73.0%).',
                      'Sending everything is worse than sending about half: where Orca is confident, its own analysis beats the fallback\'s.',
+                     '<b>All sentences, after Orca</b> includes Orca\'s time; <b>ACE alone</b> is ACE without Orca, the baseline.',
                      'Different systems from Orca alone, so they sit beside the headline, not in it.')
     return fold('Orca with a fallback for the hard sentences', 'Routing the hard half of the sentences to ACE reaches 82–85% at one to two sentences per second; sending everything gains nothing more.', body)
 
