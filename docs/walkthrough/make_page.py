@@ -785,6 +785,38 @@ def exp_ensemble():
             + notes('Label probabilities averaged per word; each extra model adds about 37 ms of tagging per sentence on GPU. One run each on dev; one tagger\'s run-to-run spread is about one point.'))
 
 
+def exp_corpus_modes():
+    d = load(f'{ORCA}/analysis/corpus-modes/summary.json')
+    if not d:
+        return ''
+    M = d['modes']
+    groups = [('All', 'all'), ('Novels (held-out excerpts)', 'novels'), ('&nbsp;&nbsp;… human', 'novels/human'), ('&nbsp;&nbsp;… LLM', 'novels/LLM'),
+              ('News, 2025', 'news'), ('&nbsp;&nbsp;… human (NYT)', 'news/human'), ('&nbsp;&nbsp;… LLM', 'news/LLM'),
+              ('Under 10 words', 'band under 10'), ('10 to 19 words', 'band 10-19'), ('20 to 29 words', 'band 20-29'), ('30 words or more', 'band 30 and over')]
+    rows = []
+    for name, k in groups:
+        c0 = M['replay']['counts'].get(k)
+        if not c0:
+            continue
+        cells = td(f"{c0['ACE parsed']:,}")
+        for m in ('replay', 'fallback', 'chart'):
+            c = M[m]['counts'][k]
+            cells += td(pct(c['same as ACE'], c['ACE parsed']), True) + td(pct(c['analysis'], c['n']))
+        rows.append(f'<tr><td>{name}</td>' + cells + '</tr>')
+    t = table([('Corpus sample (2,000 sentences)', ''), ('ACE parsed', 'n'), ('Same as ACE', 'n hl'), ('Any analysis', 'n'), ('Same as ACE', 'n hl'), ('Any analysis', 'n'),
+               ('Same as ACE', 'n hl'), ('Any analysis', 'n')], rows, group=[('', 2), ('Replay', 2), ('Fallback', 2), ('Chart', 2)])
+    j = load(f'{ORCA}/analysis/corpus-modes/judge-fallback/score.json')
+    body = t + notes('500 sentences each from held-out novel excerpts (human, LLM) and 2025 news (NYT, LLM). Reference: ACE\'s first parse, unchecked silver; Orca\'s grammar replays 1,917 of ACE\'s 1,927 derivations, so the grammar versions barely differ.',
+                     'Chart mode shares ACE\'s ranking model, so part of its agreement with ACE is built in.',
+                     'Speeds are not shown: the machine was loaded by other jobs during these runs.')
+    if j and j.get('verdicts'):
+        v = j['verdicts']; n = sum(v.values())
+        jt = table([('Fallback against ACE, a random sample of disagreements', ''), ('Judged', 'n'), ('Orca right', 'n hl'), ('ACE right', 'n hl'), ('Both', 'n'), ('Neither', 'n')],
+                   [f'<tr><td>Novels and news</td>' + td(f'{n:,}') + td(pct(v.get('orca', 0), n), True) + td(pct(v.get('reference', 0), n), True) + td(pct(v.get('both', 0), n)) + td(pct(v.get('neither', 0), n)) + '</tr>'])
+        body += jt + notes(f'Claude Opus, readings shown in random order (${j.get("cost_usd", 0):.2f}). The judge prefers Orca on novels and ACE on news.')
+    return fold('The modes on real text: novels and news', 'Replay agrees with ACE far less on corpus text than on dev; fallback analyzes almost everything; chart mode agrees with ACE most.', body)
+
+
 def exp_agreement():
     path = f'{ORCA}/analysis/agreement-attractors/score.json'
     if not os.path.exists(path):
@@ -859,7 +891,7 @@ def rebuild(s):
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_supertag_ace() + exp_hybrid() + exp_edm() + exp_replay_rate() + exp_generated() + exp_beyond_ace() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+            + exp_training() + exp_encoders() + exp_supertag_ace() + exp_corpus_modes() + exp_hybrid() + exp_edm() + exp_replay_rate() + exp_generated() + exp_beyond_ace() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
