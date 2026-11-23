@@ -25,6 +25,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, '..'))
 
 from orca_parse import DEFAULTS, Parser, ace_parse  # noqa: E402
+from ace_sign import replay_sign  # noqa: E402
 
 PAGE = os.path.join(HERE, '..', 'docs', 'demo', 'index.html')
 LOCK = threading.Lock()
@@ -145,11 +146,24 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 m = r.pop('_mrs_obj', None)
                 r['mrs_view'] = mrs_view(m)
                 fs = r.pop('_fs', None)
-                r['fs'] = fs_view(PARSER.fg, fs) if fs is not None else None
+                ad = r.pop('_ace_derivation', None)
+                if fs is not None:
+                    r['fs'] = fs_view(PARSER.fg, fs)
+                elif ad:                                  # chart mode: the sign of ACE's restricted parse, rebuilt by replay
+                    sign, how = replay_sign(PARSER.fg, ad)
+                    r['fs'] = fs_view(PARSER.fg, sign) if sign is not None else None
+                    r['fs_note'] = None if sign is not None else how
+                else:
+                    r['fs'] = None
                 if req.get('ace'):
                     a = ace_parse(text, timeout=ACE_TIMEOUT)
                     am = a.pop('_mrs_obj', None)
                     a['mrs_view'] = mrs_view(am)
+                    der = a.pop('_derivation', None)       # ACE prints no feature structure: rebuild it by replaying its derivation
+                    if der:
+                        sign, how = replay_sign(PARSER.fg, der)
+                        a['fs'] = fs_view(PARSER.fg, sign) if sign is not None else None
+                        a['fs_note'] = None if sign is not None else how
                     a['same as orca'] = same_mrs(m, am) if m is not None and am is not None else None
                     r['ace'] = a
             self._send(200, json.dumps(r, ensure_ascii=False), 'application/json')

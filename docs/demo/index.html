@@ -135,6 +135,8 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
 .fs .tag.on { outline: 2px solid var(--lex); }
 .fs .list { color: var(--muted); }
 .fs .hit > .ft { background: var(--chg-soft); color: var(--chg); }
+.fs-tools input[type=checkbox] { min-width: 0; padding: 0; }
+.fs .fsdiff > .atom, .fs .fsdiff > .str, .fs .fsdiff > .opener { color: var(--chg); font-weight: 600; }
 .fs-crumbs { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; margin-bottom: 8px; font: 0.8rem var(--mono); color: var(--muted); }
 .fs-crumbs .crumb { font: inherit; border: 1px solid var(--line); background: var(--surface); color: var(--accent); border-radius: 4px; padding: 1px 6px; cursor: pointer; }
 .fs .ft.zoom { cursor: zoom-in; }
@@ -188,8 +190,8 @@ details.frag summary .small { margin-left: 6px; }
 
     <section class="panel" id="fs-panel">
       <h2>Feature structure</h2>
-      <p class="small">The whole sign the grammar built. A folded value shows a summary of what is inside; click it to unfold one level, ▾ to fold. Click a feature name to show only that value (the path above leads back). Values with nothing specified (bool, luk …) are hidden unless you ask. Purple numbers mark shared values; click one to light up where it occurs. A path such as SYNSEM LOCAL CAT HEAD opens directly.</p>
-      <div class="fs-tools"><input id="fs-path" placeholder="SYNSEM LOCAL CAT HEAD" aria-label="Open a path"><button type="button" id="fs-open">Open path</button><button type="button" id="fs-fold">Back to the whole sign</button><label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="fs-vague">show values with nothing specified</label><span id="fs-size"></span></div>
+      <p class="small">The whole sign the grammar built. A folded value shows a summary of what is inside; click it to unfold one level, ▾ to fold. Click a feature name to show only that value (the path above leads back). Values with nothing specified (bool, luk …) are hidden unless you ask. Purple numbers mark shared values; click one to light up where it occurs. A path such as SYNSEM LOCAL CAT HEAD opens directly. With ACE's comparison on, orange marks values that differ from ACE's sign.</p>
+      <div class="fs-tools"><input id="fs-path" placeholder="SYNSEM LOCAL CAT HEAD" aria-label="Open a path"><button type="button" id="fs-open">Open path</button><button type="button" id="fs-fold">Back to the whole sign</button><label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="fs-vague">show values with nothing specified</label><label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="fs-diff">only what differs from ACE</label><span id="fs-size"></span></div>
       <div class="scroll pad"><div class="fs" id="fs"></div></div>
     </section>
 
@@ -219,6 +221,11 @@ details.frag summary .small { margin-left: 6px; }
       <div id="ace-mrsview"></div>
       <details><summary>As a DMRS graph</summary><div id="ace-dmrs" style="margin-top:10px"></div></details>
       <details><summary>ACE's MRS as text</summary><div class="scroll pad" style="margin-top:10px"><pre id="ace-mrs"></pre></div></details>
+      <details><summary>ACE's feature structure</summary>
+        <p class="small" style="margin-top:10px">ACE prints a derivation, not the sign; Orca rebuilds the sign by replaying that derivation with the grammar. Orange marks values that differ from Orca's sign; the switch shows only those.</p>
+        <div class="fs-tools"><input id="ace-fs-path" placeholder="SYNSEM LOCAL CAT HEAD" aria-label="Open a path in ACE's sign"><button type="button" id="ace-fs-open">Open path</button><button type="button" id="ace-fs-fold">Back to the whole sign</button><label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="ace-fs-vague">show values with nothing specified</label><label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="ace-fs-diff">only what differs from Orca</label><span id="ace-fs-size"></span></div>
+        <div class="scroll pad"><div class="fs" id="ace-fs"></div></div>
+      </details>
     </section>
   </div>
 </div>
@@ -438,10 +445,41 @@ function drawMrs(mv, text, tokens) {
   return root;
 }
 
-function drawFs(fsv, box) {
+// paths where sign A differs from sign B: ids in A whose type differs, or whose feature B lacks
+function fsDiff(A, B) {
+  const out = new Set(), seen = new Set();
+  if (!A || !B) return out;
+  (function walk(a, b) {
+    const key = a + '|' + b;
+    if (seen.has(key)) return; seen.add(key);
+    const na = A.nodes[a], nb = B.nodes[b];
+    if (!na) return;
+    if (!nb || na[0] !== nb[0]) out.add(a);
+    if (!nb) return;
+    const bArcs = Object.fromEntries(nb[1]);
+    na[1].forEach(([f, v]) => { if (f in bArcs) walk(v, bArcs[f]); else out.add(v); });
+  })(A.root, B.root);
+  return out;
+}
+
+function drawFs(fsv, box, pre = 'fs', other = null, note = null) {
+  const ctl = name => $(`${pre}-${name}`);
   box.replaceChildren();
-  if (!fsv) { box.append(el('p', 'small', 'No analysis.')); return; }
+  if (!fsv) { box.append(el('p', 'small', note ? `No feature structure (${esc(note)}).` : 'No analysis.')); if (ctl('size')) ctl('size').textContent = ''; return; }
   const N = fsv.nodes, inc = {};
+  const diff = fsDiff(fsv, other);                 // ids whose value differs from the other sign
+  const hasDiff = new Set(), memo = {};
+  (function mark(id, stack) {                      // ids with a difference at or below them
+    if (id in memo) return memo[id];
+    if (stack.has(id)) return false;
+    stack.add(id);
+    let d = diff.has(id);
+    (N[id] ? N[id][1] : []).forEach(([, v]) => { if (mark(v, stack)) d = true; });
+    stack.delete(id);
+    memo[id] = d; if (d) hasDiff.add(id);
+    return d;
+  })(fsv.root, new Set());
+  let onlyDiff = false;
   Object.values(N).forEach(([, arcs]) => arcs.forEach(([, v]) => { inc[v] = (inc[v] || 0) + 1; }));
   const tags = {}; let nt = 0;
   const tagOf = id => (inc[id] > 1 ? (tags[id] = tags[id] || ++nt) : 0);
@@ -458,7 +496,7 @@ function drawFs(fsv, box) {
     }
     return items.length && N[cur] && N[cur][1].length === 0 ? items : null;
   };
-  const shown = id => N[id][1].filter(([, v]) => showVague || !vague(v));
+  const shown = id => N[id][1].filter(([, v]) => (showVague || !vague(v)) && (!onlyDiff || hasDiff.has(v)));
   function preview(id, depth = 0) {
     const [type, arcs] = N[id];
     if (!arcs.length) return type;
@@ -473,6 +511,7 @@ function drawFs(fsv, box) {
     const [type, arcs] = N[id] || ['?', []];
     const t = tagOf(id);
     if (t) { const g = el('span', 'tag', String(t)); g.dataset.id = id; g.title = 'shared value: click to light up every place it occurs'; g.addEventListener('click', e => { e.stopPropagation(); const on = !g.classList.contains('on'); box.querySelectorAll('.tag').forEach(x => x.classList.toggle('on', on && x.dataset.id === g.dataset.id)); }); span.append(g); }
+    if (diff.has(id)) span.classList.add('fsdiff');
     if (!arcs.length) { span.append(el('span', type.startsWith('"') ? 'str' : 'atom', esc(type))); return span; }
     const tog = el('button', 'tog', '▸'); tog.type = 'button'; tog.setAttribute('aria-expanded', 'false');
     const pv = preview(id);
@@ -509,7 +548,7 @@ function drawFs(fsv, box) {
       d.append(ft, value(v, path.concat([[f, v]])));
     });
     const hidden = N[id][1].length - arcs.length;
-    if (hidden) { d.append(el('span', 'ft', ''), el('span', 'small', `${hidden} more with nothing specified`)); }
+    if (hidden) { d.append(el('span', 'ft', ''), el('span', 'small', onlyDiff ? `${hidden} more that do not differ or say nothing` : `${hidden} more with nothing specified`)); }
     return d;
   }
   function render() {
@@ -524,21 +563,23 @@ function drawFs(fsv, box) {
     box.append(top);
     if (top._open) top._open();
   }
-  $('fs-size').textContent = `${Object.keys(N).length.toLocaleString('en-US')} nodes${fsv.truncated ? ' (cut off)' : ''}`;
+  ctl('size').textContent = `${Object.keys(N).length.toLocaleString('en-US')} nodes${fsv.truncated ? ' (cut off)' : ''}${other ? `; ${diff.size.toLocaleString('en-US')} ${diff.size === 1 ? 'value differs' : 'values differ'} from the other analysis` : ''}`;
   const openPath = txt => {
     const feats = txt.trim().toUpperCase().split(/[\s.]+/).filter(Boolean);
     let id = fsv.root; const path = [];
     for (const f of feats) {
       const arc = (N[id] || [, []])[1].find(([g]) => g === f);
-      if (!arc) { $('fs-size').textContent = `No feature ${f} under ${path.length ? path[path.length - 1][0] : 'the sign'}.`; return; }
+      if (!arc) { ctl('size').textContent = `No feature ${f} under ${path.length ? path[path.length - 1][0] : 'the sign'}.`; return; }
       id = arc[1]; path.push([f, id]);
     }
     focus = path; render();
   };
-  $('fs-open').onclick = () => openPath($('fs-path').value);
-  $('fs-path').onkeydown = e => { if (e.key === 'Enter') openPath($('fs-path').value); };
-  $('fs-fold').onclick = () => { focus = []; render(); };
-  const vg = $('fs-vague'); if (vg) vg.onchange = () => { showVague = vg.checked; render(); };
+  ctl('open').onclick = () => openPath(ctl('path').value);
+  ctl('path').onkeydown = e => { if (e.key === 'Enter') openPath(ctl('path').value); };
+  ctl('fold').onclick = () => { focus = []; render(); };
+  const vg = ctl('vague'); if (vg) vg.onchange = () => { showVague = vg.checked; render(); };
+  const dg = ctl('diff');
+  if (dg) { dg.checked = false; dg.disabled = !other; dg.parentElement.style.opacity = other ? '1' : '0.5'; dg.onchange = () => { onlyDiff = dg.checked; render(); }; }
   render();
 }
 
@@ -591,7 +632,7 @@ function show(r) {
   $('dmrs-caption').textContent = 'The meaning as a DMRS graph: predicates and the links between them (dashed links are scope).' + (r.ace && r.ace.dmrs ? ' Orange marks what ACE’s analysis does not have.' : '');
   $('mrsview').replaceChildren(drawMrs(r.mrs_view, r.input || $('input').value, r.tokens));
   $('mrs').textContent = r.mrs || '';
-  drawFs(r.fs, $('fs'));
+  drawFs(r.fs, $('fs'), 'fs', r.ace && r.ace.fs, r.fs_note);
   $('tree').replaceChildren(r.derivation ? drawTree(toRaw(r.derivation)) : el('p', 'small', 'No derivation.'));
 
   let t = '<tr><th>Step</th><th class="n">ms</th></tr>';
@@ -620,6 +661,7 @@ function show(r) {
     $('ace-dmrs').replaceChildren(r.ace.dmrs ? drawDmrs(r.ace.dmrs, r.dmrs) : el('span'));
     $('ace-mrsview').replaceChildren(r.ace.mrs_view ? drawMrs(r.ace.mrs_view, r.input || $('input').value, r.tokens) : el('span'));
     $('ace-mrs').textContent = r.ace.mrs || '';
+    drawFs(r.ace.fs, $('ace-fs'), 'ace-fs', r.fs, r.ace.fs_note);
   } else ap.classList.add('hidden');
 }
 

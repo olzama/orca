@@ -248,6 +248,7 @@ class Parser:
         out['hcons'] = [[h.hi, h.relation, h.lo] for h in m.hcons]
         out['top'], out['index'] = m.top, m.index
         if deriv_s:
+            out['_ace_derivation'] = deriv_s          # the demo rebuilds the sign from it (scripts/ace_sign.py)
             try:
                 out['derivation'] = self.tree_json(to_tree(D.from_string(deriv_s)))
             except Exception:
@@ -285,7 +286,8 @@ def ace_parse(text, ace=DEFAULTS['ace'], dat=DEFAULTS['dat'], timeout=30):
             d = dmrs_json(m)
         except Exception:
             d = None
-        return {'seconds': secs, 'mrs': simplemrs.encode(m, indent=True), 'dmrs': d, '_mrs_obj': m}
+        return {'seconds': secs, 'mrs': simplemrs.encode(m, indent=True), 'dmrs': d, '_mrs_obj': m,
+                '_derivation': str(res[0].get('derivation') or '') or None}   # for the demo's feature-structure view (scripts/ace_sign.py)
     except Exception as e:
         return {'seconds': time.perf_counter() - t, 'mrs': None, 'error': str(e)[:200]}
 
@@ -319,6 +321,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False,
         r = parser.parse(raw[s['id']], s['id'])
         m = r.pop('_mrs_obj', None)
         r.pop('_fs', None)
+        r.pop('_ace_derivation', None)
         g = normalized(simplemrs.decode(gold[s['id']]))
 
         def is_gold(x):
@@ -390,6 +393,7 @@ def main():
         r = p.parse(text)
         r.pop('_mrs_obj', None)
         r.pop('_fs', None)
+        r.pop('_ace_derivation', None)
         print(json.dumps(r, indent=1, ensure_ascii=False))
 
 
