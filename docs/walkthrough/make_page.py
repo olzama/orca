@@ -620,7 +620,17 @@ def exp_spanish():
     t = table([('Spanish Resource Grammar treebank (release 0.3.6)', ''), ('Sentences', 'n'), ('Share', 'n hl')], rows)
     body = t + notes('Gold derivations from 14 treebank profiles, preferred analysis only; grammar SRG 0.3.6 compiled with ACE. Treebank MRSs that PyDelphin cannot read are left out.',
                      'Five more ERG-only assumptions removed on the way, among them inflection rules that match part-of-speech tags (SRG\'s input is tagged lemmas).')
-    return fold('Another grammar: Spanish', 'Orca replays the Spanish treebank and rebuilds its meanings; a Spanish tagger is next.', body)
+    tg = load(f'{ORCA}/analysis/srg/tagger-dev-0.3.6.json')
+    if tg:
+        k = tg['counts']; n = k['comparable']
+        rows = [f'<tr><td>{name}</td>' + td(pct(k[key], n), hl) + '</tr>' for name, key, hl in
+                (('First guess accepted by the grammar', 'first guess accepted', False), ('Any analysis after repair', 'any analysis', False),
+                 ('Same MRS as the treebank', 'same MRS', True), ('&nbsp;&nbsp;… with properties too', 'same MRS with properties', True),
+                 ('Gold MRS among the accepted analyses (ceiling)', 'gold MRS among accepted', False))]
+        body += ('    <h3>A Spanish tagger</h3>\n' + table([(f'SRG treebank dev, {n:,} sentences', ''), ('Share', 'n')], rows)
+                 + notes('XLM-R large trained on 2,149 treebank sentences (split by profile); the treebank\'s own tokens, not raw text. No ranking model for SRG: the accepted analysis the tagger likes best is chosen.',
+                         'Dev sentences are short (4 words on average, against 10 in training). Most failures are labels never seen in training: more data, not more search.'))
+    return fold('Another grammar: Spanish', 'Orca replays the Spanish treebank and rebuilds its meanings; a first Spanish tagger gets half of the dev meanings exactly.', body)
 
 
 def exp_beyond_ace():
