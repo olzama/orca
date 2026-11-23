@@ -1,0 +1,71 @@
+{
+ "sentences": 2062,
+ "orca exact": 1506,
+ "ace exact": 1767,
+ "cv AUC (Orca wrong)": 0.877,
+ "ace seconds per sentence (measured on no-analysis)": 3.7436109537210984,
+ "curve": [
+  {
+   "sent to ACE": 156,
+   "exact": 1612,
+   "sentences per second": 2.41
+  },
+  {
+   "sent to ACE": 206,
+   "exact": 1622,
+   "sentences per second": 2.28
+  },
+  {
+   "sent to ACE": 256,
+   "exact": 1643,
+   "sentences per second": 2.16
+  },
+  {
+   "sent to ACE": 356,
+   "exact": 1671,
+   "sentences per second": 1.96
+  },
+  {
+   "sent to ACE": 456,
+   "exact": 1690,
+   "sentences per second": 1.79
+  },
+  {
+   "sent to ACE": 556,
+   "exact": 1710,
+   "sentences per second": 1.65
+  },
+  {
+   "sent to ACE": 756,
+   "exact": 1732,
+   "sentences per second": 1.43
+  },
+  {
+   "sent to ACE": 956,
+   "exact": 1748,
+   "sentences per second": 1.26
+  },
+  {
+   "sent to ACE": 1156,
+   "exact": 1757,
+   "sentences per second": 1.12
+  },
+  {
+   "sent to ACE": 2062,
+   "exact": 1767,
+   "sentences per second": 0.76
+  }
+ ],
+ "features": [
+  "min leaf p",
+  "min tree p",
+  "mean log leaf p",
+  "mean log tree p",
+  "log replays",
+  "first try",
+  "log accepted",
+  "tagger-cost margin of the two best accepted",
+  "log length",
+  "no analysis"
+ ]
+}
