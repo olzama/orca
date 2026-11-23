@@ -52,6 +52,9 @@ def prepare(a):
         pickle.dump({'tagger': p.tagger_name, 'items': out}, f)
 
 
+GOLDFLAGS = []
+
+
 def run(a):
     from compare_mrs import to_pydelphin
     from delphin.codecs import simplemrs
@@ -69,8 +72,18 @@ def run(a):
         from repair_patterns import Patterns
         pats = Patterns(a.patterns, weight=a.pattern_weight, only_new=a.pattern_only_new)
     cands_out = open(a.cands_out, 'w', encoding='utf-8') if a.cands_out else None
+    import copy as _copy
+    args = _copy.copy(p.args)            # search settings: the parser's, with these overrides
+    for k in ('budget', 'kbest', 'min_prob', 'fanout'):
+        if getattr(a, k, None) is not None:
+            setattr(args, k, getattr(a, k))
+    args.search, args.distinct, args.global_min_prob = a.search, a.distinct, a.global_min_prob
     n_exact = n_any = 0
-    items = list(data['items'].items())[:a.limit]
+    items = list(data['items'].items())
+    if a.ids:
+        keep_ids = set(open(a.ids).read().split())
+        items = [x for x in items if x[0] in keep_ids]
+    items = items[:a.limit]
     recs, rep_secs = {}, 0.0
     prof = None
     if a.profile:
@@ -86,7 +99,7 @@ def run(a):
         if pats is not None:
             import copy
             top = pats.augment(copy.deepcopy(top))
-        r._WORK = (p.fg, [s], [top], {sid: [q[1] for q in path]}, p.args, p.lx)
+        r._WORK = (p.fg, [s], [top], {sid: [q[1] for q in path]}, args, p.lx)
         r.GOLD_MRS.clear()
         if sid in gold:
             r.GOLD_MRS[sid] = gold[sid]
@@ -97,6 +110,7 @@ def run(a):
         if prof:
             prof.disable()
         rep_secs += time.perf_counter() - t
+        GOLDFLAGS.append(kbest)
         rec = {'outcome': outcome.replace(', wrong', '').replace(', right', ''), 'replays': n_replays,
                'kbest': [[c['leaf'], c['tree'], c['entries'], c['cost']] for c in kbest]}
         if kbest:
@@ -118,7 +132,11 @@ def run(a):
                       'same_mrs': bool(c.get('same_mrs'))} for c in kbest]
             cands_out.write(json.dumps({'id': sid, 'forms': rforms, 'outcome': rec['outcome'], 'candidates': cands}, ensure_ascii=False) + '\n')
         recs[sid] = rec
-    res = {'sentences': len(items), 'repair seconds': rep_secs, 'repair seconds per sentence': rep_secs / max(1, len(items)),
+    res = {'search': {'mode': a.search, 'distinct': a.distinct, 'global_min_prob': a.global_min_prob,
+                      'budget': args.budget, 'kbest': args.kbest, 'min_prob': args.min_prob, 'fanout': args.fanout},
+           'gold among accepted': sum(any(c.get('same_mrs') for c in kb) for kb in GOLDFLAGS) if gold else None,
+           'replays': sum(r.get('replays', 0) for r in recs.values()),
+           'sentences': len(items), 'repair seconds': rep_secs, 'repair seconds per sentence': rep_secs / max(1, len(items)),
            'any analysis': n_any, 'patterns': a.patterns, 'pattern_weight': a.pattern_weight if a.patterns else None,
            'pattern_only_new': a.pattern_only_new if a.patterns else None, 'records': recs}
     if gold:
@@ -179,6 +197,15 @@ def main():
     ap.add_argument('--pattern-weight', type=float, default=1.0)
     ap.add_argument('--pattern-only-new', action='store_true')
     ap.add_argument('--cands-out')
+    ap.add_argument('--search', default='local', choices=('local', 'global', 'hybrid'),
+                    help='repair search (scripts/repair.py): local (default), global order, or local then global')
+    ap.add_argument('--distinct', action='store_true', help='count accepted readings (distinct MRSs), not derivations')
+    ap.add_argument('--global-min-prob', type=float, default=0.0, help='labels below this probability are not tried by the global search')
+    ap.add_argument('--budget', type=int)
+    ap.add_argument('--kbest', type=int)
+    ap.add_argument('--min-prob', type=float)
+    ap.add_argument('--fanout', type=int)
+    ap.add_argument('--ids', help='file with sentence ids to run (one per line)')
     a = ap.parse_args()
     {'prepare': prepare, 'run': run, 'compare': compare}[a.cmd](a)
 

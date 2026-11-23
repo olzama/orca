@@ -1,0 +1,229 @@
+{
+ "note": "Redwoods dev, DeBERTa, cached tagger output (data/bench/dev-debertav3large-tags.pkl), repair_bench.py on CPU; ERG MaxEnt chooses. Timings rough: variant runs ran two at a time beside other CPU jobs.",
+ "full dev": {
+  "minprob1e-4": {
+   "search": {
+    "mode": "local",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.0001,
+    "fanout": 8
+   },
+   "gold among accepted": 1670,
+   "replays": 582172,
+   "sentences": 2062,
+   "repair seconds": 240.35002987086773,
+   "repair seconds per sentence": 0.1165616051750086,
+   "any analysis": 1940,
+   "exact": 1528
+  },
+  "minprob1e-4-distinct-b1200": {
+   "search": {
+    "mode": "local",
+    "distinct": true,
+    "global_min_prob": 0.0,
+    "budget": 1200,
+    "kbest": 30,
+    "min_prob": 0.0001,
+    "fanout": 8
+   },
+   "gold among accepted": 1697,
+   "replays": 1303127,
+   "sentences": 2062,
+   "repair seconds": 557.366135623306,
+   "repair seconds per sentence": 0.2703036545214869,
+   "any analysis": 1952,
+   "exact": 1538
+  },
+  "minprob1e-3": {
+   "search": {
+    "mode": "local",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.001,
+    "fanout": 8
+   },
+   "gold among accepted": 1637,
+   "replays": 360972,
+   "sentences": 2062,
+   "repair seconds": 166.75964418053627,
+   "repair seconds per sentence": 0.08087276633391671,
+   "any analysis": 1924,
+   "exact": 1524
+  },
+  "hybrid": {
+   "search": {
+    "mode": "hybrid",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.005,
+    "fanout": 8
+   },
+   "gold among accepted": 1661,
+   "replays": 969461,
+   "sentences": 2062,
+   "repair seconds": 312.1143499193713,
+   "repair seconds per sentence": 0.15136486417040315,
+   "any analysis": 1930,
+   "exact": 1495
+  },
+  "local": {
+   "search": {
+    "mode": "local",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.005,
+    "fanout": 8
+   },
+   "gold among accepted": 1599,
+   "replays": 242496,
+   "sentences": 2062,
+   "repair seconds": 135.6285615293309,
+   "repair seconds per sentence": 0.06577524807436029,
+   "any analysis": 1907,
+   "patterns": null,
+   "pattern_weight": null,
+   "pattern_only_new": null,
+   "exact": 1505
+  },
+  "global": {
+   "search": {
+    "mode": "global",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.005,
+    "fanout": 8
+   },
+   "gold among accepted": 1645,
+   "replays": 975412,
+   "sentences": 2062,
+   "repair seconds": 359.7302930466831,
+   "repair seconds per sentence": 0.17445698013903155,
+   "any analysis": 1892,
+   "patterns": null,
+   "pattern_weight": null,
+   "pattern_only_new": null,
+   "exact": 1483
+  }
+ },
+ "missed 556": {
+  "local": {
+   "search": {
+    "mode": "local",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.005,
+    "fanout": 8
+   },
+   "gold among accepted": 93,
+   "replays": 149477,
+   "sentences": 556,
+   "repair seconds": 85.77921176049858,
+   "repair seconds per sentence": 0.15427915784262336,
+   "any analysis": 401,
+   "exact": 0
+  },
+  "minprob1e-4": {
+   "search": {
+    "mode": "local",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.0001,
+    "fanout": 8
+   },
+   "gold among accepted": 165,
+   "replays": 232983,
+   "sentences": 556,
+   "repair seconds": 122.35209286957979,
+   "repair seconds per sentence": 0.22005772098845286,
+   "any analysis": 434,
+   "exact": 44
+  },
+  "hybrid": {
+   "search": {
+    "mode": "hybrid",
+    "distinct": false,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.005,
+    "fanout": 8
+   },
+   "gold among accepted": 155,
+   "replays": 282673,
+   "sentences": 556,
+   "repair seconds": 127.11877275910228,
+   "repair seconds per sentence": 0.2286308862573782,
+   "any analysis": 424,
+   "exact": 35
+  },
+  "distinct": {
+   "search": {
+    "mode": "local",
+    "distinct": true,
+    "global_min_prob": 0.0,
+    "budget": 600,
+    "kbest": 30,
+    "min_prob": 0.005,
+    "fanout": 8
+   },
+   "gold among accepted": 101,
+   "replays": 173991,
+   "sentences": 556,
+   "repair seconds": 127.67725004255772,
+   "repair seconds per sentence": 0.22963534180316136,
+   "any analysis": 401,
+   "exact": 7
+  },
+  "minprob1e-4-distinct-b1200": {
+   "search": {
+    "mode": "local",
+    "distinct": true,
+    "global_min_prob": 0.0,
+    "budget": 1200,
+    "kbest": 30,
+    "min_prob": 0.0001,
+    "fanout": 8
+   },
+   "gold among accepted": 191,
+   "replays": 535882,
+   "sentences": 556,
+   "repair seconds": 311.31590615957975,
+   "repair seconds per sentence": 0.5599206945316183,
+   "any analysis": 446,
+   "exact": 60
+  },
+  "hybrid-gmin1e-3-distinct-b1200": {
+   "search": {
+    "mode": "hybrid",
+    "distinct": true,
+    "global_min_prob": 0.001,
+    "budget": 1200,
+    "kbest": 30,
+    "min_prob": 0.005,
+    "fanout": 8
+   },
+   "gold among accepted": 145,
+   "replays": 493621,
+   "sentences": 556,
+   "repair seconds": 242.9207231765613,
+   "repair seconds per sentence": 0.4369077754974124,
+   "any analysis": 423,
+   "exact": 35
+  }
+ }
+}

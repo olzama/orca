@@ -167,7 +167,19 @@ def search(index):
     stack, commits = [], 0
     accepted, first_right = None, None
     accepted_info, kbest = [], []
-    while n_replays < args.budget:
+    # mode 'local' (default): the search above; 'global': whole label sequences in order of total tagger
+    # cost; 'hybrid': local first, then global for the remaining budget. distinct: count readings (MRSs).
+    mode = getattr(args, 'search', 'local') or 'local'
+    distinct = getattr(args, 'distinct', False)
+    tried, readings = set(), {}
+
+    def keep(fs, resolved, leaf, tree, cost):
+        """Add an accepted derivation to kbest; with `distinct`, only if its reading is new."""
+        if distinct and not new_reading(mrs_key(fs), readings):
+            return
+        kbest.append(candidate(fs, resolved, leaf, tree, cost))
+
+    while mode != 'global' and n_replays < args.budget:
         if not heap:
             if not stack:
                 break
@@ -178,6 +190,7 @@ def search(index):
         if first_right is None:
             first_right = right(leaf, tree)
         n_replays += 1
+        tried.add(state)
         span = replay(leaf, tree)
         if getattr(args, 'trace', None) is not None:
             args.trace.append((len(state), None if span is None else (min(span), max(span), len(span)), round(cost, 2)))
@@ -192,7 +205,10 @@ def search(index):
             if args.kbest <= 1:
                 break
             fs, resolved = accepted_info.pop()
-            kbest.append(candidate(fs, resolved, leaf, tree, cost))
+            if distinct:
+                keep(fs, resolved, leaf, tree, cost)
+            else:
+                kbest.append(candidate(fs, resolved, leaf, tree, cost))
             if len(kbest) >= args.kbest:
                 break
             span = list(range(n))           # look for other readings anywhere
@@ -215,6 +231,44 @@ def search(index):
                     seen.add(new)
                     heapq.heappush(heap, (cost + top[kind][j][0][1] - logp, counter, new, frozenset(span)))
                     counter += 1
+    if mode in ('global', 'hybrid') and n_replays < args.budget and (
+            accepted is None or (args.kbest > 1 and len(kbest) < args.kbest)):
+        # Lazy enumeration of whole assignments in order of total cost (the product of the per-token
+        # sorted label lists, as in k-best enumeration over a CFG's fringes): each assignment has one
+        # parent, the assignment with its last changed position one rank lower, so the order is exact.
+        gmin = getattr(args, 'global_min_prob', 0.0)
+        pos = [(kind, j) for j in range(n) for kind in ('leaf', 'tree') if not (kind == 'tree' and j == n - 1)]
+        avail = [1 + sum(1 for q in top[kind][j][1:] if q[2] >= gmin) for kind, j in pos]
+        delta = lambda i, r: top[pos[i][0]][pos[i][1]][0][1] - top[pos[i][0]][pos[i][1]][r][1]
+        heap2, cnt = [(0.0, 0, ())], 1
+        while heap2 and n_replays < args.budget:
+            cost, _, vec = heapq.heappop(heap2)
+            last = vec[-1][0] if vec else -1
+            if vec and vec[-1][1] + 1 < avail[last]:
+                i, r = vec[-1]
+                heapq.heappush(heap2, (cost - delta(i, r) + delta(i, r + 1), cnt, vec[:-1] + ((i, r + 1),)))
+                cnt += 1
+            for q in range(last + 1, len(pos)):
+                if avail[q] > 1:
+                    heapq.heappush(heap2, (cost + delta(q, 1), cnt, vec + ((q, 1),)))
+                    cnt += 1
+            state = tuple(sorted((pos[i][0], pos[i][1], r) for i, r in vec))
+            if state in tried:
+                continue
+            tried.add(state)
+            leaf, tree = assignment(state)
+            if first_right is None:
+                first_right = right(leaf, tree)
+            n_replays += 1
+            if replay(leaf, tree) is None:
+                if accepted is None:
+                    accepted = (leaf, tree, state)
+                if args.kbest <= 1:
+                    break
+                fs, resolved = accepted_info.pop()
+                keep(fs, resolved, leaf, tree, cost)
+                if len(kbest) >= args.kbest:
+                    break
     if accepted is None:
         outcome = 'rejected, budget used' if n_replays >= args.budget else 'rejected, nothing left to try'
         leaf, tree = assignment(())
@@ -223,6 +277,30 @@ def search(index):
     ok = right(leaf, tree)
     outcome = ('accepted at first try' if not state else 'accepted after repair') + (', right' if ok else ', wrong')
     return outcome, leaf, tree, n_replays, first_right, ok, kbest
+
+
+def mrs_key(fs):
+    """The MRS of an accepted derivation, normalized as comparisons do, for telling readings apart."""
+    g = _WORK[0]
+    from orca.tfs.fast import extract as fast_extract
+    from compare_mrs import normalized, to_pydelphin
+    try:
+        return normalized(to_pydelphin(fast_extract(g, fs) if hasattr(g, 'reset') else extract_py(g, fs)))
+    except Exception:
+        return None
+
+
+def new_reading(m, readings):
+    """True (and remember m) if m is not isomorphic to an MRS seen before for this sentence."""
+    if m is None:
+        return True
+    from delphin import mrs as M
+    sig = tuple(sorted(str(ep.predicate) for ep in m.rels))
+    for other in readings.get(sig, ()):
+        if M.is_isomorphic(m, other, properties=False):
+            return False
+    readings.setdefault(sig, []).append(m)
+    return True
 
 
 def candidate(fs, resolved, leaf, tree, cost):
