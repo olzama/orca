@@ -371,8 +371,8 @@ def main():
     ap.add_argument('--patterns', help='repair: also try learned label substitutions (scripts/repair_patterns.py mine)')
     ap.add_argument('--pattern-weight', type=float, default=1.0, help='with --patterns: scale of their pseudo-probabilities')
     ap.add_argument('--pattern-only-new', action='store_true', help='with --patterns: only add labels the tagger did not list')
-    ap.add_argument('--mode', choices=('replay', 'chart', 'fallback'), default='replay',
-                    help='replay: the tagger\'s labels replayed and repaired (default); chart: ACE restricted to the tagger\'s lexical entries; fallback: replay, and chart where replay finds nothing')
+    ap.add_argument('--mode', choices=('replay', 'chart', 'fallback'), default=None,
+                    help='replay: the tagger\'s labels replayed and repaired (default with --eval, the headline); chart: ACE restricted to the tagger\'s lexical entries; fallback: replay, and chart where replay finds nothing (default when parsing text)')
     ap.add_argument('--chart-k', type=int, default=5, help='chart: tagger lexical labels per token')
     ap.add_argument('--chart-min-prob', type=float, default=0.001, help='chart: drop labels below this probability (the first is always kept)')
     ap.add_argument('--no-fragments', dest='fragments', action='store_false', help='parsing sentences: give no fragments when there is no full analysis (never used in --eval)')
@@ -381,7 +381,7 @@ def main():
                commit=args.commit, commit_min=args.commit_min, root_focus=args.root_focus,
                locate_missing=args.locate_missing, normalized_lookup=args.normalized_lookup,
                patterns=args.patterns, pattern_weight=args.pattern_weight, pattern_only_new=args.pattern_only_new,
-               fragments=args.fragments and not args.eval, mode=args.mode, chart_k=args.chart_k,
+               fragments=args.fragments and not args.eval, mode=args.mode or ('replay' if args.eval else 'fallback'), chart_k=args.chart_k,
                chart_min_prob=args.chart_min_prob)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)

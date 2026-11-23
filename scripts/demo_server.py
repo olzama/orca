@@ -171,7 +171,7 @@ def main():
     ap.add_argument('--port', type=int, default=8017)
     ap.add_argument('--tagger', default=DEFAULTS['tagger'])
     args = ap.parse_args()
-    PARSER = Parser(tagger=args.tagger, fragments=True)
+    PARSER = Parser(tagger=args.tagger, fragments=True, mode='chart')   # the demo shows one sentence at a time: the most accurate mode
     PARSER.parse('The dog barked.')
     srv = http.server.ThreadingHTTPServer((args.host, args.port), Handler)
     print(f'Orca demo ready: http://{args.host}:{args.port}', flush=True)
