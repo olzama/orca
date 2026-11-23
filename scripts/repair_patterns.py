@@ -22,8 +22,16 @@ list in order of probability. Repair (scripts/repair.py) then tries them
 like any other alternative: early if the pattern is strong and the tagger
 unsure.
 
+Mining from cross-validation candidates (`mine-cv`): the tagger's first choice
+and the treebank's gold labels are already stored per sentence by
+cv_candidates.py (held-out folds of the Redwoods training data, each tagged by a
+tagger that never saw it), so no tagging is needed. Only sentences whose tokens
+match the treebank's are used. Root conditions are kept: here the gold labels
+carry them.
+
 Usage:
     repair_patterns.py mine --tagger MODEL --data A.jsonl [B.jsonl ...] --out PATTERNS.json
+    repair_patterns.py mine-cv --data data/cv-candidates/fold0.jsonl [...] --out PATTERNS.json
 """
 import argparse
 import collections
@@ -103,6 +111,47 @@ def mine(args):
     print(json.dumps({k: v for k, v in out.items() if k not in ('whole', 'part')}, indent=1))
 
 
+def mine_cv(args):
+    whole = {k: collections.defaultdict(collections.Counter) for k in ('leaf', 'tree')}
+    part = {k: collections.defaultdict(collections.Counter) for k in ('leaf', 'tree')}
+    wrong = collections.Counter()
+    n = used = 0
+    for path in args.data:
+        for line in open(path, encoding='utf-8'):
+            r = json.loads(line)
+            n += 1
+            if not r.get('gold_forms_match') or 'first' not in r:
+                continue
+            used += 1
+            for kind in ('leaf', 'tree'):
+                fl, gl = r['first'][kind], r['gold'][kind]
+                if len(fl) != len(gl):
+                    continue
+                for j, (a, gold) in enumerate(zip(fl, gl)):
+                    if kind == 'tree' and j == len(fl) - 1:
+                        continue
+                    if a == gold or a.startswith(CONT) or gold.startswith(CONT):
+                        continue
+                    wrong[kind] += 1
+                    whole[kind][a][gold] += 1
+                    for name, x, y in parts_subs(kind, a, gold):
+                        part[kind][(name, x)][y] += 1
+    out = {'source': [os.path.relpath(x) for x in args.data], 'tagger': 'cross-validation folds (first choice of each fold\'s tagger)',
+           'sentences': n, 'sentences used': used, 'errors': dict(wrong), 'whole': {}, 'part': {}}
+    for kind in ('leaf', 'tree'):
+        out['whole'][kind] = {a: [[b, c] for b, c in cs.most_common(args.per_label) if c >= args.min_count]
+                              for a, cs in whole[kind].items()}
+        out['whole'][kind] = {a: v for a, v in out['whole'][kind].items() if v}
+        out['part'][kind] = {f'{name}={x}': [[y, c, sum(cs.values())] for y, c in cs.most_common(args.per_label) if c >= args.min_count]
+                             for (name, x), cs in part[kind].items()}
+        out['part'][kind] = {a: v for a, v in out['part'][kind].items() if v}
+    out['counts'] = {k: {'whole': sum(len(v) for v in out['whole'][k].values()),
+                         'part': sum(len(v) for v in out['part'][k].values())} for k in ('leaf', 'tree')}
+    with open(args.out, 'w') as f:
+        json.dump(out, f, indent=1, ensure_ascii=False)
+    print(json.dumps({k: v for k, v in out.items() if k not in ('whole', 'part')}, indent=1))
+
+
 class Patterns:
     def __init__(self, path, weight=1.0, max_new=3, only_new=False):
         d = json.load(open(path))
@@ -161,9 +210,16 @@ def main():
     m.add_argument('--k', type=int, default=5)
     m.add_argument('--min-count', type=int, default=2)
     m.add_argument('--per-label', type=int, default=5)
+    c = sub.add_parser('mine-cv')
+    c.add_argument('--data', nargs='+', required=True)
+    c.add_argument('--out', required=True)
+    c.add_argument('--min-count', type=int, default=2)
+    c.add_argument('--per-label', type=int, default=5)
     a = ap.parse_args()
     if a.cmd == 'mine':
         mine(a)
+    elif a.cmd == 'mine-cv':
+        mine_cv(a)
 
 
 if __name__ == '__main__':

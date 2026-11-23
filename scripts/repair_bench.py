@@ -10,6 +10,11 @@ result identical.
         derivations (labels, entries), chosen index, MRS text; repair seconds
     repair_bench.py compare A.json B.json
         identical outcomes, accepted derivations, chosen derivation and MRS?
+
+    run options for evaluation (they add fields, never change search):
+        --gold-mrs PROFILES   mark accepted derivations with the gold MRS (same_mrs) and count exact matches
+        --patterns P.json [--pattern-weight W] [--pattern-only-new]   learned repair patterns (these do change search)
+        --cands-out C.jsonl   accepted derivations per sentence, in the format train_ranker.py devprep/eval read
 """
 import argparse
 import json
@@ -58,6 +63,13 @@ def run(a):
     data = pickle.load(open(a.cache, 'rb'))
     p = Parser(tagger=a.tagger, device='cpu')
     r = p.repair
+    gold = load_gold(a.gold_mrs) if a.gold_mrs else {}
+    pats = None
+    if a.patterns:
+        from repair_patterns import Patterns
+        pats = Patterns(a.patterns, weight=a.pattern_weight, only_new=a.pattern_only_new)
+    cands_out = open(a.cands_out, 'w', encoding='utf-8') if a.cands_out else None
+    n_exact = n_any = 0
     items = list(data['items'].items())[:a.limit]
     recs, rep_secs = {}, 0.0
     prof = None
@@ -71,8 +83,13 @@ def run(a):
             continue
         rforms = [q[0] for q in path] if p.normalized_lookup else forms
         s = {'id': sid, 'forms': rforms, 'leaf': [None] * len(forms), 'tree': [None] * len(forms)}
+        if pats is not None:
+            import copy
+            top = pats.augment(copy.deepcopy(top))
         r._WORK = (p.fg, [s], [top], {sid: [q[1] for q in path]}, p.args, p.lx)
         r.GOLD_MRS.clear()
+        if sid in gold:
+            r.GOLD_MRS[sid] = gold[sid]
         t = time.perf_counter()
         if prof:
             prof.enable()
@@ -92,13 +109,48 @@ def run(a):
             fs, _ = p.fg.replay_tree(scored[best][1], [q[1] for q in path])
             rec['chosen'] = best
             rec['mrs'] = simplemrs.encode(to_pydelphin(extract(p.fg, fs)))
+            n_any += 1
+            if gold:
+                rec['exact'] = bool(kbest[best].get('same_mrs'))
+                n_exact += rec['exact']
+        if cands_out is not None:
+            cands = [{'leaf': c['leaf'], 'tree': c['tree'], 'entries': c['entries'], 'cost': c['cost'],
+                      'same_mrs': bool(c.get('same_mrs'))} for c in kbest]
+            cands_out.write(json.dumps({'id': sid, 'forms': rforms, 'outcome': rec['outcome'], 'candidates': cands}, ensure_ascii=False) + '\n')
         recs[sid] = rec
     res = {'sentences': len(items), 'repair seconds': rep_secs, 'repair seconds per sentence': rep_secs / max(1, len(items)),
-           'records': recs}
+           'any analysis': n_any, 'patterns': a.patterns, 'pattern_weight': a.pattern_weight if a.patterns else None,
+           'pattern_only_new': a.pattern_only_new if a.patterns else None, 'records': recs}
+    if gold:
+        res['exact'] = n_exact
+    if cands_out is not None:
+        cands_out.close()
     json.dump(res, open(a.out, 'w'))
     print(json.dumps({k: v for k, v in res.items() if k != 'records'}))
     if prof:
         prof.dump_stats(a.profile)
+
+
+def load_gold(split_dir):
+    """Gold MRS per sentence id (normalized, as compare_mrs compares them) from a split's profiles."""
+    import glob
+    from delphin import tsdb
+    from delphin.codecs import simplemrs
+    from compare_mrs import normalized
+    gold = {}
+    for prof in sorted(glob.glob(os.path.join(split_dir, '*'))):
+        if not os.path.exists(os.path.join(prof, 'relations')):
+            continue
+        names = [f.name for f in tsdb.read_schema(prof)['result']]
+        with tsdb.open(prof, 'result') as rows:
+            for line in rows:
+                rec = tsdb.split(line)
+                if rec[names.index('derivation')]:
+                    try:
+                        gold[f"{os.path.basename(prof)}/{rec[names.index('parse-id')]}"] = normalized(simplemrs.decode(rec[names.index('mrs')]))
+                    except Exception:
+                        pass
+    return gold
 
 
 def compare(a):
@@ -122,6 +174,11 @@ def main():
     ap.add_argument('--out')
     ap.add_argument('--limit', type=int)
     ap.add_argument('--profile')
+    ap.add_argument('--gold-mrs', help='profiles of the split, to mark accepted derivations with the gold MRS')
+    ap.add_argument('--patterns')
+    ap.add_argument('--pattern-weight', type=float, default=1.0)
+    ap.add_argument('--pattern-only-new', action='store_true')
+    ap.add_argument('--cands-out')
     a = ap.parse_args()
     {'prepare': prepare, 'run': run, 'compare': compare}[a.cmd](a)
 

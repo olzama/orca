@@ -13,6 +13,7 @@ The candidates format is what train_ranker.py devprep/eval read.
 
     cv_candidates.py run --fold K [--threads 3] [--limit N]
     cv_candidates.py summary --fold K
+    cv_candidates.py reflag --fold K     (gold flags for sentences whose gold has ICONS; see reflag)
 Writes data/cv-candidates/fold{K}.jsonl (resumable) and fold{K}-summary.json.
 """
 import argparse
@@ -132,6 +133,66 @@ def run(a):
     summary(a)
 
 
+def reflag(a):
+    """Recompute same_mrs where the gold MRS has ICONS. Before repair.candidate normalized
+    our side (fix of 2026-11-23), our ICONS made every such candidate differ from the
+    (ICONS-free, normalized) gold, so those sentences had no gold flag at all."""
+    import tempfile
+    import torch
+    torch.set_num_threads(1)
+    from check_raw_tokens import raw_inputs
+    from compare_mrs import normalized, to_pydelphin
+    from delphin import mrs as M
+    from eval_trees import to_leaves
+    from orca.encoding import decode
+    from orca.tfs.fast import extract
+    from orca.tokens import lattice_path, token_chart
+    from orca_parse import Parser
+    from rerank import with_entries
+    data = os.path.join(ORCA, 'data', f'encoded-2025-bothall-surface-cv{a.fold}')
+    fold = json.load(open(os.path.join(data, 'fold.json')))
+    split = os.path.join(ORCA, 'data', 'profiles-2025', 'train')
+    gold, _, simplemrs = gold_mrs(fold['profiles'], split)
+    raw = {}
+    for name in fold['profiles']:
+        with tempfile.TemporaryDirectory() as d:
+            os.symlink(os.path.realpath(os.path.join(split, name)), os.path.join(d, name))
+            raw.update(raw_inputs(d))
+    p = Parser(tagger=os.path.join(ORCA, 'data', 'models', f'tagger-2025bothsurf-debertav3large-cv{a.fold}'), device='cpu')
+    src = os.path.join(OUT, f'fold{a.fold}.jsonl')
+    tmp = src + '.reflag'
+    st = collections.Counter()
+    with open(src, encoding='utf-8') as f, open(tmp, 'w', encoding='utf-8') as out:
+        for line in f:
+            r = json.loads(line)
+            cands = r.get('candidates') or []
+            g = gold.get(r['id'])
+            if cands and g:
+                try:
+                    gm = simplemrs.decode(g)
+                    has_icons = bool(gm.icons)
+                except Exception:
+                    has_icons = False
+                if has_icons:
+                    st['sentences with gold ICONS'] += 1
+                    gn = normalized(gm)
+                    text = raw[r['id']]
+                    toks = [q[1] for q in lattice_path(token_chart(text, p.ace, p.dat), p.known)]
+                    for c in cands:
+                        try:
+                            tr = with_entries(decode(to_leaves(r['forms'], c['leaf'], c['tree'])), c['entries'])
+                            p.fg.reset()
+                            fs, _ = p.fg.replay_tree(tr, toks)
+                            c['same_mrs'] = bool(M.is_isomorphic(normalized(to_pydelphin(extract(p.fg, fs))), gn, properties=False))
+                        except Exception:
+                            st['replay failed'] += 1
+                    st['now with gold among candidates'] += any(c['same_mrs'] for c in cands)
+            out.write(json.dumps(r, ensure_ascii=False) + '\n')
+    os.replace(tmp, src)
+    print(json.dumps(dict(st)), flush=True)
+    summary(a)
+
+
 def summary(a):
     st = collections.Counter()
     for line in open(os.path.join(OUT, f'fold{a.fold}.jsonl'), encoding='utf-8'):
@@ -153,12 +214,12 @@ def summary(a):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=('run', 'summary'))
+    ap.add_argument('cmd', choices=('run', 'summary', 'reflag'))
     ap.add_argument('--fold', type=int, required=True)
     ap.add_argument('--threads', type=int, default=3)
     ap.add_argument('--limit', type=int)
     a = ap.parse_args()
-    {'run': run, 'summary': summary}[a.cmd](a)
+    {'run': run, 'summary': summary, 'reflag': reflag}[a.cmd](a)
 
 
 if __name__ == '__main__':

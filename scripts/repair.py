@@ -233,9 +233,10 @@ def candidate(fs, resolved, leaf, tree, cost):
     if GOLD_MRS:
         from delphin import mrs as M
         from orca.tfs.fast import extract as fast_extract
-        from compare_mrs import to_pydelphin
+        from compare_mrs import normalized, to_pydelphin
         try:
-            m = to_pydelphin(fast_extract(g, fs) if hasattr(g, 'reset') else extract_py(g, fs))
+            # normalized like the gold (GOLD_MRS holds normalized MRSs): without it, ICONS on our side never match
+            m = normalized(to_pydelphin(fast_extract(g, fs) if hasattr(g, 'reset') else extract_py(g, fs)))
             out['same_mrs'] = M.is_isomorphic(m, GOLD_MRS[_CURRENT[0]], properties=False)
         except Exception:
             out['same_mrs'] = False

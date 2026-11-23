@@ -1,0 +1,42 @@
+{
+ "dev": "Redwoods dev, 2,062 sentences; candidates from the current code (analysis/cv-learn/dev-cands-current.jsonl), 1,907 with candidates",
+ "ranking (gold MRS chosen)": {
+  "first found": 1396,
+  "ERG MaxEnt": 1505,
+  "oracle": 1599,
+  "ERG templates + ERG score, lr 0.05 (best epoch)": 1472,
+  "ERG templates, no ERG score": 1241,
+  "all templates + ERG score, lr 0.05": 1440,
+  "all templates, no ERG score": 1249,
+  "ERG templates + ERG score, lr 0.005, L2": 1496,
+  "all templates + ERG score, lr 0.005, min count 20": 1487
+ },
+ "training data": "cross-validation folds 0 and 1 (34,368 held-out Redwoods training sentences), gold flags corrected for ICONS",
+ "repair patterns (data/repair-patterns/cv01.json; exact / any analysis / repair ms per sentence)": {
+  "none": [
+   1505,
+   1907,
+   72.9
+  ],
+  "weight 1.0": [
+   1499,
+   1903,
+   92.5
+  ],
+  "weight 0.3": [
+   1508,
+   1906,
+   83.9
+  ],
+  "weight 0.1": [
+   1508,
+   1907,
+   77.3
+  ],
+  "only new labels": [
+   1498,
+   1901,
+   86.9
+  ]
+ }
+}

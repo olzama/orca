@@ -18,6 +18,9 @@ Features (hashed into 2^23 weights):
 
 Steps:
   featurize  -> data/ranking/features/shards/*.npz
+  featurize-cv -> the same, from Orca's own accepted derivations on held-out
+             cross-validation folds (data/cv-candidates/fold*.jsonl, cv_candidates.py);
+             set RANKER_SHARDS to keep them apart, e.g. RANKER_SHARDS=shards-cv-erg
   train      -> data/models/ranker-<name>/model.pt
   eval       -> rerank Orca's accepted dev derivations (MODEL/dev-strict-k30-b600.jsonl)
 
@@ -45,7 +48,7 @@ ORCA = os.path.join(HERE, '..')
 FEAT = os.path.join(ORCA, 'data', 'ranking', 'features')
 BITS = int(os.environ.get('RANKER_BITS', 23))      # hashed weights: 2^BITS
 TEMPLATES = os.environ.get('RANKER_TEMPLATES', 'all')   # 'erg': only the ERG MaxEnt templates (lexical types)
-SHARDS = ('shards' if BITS == 23 else f'shards{BITS}') + ('' if TEMPLATES == 'all' else '-' + TEMPLATES)
+SHARDS = os.environ.get('RANKER_SHARDS') or (('shards' if BITS == 23 else f'shards{BITS}') + ('' if TEMPLATES == 'all' else '-' + TEMPLATES))
 MASK = (1 << BITS) - 1
 GP = 3                                    # grandparenting, as in redwoods.mem
 MAX_CANDS = 100                           # per sentence, from the 500-best lists
@@ -141,6 +144,70 @@ def featurize_line(line):
     if len(gold) < 2 or not any(gold) or all(gold):
         return None
     return r['id'], np.concatenate(feats), np.asarray(lens, np.int32), np.asarray(gold), np.asarray(mes, np.float32)
+
+
+def featurize_cv_line(line):
+    r = json.loads(line)
+    cands = r.get('candidates') or []
+    if len(cands) < 2 or not any(c.get('same_mrs') for c in cands) or all(c.get('same_mrs') for c in cands):
+        return None
+    if len(cands) > MAX_CANDS:
+        rng = random.Random(r['id'])
+        gold = [c for c in cands if c.get('same_mrs')]
+        rest = [c for c in cands if not c.get('same_mrs')]
+        rng.shuffle(rest)
+        cands = gold + rest[:MAX_CANDS - len(gold)]
+    cands = list(cands)
+    random.Random(r['id'] + '/order').shuffle(cands)      # the gold one must not sit first: ties pick the first
+    feats, lens, gold, mes = [], [], [], []
+    for c in cands:
+        try:
+            ids, me = tree_features(orca_bare(r['forms'], c['leaf'], c['tree'], c['entries']))
+        except Exception:
+            continue
+        feats.append(np.asarray(ids, dtype=np.int32))
+        lens.append(len(ids))
+        gold.append(bool(c.get('same_mrs')))
+        mes.append(me)
+    if len(gold) < 2 or not any(gold) or all(gold):
+        return None
+    return r['id'], np.concatenate(feats), np.asarray(lens, np.int32), np.asarray(gold), np.asarray(mes, np.float32)
+
+
+def featurize_cv(a):
+    os.makedirs(os.path.join(FEAT, SHARDS), exist_ok=True)
+    for old in glob.glob(os.path.join(FEAT, SHARDS, '*.npz')):
+        os.remove(old)
+
+    def lines():
+        for path in a.cv:
+            with open(path, encoding='utf-8') as f:
+                for l in f:
+                    if l.endswith('\n'):
+                        yield l
+    shard, buf, k = 0, [], 0
+
+    def flush():
+        nonlocal shard, buf
+        if not buf:
+            return
+        ids, feats, lens, gold, mes = zip(*buf)
+        np.savez(os.path.join(FEAT, SHARDS, f'shard{shard:03d}.npz'), ids=np.asarray(ids), feats=np.concatenate(feats),
+                 tree_lens=np.concatenate(lens), cand_counts=np.asarray([len(x) for x in gold], np.int32),
+                 gold=np.concatenate(gold), me=np.concatenate(mes))
+        shard += 1
+        buf = []
+    with mp.Pool(a.workers, initializer=init_worker) as pool:
+        for res in pool.imap(featurize_cv_line, lines(), chunksize=16):
+            k += 1
+            if res is not None:
+                buf.append(res)
+            if len(buf) >= 5000:
+                flush()
+            if k % 5000 == 0:
+                print('sentences', k, 'shards', shard, flush=True)
+    flush()
+    print('done', k, 'sentences read', shard, 'shards', flush=True)
 
 
 def featurize(a):
@@ -431,7 +498,8 @@ def evaluate(a):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('step', choices=['featurize', 'train', 'eval', 'devprep'])
+    ap.add_argument('step', choices=['featurize', 'featurize-cv', 'train', 'eval', 'devprep'])
+    ap.add_argument('--cv', nargs='+', help='featurize-cv: data/cv-candidates/fold*.jsonl')
     ap.add_argument('--workers', type=int, default=5)
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--name', default='')
@@ -447,7 +515,7 @@ def main():
     ap.add_argument('--dev', help='dev shard from devprep: early stopping on picked-gold count there')
     ap.add_argument('--out')
     a = ap.parse_args()
-    {'featurize': featurize, 'train': train, 'eval': evaluate, 'devprep': devprep}[a.step](a)
+    {'featurize': featurize, 'featurize-cv': featurize_cv, 'train': train, 'eval': evaluate, 'devprep': devprep}[a.step](a)
 
 
 if __name__ == '__main__':
