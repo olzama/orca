@@ -709,20 +709,29 @@ def exp_seeds():
 
 def exp_hybrid():
     r = load(f'{ORCA}/analysis/ace-fallback/route.json')
+    cb = load(f'{ORCA}/analysis/supertag-ace/combined.json')
     if not r:
         return ''
-    keep = (156, 256, 356, 556, 956)
-    rows = [f'<tr><td>Orca alone</td>' + td('0') + td(pct(r['orca exact'], N), True) + td(f"{BEST['sentences per second']:.1f}") + '</tr>']
-    for c in r['curve']:
-        if c['sent to ACE'] in keep:
-            name = 'Orca, ACE where Orca finds no analysis' if c['sent to ACE'] == 156 else '&nbsp;&nbsp;… and ACE for the least certain of the rest'
-            rows.append(f'<tr><td>{name}</td>' + td(f"{c['sent to ACE']:,}") + td(pct(c['exact'], N), True) + td(f"{c['sentences per second']:.2f}") + '</tr>')
-    rows.append(f'<tr><td>ACE alone</td>' + td(f'{N:,}') + td(pct(r['ace exact'], N), True) + td(f'{N / (ACE_PASS + ACE_RETRY):.1f}') + '</tr>')
-    t = table([('Redwoods dev, raw text', ''), ('Sentences sent to ACE', 'n'), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n')], rows)
-    body = t + notes(f'Which of the rest go to ACE: a logistic model on Orca\'s own signals (tagger probabilities, replays, candidates), cross-validated on dev (AUC {r["cv AUC (Orca wrong)"]:.2f} for spotting Orca\'s errors).',
-                     'ACE time on the no-analysis sentences is measured (3.7 s each, ACE\'s slow ones too); for the rest it is ACE\'s dev mean, an estimate.',
-                     'A different system from Orca alone, so it sits beside the headline, not in it.')
-    return fold('Orca with ACE as a fallback', 'Sending only the sentences Orca cannot analyze to ACE gains five points and stays more than twice as fast as ACE.', body)
+    full = {c['sent to ACE']: c for c in r['curve']}
+    rest = {c['sent']: c for c in (cb or {}).get('curves', {}).get('restricted', [])}
+    casc = {c['sent']: c for c in (cb or {}).get('curves', {}).get('cascade', [])}
+    ns = sorted(set(full) | set(rest) | set(casc))
+    def cells(c, key='exact'):
+        return (td(pct(c[key], N), True) + td(f"{c['sentences per second']:.2f}")) if c else td(na('not measured')) + td(na('not measured'))
+    base = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-current.json')   # the Orca run the routing was fitted on
+    orca = f"{base['sentences per second']:.2f}"
+    rows = ['<tr><td>0 (Orca alone)</td>' + (td(pct(r['orca exact'], N), True) + td(orca)) * 3 + '</tr>']
+    for n in ns:
+        name = f'{n:,}' + (' (where Orca finds no analysis)' if n == 156 else ' (all sentences)' if n == N else '')
+        rows.append(f'<tr><td>{name}</td>' + cells(full.get(n)) + cells(rest.get(n)) + cells(casc.get(n)) + '</tr>')
+    t = table([('Sentences sent to the fallback', ''), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n'),
+               ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n'), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n')], rows,
+              group=[('', 1), ('Full ACE', 2), ('Restricted ACE (tagger\'s entries, ≥ 0.001)', 2), ('Restricted ACE, then full ACE if it finds nothing', 2)])
+    body = t + notes('Redwoods dev, raw text, 2,062 sentences. First the sentences where Orca finds no analysis (156), then Orca\'s least certain ones, by a logistic model on Orca\'s own signals (tagger probabilities, replays, candidates), cross-validated on dev (AUC ' + f'{r["cv AUC (Orca wrong)"]:.2f}' + ' for spotting Orca\'s errors).',
+                     'Speed includes Orca\'s whole run. Full ACE time is measured on the no-analysis sentences (3.7 s each) and ACE\'s dev mean elsewhere; restricted ACE time is measured. Orca here is the run before the repair cutoff change (73.0%).',
+                     'Sending everything is worse than sending about half: where Orca is confident, its own analysis beats the fallback\'s.',
+                     'Different systems from Orca alone, so they sit beside the headline, not in it.')
+    return fold('Orca with a fallback for the hard sentences', 'Routing the hard half of the sentences to ACE reaches 82–85% at one to two sentences per second; sending everything gains nothing more.', body)
 
 
 def exp_supertag_ace():
