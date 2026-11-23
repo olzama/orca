@@ -605,6 +605,18 @@ def exp_edm():
     body = t + notes('Precision / recall / F1, in %, over elementary dependencies tied to character spans (Dridan and Oepen 2011), micro-averaged; mtool, the MRP scorer, gives the same numbers.',
                      'A sentence without an analysis counts as an empty graph, which lowers recall only.',
                      'Partial credit: a sentence with one wrong argument still scores on the rest, unlike exact match.')
+    rx = load(f'{ORCA}/analysis/relaxed/dev.json')
+    if rx:
+        def prf(x):
+            p, r, f = (x.get(k) for k in ('p', 'r', 'f'))
+            return f"{100 * p:.1f} / {100 * r:.1f} / <b>{100 * f:.1f}</b>"
+        e1, e2 = rx['EDM_NA (names, arguments)']['robust or fragments'], rx['EDM without tops (names, arguments, properties)']['robust or fragments']
+        rows = [f'<tr><td>Words covered by some fragment</td>' + td(pct(rx['words covered'], rx['words']), True) + '</tr>',
+                f'<tr><td>&nbsp;&nbsp;… by fragments of two or more words</td>' + td(pct(rx['words in multi-word fragments'], rx['words'])) + '</tr>',
+                '<tr><td>EDM<sub>NA</sub> of the fragments against gold (P / R / F1)</td>' + td(prf(e1)) + '</tr>',
+                '<tr><td>EDM, properties included (P / R / F1)</td>' + td(prf(e2)) + '</tr>']
+        body += ('    <h3>Fragments where there is no full analysis</h3>\n' + table([(f'The {rx["sentences"]} dev sentences without a full analysis', ''), ('', 'n')], rows)
+                 + notes('The largest pieces of the tagger\'s first guess that the grammar accepts, each with its own MRS; the ERG\'s robust root conditions rescue only one sentence. Without fragments these sentences score zero. Off by default (scripts/relaxed.py).'))
     return fold('EDM, as published parsers report it', 'Orca is as precise as ACE; the gap is in recall, from sentences Orca does not analyze.', body)
 
 
