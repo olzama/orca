@@ -809,11 +809,26 @@ def exp_corpus_modes():
     body = t + notes('500 sentences each from held-out novel excerpts (human, LLM) and 2025 news (NYT, LLM). Reference: ACE\'s first parse, unchecked silver; Orca\'s grammar replays 1,917 of ACE\'s 1,927 derivations, so the grammar versions barely differ.',
                      'Chart mode shares ACE\'s ranking model, so part of its agreement with ACE is built in.',
                      'Speeds are not shown: the machine was loaded by other jobs during these runs.')
-    if j and j.get('verdicts'):
-        v = j['verdicts']; n = sum(v.values())
-        jt = table([('Fallback against ACE, a random sample of disagreements', ''), ('Judged', 'n'), ('Orca right', 'n hl'), ('ACE right', 'n hl'), ('Both', 'n'), ('Neither', 'n')],
-                   [f'<tr><td>Novels and news</td>' + td(f'{n:,}') + td(pct(v.get('orca', 0), n), True) + td(pct(v.get('reference', 0), n), True) + td(pct(v.get('both', 0), n)) + td(pct(v.get('neither', 0), n)) + '</tr>'])
-        body += jt + notes(f'Claude Opus, readings shown in random order (${j.get("cost_usd", 0):.2f}). The judge prefers Orca on novels and ACE on news.')
+    pairs = [('Fallback', 'ACE', 'judge-fallback'), ('Chart', 'replay', 'judge-chart-replay'), ('Chart', 'ACE', 'judge-chart-ace')]
+    jrows, cost = [], 0
+    for first, second, f in pairs:
+        jj = load(f'{ORCA}/analysis/corpus-modes/{f}/score.json')
+        if not jj:
+            continue
+        cost += jj.get('cost_usd', 0)
+        by = jj.get('by_id', {})
+        for gname, pre in (('all', ''), ('novels', 'novels-'), ('news', 'news-')):
+            v = collections.Counter(x for i2, x in by.items() if i2.startswith(pre)) if by else collections.Counter(jj['verdicts'])
+            n = sum(v.values())
+            if not n:
+                continue
+            label = f'<b>{first} against {second}</b>' if gname == 'all' else f'&nbsp;&nbsp;… {gname}'
+            jrows.append(f'<tr><td>{label}</td>' + td(f'{n:,}') + td(pct(v.get('orca', 0), n), True) + td(pct(v.get('reference', 0), n), True)
+                         + td(pct(v.get('both', 0), n)) + td(pct(v.get('neither', 0), n)) + '</tr>')
+    if jrows:
+        body += (table([('Where two systems disagree, a random sample', ''), ('Judged', 'n'), ('First right', 'n hl'), ('Second right', 'n hl'), ('Both', 'n'), ('Neither', 'n')], jrows)
+                 + notes(f'Claude Opus, readings shown in random order (${cost:.2f} in all). Only sentences where both systems have an analysis.',
+                         'Head to head, chart and replay are about even: chart is preferred on news, replay on novels. Where chart and ACE differ, ACE is preferred about two to one.'))
     return fold('The modes on real text: novels and news', 'Replay agrees with ACE far less on corpus text than on dev; fallback analyzes almost everything; chart mode agrees with ACE most.', body)
 
 
