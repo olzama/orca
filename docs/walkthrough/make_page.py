@@ -117,14 +117,18 @@ def summary():
     cnt, verdicts, _, labels = gen_counts()
     if verdicts:
         g = cnt['all']
-        gb = gen_counts('')[0]['all']
+        gb = gen_counts('bert-current')[0].get('all')
+        gc = gen_counts(f'{BEST_KEY}-chart')[0].get('all')
         lo = g['agree'] + g['reference'] + g['both']
         hi = lo + g['none'] + g['scope']
         rows += [grp(f'Generated sentences on hard phenomena (rounds 1 to {len(labels)}), '
                      'compared with ACE\'s first-ranked parse, which nobody checked'),
                  row('&nbsp;&nbsp;Orca (DeBERTa-v3 large), from raw text', g['n'], pct(g['agree'], g['n']), na('not measured'), pct(g['agree'] + g['orca'] + g['both'], g['n']),
                      pct(g['mrs'], g['n']), na('not measured')),
-                 row('&nbsp;&nbsp;Orca (BERT-base), from raw text', gb['n'], na('not re-run with the lookup fixes'), na('not measured'), na('not re-run'), na('not re-run'), na('not measured')),
+                 (row('&nbsp;&nbsp;Orca (BERT-base), from raw text', gb['n'], pct(gb['agree'], gb['n']), na('not measured'), pct(gb['agree'] + gb['orca'] + gb['both'], gb['n']),
+                      pct(gb['mrs'], gb['n']), na('not measured')) if gb else ''),
+                 (row('&nbsp;&nbsp;Orca chart mode (DeBERTa-v3 large; ACE restricted to the tagger\'s entries)', gc['n'], pct(gc['agree'], gc['n']), na('not measured'), pct(gc['agree'] + gc['orca'] + gc['both'], gc['n']),
+                      pct(gc['mrs'], gc['n']), na('not measured')) if gc else ''),
                  row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], na('the reference'), na('the reference'),
                      f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), na('not measured'))]
     t = table([('Text and parser', ''), ('Sentences', 'n'), ('Same meaning as the reference', 'n hl'), ('… with tense, number and information structure too', 'n hl'),
@@ -135,6 +139,7 @@ def summary():
               '<b>Comparing with other work:</b> most semantic parsing evaluation scores predicates and arguments only (SDP\'s DM, AMR\'s Smatch, CCG dependencies, EDM<sub>NA</sub>), as the first column does; full EDM and MRP\'s EDS score count properties too.',
               '<b>Right according to the LLM judge:</b> same meaning, or the judge (Claude Opus) accepts this parser\'s reading where they differ.',
               '<b>ACE on generated text:</b> a range; sentences the judge never saw count as wrong for the low end, right for the high end.',
+              '<b>Chart mode on generated text:</b> it uses ACE\'s chart and ranking model, so agreeing with ACE\'s parse is partly built in; the judge column is the fairer comparison.',
               'Agreements between Orca and ACE count as right; checking them was inconclusive (<i>Generated sentences</i>).')
     finds = ['<b>Exact match understates Orca:</b> the judge often accepts Orca\'s reading where it differs (<i>Generated sentences</i>).',
              '<b>Losses are in proposing</b>, not ranking, and grow with length (<i>Where the wrong sentences go wrong</i>).',
@@ -464,7 +469,7 @@ def exp_encoders():
 GEN_ROUNDS = (('pilot1', 'Round 1'), ('round2', 'Round 2'), ('round3', 'Round 3'))
 
 
-def gen_counts(key=f'{BEST_KEY}-normlocate'):
+def gen_counts(key=f'{BEST_KEY}-current'):
     """Per round, per phenomenon and overall: sentences, analyses, and how each sentence came out
     (agree with ACE; judge says orca / reference / both / neither; none = Orca no analysis; scope = differ only in scope)."""
     import collections
