@@ -141,6 +141,13 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
 .fs .ft.zoom:hover { color: var(--accent); text-decoration: underline; }
 .fs .opener { color: var(--muted); }
 .fs .opener::first-line { color: var(--fg); }
+/* fragments (partial analysis) */
+.frag-sent { font: 500 1.1rem/1.7 var(--display); }
+.frag-sent .cov { background: var(--chg-soft); border-bottom: 2px solid var(--chg); border-radius: 3px; padding: 0 1px; }
+.frag-sent .gap { color: var(--muted); }
+details.frag { border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; background: var(--well); }
+details.frag summary { color: var(--fg); font-weight: 500; }
+details.frag summary .small { margin-left: 6px; }
 </style>
 </head>
 <body>
@@ -162,6 +169,13 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
   </section>
 
   <div id="status" class="verdict hidden" role="status"></div>
+
+  <section class="panel hidden" id="frag-panel">
+    <h2 id="frag-title">Partial analysis</h2>
+    <p class="small">The grammar accepts no analysis of the whole sentence. These are the largest pieces of the tagger’s first guess that it does accept, each with its own meaning. They are not an analysis of the sentence and are never counted as one.</p>
+    <div class="frag-sent" id="frag-sent"></div>
+    <div id="frag-list" style="display:flex;flex-direction:column;gap:10px"></div>
+  </section>
 
   <div id="results" class="hidden" style="display:flex;flex-direction:column;gap:28px">
     <section class="panel">
@@ -527,6 +541,36 @@ function drawFs(fsv, box) {
   const vg = $('fs-vague'); if (vg) vg.onchange = () => { showVague = vg.checked; render(); };
   render();
 }
+
+function showFragments(r) {
+  const panel = $('frag-panel');
+  const f = !r.mrs && r.fragments;
+  if (!f || !f.pieces || !f.pieces.length) { panel.classList.add('hidden'); return; }
+  panel.classList.remove('hidden');
+  const text = r.input || $('input').value;
+  const robust = f.result === 'robust root';
+  $('frag-title').textContent = robust ? `Partial analysis: the whole sentence under the robust root ${f['robust root']}`
+                                       : `Partial analysis: ${f.pieces.length} fragment${f.pieces.length === 1 ? '' : 's'}`;
+  const sent = $('frag-sent'); sent.replaceChildren();
+  const spans = f.pieces.map(p => [p.from, p.to]).sort((a, b) => a[0] - b[0]);
+  let pos = 0;
+  spans.forEach(([a, b]) => {
+    if (a > pos) sent.append(el('span', 'gap', esc(text.slice(pos, a))));
+    sent.append(el('span', 'cov', esc(text.slice(a, b))));
+    pos = Math.max(pos, b);
+  });
+  if (pos < text.length) sent.append(el('span', 'gap', esc(text.slice(pos))));
+  const largest = f.pieces.reduce((best, p, i) => ((p.tokens[1] - p.tokens[0]) > (f.pieces[best].tokens[1] - f.pieces[best].tokens[0]) ? i : best), 0);
+  $('frag-list').replaceChildren(...f.pieces.map((p, i) => {
+    const d = el('details', 'frag');
+    if (i === largest) d.open = true;
+    const n = p.tokens[1] - p.tokens[0];
+    d.append(el('summary', '', `“${esc(text.slice(p.from, p.to))}”<span class="small">${n} word${n === 1 ? '' : 's'} · ${esc(p['root rule'])}</span>`));
+    const toks = (r.tokens || []).filter(t => t.from >= p.from && t.to <= p.to);
+    d.append(drawMrs(p.mrs_view, text, toks));
+    return d;
+  }));
+}
 const ms = s => s < 0.01 ? (s * 1000).toFixed(1) : Math.round(s * 1000).toLocaleString('en-US');
 const STEPS = [['tokens', 'Tokens (grammar preprocessing, in ACE)'], ['tag', 'Tagger'], ['repair', 'Replay and repair'], ['rank', 'Ranking'], ['mrs', 'Meaning (MRS)']];
 
@@ -542,6 +586,7 @@ function show(r) {
     status.className = 'verdict bad';
     status.innerHTML = `<b>No analysis.</b> No derivation the grammar accepts was found within ${r.replays ?? 0} replays (${esc(r.outcome || '')}).`;
   }
+  showFragments(r);
   $('dmrs').replaceChildren(r.dmrs ? drawDmrs(r.dmrs, r.ace && r.ace.dmrs) : el('p', 'small', 'No analysis.'));
   $('dmrs-caption').textContent = 'The meaning as a DMRS graph: predicates and the links between them (dashed links are scope).' + (r.ace && r.ace.dmrs ? ' Orange marks what ACE’s analysis does not have.' : '');
   $('mrsview').replaceChildren(drawMrs(r.mrs_view, r.input || $('input').value, r.tokens));

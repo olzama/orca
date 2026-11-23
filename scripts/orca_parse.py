@@ -51,7 +51,8 @@ class Parser:
     def __init__(self, grammar=DEFAULTS['grammar'], tagger=DEFAULTS['tagger'], ace=DEFAULTS['ace'],
                  dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.005, device=None,
                  all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
-                 normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False):
+                 normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False,
+                 fragments=False):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -65,6 +66,7 @@ class Parser:
         self.ace, self.dat, self.k = ace, dat, k
         self.normalized_lookup = normalized_lookup     # replay with the preprocessed token forms (ACE's +FORM), tag the text as typed
         self.all_mrs = all_mrs                          # also read off the MRS of every accepted derivation
+        self.fragments = fragments                      # with no full analysis, give labeled fragments (scripts/fragments.py); never counted
         self.patterns = None                            # learned repair patterns (scripts/repair_patterns.py)
         if patterns:
             from repair_patterns import Patterns
@@ -93,6 +95,20 @@ class Parser:
             if status in ('rule', 'lex-rule'):
                 self.fg.instance(name)
         self.tagger_name = os.path.basename(os.path.normpath(tagger))
+
+    def fragment_output(self, rforms, forms, path, first):
+        """Partial analysis from the tagger's first guess (scripts/fragments.py), as output:
+        {'result', 'pieces': [{from, to, words, root rule, mrs, mrs_view}]}; from/to are
+        character offsets, words the covered tokens. Not an analysis: never counted."""
+        from delphin.codecs import simplemrs
+        from fragments import mrs_view, partial_analysis
+        pa = partial_analysis(self.fg, self.lx, rforms, first['leaf'], first['tree'], [p[1] for p in path])
+        pieces = []
+        for s, e, label, m in pa['pieces']:
+            pieces.append({'from': path[s][2][0], 'to': path[e - 1][2][1], 'words': ' '.join(forms[s:e]),
+                           'tokens': [s, e], 'root rule': label, 'mrs': simplemrs.encode(m, indent=True),
+                           'mrs_view': mrs_view(m)})
+        return {'result': pa['result'], 'robust root': pa.get('root'), 'pieces': pieces}
 
     def tag(self, forms):
         from train_tagger import UNK, collate
@@ -151,6 +167,9 @@ class Parser:
         out['replays'] = n_replays
         out['accepted derivations'] = len(kbest)
         if not kbest:
+            if self.fragments:
+                out['fragments'] = self.fragment_output(rforms, forms, path, out['first guess'])
+                lap('fragments')
             return out
         scored = []
         for c in kbest:
@@ -298,11 +317,13 @@ def main():
     ap.add_argument('--patterns', help='repair: also try learned label substitutions (scripts/repair_patterns.py mine)')
     ap.add_argument('--pattern-weight', type=float, default=1.0, help='with --patterns: scale of their pseudo-probabilities')
     ap.add_argument('--pattern-only-new', action='store_true', help='with --patterns: only add labels the tagger did not list')
+    ap.add_argument('--no-fragments', dest='fragments', action='store_false', help='parsing sentences: give no fragments when there is no full analysis (never used in --eval)')
     args = ap.parse_args()
     p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget,
                commit=args.commit, commit_min=args.commit_min, root_focus=args.root_focus,
                locate_missing=args.locate_missing, normalized_lookup=args.normalized_lookup,
-               patterns=args.patterns, pattern_weight=args.pattern_weight, pattern_only_new=args.pattern_only_new)
+               patterns=args.patterns, pattern_weight=args.pattern_weight, pattern_only_new=args.pattern_only_new,
+               fragments=args.fragments and not args.eval)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
         return

@@ -38,10 +38,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, '..'))
 sys.setrecursionlimit(20000)
 
-# The ERG's parsing roots in ACE's order (scripts/kelp_check_forest.py).
-ROOTS = ['root_strict', 'root_informal', 'root_inffrag', 'root_frag', 'root_robust_frag',
-         'root_robust', 'root_exclam_ques']
-ROOT_RE = re.compile(r'root_[a-z_]+')
+from fragments import ROOTS, ROOT_RE  # noqa: E402,F401  (the logic lives in fragments.py)
 
 
 def main():
@@ -57,14 +54,9 @@ def main():
 
     import torch
     torch.set_num_threads(a.threads)
-    from compare_mrs import to_pydelphin
     from delphin.codecs import simplemrs
     from edm import gold_mrs, prf, to_eds, tuples
-    from eval_trees import to_leaves
-    from orca.encoding import Leaf, Node, decode, n_leaves
-    from orca.tfs.fast import extract
-    from orca.tfs.grammar import ReplayFailure
-    from orca.tfs.lexicon import replay_with_entries
+    from fragments import partial_analysis
     from orca_parse import Parser
 
     data = pickle.load(open(a.cache, 'rb'))['items']
@@ -74,38 +66,6 @@ def main():
     gold = gold_mrs(a.profiles)
     p = Parser(tagger=a.tagger, device='cpu')
     fg, lx = p.fg, p.lx
-
-    def mrs_text(fs):
-        return simplemrs.encode(to_pydelphin(extract(fg, fs)))
-
-    def try_replay(tree, toks):
-        fg.reset()
-        try:
-            fs, _ = replay_with_entries(fg, lx, tree, toks)
-            return mrs_text(fs)
-        except ReplayFailure:
-            return None
-        except Exception:
-            return None
-
-    def strip_roots(t):
-        while isinstance(t, Node) and t.label.startswith('root_') and len(t.children) == 1:
-            t = t.children[0]
-        return t
-
-    def fragments(t, start, toks, out):
-        """Maximal replayable subtrees of t, left to right: (start, end, words, mrs)."""
-        n = n_leaves(t)
-        m = try_replay(t, toks[start:start + n])
-        if m is not None:
-            out.append((start, start + n, m))
-            return
-        if isinstance(t, Leaf):
-            return                          # a word with no usable entry: uncovered
-        pos = start
-        for c in t.children:
-            fragments(c, pos, toks, out)
-            pos += n_leaves(c)
 
     recs, c = {}, collections.Counter()
     tot = {'robust or fragments': [0, 0, 0], 'nothing': [0, 0, 0]}
@@ -126,41 +86,22 @@ def main():
         n = len(forms)
         leaf = [top['leaf'][j][0][0] for j in range(n)]
         tree = [top['tree'][j][0][0] for j in range(n)]
-        try:
-            t = decode(to_leaves(rforms, leaf, tree))
-        except Exception:
-            rec['result'] = 'undecodable first guess'
+        pa = partial_analysis(fg, lx, rforms, leaf, tree, toks)
+        if pa['result'] == 'undecodable first guess':
+            rec['result'] = pa['result']
             recs[sid] = rec
-            c['undecodable first guess'] += 1
+            c[pa['result']] += 1
             continue
-        # 1. robust roots
-        guessed = ROOT_RE.search(' '.join(tree))
-        rec['root guessed'] = guessed.group(0) if guessed else None
-        robust = None
-        for root in ROOTS:
-            if guessed and root == guessed.group(0):
-                continue                    # repair already tried the guessed root
-            tr2 = [ROOT_RE.sub(root, x) for x in tree]
-            if tr2 == tree:
-                continue
-            try:
-                t2 = decode(to_leaves(rforms, leaf, tr2))
-            except Exception:
-                continue
-            m = try_replay(t2, toks)
-            if m is not None:
-                robust = (root, m)
-                break
-        frags = []
-        if robust:
+        rec['root guessed'] = pa['root guessed']
+        frags = [(s, e, simplemrs.encode(m)) for s, e, _, m in pa['pieces']]
+        if pa['result'] == 'robust root':
             rec['result'] = 'robust root'
-            rec['root'] = robust[0]
-            rec['mrs'] = [robust[1]]
+            rec['root'] = pa['root']
+            rec['mrs'] = [frags[0][2]]
             covered = multi = n
             c['robust root'] += 1
         else:
-            fragments(strip_roots(t), 0, toks, frags)
-            rec['result'] = 'fragments' if frags else 'nothing'
+            rec['result'] = pa['result']
             rec['fragments'] = [{'from': s, 'to': e, 'words': ' '.join(forms[s:e]), 'mrs': m} for s, e, m in frags]
             rec['mrs'] = [m for _, _, m in frags]
             covered = sum(e - s for s, e, _ in frags)

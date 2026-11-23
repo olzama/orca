@@ -51,18 +51,7 @@ def measured_note():
             f"{r['sentences per second']:.1f} sentences per second.")
 
 
-def mrs_view(m):
-    """The MRS as plain JSON for the page's interactive view."""
-    if m is None:
-        return None
-    eps = []
-    for ep in m.rels:
-        eps.append({'label': ep.label, 'pred': str(ep.predicate), 'from': ep.cfrom, 'to': ep.cto, 'carg': ep.carg,
-                    'args': [[r, str(x)] for r, x in ep.args.items() if r != 'CARG']})
-    return {'top': m.top, 'index': m.index, 'eps': eps,
-            'hcons': [[h.hi, h.relation, h.lo] for h in m.hcons],
-            'icons': [[i.left, i.relation, i.right] for i in (m.icons or [])],
-            'vars': {v: {k.upper(): str(x) for k, x in props.items()} for v, props in m.variables.items()}}
+from fragments import mrs_view  # noqa: E402  (shared with orca_parse's fragment output)
 
 
 def fs_view(fg, root, limit=150000):
@@ -182,7 +171,7 @@ def main():
     ap.add_argument('--port', type=int, default=8017)
     ap.add_argument('--tagger', default=DEFAULTS['tagger'])
     args = ap.parse_args()
-    PARSER = Parser(tagger=args.tagger)
+    PARSER = Parser(tagger=args.tagger, fragments=True)
     PARSER.parse('The dog barked.')
     srv = http.server.ThreadingHTTPServer((args.host, args.port), Handler)
     print(f'Orca demo ready: http://{args.host}:{args.port}', flush=True)
