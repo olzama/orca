@@ -457,6 +457,7 @@ def exp_encoders():
                ('Every label of the sentence right (%)', 'n'), ('Right meaning chosen', 'n hl'), ('Any analysis', 'n'), ('Right meaning among the analyses found', 'n')],
               rows, group=[('', 2), ('Tagging, dev', 3), ('Full pipeline from raw text, dev', 3)])
     body = t + cap('Same recipe for all: forms as typed, 6 epochs, batch 32, learning rate 3e-5 (BERT-base) or 2e-5. One run each.')
+    body += exp_ensemble()
     return fold('Encoders', 'DeBERTa and XLM-R large lead, with the treebank alone and with all data.', body)
 
 
@@ -740,6 +741,25 @@ def exp_supertag_ace():
                      'Speed: ACE\'s measured time plus Orca\'s tokenization and tagging (GPU); estimated, not measured end to end.',
                      'The tagger gets lexical types right far more often than tree labels; the chart finds trees that label-by-label replay misses.')
     return fold('The tagger plus a chart: ACE restricted to the tagger\'s words', 'More accurate than replay (about five points) at less than half Orca\'s speed and over three times ACE\'s.', body)
+
+
+def exp_ensemble():
+    e = load(f'{ORCA}/analysis/ensemble/summary.json')
+    if not e:
+        return ''
+    rp = e['repair (replay mode, cutoff 0.001)']
+    ch = next((v for k, v in e.items() if k.startswith('chart')), {})
+    def row(name, k):
+        r = rp.get(k, {})
+        c = ch.get(k, {}) if isinstance(ch, dict) else {}
+        cx = c.get('exact', c.get('same MRS'))
+        return (f'<tr><td>{name}</td>' + td(pct(r['exact'], N), True) + td(pct(r['any analysis'], N)) + td(pct(r['gold among accepted'], N))
+                + (td(pct(cx, N), True) if cx is not None else td(na('not run'))) + '</tr>')
+    rows = [row('One tagger (seed 1)', 's1-top5'), row('Average of two (two seeds)', 'ens2'), row('Average of seven (two seeds, five folds)', 'ens7')]
+    t = table([('DeBERTa-v3 large taggers', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Gold among the analyses', 'n'), ('Same meaning as gold', 'n hl')], rows,
+              group=[('', 1), ('Replay', 3), ('Chart mode', 1)])
+    return ('    <h3>Averaging taggers</h3>\n' + t
+            + notes('Label probabilities averaged per word; each extra model adds about 37 ms of tagging per sentence on GPU. One run each on dev; one tagger\'s run-to-run spread is about one point.'))
 
 
 def exp_agreement():
