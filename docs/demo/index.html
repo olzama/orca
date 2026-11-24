@@ -59,6 +59,8 @@ tr.total td { font-weight: 600; border-bottom: 0; }
 #time, .timetable { width: 100%; }
 #time td:first-child, .timetable td:first-child { white-space: normal; }
 #time td.n, .timetable td.n { width: 6em; }
+#time td.note { color: var(--muted); font-size: 0.78rem; }
+#time th.n { width: 7em; }
 pre { margin: 0; font: 0.78rem/1.5 var(--mono); }
 details summary { cursor: pointer; color: var(--accent); font-weight: 500; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
@@ -297,16 +299,9 @@ select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--li
     <section class="panel">
       <h2>Time</h2>
       <div class="scroll"><table id="time"></table></div>
+      <p class="small" id="time-counts"></p>
       <p class="small" id="time-note"></p>
       <p class="small" id="time-reading"></p>
-    </section>
-
-    <section class="panel">
-      <details><summary>How it got there</summary>
-        <div class="scroll" style="margin-top:10px"><table id="how"></table></div>
-        <p class="small" style="margin-top:10px">Tokens come from the grammar's own preprocessing. A token outlined in purple has several readings (a known word, a name, an unknown word); replay picks the one the lexical entry accepts.</p>
-        <div class="forms" id="forms" style="margin-top:10px"></div>
-      </details>
     </section>
 
     <section class="panel hidden" id="ace-panel">
@@ -322,8 +317,7 @@ select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--li
         <p class="small">The buttons open the assistant in a new tab with the question filled in, under your own account: a free account is enough, and you may have to sign in once. The demo itself sends nothing to any assistant. With “Copy the question” you can paste it into any other one. The answer is an informal reading aid and can be wrong; the graphs are what counts.</p>
         <details><summary>The question that is asked</summary><pre id="ask-text" style="white-space:pre-wrap;margin-top:8px"></pre></details>
       </div>
-      <div class="scroll"><table id="ace-time" class="timetable"></table></div>
-      <p class="small" id="ace-time-note"></p>
+      <p class="small">ACE’s times are in the Time table above, next to Orca’s.</p>
       <div id="ace-dmrs"></div>
       <details><summary>MRS</summary>
         <div id="ace-mrsview" style="margin-top:10px"></div>
@@ -830,35 +824,52 @@ function showFragments(r) {
 const ms = s => s < 0.01 ? (s * 1000).toFixed(1) : Math.round(s * 1000).toLocaleString('en-US');
 const STEPS = [['tokens', 'Tokens (grammar preprocessing, in ACE)'], ['tag', 'Tagger'], ['chart', 'Chart parsing limited to the tagger’s candidate labels (in ACE)'], ['repair', 'Replay and repair'], ['rank', 'Ranking'], ['mrs', 'Meaning (MRS)'], ['readings', 'Further readings'], ['fragments', 'Fragments']];
 
-// Where the time went: producing the parse, and showing it (server views, transfer, drawing in the browser)
+// Where the time went, in one table: producing the parse and showing it, Orca next to ACE when the comparison is on
 function showTime(r, c) {
-  const total = Object.values(r.seconds).reduce((a, b) => a + b, 0), sv = r.server || {};
-  const row = (name, s, cls) => `<tr${cls ? ` class="${cls}"` : ''}><td>${name}</td><td class="n">${ms(Math.max(0, s))}</td></tr>`;
-  const head = name => `<tr><th colspan="2">${name}</th></tr>`;
-  let t = '<tr><th>Step</th><th class="n">ms</th></tr>' + head('Producing the parse');
-  const ch = r.chart || {};
+  const total = Object.values(r.seconds).reduce((a, b) => a + b, 0), sv = r.server || {}, a = r.ace, ch = r.chart || {};
+  const cell = v => v == null ? '<td class="n"></td>' : typeof v === 'string' ? `<td class="n note">${v}</td>` : `<td class="n">${ms(Math.max(0, v))}</td>`;
+  const row = (name, o, x, cls) => `<tr${cls ? ` class="${cls}"` : ''}><td>${name}</td>${cell(o)}${a ? cell(x) : ''}</tr>`;
+  const whole = (name, v, cls) => `<tr${cls ? ` class="${cls}"` : ''}><td>${name}</td><td class="n"${a ? ' colspan="2"' : ''}>${ms(Math.max(0, v))}</td></tr>`;
+  const head = name => `<tr><th colspan="${a ? 3 : 2}">${name}</th></tr>`;
+  const aOwn = a && a['parse seconds'] != null ? a['parse seconds'] : null, inside = a ? 'within parsing' : null;
+  let t = `<tr><th>Step</th><th class="n">${a ? 'Orca' : 'ms'}</th>${a ? '<th class="n">ACE</th>' : ''}</tr>` + head('Producing the parse');
+  let aceRows = false;
   STEPS.forEach(([k, name]) => {
     if (!(k in r.seconds)) return;
-    if (k === 'chart' && ch['ace parse seconds'] != null && ch['ace wall seconds'] != null) {   // the chart step runs ACE once: show its start-up apart, as in ACE's own table
-      t += row('Chart: choosing the lexical entries ACE may use, and reading its answer', r.seconds.chart - ch['ace wall seconds']);
-      t += row('Chart: starting ACE and loading the compiled grammar', ch['ace wall seconds'] - ch['ace parse seconds']);
-      t += row('Chart: parsing limited to the tagger’s candidates (ACE’s own measurement)', ch['ace parse seconds']);
-    } else t += row(name, r.seconds[k]);
+    if (k === 'tokens') t += row('Tokens (the grammar’s preprocessing)', r.seconds.tokens, aOwn != null ? inside : null);
+    else if (k === 'mrs') t += row(name, r.seconds.mrs, aOwn != null ? inside : null);
+    else if (k === 'chart' && ch['ace parse seconds'] != null && ch['ace wall seconds'] != null) {   // the chart step runs ACE once, limited to the tagger's candidates
+      t += row('Chart: choosing the lexical entries ACE may use, reading its answer', r.seconds.chart - ch['ace wall seconds'], null);
+      t += row('Starting ACE and loading the compiled grammar', ch['ace wall seconds'] - ch['ace parse seconds'], aOwn != null ? a.seconds - aOwn : null);
+      t += row(a ? 'Parsing, as ACE measures it (for Orca: limited to the tagger’s candidates)' : 'Chart: parsing limited to the tagger’s candidates, as ACE measures it', ch['ace parse seconds'], aOwn);
+      aceRows = true;
+    } else t += row(name, r.seconds[k], null);
   });
-  t += row('Parsing, total', total, 'total');
+  if (a && !aceRows && aOwn != null) {
+    t += row('Starting ACE and loading the compiled grammar', null, a.seconds - aOwn);
+    t += row('Parsing, as ACE measures it', null, aOwn);
+  }
+  t += row('Parsing, total', total, a ? a.seconds : null, 'total');
   t += head('Showing it');
   if (sv.total != null) {
-    t += row('Server: building what the page shows (feature structure, MRS table, readings) and encoding it', (sv.views || 0) + (sv.json || 0) + Math.max(0, (sv.parse || 0) - total));
-    if (sv.wait > 0.005) t += row('Server: waiting for another visitor’s sentence', sv.wait);
-    if (r.ace) t += row('Server: the ACE comparison and its views', sv.ace || 0);
+    t += row('Server: building what the page shows (feature structure, MRS table, readings) and encoding it', (sv.views || 0) + (sv.json || 0) + Math.max(0, (sv.parse || 0) - total), a && sv.ace != null ? sv.ace - a.seconds : null);
+    if (sv.wait > 0.005) t += whole('Server: waiting for another visitor’s sentence', sv.wait);
   }
   if (c) {
-    if (sv.total != null) t += row('Transfer: sending the request and receiving the answer', c.roundtrip - sv.total);
-    t += row('Browser: drawing the graph, tree, tables and feature structure', c.draw);
-    t += row('From pressing Parse to everything drawn', c.roundtrip + c.draw, 'total');
+    if (sv.total != null) t += whole('Transfer: sending the request and receiving the answer', c.roundtrip - sv.total);
+    t += whole('Browser: drawing the graphs, trees, tables and feature structures', c.draw);
+    t += whole('From pressing Parse to everything drawn', c.roundtrip + c.draw, 'total');
   }
   $('time').innerHTML = t;
-  $('time-note').textContent = 'One sentence at a time on this server (no GPU; one CPU core for everything but the tagger). The first parse after the server starts is slower.';
+  const counts = [`${r.tokens.length} words (tokens)`];
+  if (ch['allowed entries'] != null) counts.push(`${ch['allowed entries'].toLocaleString('en-US')} lexical entries allowed in Orca’s chart`);
+  if (r.replays != null) {
+    counts.push(`${r.replays.toLocaleString('en-US')} derivations replayed`, `${r['accepted derivations'] ?? 0} accepted by the grammar`);
+    if (r.chosen) counts.push(`the chosen one was number ${r.chosen['rank among accepted'] + 1} in the order found`);
+  }
+  $('time-counts').innerHTML = '<b>Counts.</b> ' + counts.map(esc).join(' · ') + '.';
+  $('time-note').textContent = 'Times in milliseconds, for one sentence at a time on this server (no GPU). The first parse after the server starts is slower.'
+    + (a ? ' ACE is started anew for every sentence, and so is the ACE process inside Orca’s chart step; the table shows both start-ups in one row. An empty cell means the step does not exist for that parser; “within parsing” means ACE does it inside its parsing time. For ACE, “showing it” includes rebuilding its feature structure by replay, which is Orca’s work.' : '');
   $('time-reading').textContent = '';
   const st = $('status-time');
   if (st && c) st.textContent = ` Parsing took ${ms(total)} ms of the ${ms(c.roundtrip + c.draw)} ms from pressing Parse to everything drawn.`;
@@ -923,14 +934,6 @@ function show(r) {
 
   showTime(r, null);
 
-  let h = '<tr><th>Measure</th><th class="n">Value</th></tr>';
-  h += `<tr><td>Words (tokens)</td><td class="n">${r.tokens.length}</td></tr>`;
-  h += `<tr><td>Derivations replayed</td><td class="n">${r.replays ?? 0}</td></tr>`;
-  h += `<tr><td>Derivations accepted by the grammar</td><td class="n">${r['accepted derivations'] ?? 0}</td></tr>`;
-  if (r.chosen) h += `<tr><td>Rank of the chosen one, in order found</td><td class="n">${r.chosen['rank among accepted'] + 1}</td></tr>`;
-  $('how').innerHTML = h;
-  $('forms').replaceChildren(...r.tokens.map(tk => el('span', tk.alternatives > 1 ? 'alt' : '', esc(tk.form))));
-
   const ap = $('ace-panel');
   if (r.ace) {
     ap.classList.remove('hidden');
@@ -940,22 +943,6 @@ function show(r) {
     else if (!r.mrs) { v.className = 'verdict chg'; v.innerHTML = '<b>Only ACE found an analysis.</b>'; }
     else { v.className = 'verdict chg'; v.innerHTML = '<b>Different meaning.</b> ACE’s first-ranked analysis differs from Orca’s; orange marks what Orca’s analysis does not have.'; }
     offerExplanation(r);
-    {
-      const a = r.ace, own = a['parse seconds'], sv = r.server || {};
-      const row = (name, s, cls) => `<tr${cls ? ` class="${cls}"` : ''}><td>${name}</td><td class="n">${ms(Math.max(0, s))}</td></tr>`;
-      const head = name => `<tr><th colspan="2">${name}</th></tr>`;
-      let t = '<tr><th>Step</th><th class="n">ms</th></tr>' + head('Producing the parse');
-      if (own != null) {
-        t += row('Starting ACE and loading the compiled grammar', a.seconds - own);
-        t += row('Parsing for the first-ranked analysis (ACE’s own measurement)', own);
-      }
-      t += row('ACE, total', a.seconds, 'total');
-      t += head('Showing it');
-      if (a['sign seconds'] != null) t += row('Server: rebuilding ACE’s feature structure by replay (Orca’s work; ACE prints none)', a['sign seconds']);
-      if (sv.ace != null) t += row('Server: the other views of ACE’s analysis and the comparison of meanings', sv.ace - a.seconds - (a['sign seconds'] || 0));
-      $('ace-time').innerHTML = t;
-      $('ace-time-note').textContent = 'The demo starts ACE anew for every sentence; the first row shows what that costs. Orca’s chart step starts ACE in the same way, and its table shows that start-up in a row of its own. Orca’s time table does not include the time of this comparison.';
-    }
     $('ace-tree').replaceChildren(r.ace.derivation ? drawTree(toRaw(r.ace.derivation)) : el('p', 'small', 'No derivation.'));
     $('ace-dmrs').replaceChildren(r.ace.dmrs ? drawDmrs(r.ace.dmrs, r.dmrs) : el('span'));
     $('ace-mrsview').replaceChildren(r.ace.mrs_view ? drawMrs(r.ace.mrs_view, r.input || $('input').value, r.tokens) : el('span'));
