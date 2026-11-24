@@ -9,6 +9,7 @@
   --bg: #f7f8f6; --panel: #ffffff; --ink: #1c2422; --muted: #66736f; --line: #dde3df;
   --accent: #0f766e; --accent-soft: #d5efe9; --open: #b45309; --open-soft: #fdf0d9;
   --no: #b42318; --no-soft: #fde5e2; --focus: #2563eb; --focus-soft: #dfe9ff;
+  --chg: #b0461a; --chg-soft: #fbe6dc;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
@@ -16,6 +17,7 @@
     --bg: #121716; --panel: #1a2120; --ink: #e6ecea; --muted: #94a3a0; --line: #2c3634;
     --accent: #4fd1c0; --accent-soft: #17403b; --open: #f2b45c; --open-soft: #3d2f14;
     --no: #f38b80; --no-soft: #47211d; --focus: #8ab0ff; --focus-soft: #1f2e52;
+    --chg: #f39a6b; --chg-soft: #3d2418;
   }
 }
 * { box-sizing: border-box; }
@@ -96,7 +98,7 @@ svg .arclabel { font: 10.5px var(--mono); fill: var(--muted); }
 svg .pred { font: 12.5px var(--mono); } svg .pred.top { font-weight: 700; fill: var(--accent); }
 svg .carg { font: 11px var(--mono); fill: var(--muted); }
 #gallery { display: flex; flex-wrap: wrap; gap: 10px; max-height: 44vh; overflow: auto; padding: 2px; margin-bottom: 6px; }
-#gallery.all { max-height: none; }
+#gallery.all, #gallery.fit { max-height: none; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px 6px; cursor: pointer; }
 .card:hover { border-color: var(--accent); }
 .card.current { border-color: var(--focus); box-shadow: 0 0 0 2px var(--focus-soft); }
@@ -115,6 +117,30 @@ svg .mini-word { font: 10px system-ui, sans-serif; fill: var(--ink); }
 #treebar { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; color: var(--muted); flex-wrap: wrap; }
 #treebar button { padding: 1px 8px; }
 
+body.wide { grid-template-columns: 250px minmax(0, 1fr) 0; }
+body.wide #choices { display: none; }
+#readbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+#readbar .sec { margin: 0 8px 0 0; }
+#readbar button.on { background: var(--accent-soft); border-color: var(--accent); }
+.reading { flex: 1 1 380px; min-width: 0; max-width: 100%; }
+.reading .rhead { display: flex; gap: 8px; align-items: center; margin: 2px 0 4px; }
+.reading .rhead .n { font: 600 13px var(--mono); background: var(--accent-soft); color: var(--accent); border-radius: 5px; padding: 1px 8px; }
+.reading .rhead .cnt { color: var(--muted); font-size: 12px; flex: 1; }
+.reading .gscroll { overflow-x: auto; }
+.reading .wordsdiff { font-size: 12.5px; margin-top: 4px; }
+.reading .wordsdiff .w { font-weight: 600; }
+.reading .wordsdiff .t { font: 12px var(--mono); }
+.reading .expl { margin-top: 6px; padding: 6px 8px; border-left: 3px solid var(--accent); background: var(--bg); font-size: 13px; }
+.reading .expl small { color: var(--muted); display: block; }
+.orange { color: var(--chg); font-weight: 600; }
+svg .arc.diff { stroke: var(--chg); stroke-width: 2.2; }
+svg .arc.same { stroke: var(--muted); stroke-width: 1; }
+svg .arclabel.diff { fill: var(--chg); font-weight: 700; }
+svg .gnode { fill: none; stroke: none; }
+svg .gnode.diff { fill: var(--chg-soft); stroke: var(--chg); stroke-width: 1.5; }
+svg .pred.lk2 { cursor: pointer; }
+svg .gentry { font: italic 11px var(--mono); fill: var(--muted); cursor: pointer; }
+.more { padding: 10px 14px; }
 #keys { grid-column: 1 / 4; border-top: 1px solid var(--line); background: var(--panel); padding: 6px 12px;
   color: var(--muted); font-size: 12px; display: flex; gap: 14px; flex-wrap: wrap; }
 #help { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: none; align-items: center; justify-content: center; }
@@ -160,7 +186,7 @@ table.cmp tr.asked { background: var(--focus-soft); }
   </div>
   <div id="treewrap">
     <div id="guide"></div>
-    <h3 class="sec" id="galleryhead" style="margin-top:0"></h3><div id="gallery"></div>
+    <div id="readbar"><h3 class="sec" id="galleryhead"></h3><span id="readbtns"></span></div><div id="gallery"></div>
     <div id="treebar"><span id="treenote"></span><span id="treebtns"></span></div>
     <div id="tree"></div>
     <h3 class="sec" id="dmrshead">Meaning</h3><div id="dmrs"></div>
@@ -174,11 +200,11 @@ table.cmp tr.asked { background: var(--focus-soft); }
 </aside>
 
 <footer id="keys">
-  <span><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> move in the tree</span>
-  <span><kbd>Tab</kbd> next open node</span>
-  <span><kbd>1</kbd>–<kbd>9</kbd> yes to a choice</span>
-  <span><kbd>j</kbd><kbd>k</kbd> move in choices, <kbd>y</kbd> yes, <kbd>x</kbd> no</span>
-  <span><kbd>,</kbd><kbd>.</kbd> previous, next tree, <kbd>s</kbd> keep only this tree, <kbd>g</kbd> all trees at full height</span>
+  <span><kbd>1</kbd>–<kbd>9</kbd> choose what has that number</span>
+  <span><kbd>s</kbd> keep the selected reading or tree</span>
+  <span><kbd>e</kbd> explain in plain English</span>
+  <span><kbd>w</kbd> whole graphs</span>
+  <span><kbd>d</kbd> single questions</span>
   <span><kbd>u</kbd> undo</span>
   <span><kbd>Enter</kbd> accept</span>
   <span><kbd>n</kbd><kbd>p</kbd> next, previous item</span>
@@ -195,11 +221,14 @@ table.cmp tr.asked { background: var(--focus-soft); }
     <tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>move the right end of the focus one word left, right</td></tr>
     <tr><td><kbd>{</kbd> <kbd>}</kbd></td><td>move the left end of the focus one word left, right</td></tr>
     <tr><td><kbd>Esc</kbd></td><td>no focus: list the choices of the whole sentence</td></tr>
-    <tr><td><kbd>1</kbd>–<kbd>9</kbd></td><td>say yes to the choice with that number</td></tr>
+    <tr><td><kbd>1</kbd>–<kbd>9</kbd></td><td>keep the reading with that number; while single questions are on the right, say yes to the question with that number</td></tr>
+    <tr><td><kbd>e</kbd></td><td>ask a language model for a plain-English explanation of each reading, if the server has one (sends the sentence and the differences to it)</td></tr>
+    <tr><td><kbd>w</kbd></td><td>draw the whole meaning of each reading, or only the part around the differences</td></tr>
+    <tr><td><kbd>d</kbd></td><td>unfold or fold the single questions (by meaning and by structure)</td></tr>
     <tr><td><kbd>j</kbd> <kbd>k</kbd></td><td>move down, up in the list of choices</td></tr>
     <tr><td><kbd>y</kbd> / <kbd>x</kbd></td><td>say yes, no to the selected choice</td></tr>
     <tr><td><kbd>,</kbd> <kbd>.</kbd></td><td>show the previous, next remaining tree (once the grammar has checked them)</td></tr>
-    <tr><td><kbd>s</kbd></td><td>keep only the tree shown</td></tr>
+    <tr><td><kbd>s</kbd></td><td>keep the selected reading; when all remaining trees mean the same, keep only the tree shown</td></tr>
     <tr><td><kbd>g</kbd></td><td>show the overview of all trees at full height, or in a scrolling strip</td></tr>
     <tr><td><kbd>u</kbd></td><td>undo the last decision</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>accept the item with the trees that remain, and go to the next item; with more than one tree, press it twice</td></tr>
@@ -211,9 +240,10 @@ table.cmp tr.asked { background: var(--focus-soft); }
   <p style="color:var(--muted);margin-bottom:0">A node drawn with a dashed border is open: the remaining trees differ there.
   While many trees remain, the tree shown is the one that most of them agree with at each open node, and the
   grammar has not checked it. Once few remain, the grammar checks each one, drops those it does not license,
-  and shows all the rest side by side in small form: open nodes are marked there (the highest one of each open
-  part with its rule name; hover over a dot for the others), and the trees that the
-  selected choice would remove are faded. Click a small tree to see it in full, with its meaning.</p>
+  and shows the readings that are left side by side: each as a graph of its meaning, with what the other
+  readings lack in orange. Trees that mean the same form one reading. When only one reading is left, its
+  trees are shown side by side in small form, with the open nodes marked. Click a reading or a small tree
+  to see it in full below.</p>
 </div></div>
 <aside id="lookup">
   <header><input id="lookupq" placeholder="rule, type, lexical entry or predicate" spellcheck="false">
@@ -234,7 +264,11 @@ function lemma(p) {
   return p.startsWith('_') ? p.split('_')[1] : p;     // _show_v_1 -> show
 }
 let clash = new Set();      // short names that stand for more than one predicate in this item
+let entryOf = {};           // predicate -> the lexical entries it comes from, in the trees listed
 function findClashes() {
+  entryOf = {};
+  for (const t of state.trees) for (const p in t.entries || {})
+    for (const e of t.entries[p]) { entryOf[p] = entryOf[p] || []; if (!entryOf[p].includes(e)) entryOf[p].push(e); }
   const full = {};
   const note = p => { (full[lemma(p)] = full[lemma(p)] || new Set()).add(p); };
   const each = key => { const [h, , d] = key.split('|'); if (h !== 'TOP') note(h); note(d); };
@@ -244,7 +278,8 @@ function findClashes() {
 }
 function shortPred(p) {     // the lemma, or the whole predicate name where the lemma alone is ambiguous
   const l = lemma(p);
-  return clash.has(l) ? p.replace(/^_/, '') : l;
+  if (!clash.has(l)) return l;
+  return p.replace(/^_/, '') + (entryOf[p] ? ' [' + entryOf[p].join(' / ') + ']' : '');
 }
 function semText(key) {
   const [h, role, d] = key.split('|');
@@ -263,6 +298,7 @@ function summary(deps) {            // 'show(ARG1 Abrams, ARG2 office, ARG3 Brow
   return lines;
 }
 let items = [], state = null, focus = null, sel = 0, shown = [], docs = {}, waiting = 0, version = 0;
+let moved = false, panel = false, whole = false, explained = {}, asking = false, explainer = null;     // single questions unfolded; whole graphs; explanations by meaning
 
 function el(tag, attrs, ...kids) {
   const e = document.createElement(tag);
@@ -351,7 +387,7 @@ function predLinks(key) {           // the predicates of a meaning statement, ea
 /* ---- items ---- */
 async function loadItems() {
   const data = await api('/api/items');
-  items = data.items;
+  items = data.items; explainer = data.explainer;
   $('profile').textContent = data.profile + ' · ' + items.length + ' items';
 }
 function badge(it) {
@@ -372,7 +408,7 @@ function renderItems() {
 }
 async function openItem(id) {
   state = await api('/api/item/' + id);
-  focus = null; sel = 0;
+  focus = null; sel = 0; panel = false; explained = {}; moved = false;
   focusFirstOpen();
   render();
   location.hash = id;
@@ -394,7 +430,7 @@ async function act(action, constraint) {
   const it = items.find(x => x.id === state.id);
   Object.assign(it, {remaining: state.remaining, decisions: state.decisions.length, status: state.status});
   if (!focus || !discsAt(focus).length) focusFirstOpen();
-  sel = 0;
+  sel = 0; moved = false;
   render();
 }
 
@@ -437,6 +473,125 @@ function stretch(dStart, dEnd) {
   const s = f.start + dStart, e = f.end + dEnd;
   if (s >= 0 && e <= n && s < e) setFocus({start: s, end: e});
 }
+
+/* ---- readings: the listed trees, grouped by meaning ---- */
+const FEW = 6;              // up to this many readings, the single questions stay folded away
+function readings() {
+  if (!state.checked) return [];
+  const by = new Map();
+  state.trees.forEach((t, i) => {
+    const key = t.unchecked || !t.dmrs ? '?' + i : t.deps.join('\n');
+    if (!by.has(key)) by.set(key, {key, trees: [], first: i});
+    by.get(key).trees.push(i);
+  });
+  return [...by.values()];
+}
+function togglePanel() { panel = !panel; sel = 0; render(); }
+function factsOf(t) {       // predicates and links as counted strings; also noted on each node and link
+  if (t.facts) return t.facts;
+  const f = {}, name = {}, add = x => { f[x] = (f[x] || 0) + 1; return x; };
+  for (const n of t.dmrs.nodes) { name[n.id] = n.pred + (n.carg ? '("' + n.carg + '")' : ''); n.fact = add('node ' + name[n.id]); }
+  for (const k of t.dmrs.links)
+    k.fact = add(name[k.from] + ' -' + (k.role || '') + (k.post && k.post !== 'NEQ' ? '/' + k.post : '') + '-> ' + name[k.to]);
+  return t.facts = f;
+}
+function varyingFacts(rs) {  // what some reading has and another lacks
+  const all = rs.map(r => state.trees[r.first]).filter(t => t.dmrs).map(factsOf), out = new Set();
+  for (const f of all) for (const x in f) if (all.some(o => (o[x] || 0) !== f[x])) out.add(x);
+  return out;
+}
+function leavesOf(t) { return flat(clone(t.tree), null, []).filter(n => !n.children.length); }
+function inOrder(t) {        // the predicates in the order of the words they come from, as far as that is known
+  const g = t.dmrs;
+  if (g.order) return g.order;
+  const leaves = leavesOf(t), at = {}, used = {};
+  const bare = w => w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+  for (const n of g.nodes) {
+    const names = (t.entries || {})[n.pred] || [];
+    let c = leaves.filter(l => l.entry && names.includes(l.entry.toLowerCase()));
+    if (!c.length && n.carg) c = leaves.filter(l => bare(words(l.start, l.end)) === bare(String(n.carg)));
+    if (c.length) { const k = used[n.pred + n.carg] || 0; used[n.pred + n.carg] = k + 1; at[n.id] = c[Math.min(k, c.length - 1)].start; }
+  }
+  for (let pass = 0; pass < 3; pass++)          // predicates of the grammar itself: just before what they point to
+    for (const n of g.nodes) if (!(n.id in at)) {
+      const to = g.links.filter(k => k.from === n.id && k.to in at).map(k => at[k.to]);
+      const from = g.links.filter(k => k.to === n.id && k.from in at).map(k => at[k.from]);
+      if (to.length) at[n.id] = Math.min(...to) - 0.3 / (pass + 1);
+      else if (from.length) at[n.id] = Math.min(...from) + 0.3 / (pass + 1);
+    }
+  const i = new Map(g.nodes.map((n, k) => [n, k]));
+  return g.order = [...g.nodes].sort((a, b) => (at[a.id] ?? 1e9) - (at[b.id] ?? 1e9) || i.get(a) - i.get(b));
+}
+function drawGraph(t, varying, full) {
+  const g = t.dmrs; factsOf(t);
+  let keep = null;
+  if (!full && varying) {
+    keep = new Set();
+    for (const n of g.nodes) if (varying.has(n.fact)) keep.add(n.id);
+    for (const k of g.links) if (varying.has(k.fact)) { keep.add(k.from); keep.add(k.to); }
+    if (!keep.size) keep = null;
+  }
+  const pos = {}; let x = 10, tall = false;
+  inOrder(t).filter(n => !keep || keep.has(n.id)).forEach((n, i) => {
+    const text = n.pred + (n.carg ? '(' + n.carg + ')' : ''), diff = !!varying && varying.has(n.fact);
+    const entry = diff || !varying ? ((t.entries || {})[n.pred] || []).join(' / ') : '';
+    const w = Math.max(text.length * 7.6, entry.length * 6.7) + 14;
+    pos[n.id] = {n, i, x: x + w / 2, w, text, diff, entry}; x += w + 14; tall = tall || !!entry;
+  });
+  const isDiff = k => !!varying && varying.has(k.fact);
+  const links = g.links.filter(k => pos[k.from] && pos[k.to] && (full || isDiff(k) || k.role !== 'RSTR'));
+  const H = k => 18 + 13 * Math.min(Math.abs(pos[k.from].i - pos[k.to].i), 9);
+  const base = Math.max(30, ...links.map(H)) + 16;
+  const s = svg('svg', {width: x, height: base + (tall ? 44 : 30)});
+  const defs = svg('defs'), mk = svg('marker', {id: 'arrow', viewBox: '0 0 8 8', refX: 7, refY: 4, markerWidth: 7, markerHeight: 7, orient: 'auto'});
+  mk.append(svg('path', {d: 'M0,0 L8,4 L0,8 z', fill: 'context-stroke'})); defs.append(mk); s.append(defs);
+  for (const k of links) {
+    const a = pos[k.from], b = pos[k.to], h = H(k), q = k.role === 'RSTR', d = isDiff(k);
+    const x1 = a.x + (b.i > a.i ? 6 : -6), x2 = b.x + (b.i > a.i ? -6 : 6);
+    s.append(svg('path', {class: 'arc' + (d ? ' diff' : q ? ' q' : varying ? ' same' : ''), 'marker-end': 'url(#arrow)',
+      d: `M${x1},${base} C${x1},${base - h * 1.33} ${x2},${base - h * 1.33} ${x2},${base}`}));
+    if (!q || d) s.append(svg('text', {class: 'arclabel' + (d ? ' diff' : ''), x: (x1 + x2) / 2, y: base - h - 2, 'text-anchor': 'middle'},
+      (k.role || '') + (k.post && k.post !== 'NEQ' ? '/' + k.post : '')));
+  }
+  for (const id in pos) {
+    const p = pos[id], n = p.n;
+    s.append(svg('rect', {class: 'gnode' + (p.diff ? ' diff' : ''), x: p.x - p.w / 2, y: base + 2, width: p.w, height: p.entry ? 34 : 20, rx: 4}));
+    const txt = svg('text', {class: 'pred lk2' + (n.id === g.top ? ' top' : ''), x: p.x, y: base + 16, 'text-anchor': 'middle'}, p.text);
+    txt.append(svg('title', {}, Object.entries(n.props || {}).map(([a, b]) => a + ': ' + b).join('\n')));
+    txt.onclick = ev => { ev.stopPropagation(); lookUp(n.pred); };
+    s.append(txt);
+    if (p.entry) {
+      const e = svg('text', {class: 'gentry', x: p.x, y: base + 30, 'text-anchor': 'middle'}, p.entry);
+      const first = p.entry.split(' / ')[0], dd = docs[first];
+      e.append(svg('title', {}, 'lexical entry' + (dd && dd.type ? ', type ' + dd.type + (dd.doc ? ': ' + plain(dd.doc) : '') : '')));
+      e.onclick = ev => { ev.stopPropagation(); lookUp(first); };
+      s.append(e);
+    }
+  }
+  return s;
+}
+function wordNotes(rs) {     // per reading: the words that the readings analyze with different lexical entries
+  const reps = rs.map(r => state.trees[r.first]), seen = {};
+  reps.forEach((t, i) => { for (const l of leavesOf(t)) (seen[l.start + ' ' + l.end] = seen[l.start + ' ' + l.end] || {})[i] = l.entry; });
+  const differs = sp => Object.keys(seen[sp]).length < reps.length || new Set(Object.values(seen[sp])).size > 1;
+  return reps.map(t => leavesOf(t).filter(l => differs(l.start + ' ' + l.end)));
+}
+async function explain() {
+  const rs = readings().filter(r => state.trees[r.first].dmrs);
+  if (asking || rs.length < 2 || !explainer) return;
+  if (rs.length > 8) { showError('At most 8 readings can be explained at once: narrow the item down first.'); return; }
+  asking = true; renderGallery();
+  const id = state.id, keys = rs.map(r => r.key);
+  try {
+    const r = await fetch('/api/explain/' + id, {method: 'POST', headers: {'Content-Type': 'application/json'},
+                                                 body: JSON.stringify({show: rs.map(r => r.first)})});
+    const data = await r.json();
+    if (!r.ok) showError(data.error || 'no explanation');
+    else if (state.id === id) rs.forEach((x, i) => { if (data.explanations[x.first] !== undefined) explained[keys[i]] = data.explanations[x.first]; });
+  } catch (e) { showError('no explanation: ' + e.message); }
+  asking = false; renderGallery();
+}
+function pickReading(r) { if (state.trees[r.first].unchecked) return; state.show = r.first; act('reading'); }
 
 /* ---- choices ---- */
 const RANK = {chain: 0, present: 1, span: 2};
@@ -490,12 +645,15 @@ function renderChoices() {
   const isTop = d => d.value[0].startsWith('TOP|');      // the main predicate first, then by how many trees agree
   const sem = state.discriminants.filter(isSem).sort((a, b) => isTop(b) - isTop(a) || b.count - a.count || a.value[0].localeCompare(b.value[0]));
   const all = sem.concat(discsAt(focus));
-  shown = all.slice(0, 150);
+  const rs = readings(), few = state.checked && rs.length > 1 && rs.length <= FEW;
+  document.body.classList.toggle('wide', few && !panel);
+  shown = few && !panel ? [] : all.slice(0, panel ? 150 : 5);
   sel = Math.min(sel, Math.max(0, shown.length - 1));
   const list = $('choicelist'); list.replaceChildren();
   if (!shown.length) {
     list.append(el('div', {class: 'empty'}, state.remaining === 1 ? 'One tree remains. Enter accepts it.'
       : focus ? 'Nothing to decide at this span.' : 'Nothing to decide.'));
+    if (panel) { const b = el('button', {}, 'Fold the single questions ', el('kbd', {}, 'd')); b.onclick = togglePanel; list.append(el('div', {class: 'more'}, b)); }
     return;
   }
   shown.forEach((d, i) => {
@@ -516,11 +674,20 @@ function renderChoices() {
     const row = el('div', {class: 'choice' + (i === sel ? ' sel' : '')},
       el('span', {class: 'num'}, i < 9 ? String(i + 1) : ''), head, el('span', {class: 'btns'}, yes, no),
       el('span', {class: 'keep'}, 'keeps ' + d.count + ' of ' + state.remaining), bar);
-    row.onclick = () => { sel = i; if (!focus && !isSem(d)) setFocus(d); else { renderChoices(); renderGallery(); } };
+    row.onclick = () => { sel = i; moved = true; if (!focus && !isSem(d)) setFocus(d); else { renderChoices(); renderGallery(); } };
     list.append(row);
     if (i === sel) row.scrollIntoView({block: 'nearest'});
   });
-  if (all.length > shown.length) list.append(el('div', {class: 'empty'}, (all.length - shown.length) + ' more: focus a node to narrow the list.'));
+  const more = el('div', {class: 'more'});
+  if (!panel && all.length > shown.length) {
+    const b = el('button', {}, 'All ' + all.length + ' single questions ', el('kbd', {}, 'd'));
+    b.onclick = togglePanel; more.append(b);
+  } else if (panel) {
+    const b = el('button', {}, 'Fold the single questions ', el('kbd', {}, 'd'));
+    b.onclick = togglePanel; more.append(b);
+    if (all.length > shown.length) more.append(el('div', {class: 'where'}, (all.length - shown.length) + ' more: focus a node to narrow the list.'));
+  }
+  list.append(more);
 }
 
 /* ---- sentence, status ---- */
@@ -544,10 +711,20 @@ function renderTop() {
   guide.style.display = state.remaining > 1 ? '' : 'none';
   if (!state.checked) guide.textContent = 'Too many trees to list (' + state.remaining + '). Work on the highlighted words: on the right, ' +
     'press the number of the analysis that is correct for them, or select a wrong one with j / k and press x. ' +
-    'Each answer removes trees. All trees are listed here once at most ' + state.limit + ' remain.';
-  else guide.textContent = 'Each tree below is headed by what it says: the main predicate first, then who does what. ' +
-    'Click the tree with the right meaning and press s to keep only that one. Or answer the choices on the right ' +
-    '(a number for yes, x for no on the selected one); the trees a choice would remove are faded.';
+    'Each answer removes trees. The readings are shown side by side once at most ' + state.limit + ' trees remain.';
+  else {
+    const rs = readings();
+    guide.replaceChildren();
+    if (rs.length === 1) guide.append('The ' + state.remaining + ' remaining trees mean the same, as far as Kelp can tell: they differ in structure only. ' +
+      'Press Enter twice to accept them all, or choose by structure: answer a question on the right, or click a tree and press s to keep only that one.');
+    else if (rs.length <= FEW && !panel) guide.append('Which reading is meant? Each card is one meaning; ', el('span', {class: 'orange'}, 'orange'),
+      ' marks what the other readings lack. Press the number of the right one. If you cannot tell them apart in this context, Enter twice accepts all.');
+    else if (rs.length <= FEW) guide.append('Each card is one meaning; ', el('span', {class: 'orange'}, 'orange'), ' marks what not all readings share. ' +
+      'Click the right one and press s, or answer the questions on the right (a number for yes, x for no on the selected one).');
+    else guide.append(rs.length + ' readings are too many to compare as graphs. Each card says who does what, and how the words are analyzed where readings differ. ' +
+      'Answer the questions on the right (a number for yes; j / k to select one, then x for no): the readings a selected question would remove fade. ' +
+      'Or click the right card and press s. The graphs appear once at most ' + FEW + ' readings are left.');
+  }
   const st = $('itemstatus'); st.replaceChildren();
   if (state.status) st.append(el('span', {class: 'badge ' + state.status}, state.status));
   const dec = $('decisions'); dec.replaceChildren();
@@ -582,11 +759,12 @@ function renderTree() {
   if (!state.checked) note.textContent = 'One of the ' + state.remaining + ' trees in the forest, as an example. Dashed nodes are open.';
   else if (state.remaining === 1) note.textContent = 'The remaining tree (' + (state.root || 'not checked yet') + ').';
   else {
-    note.textContent = 'Tree ' + (state.show + 1) + ' in full (' + (state.root || 'not checked by the grammar yet') + '). Dashed nodes are open.';
-    const prev = el('button', {}, '‹ previous ', el('kbd', {}, ',')), next = el('button', {}, 'next › ', el('kbd', {}, '.')),
-      only = el('button', {}, 'Keep only this tree ', el('kbd', {}, 's'));
-    prev.onclick = () => showTree(-1); next.onclick = () => showTree(1); only.onclick = () => act('only');
-    btns.append(prev, next, only);
+    const rs = readings(), r = rs.findIndex(x => x.trees.includes(state.show));
+    note.textContent = (rs.length > 1 ? 'Reading ' + (r + 1) + ', tree ' : 'Tree ') + (state.show + 1) + ' in full (' +
+      (state.root || 'not checked by the grammar yet') + '). Dashed nodes are open.';
+    const only = el('button', {}, 'Keep only this tree');
+    only.onclick = () => act('only');
+    btns.append(only);
   }
   const root = state.tree, all = nodes();
   measure(root); place(root, 10, 10);
@@ -620,31 +798,8 @@ function renderMeaning() {
   if (state.unchecked) { holder.append(el('div', {class: 'empty'}, 'The grammar has not checked this tree yet.')); return; }
   if (!g) { holder.append(el('div', {class: 'empty'}, 'This meaning cannot be drawn as a graph.')); return; }
   holder.append(el('div', {id: 'meaningsum'}, ...summary(g.deps).map(line => el('div', {}, line))));
-  const pos = {}; let x = 14;
-  g.nodes.forEach((n, i) => {
-    n.text = n.pred + (n.carg ? '(' + n.carg + ')' : '');
-    n.w = n.text.length * 7.6; n.x = x + n.w / 2; n.i = i; pos[n.id] = n; x += n.w + 26;
-  });
-  const links = g.links.filter(k => pos[k.from] && pos[k.to]);
-  const H = k => 20 + 15 * Math.abs(pos[k.from].i - pos[k.to].i);
-  const top = Math.max(30, ...links.map(H)) + 16, base = top;
-  const s = svg('svg', {width: x, height: base + 30});
-  const defs = svg('defs'), mk = svg('marker', {id: 'arrow', viewBox: '0 0 8 8', refX: 7, refY: 4, markerWidth: 7, markerHeight: 7, orient: 'auto'});
-  mk.append(svg('path', {d: 'M0,0 L8,4 L0,8 z', fill: 'context-stroke'})); defs.append(mk); s.append(defs);
-  for (const k of links) {
-    const a = pos[k.from], b = pos[k.to], h = H(k), q = k.role === 'RSTR';
-    const x1 = a.x + (b.i > a.i ? 6 : -6), x2 = b.x + (b.i > a.i ? -6 : 6);
-    s.append(svg('path', {class: 'arc' + (q ? ' q' : ''), 'marker-end': 'url(#arrow)',
-      d: `M${x1},${base} C${x1},${base - h * 1.33} ${x2},${base - h * 1.33} ${x2},${base}`}));
-    if (!q) s.append(svg('text', {class: 'arclabel', x: (x1 + x2) / 2, y: base - h - 2, 'text-anchor': 'middle'},
-      (k.role || '') + (k.post ? '/' + k.post : '')));
-  }
-  for (const n of g.nodes) {
-    const t = svg('text', {class: 'pred' + (n.id === g.top ? ' top' : ''), x: n.x, y: base + 16, 'text-anchor': 'middle'}, n.text);
-    t.append(svg('title', {}, Object.entries(n.props).map(([a, b]) => a + ': ' + b).join('\n')));
-    s.append(t);
-  }
-  holder.append(s);
+  const rs = readings();
+  holder.append(drawGraph(state.trees[state.show] || state, rs.length > 1 ? varyingFacts(rs) : null, true));
 }
 /* ---- all trees, small ---- */
 function holds(t, d) {               // does the tree satisfy a choice?
@@ -688,21 +843,52 @@ function miniTree(tree) {
   return g;
 }
 function renderGallery() {
-  const holder = $('gallery'), head = $('galleryhead'); holder.replaceChildren();
+  const holder = $('gallery'), head = $('galleryhead'), btns = $('readbtns'); holder.replaceChildren(); btns.replaceChildren();
   const on = state.checked && state.remaining > 1;
-  head.style.display = holder.style.display = on ? '' : 'none';
+  $('readbar').style.display = holder.style.display = on ? '' : 'none';
   if (!on) return;
-  head.textContent = 'All ' + state.remaining + ' remaining trees';
-  const choice = shown[sel];
-  state.trees.forEach((t, i) => {
-    const copy = clone(t.tree);
-    const card = el('div', {class: 'card' + (i === state.show ? ' current' : '') + (choice && !holds(t, choice) ? ' out' : '') +
-        (t.unchecked ? ' unchecked' : '')},
-      el('div', {class: 'no'}, (i + 1) + (t.unchecked ? ' · not checked yet' : '')),
-      el('div', {class: 'sum'}, ...summary(t.deps).map(line => el('div', {}, line))), miniTree(copy));
-    card.onclick = () => showTree(0, i);
-    holder.append(card);
-  });
+  const rs = readings(), choice = moved ? shown[sel] : null, many = rs.length > FEW;
+  holder.classList.toggle('fit', rs.length > 1 && !many);
+  const button = (text, key, fn, active) => { const b = el('button', {class: active ? 'on' : ''}, text + ' ', el('kbd', {}, key)); b.onclick = fn; btns.append(b); };
+  if (rs.length === 1) {              // one meaning: the trees, small
+    head.textContent = 'All ' + state.remaining + ' remaining trees';
+    state.trees.forEach((t, i) => {
+      const card = el('div', {class: 'card' + (i === state.show ? ' current' : '') + (choice && !holds(t, choice) ? ' out' : '') +
+          (t.unchecked ? ' unchecked' : '')},
+        el('div', {class: 'no'}, (i + 1) + (t.unchecked ? ' · not checked yet' : '')), miniTree(clone(t.tree)));
+      card.onclick = () => showTree(0, i);
+      holder.append(card);
+    });
+  } else {
+    head.textContent = rs.length + ' readings' + (state.remaining > rs.length ? ' of ' + state.remaining + ' trees' : '');
+    if (!many) button(whole ? 'Only the differences' : 'Whole graphs', 'w', () => { whole = !whole; renderGallery(); }, whole);
+    if (explainer && rs.length <= 8) button(asking ? 'Asking ' + explainer + ' …' : 'Explain in plain English', 'e', explain, asking);
+    const varying = varyingFacts(rs), notes = wordNotes(rs), numbered = !shown.length;
+    rs.forEach((r, i) => {
+      const t = state.trees[r.first], current = r.trees.includes(state.show);
+      const keep = el('button', {}, 'Keep this reading');
+      keep.onclick = ev => { ev.stopPropagation(); pickReading(r); };
+      const card = el('div', {class: 'card reading' + (current ? ' current' : '') + (r.trees.every(k => choice && !holds(state.trees[k], choice)) ? ' out' : '') +
+          (t.unchecked ? ' unchecked' : '')},
+        el('div', {class: 'rhead'}, el('span', {class: 'n'}, numbered && i < 9 ? String(i + 1) : '·'),
+          el('span', {class: 'cnt'}, t.unchecked ? 'not checked by the grammar yet' : r.trees.length > 1 ? r.trees.length + ' trees with this meaning' : ''),
+          t.unchecked ? '' : keep));
+      if (t.dmrs && many) card.append(el('div', {class: 'sum'}, ...summary(t.deps).map(line => el('div', {}, line))));
+      if (t.dmrs) {
+        const only = [...Object.keys(factsOf(t))].some(x => varying.has(x));
+        if (!many) card.append(el('div', {class: 'gscroll'}, drawGraph(t, varying, whole || !only)));
+        if (!many && !only && !whole) card.append(el('div', {class: 'where'}, 'This reading has nothing that the others lack: it lacks what is orange in them.'));
+        if (notes[i].length) card.append(el('div', {class: 'wordsdiff'}, ...notes[i].map(l => {
+          const d = docs[(l.entry || '').toLowerCase()] || {}, ty = l.labels[l.labels.length - 1];
+          return el('div', {}, el('span', {class: 'w'}, words(l.start, l.end)), ': ', el('span', {class: 't'}, link(l.entry || ty)),
+            l.entry && ty !== l.entry ? el('span', {class: 't'}, ' — ', link(ty)) : '', d.doc ? ' — ' + plain(d.doc) : '');
+        })));
+        if (explained[r.key]) card.append(el('div', {class: 'expl'}, explained[r.key], el('small', {}, 'Suggested by ' + explainer + ' from the differences alone. It can be wrong; the graph is what counts.')));
+      } else if (!t.unchecked) card.append(el('div', {class: 'empty'}, 'This meaning cannot be drawn as a graph.'), miniTree(clone(t.tree)));
+      card.onclick = () => showTree(0, r.first);
+      holder.append(card);
+    });
+  }
 }
 let poll = 0;
 function schedulePoll() {
@@ -721,7 +907,7 @@ function schedulePoll() {
     render();
   }, 1500);
 }
-function render() { findClashes(); schedulePoll(); renderTop(); renderTree(); renderMeaning(); renderChoices(); renderGallery(); renderItems(); }
+function render() { findClashes(); schedulePoll(); renderChoices(); renderTop(); renderTree(); renderMeaning(); renderGallery(); renderItems(); }
 
 /* ---- keys and buttons ---- */
 $('b-undo').onclick = () => act('undo');
@@ -747,15 +933,21 @@ document.addEventListener('keydown', ev => {
   let used = true;
   if (k.startsWith('Arrow')) moveTree(k);
   else if (k === 'Tab') moveOpen(ev.shiftKey ? -1 : 1);
-  else if (k >= '1' && k <= '9') { const d = shown[+k - 1]; if (d) decide(d, true); }
-  else if (k === 'j') { sel = Math.min(sel + 1, shown.length - 1); renderChoices(); renderGallery(); }
-  else if (k === 'k') { sel = Math.max(sel - 1, 0); renderChoices(); renderGallery(); }
+  else if (k >= '1' && k <= '9') {
+    if (shown.length) { if (shown[+k - 1]) decide(shown[+k - 1], true); }
+    else { const r = readings()[+k - 1]; if (r && state.checked && state.remaining > 1) pickReading(r); }
+  }
+  else if (k === 'd') togglePanel();
+  else if (k === 'w') { whole = !whole; renderGallery(); }
+  else if (k === 'e') explain();
+  else if (k === 'j') { moved = true; sel = Math.min(sel + 1, shown.length - 1); renderChoices(); renderGallery(); }
+  else if (k === 'k') { moved = true; sel = Math.max(sel - 1, 0); renderChoices(); renderGallery(); }
   else if (k === 'g') $('gallery').classList.toggle('all');
   else if (k === 'y') { if (shown[sel]) decide(shown[sel], true); }
   else if (k === 'x') { if (shown[sel]) decide(shown[sel], false); }
   else if (k === ',') showTree(-1);
   else if (k === '.') showTree(1);
-  else if (k === 's') { if (state.checked && state.remaining > 1) act('only'); }
+  else if (k === 's') { if (state.checked && state.remaining > 1) act(readings().length > 1 ? 'reading' : 'only'); }
   else if (k === 'u' || k === 'Backspace') act('undo');
   else if (k === 'Enter') finish('accept');
   else if (k === 'r') finish('reject');

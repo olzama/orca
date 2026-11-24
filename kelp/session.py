@@ -62,6 +62,13 @@ class Item:
         return words
 
 
+def _leaves(tree):
+    if tree.lexical:
+        yield tree
+    for c in tree.children:
+        yield from _leaves(c)
+
+
 def _props(tree_spans):
     """The properties of one tree that can be discriminants."""
     for (i, j), labels in tree_spans.items():
@@ -84,9 +91,15 @@ def _tree_json(t, settled, lexlabel):
 
 
 class Session:
-    def __init__(self, profile, journal=None, engine=None, limit=150, lextypes=None, author=None):
+    def __init__(self, profile, journal=None, engine=None, limit=150, lextypes=None, author=None,
+                 pred_entries=None, explain=None):
         """lextypes: {lexical entry name: lexical type}. With it, entries appear
-        in chains under their type, as in FFTB's decisions."""
+        in chains under their type, as in FFTB's decisions.
+        pred_entries: {predicate: [names of the lexical entries that have it]},
+        to show which entry of a tree a predicate comes from.
+        explain: a function from a prompt to {reading number: explanation}."""
+        self.pred_entries = pred_entries or {}
+        self.explain, self.explained = explain, {}
         self.profile = profile
         self.journal = journal or os.path.join(profile, 'kelp-journal.jsonl')
         self.engine, self.limit = engine, limit
@@ -95,6 +108,7 @@ class Session:
         self.author = author or getpass.getuser()
         lextypes = lextypes or {}
         self.lexlabel = lambda name: lextypes.get(name.lower(), name)
+        self.typedocs = {}          # lexical type -> the grammar's note on it
         self.store = Annotations(profile) if engine else None
         self.lock = threading.Lock()
         ts = itsdb.TestSuite(profile)
@@ -251,7 +265,8 @@ class Session:
                 show = min(max(show, 0), len(exact) - 1)
                 out['trees'] = [{'tree': _tree_json(t, lambda p: seen[p] == len(exact), self.lexlabel),
                                  'root': r and r['root'], 'dmrs': r and r['dmrs'], 'unchecked': r is None,
-                                 'deps': r.get('deps', []) if r else []} for t, _, r in exact]
+                                 'deps': r.get('deps', []) if r else [],
+                                 'entries': self._entries(t, r)} for t, _, r in exact]
                 out.update(out['trees'][show], show=show)
         item.remaining = out['remaining']
         out['discriminants'] = [dict(_to_json(c), count=k) for c, k in found.items()]
@@ -261,6 +276,72 @@ class Session:
             out['discriminants'] += [{'kind': SEM, 'start': 0, 'end': 0, 'value': [d], 'count': k}
                                      for d, k in said.items() if k < len(known)]
         return out
+
+    def _entries(self, tree, result):
+        """{predicate: [the lexical entries of this tree that have it]}"""
+        if not result or not result.get('dmrs'):
+            return {}
+        mine, out = {leaf.label.lower() for leaf in _leaves(tree)}, {}
+        for n in result['dmrs']['nodes']:
+            names = [e for e in self.pred_entries.get(n['pred'].lower(), ()) if e in mine]
+            if names:
+                out[n['pred']] = names
+        return out
+
+    def _reading(self, item, show):
+        """Decisions about the meaning that leave the trees with the meaning of
+        the tree shown: first what it says and other trees do not, then what
+        others say and it does not, each only while it removes trees."""
+        _, exact = self._view(item, item.constraints)
+        if exact is None or not 0 <= show < len(exact) or exact[show][2] is None:
+            raise ValueError('a reading can be chosen only once the grammar has checked its tree')
+        known = [set(r.get('deps', ())) for _, _, r in exact if r]
+        mine = set(exact[show][2].get('deps', ()))
+        every = set().union(*known)
+        left = [k for k in known]
+        for kind, pool in ((SEM, sorted(mine)), (NOT_SEM, sorted(every - mine))):
+            for d in pool:
+                kept = [k for k in left if (d in k) == (kind == SEM)]
+                if len(kept) < len(left):
+                    item.constraints.append(Constraint(kind, 0, 0, (d,)))
+                    left = kept
+
+    def explain_readings(self, pid, shows):
+        """Plain-English explanations for the trees with the given numbers, each
+        standing for one reading: {tree number: text}. Asks the model once
+        per set of readings."""
+        from kelp import explain as X
+        if self.explain is None:
+            raise ValueError('this server has no model for explanations (see --explain)')
+        with self.lock:
+            item = self.items[pid]
+            _, exact = self._view(item, item.constraints)
+            if exact is None:
+                raise ValueError('readings can be explained only once the trees are listed')
+            picked = [(i, exact[i]) for i in shows if 0 <= i < len(exact) and exact[i][2] and exact[i][2].get('dmrs')]
+            if len(picked) < 2:
+                raise ValueError('there is nothing to compare')
+            if len(picked) > 8:
+                raise ValueError('at most 8 readings can be explained at once: narrow the item down first')
+            words = {}
+            for i, (t, _, _) in picked:
+                for leaf in _leaves(t):
+                    words.setdefault((leaf.start, leaf.end), {})[i] = leaf.label
+            differ = {sp for sp, by in words.items() if len(by) < len(picked) or len(set(by.values())) > 1}
+            readings = []
+            for (i, (t, _, r)), fs in zip(picked, X.distinguishing([r['dmrs'] for _, (_, _, r) in picked])):
+                notes = []
+                for leaf in _leaves(t):
+                    if (leaf.start, leaf.end) in differ:
+                        ltype = self.lexlabel(leaf.label)
+                        notes.append(f'"{" ".join(item.words[leaf.start:leaf.end])}": lexical entry {leaf.label}, type {ltype}'
+                                     + (f' ({self.typedocs[ltype.lower()]})' if self.typedocs.get(ltype.lower()) else ''))
+                readings.append((i + 1, fs, notes))
+            text = X.prompt(item.text, readings)
+        if text not in self.explained:              # the model is asked outside the lock
+            answer = self.explain(text)
+            self.explained[text] = {int(k) - 1: v for k, v in answer.items() if str(k).isdigit()}
+        return {'explanations': self.explained[text]}
 
     def _remaining(self, item, constraints):
         counts, exact = self._view(item, constraints)
@@ -309,7 +390,8 @@ class Session:
 
     def act(self, pid, action, constraint=None, show=0):
         """Apply one action to an item and return its new state.
-        Actions: decide (with a constraint), only (keep the tree shown), undo,
+        Actions: decide (with a constraint), only (keep the tree shown),
+        reading (keep the trees that mean what the tree shown means), undo,
         reset, accept, reject, reopen."""
         with self.lock:
             item = self.items[pid]
@@ -322,6 +404,9 @@ class Session:
                 item.status, show = OPEN, 0
             elif action == 'only':
                 self._only(item, show)
+                item.status, show = OPEN, 0
+            elif action == 'reading':
+                self._reading(item, show)
                 item.status, show = OPEN, 0
             elif action == 'undo':
                 if item.constraints:

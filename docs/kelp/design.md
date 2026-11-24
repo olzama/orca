@@ -103,6 +103,30 @@ Other points:
 - **Seeing all trees.** Once the grammar has checked the remaining trees, all of them are shown side by side in small form, with the nodes where they differ marked; the trees that the selected choice would remove are faded. Any of them can be opened in full, with its meaning.
 - **List view.** Per item: status, number of trees, number of decisions, whether the proposers agree. Sortable, so easy items can be confirmed in a run.
 
+### Choosing by comparing readings (built)
+
+Once at most 150 trees of an item remain, Kelp lists them, Orca checks each one in the background, and the
+trees are grouped by meaning into readings. The main view then follows the "Gold or ACE?" review pages:
+
+- Up to six readings are shown side by side, each as a graph of its meaning (DMRS). What not every reading has
+  is drawn in orange, and by default only the part of the graph around the differences is drawn. Under the
+  graph, the words that the readings analyze with different lexical entries are listed with the entry, its
+  type, and the grammar's note on the type. A number key keeps the reading with that number.
+- With more readings, each card gives a summary of who does what, and a short list of questions is shown
+  beside the cards.
+- A predicate whose short name is ambiguous in the item is shown with its full name and the lexical entry it
+  comes from.
+- The single questions (discriminants by meaning and by structure) are folded away while few readings remain,
+  and limited to the first five otherwise; `d` unfolds the full list.
+- A plain-English explanation of each reading is produced only when the annotator asks (`e`). The model sees
+  the sentence and the differences, and is told not to say which reading is better. Explanations are optional:
+  `--explain` selects the `claude` program (a subscription), or the Anthropic, OpenAI or Gemini service with a
+  key from the environment, or none. Kelp works fully without a model.
+
+Keeping a reading is saved as decisions about the meaning (type 10 in the `decision` relation: one dependency
+is there, or is not). When all remaining trees mean the same, they are shown as small trees and are told apart
+by structure.
+
 ## 6. Proposals
 
 For each item, before the annotator opens it, Kelp prepares:
