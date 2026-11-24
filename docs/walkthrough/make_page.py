@@ -47,8 +47,8 @@ def ms(step, run=None):
     return 1000 * run['seconds by step'][step] / run['counts']['sentences']
 
 
-def fold(title, takeaway, body, open_=False):
-    return (f'  <details class="fold"{" open" if open_ else ""}>\n'
+def fold(title, takeaway, body, open_=False, id_=None):
+    return (f'  <details class="fold"{f" id={chr(34)}{id_}{chr(34)}" if id_ else ""}{" open" if open_ else ""}>\n'
             f'    <summary><span class="ft">{title}</span><span class="fs">{takeaway}</span></summary>\n'
             f'    <div class="fb stack">\n{body}    </div>\n  </details>\n')
 
@@ -88,6 +88,89 @@ def tiles():
 def na(text):
     """A cell with no number yet: say why (queued, running, not measured, ...)."""
     return f'<span class="na">{text}</span>'
+
+
+def link(anchor, text):
+    return f'<a href="#{anchor}">{text}</a>'
+
+
+def in_short():
+    """The findings, each linked to the section that measures it. Numbers stay in the tables (tiles, modes, sections)."""
+    f = [('Orca alone is fast and well behind ACE in accuracy.', 'Replay is several times ACE\'s speed; ACE gets the exact meaning for clearly more sentences, by exact match and by the LLM judge.', [('stands', 'Where Orca stands')]),
+         ('The gap is coverage, not precision.', 'What Orca outputs is about as precise as ACE\'s output; recall is lower because some sentences get no analysis and long sentences often fail.', [('edm', 'EDM'), ('errors', 'error breakdown')]),
+         ('The losses are in proposing, not ranking.', 'For most wrong sentences the right meaning is never among the analyses found; ranking errors are a small share.', [('errors', 'Where the wrong sentences go wrong')]),
+         ('Accuracy can be bought back with speed.', 'A chart over the tagger\'s lexical entries, or sending the least certain half of the sentences to full ACE, closes much or most of the gap at a fraction of Orca\'s speed.', [('modes', 'Which mode to use')]),
+         ('On novels and news, replay alone is weaker.', 'It agrees with ACE far less than chart mode does, falls off with length, and is lower again on news it has not seen. The judge prefers replay on novels, chart mode on news, and ACE over chart mode two to one.', [('corpus', 'Novels and news')]),
+         ('Agreement with ACE understates Orca where ACE is the reference.', 'On generated sentences the judge accepts many of Orca\'s readings that differ from ACE\'s, and often rejects ACE\'s own first parse.', [('generated', 'Generated sentences')]),
+         ('Differences of about one point are not evidence.', 'Two training runs of the same tagger differ by about that much; training on judged sentences and the xlarge encoder both stay inside it.', [('runs', 'How much two runs differ')]),
+         ('Data and encoder each add a few points.', 'All the silver data beats the treebank alone; DeBERTa-v3 large and XLM-R large beat BERT-base, RoBERTa-large does not, and an encoder twice the size adds nothing measurable. Averaging seven taggers adds about one point.', [('encoders', 'Encoders'), ('training-data', 'training data')]),
+         ('Other grammars work.', 'Orca replays every Hausa parse ACE finds and all but one Spanish treebank derivation; a first Spanish tagger gets about half the dev meanings exactly.', [('hausa', 'Hausa'), ('spanish', 'Spanish')]),
+         ('The grammar check does its job.', 'Verbs that do not agree with their subject are turned down almost always, where ACE finds a strained reading; where ACE runs out of memory, Orca\'s reading is right or partly right almost every time.', [('agreement', 'Agreement'), ('ace-fails', 'where ACE fails')]),
+         ('LLMs help offline, not while parsing.', 'LLM repair finds an analysis for about half the leftover sentences, slowly and at a cost; as a ranker the LLM is below the grammar\'s own model.', [('llm-repair', 'LLM repair'), ('llm-choice', 'LLM choosing')])]
+    items = ''.join(f'      <li><b>{h}</b> {t} ' + ', '.join(link(a, x) for a, x in ls) + '</li>\n' for h, t, ls in f)
+    return ('  <section class="stack" id="in-short">\n    <h2>In short</h2>\n    <ol class="short">\n' + items + '    </ol>\n  </section>\n')
+
+
+def modes():
+    """Replay, chart, fallback and ACE on dev in one table."""
+    r = load(f'{ORCA}/analysis/ace-fallback/route.json')
+    full = {c['sent to ACE']: c for c in (r or {}).get('curve', [])}
+    ch = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-chart-0.001.json')
+    fb = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-fallback-0.001.json')
+    ace = T['ace']['all']
+    row = lambda name, ex, sp, an: f'<tr><td>{name}</td>' + td(ex, True) + td(sp) + td(an) + '</tr>'
+    rows = [row('Orca (replay): the headline', pct(BEST['counts']['same MRS'], N), f"{BEST['sentences per second']:.1f}", pct(BEST['counts']['with MRS'], N))]
+    if fb:
+        rows.append(row('Orca, then restricted ACE where it finds nothing (fallback mode)', pct(fb['counts']['same MRS'], N), f"{fb['sentences per second']:.1f}", pct(fb['counts']['with MRS'], N)))
+    if ch:
+        rows.append(row('Chart mode: ACE restricted to the tagger\'s entries', pct(ch['counts']['same MRS'], N), f"{ch['sentences per second']:.1f}", pct(ch['counts']['with MRS'], N)))
+    for k, name in ((156, 'Orca, then full ACE where it finds nothing *'), (956, 'Orca, then full ACE for the least certain half *')):
+        if k in full:
+            rows.append(row(name, pct(full[k]['exact'], N), f"{full[k]['sentences per second']:.1f}", na('not recorded')))
+    rows.append(row('ACE alone, full lexicon', pct(ace['same MRS'], N), f'{N / (ACE_PASS + ACE_RETRY):.1f}', pct(ace['with MRS'], N)))
+    t = table([('Redwoods dev, raw text', ''), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n'), ('Any analysis', 'n')], rows)
+    return ('  <section class="stack" id="modes">\n    <h2>Which mode to use</h2>\n' + t
+            + notes('Replay is Orca\'s own method and the headline; the other rows are different systems built on it. Fallback mode is the default for parsing corpora, chart mode where accuracy matters most.',
+                    'Restricted ACE: ACE with only the tagger\'s five best lexical entries per word (probability 0.001 or more). Counts and details in ' + link('chart', 'The tagger plus a chart') + ' and ' + link('fallback', 'Orca with a fallback') + '.',
+                    'The least certain half: first the sentences without an analysis, then those Orca is least sure of.',
+                    '* Built on the Orca run before the repair cutoff change (' + link('runs', 'parser versions') + '); these rows would move a little with the current run.',
+                    'On novels and news the modes come in the same order, with a wider gap between replay and chart mode (' + link('corpus', 'Novels and news') + ').')
+            + '  </section>\n')
+
+
+def open_items():
+    """Gaps and inconsistencies from the audit of 24 November; each is a roadmap task (ids in brackets)."""
+    items = [('Three parser versions are on the page.', 'Some tables were measured before the lookup fixes or before the repair cutoff change; each says so, and ' + link('runs', 'parser versions') + ' lists which. Re-measuring them is a task.'),
+             ('The fallback rows start from the earlier run,', 'and restricted ACE where Orca finds nothing has a different speed in two tables.'),
+             ('The run-to-run spread rests on two seeds,', 'measured before the repair cutoff change. Every "within one point" judgment depends on it.'),
+             ('EDM is for replay only.', 'Chart and fallback modes have no EDM, and the fragments table covers the earlier run\'s sentences without an analysis.'),
+             ('Generated sentences have empty columns:', 'speed, and the measure with tense and number; a few disagreements have no verdict and count as wrong.'),
+             ('Unseen news is a small sample.', 'Most news sentences in the corpus comparison were in training; there are no speeds on corpus text.'),
+             ('The agreement test used BERT-base in replay mode only.', 'Chart mode shares ACE\'s chart and may accept the strained readings.'),
+             ('Orca against ACE by length and on several cores', 'is still the first pipeline (BERT-base, treebank tokens).'),
+             ('The averaging table has empty cells', 'and no end-to-end speed.'),
+             ('The replay-rate comparison', 'lacks replays until the first accepted derivation.'),
+             ('A few figures disagree between two tables', '(tagger accuracy; BERT-base on dev); the evaluation files will settle which is right.')]
+    return ('  <section class="stack" id="open">\n    <h2>What is not settled</h2>\n'
+            + cap('Measurements the page needs and does not have, and places where it disagrees with itself (audit of 24 November). Each is a task on the Orca roadmap.')
+            + '    <ul class="short">\n' + ''.join(f'      <li><b>{h}</b> {t}</li>\n' for h, t in items) + '    </ul>\n  </section>\n')
+
+
+def runs():
+    """Run-to-run spread, and the parser versions behind the tables."""
+    seeds = exp_seeds()
+    vers = [('Before the lookup fixes', 'dev-2025bothsurf-debertav3large-rawtext.json', 'Encoders; training on the judged sentences. BERT-base in From raw text, Training data, and Tense, number, information structure'),
+            ('With the lookup fixes', 'dev-2025bothsurf-debertav3large-rawtext-normlocate-rootcheck.json', 'The table above; the fallback rows; EDM fragments'),
+            ('<b>With the repair cutoff at 0.001 (current)</b>', None, 'The headline, the summary table, the error breakdown, averaging, chart mode')]
+    rows = []
+    for name, f, used in vers:
+        x = BEST if f is None else load(f'{ORCA}/analysis/mrs/{f}')
+        if x:
+            rows.append(f'<tr><td>{name}</td>' + td(pct(x['counts']['same MRS'], N), True) + td(pct(x['counts']['with MRS'], N)) + f'<td>{used}</td></tr>')
+    t = table([('Parser version (DeBERTa-v3 large, dev, raw text)', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Tables measured with it', '')], rows)
+    return ('  <section class="stack" id="runs">\n    <h2>How much two runs differ</h2>\n' + seeds + t
+            + cap('The same tagger under three versions of the parser. A table on an older version is comparable within itself, not with the headline.')
+            + '  </section>\n')
 
 
 def summary():
@@ -135,25 +218,13 @@ def summary():
                ('Right according to the LLM judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
     c = notes('<b>… with tense, number and information structure too:</b> the variable properties (tense, aspect, mood, sentence force, number, person, gender) and ICONS must match as well; ICONS never break a match for either parser.',
               '<b>Same meaning as the reference:</b> on dev the reference is gold; on generated text it is ACE\'s unchecked first parse.',
-              '<b>Run-to-run spread:</b> a second training run of the same tagger, with another random seed, gets about one point less exact meaning on dev (<i>Generated sentences</i>).',
+              '<b>Run-to-run spread:</b> a second training run of the same tagger, with another random seed, gets about one point less exact meaning on dev (' + link('runs', 'How much two runs differ') + ').',
               '<b>Comparing with other work:</b> most semantic parsing evaluation scores predicates and arguments only (SDP\'s DM, AMR\'s Smatch, CCG dependencies, EDM<sub>NA</sub>), as the first column does; full EDM and MRP\'s EDS score count properties too.',
               '<b>Right according to the LLM judge:</b> same meaning, or the judge (Claude Opus) accepts this parser\'s reading where they differ.',
               '<b>ACE on generated text:</b> a range; sentences the judge never saw count as wrong for the low end, right for the high end.',
               '<b>Chart mode on generated text:</b> it uses ACE\'s chart and ranking model, so agreeing with ACE\'s parse is partly built in; the judge column is the fairer comparison.',
-              'Agreements between Orca and ACE count as right; checking them was inconclusive (<i>Generated sentences</i>).')
-    finds = ['<b>Exact match understates Orca:</b> the judge often accepts Orca\'s reading where it differs (<i>Generated sentences</i>).',
-             '<b>Losses are in proposing</b>, not ranking, and grow with length (<i>Where the wrong sentences go wrong</i>).',
-             '<b>The tagger plus a chart</b> (ACE restricted to the tagger\'s lexical entries) beats replay by about five points, at almost three times ACE\'s speed (<i>The tagger plus a chart</i>).',
-             '<b>ACE as a fallback</b> where Orca finds nothing lifts exact meaning by five points, still over twice ACE\'s speed (<i>Orca with ACE as a fallback</i>).',
-             '<b>Bigger encoders help</b>, even with all the data (<i>Encoders</i>).',
-             '<b>Training on judged generated sentences</b> makes no difference beyond what a second run of the same setup does (<i>Generated sentences</i>).',
-             '<b>Other grammars work:</b> Orca replays every Hausa parse ACE finds and nearly all of the Spanish treebank (<i>Another grammar: Hausa</i>, <i>Spanish</i>).',
-             '<b>Faster than ACE</b>, but more sentences get no analysis (<i>Orca and ACE</i>).',
-             '<b>Where ACE runs out of memory</b>, Orca still gives a right or partly right reading almost every time (<i>Where ACE fails</i>).',
-             '<b>Wrong agreement is turned down</b>; ACE finds strained readings instead (<i>Agreement after distracting material</i>).',
-             '<b>LLMs help offline</b> (repair, judging), <b>not online</b> (<i>LLM repair</i>, <i>LLM choosing among readings</i>).']
-    return ('  <section class="stack">\n    <h2>Where Orca stands</h2>\n' + t + c
-            + '    <ul class="finds">\n' + ''.join(f'      <li>{x}</li>\n' for x in finds) + '    </ul>\n  </section>\n')
+              'Agreements between Orca and ACE count as right; checking them was inconclusive (' + link('generated', 'Generated sentences') + ').')
+    return '  <section class="stack" id="stands">\n    <h2>Where Orca stands</h2>\n' + t + c + '  </section>\n'
 
 
 def box(x, y, w, h, title, sub, cls='', ms_=None):
@@ -239,7 +310,7 @@ def how():
     rows = [f'<tr><td><b>{w}</b></td><td class="m">{l}</td><td class="m">{t.replace("<", "&lt;").replace(">", "&gt;")}</td></tr>' for w, l, t in enc]
     enc_t = table([('Word', ''), ('Leaf: lexical type | lexical rules | unary rules', ''),
                    ('Tree: depth change | rule joining this word to the next', '')], rows)
-    return ('  <section class="stack">\n    <h2>How it works</h2>\n'
+    return ('  <section class="stack" id="how">\n    <h2>How it works</h2>\n'
             f'    <div class="scroll pad">{pipeline()}</div>\n'
             + cap('No chart: the tagger proposes a complete derivation; the grammar checks it by unification. Times: average per dev sentence, from raw text.')
             + '    <h3>The tagger</h3>\n'
@@ -296,7 +367,7 @@ def results():
     t2 = table([('Tagger', ''), ('Sentences', 'n'), ('Right meaning chosen', 'n hl'), ('Right meaning found, another chosen', 'n'),
                 ('Analyses found, none right', 'n'), ('No analysis', 'n')], rows,
                group=[('', 2), ('Right meaning', 2), ('Wrong or missing', 2)])
-    return ('  <section class="stack">\n    <h2>Where the wrong sentences go wrong</h2>\n' + t2
+    return ('  <section class="stack" id="errors">\n    <h2>Where the wrong sentences go wrong</h2>\n' + t2
             + notes(f'All {N:,} dev sentences, from raw text; each row adds up to 100%. Gold derivations always replay to the gold MRS, so all loss is in the proposals.',
                     '<b>Found, another chosen:</b> a ranking error. <b>None right:</b> a proposing error. <b>No analysis:</b> the grammar rejected everything proposed.',
                     'Most of the loss is in proposing, and it grows with length.')
@@ -331,7 +402,7 @@ def exp_training():
     t = t + cap('BERT-base, treebank tokens.') + t2 + cap('BERT-base. Half the silver data, chosen at random, costs little.')
     body = t + notes('Silver data: ACE\'s first parses of novels (1838 to 1921) and news (NYT 2023, 2025), with LLM-written counterparts, kept if they replay.',
                      'One run each; seed variation not measured.')
-    return fold('Training data', 'More grammar-licensed text helped up to now; halving it costs little.', body)
+    return fold('Training data', 'More grammar-licensed text helped up to now; halving it costs little.', body, id_='training-data')
 
 
 def exp_rawtext():
@@ -347,9 +418,9 @@ def exp_rawtext():
             f'<tr><td>Raw text, tagger trained on treebank word forms</td>' + td(pct(RAW['counts']['same MRS'], N), True) + td(pct(RAW['counts']['with MRS'], N)) + '</tr>',
             f'<tr><td>Raw text, tagger trained on forms as typed (used everywhere else)</td>' + td(pct(ORACLE['counts']['same MRS'], N), True) + td(pct(ORACLE['counts']['with MRS'], N)) + '</tr>']
     t0 = table([('BERT-base tagger, all data; input', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n')], rows)
-    body = (t0 + cap('Treebank tokens are not available for new text; every other number on this page is from raw text.') + t1 + t2 + notes('Tokens come from ACE\'s preprocessing, without parsing; replay picks the token the lexical entry accepts.',
+    body = (t0 + cap('Treebank tokens are not available for new text. The headline, the summary table and every table not marked otherwise are from raw text; the tables that use treebank tokens say so (training data, Orca and ACE, LLM repair, Spanish). BERT-base here is the run before the lookup fixes (' + link('runs', 'parser versions') + ').') + t1 + t2 + notes('Tokens come from ACE\'s preprocessing, without parsing; replay picks the token the lexical entry accepts.',
                             'Treebank word forms leak the analysis through capitalization; training on forms as typed removes the leak.'))
-    return fold('From raw text', 'The grammar\'s tokens work; the tagger loses a little on capitalization.', body)
+    return fold('From raw text', 'The grammar\'s tokens work; the tagger loses a little on capitalization.', body, id_='raw-text')
 
 
 def exp_properties():
@@ -369,10 +440,11 @@ def exp_properties():
     rows = [f'<tr><td>{k}</td>{td(pct(v, lost))}</tr>' for k, v in sorted(p['differ by kind'].items(), key=lambda kv: -kv[1])]
     t2 = table([(f'Sentences that stop matching ({lost})', ''), ('Share', 'n')], rows)
     body = (t1 + notes('Properties: features on MRS variables (TENSE, SF, NUM …), mapped as ACE does.',
+                       'The BERT-base column and the breakdown below are from the run before the lookup fixes; the current BERT-base run is in the summary table.',
                        'The first row is what most parsing work compares (SDP\'s DM, AMR\'s Smatch, CCG dependencies, EDM<sub>NA</sub>); the second is closer to full EDM and MRP\'s EDS score.',
                        f'ICONS: about one gold analysis in six has them ({ic["gold with ICONS"] if ic else "…"} of {n:,}). Requiring them loses no exact match: they follow from the derivation.' if ic else 'ICONS: being measured.')
             + t2 + cap('BERT-base. Each sentence counted once, under the first kind that differs. Sentence force: statement against question.'))
-    return fold('Tense, number, information structure', 'Orca now outputs them; requiring them to match changes the headline little.', body)
+    return fold('Tense, number, information structure', 'Orca now outputs them; requiring them to match changes the headline little.', body, id_='properties')
 
 
 def exp_ace():
@@ -400,10 +472,10 @@ def exp_ace():
                     + td(p1(a['preds']['precision'])) + td(p1(a['links']['precision'])) + '</tr>')
     prec = table([('System', ''), ('Sentences it analyzes', 'n'), ('Right meaning, of those', 'n hl'),
                   ('Its predicates that are in gold (%)', 'n'), ('Its links that are in gold (%)', 'n')], rows)
-    body = (by_len + cap('BERT-base, treebank only, treebank tokens.')
+    body = (by_len + cap('BERT-base, treebank only, treebank tokens: the first pipeline. For the current tagger by length, see ' + link('errors', 'Where the wrong sentences go wrong') + '.')
             + speed + cap('Dev sentences average about 12 words. ACE\'s time includes retries with more memory.')
             + prec + cap('Only the sentences each system analyzes.'))
-    return fold('Orca and ACE', 'Faster at every setting; behind on long sentences.', body)
+    return fold('Orca and ACE', 'Faster at every setting; behind on long sentences.', body, id_='orca-ace')
 
 
 def exp_llm():
@@ -414,7 +486,7 @@ def exp_llm():
                 ('Sentences per second', 'n'), ('Cost', 'n')], rows)
     body = (llm + cap('Claude Opus sees the failure points and the grammar\'s definitions; the grammar replays every answer. Costs are API-equivalent.')
             + fb + cap('ACE is the better fallback for English.'))
-    return fold('LLM repair', 'Accepted analyses for about half the leftovers; slow; used offline only.', body)
+    return fold('LLM repair', 'Accepted analyses for about half the leftovers; slow; used offline only.', body, id_='llm-repair')
 
 
 def exp_llm_rank():
@@ -430,7 +502,7 @@ def exp_llm_rank():
     t = table([('Dev sentences with two or more readings, the right one among them', ''), ('Sentences', 'n'), ('Readings per sentence', 'n'),
                ('Ranking model picks the right one', 'n hl'), ('LLM picks the right one', 'n hl')], rows)
     body = t + cap(f'A random 300 of 622. Readings shown by what sets them apart; Claude Opus picks one (${r["cost_usd"]:.2f}). Many misses are treebank conventions.')
-    return fold('LLM choosing among readings', 'Below the grammar\'s ranking model at every margin.', body)
+    return fold('LLM choosing among readings', 'Below the grammar\'s ranking model at every margin.', body, id_='llm-choice')
 
 
 ENCODERS = (('bertbase', 'BERT-base (cased)', '110M'), ('robertalarge', 'RoBERTa-large', '355M'),
@@ -461,9 +533,9 @@ def exp_encoders():
     t = table([('Encoder', ''), ('Parameters', 'n'), ('Leaf labels right (%)', 'n'), ('Tree labels right (%)', 'n'),
                ('Every label of the sentence right (%)', 'n'), ('Right meaning chosen', 'n hl'), ('Any analysis', 'n'), ('Right meaning among the analyses found', 'n')],
               rows, group=[('', 2), ('Tagging, dev', 3), ('Full pipeline from raw text, dev', 3)])
-    body = t + cap('Same recipe for all: forms as typed, 6 epochs, batch 32, learning rate 3e-5 (BERT-base) or 2e-5. One run each.')
+    body = t + cap('Same recipe for all: forms as typed, 6 epochs, batch 32, learning rate 3e-5 (BERT-base) or 2e-5. One run each, measured before the lookup fixes (' + link('runs', 'parser versions') + '); DeBERTa-v3 large and BERT-base were re-run with the current parser (summary table), the other two were not.')
     body += exp_ensemble()
-    return fold('Encoders', 'DeBERTa and XLM-R large lead, with the treebank alone and with all data.', body)
+    return fold('Encoders', 'DeBERTa and XLM-R large lead, with the treebank alone and with all data.', body, id_='encoders')
 
 
 GEN_ROUNDS = (('pilot1', 'Round 1'), ('round2', 'Round 2'), ('round3', 'Round 3'))
@@ -547,8 +619,7 @@ def exp_generated():
                    group=[('', 1), (f'Redwoods dev ({N:,})', 3), ('Round 3, unseen in training', 3)])
         body += ('    <h3>Training on the judged sentences</h3>\n' + t4
                  + notes('Judged training data: ACE\'s reading unless the judge preferred Orca\'s; sentences judged wrong both ways dropped.',
-                         'One training run each, measured before the lookup fixes; the table below compares runs with the current defaults.'))
-        body += exp_seeds()
+                         'One training run each, measured before the lookup fixes; ' + link('runs', 'How much two runs differ') + ' compares runs after them.'))
     ap = f'{ORCA}/analysis/agreements/gen-r12/score.json'
     if os.path.exists(ap):
         a = json.load(open(ap))
@@ -572,7 +643,7 @@ def exp_generated():
         body += ('    <h3>Checking the agreements</h3>\n' + t3
                  + notes(f'Rounds 1 and 2. Readings: up to eight distinct meanings from ACE\'s 30 best parses, in random order (${a["cost_usd"]:.2f}).',
                          'Inconclusive: the judge is unreliable when choosing among many readings, as the dev row shows.'))
-    return fold('Generated sentences', 'Harder than dev; ACE\'s own parses of them are often wrong.', body)
+    return fold('Generated sentences', 'Harder than dev; ACE\'s own parses of them are often wrong.', body, id_='generated')
 
 
 def exp_hausa():
@@ -597,7 +668,7 @@ def exp_hausa():
                      'Replay: Orca rebuilds ACE\'s first parse from its labels, finding entries in HaG\'s lexicon from the plain words. Properties use HaG\'s own mapping.',
                      'The MRS differences are one homograph: plain <i>nama</i> is both meat and animal. HaG\'s build has no ranking model, so ACE\'s choice between them is arbitrary; Orca offers both readings.',
                      'Before two fixes, Orca assumed ERG habits: lexical-rule names, spelling rules, and a shorthand in definitions that the ERG uses only for lists.')
-    return fold('Another grammar: Hausa', 'Orca replays every Hausa parse ACE finds, after removing assumptions that held only for the ERG.', body)
+    return fold('Another grammar: Hausa', 'Orca replays every Hausa parse ACE finds, after removing assumptions that held only for the ERG.', body, id_='hausa')
 
 
 def exp_edm():
@@ -616,7 +687,8 @@ def exp_edm():
     t = table([('Redwoods dev (2,062 sentences)', ''), (f'Orca ({BEST_NAME.split(" tagger")[0]}), from raw text', 'n hl'), ('ACE, first-ranked parse', 'n')], rows)
     body = t + notes('Precision / recall / F1, in %, over elementary dependencies tied to character spans (Dridan and Oepen 2011), micro-averaged; mtool, the MRP scorer, gives the same numbers.',
                      'A sentence without an analysis counts as an empty graph, which lowers recall only.',
-                     'Partial credit: a sentence with one wrong argument still scores on the rest, unlike exact match.')
+                     'Partial credit: a sentence with one wrong argument still scores on the rest, unlike exact match.',
+                     'Scored on the run with the lookup fixes, before the repair cutoff change; chart and fallback modes are not scored yet.')
     rx = load(f'{ORCA}/analysis/relaxed/dev.json')
     if rx:
         def prf(x):
@@ -628,8 +700,8 @@ def exp_edm():
                 '<tr><td>EDM<sub>NA</sub> of the fragments against gold (P / R / F1)</td>' + td(prf(e1)) + '</tr>',
                 '<tr><td>EDM, properties included (P / R / F1)</td>' + td(prf(e2)) + '</tr>']
         body += ('    <h3>Fragments where there is no full analysis</h3>\n' + table([(f'The {rx["sentences"]} dev sentences without a full analysis', ''), ('', 'n')], rows)
-                 + notes('The largest pieces of the tagger\'s first guess that the grammar accepts, each with its own MRS; the ERG\'s robust root conditions rescue only one sentence. Without fragments these sentences score zero. Off by default (scripts/relaxed.py).'))
-    return fold('EDM, as published parsers report it', 'Orca is as precise as ACE; the gap is in recall, from sentences Orca does not analyze.', body)
+                 + notes('The largest pieces of the tagger\'s first guess that the grammar accepts, each with its own MRS; the ERG\'s robust root conditions rescue only one sentence. Without fragments these sentences score zero. Measured on the run before the repair cutoff change, which left more sentences without an analysis (' + link('runs', 'parser versions') + '). The parser returns fragments as a labeled fallback on the command line and in the demo, never counted as full analyses.'))
+    return fold('EDM, as published parsers report it', 'Orca is as precise as ACE; the gap is in recall, from sentences Orca does not analyze.', body, id_='edm')
 
 
 def exp_spanish():
@@ -638,7 +710,7 @@ def exp_spanish():
         return ''
     n = sum(v['sentences'] for v in rp.values()); r = sum(v['replayed'] for v in rp.values())
     c = mr['counts']; m = c['sentences'] - c['treebank MRS unreadable']
-    rows = [f'<tr><td>Orca replays the gold derivation</td>' + td(f'{n:,}') + td(pct(r, n), True) + '</tr>',
+    rows = [f'<tr><td>Orca replays the gold derivation</td>' + td(f'{n:,}') + td(f'{100 * r / n:.2f}% <span class="cnt">({r:,})</span>' if r != n else pct(r, n), True) + '</tr>',
             f'<tr><td>&nbsp;&nbsp;… and its MRS equals the treebank\'s</td>' + td(f'{m:,}') + td(pct(c['same without properties'], m), True) + '</tr>',
             f'<tr><td>&nbsp;&nbsp;… with properties and ICONS too</td>' + td(f'{m:,}') + td(pct(c['same with properties and ICONS'], m), True) + '</tr>']
     t = table([('Spanish Resource Grammar treebank (release 0.3.6)', ''), ('Sentences', 'n'), ('Share', 'n hl')], rows)
@@ -654,7 +726,7 @@ def exp_spanish():
         body += ('    <h3>A Spanish tagger</h3>\n' + table([(f'SRG treebank dev, {n:,} sentences', ''), ('Share', 'n')], rows)
                  + notes('XLM-R large trained on 2,149 treebank sentences (split by profile); the treebank\'s own tokens, not raw text. No ranking model for SRG: the accepted analysis the tagger likes best is chosen.',
                          'Dev sentences are short (4 words on average, against 10 in training). Most failures are labels never seen in training: more data, not more search.'))
-    return fold('Another grammar: Spanish', 'Orca replays the Spanish treebank and rebuilds its meanings; a first Spanish tagger gets half of the dev meanings exactly.', body)
+    return fold('Another grammar: Spanish', 'Orca replays the Spanish treebank and rebuilds its meanings; a first Spanish tagger gets half of the dev meanings exactly.', body, id_='spanish')
 
 
 def exp_beyond_ace():
@@ -681,7 +753,7 @@ def exp_beyond_ace():
               group=[('', 2), ('According to the LLM judge', 3)])
     body = t + notes(f'ACE rerun one sentence at a time, 300 s and 6 GB per sentence. Claude Opus judged Orca\'s reading alone from its predicates and links (${verd["cost_usd"]:.2f}).',
                      'Dev items without gold are ones the annotators rejected every reading for; ACE does parse most of them.')
-    return fold('Where ACE fails', 'On generated text, ACE mostly fails by running out of memory; Orca\'s reading is then right or partly right almost every time.', body)
+    return fold('Where ACE fails', 'On generated text, ACE mostly fails by running out of memory; Orca\'s reading is then right or partly right almost every time.', body, id_='ace-fails')
 
 
 def exp_replay_rate():
@@ -694,7 +766,7 @@ def exp_replay_rate():
     t = table([('Proposed derivation accepted by the grammar', ''), ('Sentences', 'n'), ('Share', 'n hl')], rows)
     body = t + notes('Enju is an HPSG derived from the Penn Treebank (12 schemata, lexical templates); its candidates pass a context-free approximation of the grammar before the check, and its supertagger proposes lexical entries only. Orca proposes lexical and rule labels and checks them directly.',
                      'Published rates for this kind of check exist only for treebank-derived grammars; these are the first for a large hand-built HPSG with full semantics.')
-    return fold('Replay rate, compared with CFG filtering', 'Orca\'s first guess passes the ERG less often than Enju\'s filtered guess passes Enju; repair closes most of the gap.', body)
+    return fold('Replay rate, compared with CFG filtering', 'Orca\'s first guess passes the ERG less often than Enju\'s filtered guess passes Enju; repair closes most of the gap.', body, id_='replay-rate')
 
 
 def exp_seeds():
@@ -708,8 +780,8 @@ def exp_seeds():
             return ''
         rows.append(f'<tr><td>{name}</td>' + td(pct(x['counts']['same MRS'], N), True) + td(pct(x['counts']['with MRS'], N)) + '</tr>')
     t = table([('Tagger', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n')], rows)
-    return ('    <h3>How much two runs differ</h3>\n' + t
-            + notes('Redwoods dev, raw text, current parser defaults. The two runs differ only in the random seed; the run with the judged sentences falls between them.'))
+    return (t
+            + notes('Redwoods dev, raw text, with the lookup fixes but before the repair cutoff change (run 1 gets the headline with the current defaults). The two runs differ only in the random seed; the run with the judged sentences falls between them.'))
 
 
 def exp_hybrid():
@@ -736,10 +808,10 @@ def exp_hybrid():
               group=[('', 1), ('Full ACE', 2), ('Restricted ACE (tagger\'s entries, ≥ 0.001)', 2), ('Restricted ACE, then full ACE if it finds nothing', 2)])
     body = t + notes('Redwoods dev, raw text, 2,062 sentences. First the sentences where Orca finds no analysis (156), then Orca\'s least certain ones, by a logistic model on Orca\'s own signals (tagger probabilities, replays, candidates), cross-validated on dev (AUC ' + f'{r["cv AUC (Orca wrong)"]:.2f}' + ' for spotting Orca\'s errors).',
                      'Speed includes Orca\'s whole run. Full ACE time is measured on the no-analysis sentences (3.7 s each) and ACE\'s dev mean elsewhere; restricted ACE time is measured. Orca here is the run before the repair cutoff change (73.0%).',
-                     'Sending everything is worse than sending about half: where Orca is confident, its own analysis beats the fallback\'s.',
+                     'With restricted ACE, sending everything is worse than sending about half: where Orca is confident, its own analysis beats the fallback\'s. With full ACE, sending everything equals ACE alone at a lower speed.',
                      '<b>All sentences, after Orca</b> includes Orca\'s time; <b>ACE alone</b> is ACE without Orca, the baseline.',
                      'Different systems from Orca alone, so they sit beside the headline, not in it.')
-    return fold('Orca with a fallback for the hard sentences', 'Routing the hard half of the sentences to ACE reaches 82–85% at one to two sentences per second; sending everything gains nothing more.', body)
+    return fold('Orca with a fallback for the hard sentences', 'Routing the hard half of the sentences to ACE reaches 82–85% at one to two sentences per second; sending everything adds half a point at most.', body, id_='fallback')
 
 
 def exp_supertag_ace():
@@ -763,7 +835,7 @@ def exp_supertag_ace():
     body = t + notes('Restricted ACE: the DeBERTa tagger\'s lexical labels become lexical entries (Orca\'s lookup); every other lexeme that could match a word is switched off (ACE -L), so ACE\'s chart and the ERG\'s ranking model work only with the tagger\'s choices. Tree labels are not used.',
                      'Speed measured end to end on one kesha GPU (tagging) and one CPU core (ACE), while other jobs ran; the 0.01 row is an estimate.',
                      'The tagger gets lexical types right far more often than tree labels; the chart finds trees that label-by-label replay misses.')
-    return fold('The tagger plus a chart: ACE restricted to the tagger\'s words', 'More accurate than replay (about five points) at less than half Orca\'s speed and almost three times ACE\'s.', body)
+    return fold('The tagger plus a chart: ACE restricted to the tagger\'s words', 'More accurate than replay (about five points) at less than half Orca\'s speed and almost three times ACE\'s.', body, id_='chart')
 
 
 def exp_ensemble():
@@ -823,6 +895,7 @@ def exp_corpus_modes():
                ('Same as ACE', 'n hl'), ('Any analysis', 'n')], rows, group=[('', 2), ('Replay', 2), ('Fallback', 2), ('Chart', 2)])
     j = load(f'{ORCA}/analysis/corpus-modes/judge-fallback/score.json')
     body = t + notes('500 sentences each from held-out novel excerpts (human, LLM) and 2025 news (NYT, LLM). Reference: ACE\'s first parse, unchecked silver; Orca\'s grammar replays 1,917 of ACE\'s 1,927 derivations, so the grammar versions barely differ.',
+                     '<b>Same as ACE</b> is a share of the sentences ACE parsed; <b>Any analysis</b> is a share of all sampled sentences.',
                      'Chart mode shares ACE\'s ranking model, so part of its agreement with ACE is built in.',
                      '<b>Correction:</b> 815 of the 1,000 news sentences were already in Orca\'s training data (found on 24 November); the last rows split them. On unseen news, replay agrees with ACE about ten points less, chart mode barely changes. The novels were all unseen.',
                      'Speeds are not shown: the machine was loaded by other jobs during these runs.')
@@ -846,7 +919,7 @@ def exp_corpus_modes():
         body += (table([('Where two systems disagree, a random sample', ''), ('Judged', 'n'), ('First right', 'n hl'), ('Second right', 'n hl'), ('Both', 'n'), ('Neither', 'n')], jrows)
                  + notes(f'Claude Opus, readings shown in random order (${cost:.2f} in all). Only sentences where both systems have an analysis.',
                          'Head to head, chart and replay are about even: chart is preferred on news, replay on novels. Where chart and ACE differ, ACE is preferred about two to one.'))
-    return fold('The modes on real text: novels and news', 'Replay agrees with ACE far less on corpus text than on dev; fallback analyzes almost everything; chart mode agrees with ACE most.', body)
+    return fold('The modes on real text: novels and news', 'Replay agrees with ACE far less on corpus text than on dev; fallback analyzes almost everything; chart mode agrees with ACE most.', body, id_='corpus')
 
 
 def exp_agreement():
@@ -873,14 +946,14 @@ def exp_agreement():
               group=[('', 2), ('Verb agrees with the subject', 3), ('Verb does not agree', 2)])
     body = t + notes('Chaves and Richter (2021) stimuli, each filled with the agreeing and the non-agreeing verb. Orca: BERT-base, raw text.',
                      'ACE\'s readings make the verb agree with something else: <i>A scientist … said I thought the boys is lost</i> (the scientist is lost).',
-                     'A clause before the subject makes first guesses fail more often; the number of its noun does not matter.')
-    return fold('Agreement after distracting material', 'Wrong agreement is turned down; ACE finds strained readings that Orca does not.', body)
+                     'A clause before the subject makes first guesses fail more often, whichever number its noun has; whether the difference between the two numbers is real has not been tested.')
+    return fold('Agreement after distracting material', 'Wrong agreement is turned down; ACE finds strained readings that Orca does not.', body, id_='agreement')
 
 
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
     body = steps + '    <div id="examples" class="stack" style="gap:28px"></div>\n'
-    return fold('Four worked examples', 'Labels, tree, feature structure, MRS and DMRS for real dev sentences.', body)
+    return fold('Four worked examples', 'Labels, tree, feature structure, MRS and DMRS for real dev sentences.', body, id_='worked-examples')
 
 
 CSS = '''
@@ -913,6 +986,14 @@ ul.finds { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column
 '''
 
 
+SHORT_CSS = '''
+ol.short, ul.short { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 9px; max-width: 80ch; }
+ol.short a, ul.notes a, .caption a { color: var(--accent); white-space: nowrap; }
+h3.grp { margin-top: 12px; }
+section[id], details[id] { scroll-margin-top: 12px; }
+'''
+
+
 def rebuild(s):
     s = s.replace('<h1>How a sentence gets its analysis, on four real examples</h1>', '<h1>Fast HPSG parsing by proposing and checking derivations</h1>')
     i = s.index('<p class="lede">')
@@ -922,8 +1003,16 @@ def rebuild(s):
                  'feature structure and the MRS.</p>') + s[j:]
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
-    body = ('\n' + tiles() + '\n' + summary() + '\n' + how() + '\n' + results() + '\n  <section class="stack">\n    <h2>Experiments</h2>\n'
-            + exp_training() + exp_encoders() + exp_supertag_ace() + exp_corpus_modes() + exp_hybrid() + exp_edm() + exp_replay_rate() + exp_generated() + exp_beyond_ace() + exp_agreement() + exp_hausa() + exp_spanish() + exp_rawtext() + exp_properties() + exp_ace() + exp_llm() + exp_llm_rank() + exp_examples() + '  </section>\n\n')
+    grp = lambda t: f'    <h3 class="grp">{t}</h3>\n'
+    body = ('\n' + tiles() + '\n' + in_short() + '\n' + modes() + '\n' + open_items() + '\n' + summary() + '\n' + results() + '\n' + runs() + '\n' + how()
+            + '\n  <section class="stack" id="experiments">\n    <h2>Experiments</h2>\n'
+            + grp('Modes and speed') + exp_supertag_ace() + exp_hybrid() + exp_ace()
+            + grp('Text beyond the treebank') + exp_corpus_modes() + exp_generated() + exp_beyond_ace() + exp_agreement()
+            + grp('Tagger and training data') + exp_encoders() + exp_training() + exp_rawtext()
+            + grp('Measures') + exp_edm() + exp_properties() + exp_replay_rate()
+            + grp('Other grammars') + exp_hausa() + exp_spanish()
+            + grp('LLM steps') + exp_llm() + exp_llm_rank()
+            + grp('Worked examples') + exp_examples() + '  </section>\n\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
         s = s.replace('</style>', CSS + '</style>', 1)
@@ -931,6 +1020,8 @@ def rebuild(s):
         s = s.replace('</style>', 'ul.finds { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }\n</style>', 1)
     if 'ul.notes' not in s:
         s = s.replace('</style>', 'ul.notes { margin: 0; padding-left: 1.1em; font-size: 0.85rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }\n</style>', 1)
+    if 'ol.short' not in s:
+        s = s.replace('</style>', SHORT_CSS + '</style>', 1)
     if 'span.na' not in s:
         s = s.replace('</style>', 'span.na { color: var(--muted); font-style: italic; font-size: 0.85em; }\n</style>', 1)
     return s
