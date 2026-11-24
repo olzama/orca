@@ -56,6 +56,9 @@ th, td { text-align: left; padding: 6px 12px; border-bottom: 1px solid var(--lin
 th { font-weight: 600; color: var(--muted); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; }
 td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
 tr.total td { font-weight: 600; border-bottom: 0; }
+#time { width: 100%; }
+#time td:first-child { white-space: normal; }
+#time td.n { width: 6em; }
 pre { margin: 0; font: 0.78rem/1.5 var(--mono); }
 details summary { cursor: pointer; color: var(--accent); font-weight: 500; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
@@ -281,19 +284,19 @@ select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--li
       <div class="scroll pad"><div class="fs" id="fs"></div></div>
     </section>
 
-    <section class="grid">
-      <div class="panel">
-        <h2>Time</h2>
-        <div class="scroll"><table id="time"></table></div>
-        <p class="small" id="time-note"></p>
-        <p class="small" id="time-reading"></p>
-      </div>
-      <div class="panel">
-        <h2>How it got there</h2>
-        <div class="scroll"><table id="how"></table></div>
-        <p class="small">Tokens come from the grammar's own preprocessing. A token outlined in purple has several readings (a known word, a name, an unknown word); replay picks the one the lexical entry accepts.</p>
-        <div class="forms" id="forms"></div>
-      </div>
+    <section class="panel">
+      <h2>Time</h2>
+      <div class="scroll"><table id="time"></table></div>
+      <p class="small" id="time-note"></p>
+      <p class="small" id="time-reading"></p>
+    </section>
+
+    <section class="panel">
+      <details><summary>How it got there</summary>
+        <div class="scroll" style="margin-top:10px"><table id="how"></table></div>
+        <p class="small" style="margin-top:10px">Tokens come from the grammar's own preprocessing. A token outlined in purple has several readings (a known word, a name, an unknown word); replay picks the one the lexical entry accepts.</p>
+        <div class="forms" id="forms" style="margin-top:10px"></div>
+      </details>
     </section>
 
     <section class="panel hidden" id="ace-panel">
