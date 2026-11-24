@@ -208,6 +208,10 @@ select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--li
 .explain { border: 1px solid var(--line); border-radius: 8px; background: var(--well); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
 .ask { font: 500 0.88rem var(--body); text-decoration: none; color: var(--accent); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
 .ask:hover { border-color: var(--accent); }
+.gem { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+#gem-key { font: 0.85rem var(--mono); padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); width: min(340px, 100%); }
+#gem-answer { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; white-space: pre-wrap; }
+#gem-answer small { display: block; color: var(--muted); margin-top: 8px; white-space: normal; }
 </style>
 </head>
 <body>
@@ -315,6 +319,18 @@ select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--li
           <button type="button" class="ask" id="ask-copy">Copy the question</button>
         </div>
         <p class="small">The buttons open the assistant in a new tab with the question filled in, under your own account: a free account is enough, and you may have to sign in once. The demo itself sends nothing to any assistant. With “Copy the question” you can paste it into any other one. The answer is an informal reading aid and can be wrong; the graphs are what counts.</p>
+        <details id="gem"><summary>Or get the answer here on the page, with your own free Gemini key</summary>
+          <div class="gem">
+            <p class="small">Google’s Gemini has a free tier. Create a key once at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> (you sign in with a Google account) and paste it here. The key and the question go from your browser straight to Google and nowhere else: not to this demo’s server. Google’s terms for the free tier apply to what is sent.</p>
+            <div class="row">
+              <input type="password" id="gem-key" placeholder="Gemini API key" autocomplete="off" spellcheck="false" aria-label="Your Gemini API key">
+              <label class="check"><input type="checkbox" id="gem-keep"> remember it in this browser</label>
+              <button type="button" class="ask" id="gem-forget">Forget the key</button>
+            </div>
+            <div class="row"><button type="button" class="ask" id="gem-go">Explain the difference here</button><span class="small" id="gem-status"></span></div>
+            <div id="gem-answer" class="hidden"></div>
+          </div>
+        </details>
         <details><summary>The question that is asked</summary><pre id="ask-text" style="white-space:pre-wrap;margin-top:8px"></pre></details>
       </div>
       <p class="small">ACE’s times are in the Time table above, next to Orca’s.</p>
@@ -893,12 +909,54 @@ function differenceQuestion(sentence, a, b) {
     + 'For each reading, write one or two short sentences in plain English saying what the sentence means under that reading, focusing on exactly where the two differ (which word attaches to what, what modifies what, which sense of a word, what is the scope). Be concrete and use the sentence’s own words. Do not say which reading is better, more natural or more likely.\n\n'
     + `Sentence: ${sentence}\nReading A: ${list(only(fa, fb))}\nReading B: ${list(only(fb, fa))}`;
 }
+// The same question answered on the page by Gemini, with the visitor's own key: browser to Google, never through this server
+const GEM = 'https://generativelanguage.googleapis.com/v1beta/';
+let GEM_Q = '';
+async function gemini(question, key) {
+  const call = model => fetch(GEM + model + ':generateContent', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify({ contents: [{ parts: [{ text: question }] }] }) });
+  let model = 'models/gemini-flash-latest', res = await call(model);
+  if (res.status === 404) {                    // the general name is gone: take the newest plain Flash model this key can use
+    const list = await (await fetch(GEM + 'models?pageSize=1000', { headers: { 'x-goog-api-key': key } })).json();
+    const ok = (list.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent') && /flash/.test(m.name) && !/image|tts|audio|live|embed|lite|exp|preview/.test(m.name)).map(m => m.name).sort();
+    if (!ok.length) throw new Error('this key has no Gemini Flash model available');
+    model = ok[ok.length - 1]; res = await call(model);
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = (data.error && data.error.message) || `HTTP ${res.status}`;
+    throw new Error(res.status === 429 ? 'the free quota of this key is used up for the moment; try again later (' + msg.split('\n')[0].slice(0, 160) + ')' : /API key not valid/.test(msg) ? 'Google does not accept this key' : msg.slice(0, 300));
+  }
+  const text = (((data.candidates || [])[0] || {}).content || {}).parts;
+  if (!text || !text.length) throw new Error('Gemini gave no answer' + (data.promptFeedback && data.promptFeedback.blockReason ? ' (' + data.promptFeedback.blockReason + ')' : ''));
+  return { text: text.map(p => p.text || '').join('').trim(), model: (data.modelVersion || model).replace(/^models\//, '') };
+}
+function gemSetup() {
+  let saved = null;
+  try { saved = localStorage.getItem('orca-gemini-key'); } catch (e) {}
+  if (saved) { $('gem-key').value = saved; $('gem-keep').checked = true; }
+  $('gem-forget').addEventListener('click', () => { try { localStorage.removeItem('orca-gemini-key'); } catch (e) {} $('gem-key').value = ''; $('gem-keep').checked = false; $('gem-status').textContent = 'The key is forgotten in this browser.'; });
+  $('gem-go').addEventListener('click', async () => {
+    const key = $('gem-key').value.trim(), st = $('gem-status'), out = $('gem-answer'), btn = $('gem-go');
+    if (!key) { st.textContent = 'Paste a Gemini API key first.'; return; }
+    try { if ($('gem-keep').checked) localStorage.setItem('orca-gemini-key', key); else localStorage.removeItem('orca-gemini-key'); } catch (e) {}
+    const asked = GEM_Q;
+    btn.disabled = true; st.textContent = 'Asking Gemini …'; out.classList.add('hidden');
+    try {
+      const ans = await gemini(asked, key);
+      if (asked !== GEM_Q) return;             // another sentence was parsed meanwhile
+      out.innerHTML = esc(ans.text) + `<small>Answered by Gemini (${esc(ans.model)}) from the differences alone. Reading A is Orca’s analysis, reading B is ACE’s. It can be wrong; the graphs are what counts.</small>`;
+      out.classList.remove('hidden'); st.textContent = '';
+    } catch (e) { st.textContent = 'That did not work: ' + e.message + '.'; }
+    finally { btn.disabled = false; }
+  });
+}
 function offerExplanation(r) {
   const box = $('ace-explain');
   const differ = r.ace && r.ace.mrs && r.mrs && r.ace['same as orca'] === false && r.dmrs && r.ace.dmrs;
   box.classList.toggle('hidden', !differ);
   if (!differ) return;
   const q = differenceQuestion(r.input || $('input').value, r.dmrs, r.ace.dmrs), enc = encodeURIComponent(q);
+  GEM_Q = q; $('gem-answer').classList.add('hidden'); $('gem-status').textContent = '';
   $('ask-text').textContent = q + '\n\n(Reading A is Orca’s analysis, reading B is ACE’s.)';
   const short = enc.length <= 6000;                       // longer questions do not fit in a link: copy them instead
   $('ask-chatgpt').href = 'https://chatgpt.com/?q=' + enc; $('ask-claude').href = 'https://claude.ai/new?q=' + enc;
@@ -1060,6 +1118,7 @@ $('types-q').addEventListener('keydown', e => { if (e.key === 'Enter') lookupTyp
 $('types-back').addEventListener('click', () => { if (typeTrail.length > 1) { typeTrail.pop(); lookupType(typeTrail[typeTrail.length - 1], true); } });
 $('types-close').addEventListener('click', closeTypes);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTypes(); });
+gemSetup();
 </script>
 </body>
 </html>
