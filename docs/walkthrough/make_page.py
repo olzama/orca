@@ -963,6 +963,15 @@ def exp_grammar_drift():
             + td(f"{c['A: replays'] / N:.0f}") + td(na('the reference run')) + '</tr>',
             f'<tr><td>ERG 2020, same tagger output</td>' + td(pct(c['B: first guess accepted'], N)) + td(pct(c['B: any analysis'], N), True)
             + td(f"{c['B: replays'] / N:.0f}") + td(pct(c['both analyzed: same MRS'], c['both analyzed'])) + '</tr>']
+    m = load(f'{ORCA}/analysis/grammar-drift/summary-map.json')
+    if m:
+        R = m['runs']
+        mrow = lambda name, k: (f'<tr><td>{name}</td>' + td(pct(R[k]['first guess accepted'], N)) + td(pct(R[k]['any analysis'], N), True)
+                                + td(f"{R[k]['replays per sentence']:.0f}") + td(pct(R[k]['same MRS as the reference'], R[k]['both analyzed'])) + '</tr>')
+        rows = rows[:1] + [mrow('&nbsp;&nbsp;… with the word-level fallback', 'ERG 2025, word fallback after generic entries')] + rows[1:]
+        for name, k in (('&nbsp;&nbsp;… with labels mapped to ERG 2020', 'ERG 2020, type map'), ('&nbsp;&nbsp;… and the word-level fallback', 'ERG 2020, type map, word fallback after generic')):
+            if k in R:
+                rows.append(mrow(name, k))
     t = table([('Redwoods dev, DeBERTa-v3 large tags from raw text', ''), ('First guess accepted', 'n'), ('Any analysis', 'n hl'), ('Replays per sentence', 'n'),
                ('Same MRS as under ERG 2025, where both have one', 'n')], rows)
     w = d['A analyzed, B not: why']
@@ -974,9 +983,10 @@ def exp_grammar_drift():
     body = (t + notes('The tagger and the MaxEnt ranking model are each used with their own grammar version (redwoods.mem of 2020 for the 2020 run); tokens are ERG 2025 preprocessing in both runs. Exact match against gold is not shown for 2020: the gold analyses are made with ERG 2025.',
                       'A label the grammar does not have counts as a rejected guess and repair moves on; no sentence fails with an error.')
             + t2 + notes('Each lost sentence counted once, by why the derivation chosen under ERG 2025 fails under ERG 2020. Most changed definitions are one constraint in one rule (flr-hd_rel-fin_c).',
-                         'About half of the losses could be recovered by mapping labels between versions (renamed types found through their lexical entries, and other entries of the same word); changed definitions need retraining on data replayed under the new grammar.')
+                         'Labels mapped to ERG 2020: a lexical type the grammar lacks is replaced by the type its lexical entries have there (40 of 108 missing types map this way; the rest are new words). Word-level fallback: where a word has no entry of the proposed type, its other entries of the same part of speech are tried after the grammar\'s generic entries, and replay decides. Neither needs retraining; both are options, off by default (orca_parse.py --label-map, --word-fallback).',
+                         'The missing rules are new constructions, not renames, so none map. Changed definitions need retraining on data replayed under the new grammar.')
             + cap('The installed trunk and latest GitHub copies of the ERG are the same as ERG 2025, so 2020 is the only different version tested.'))
-    return fold('When the grammar changes: the tagger against ERG 2020', 'Trained for ERG 2025, the tagger finds an analysis for clearly fewer sentences under ERG 2020; label mapping could win back about half.', body, id_='grammar-drift')
+    return fold('When the grammar changes: the tagger against ERG 2020', 'Trained for ERG 2025, the tagger finds an analysis for clearly fewer sentences under ERG 2020; mapping labels and trying other entries of the same word win back about half, without retraining.', body, id_='grammar-drift')
 
 
 def exp_examples():
