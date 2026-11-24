@@ -175,6 +175,7 @@ class Parser:
         out['outcome'] = outcome.replace(', wrong', '').replace(', right', '')
         out['replays'] = n_replays
         out['accepted derivations'] = len(kbest)
+        out['candidate costs'] = sorted(c.get('cost') or 0.0 for c in kbest)   # routing signal (scripts/ace_fallback.py, rawtext.py)
         if not kbest and self.mode == 'fallback':
             return self.chart_parse(text, path, top, rforms, forms, out, lap, after_replay=True)
         if not kbest:
