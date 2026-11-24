@@ -1110,6 +1110,38 @@ def exp_judge_check():
                          'Asked again, the same variant agrees with the person noticeably less often: the judge varies from one run to the next about as much as the variants differ, so none of them is shown to be better. Re-judging all of dev with paraphrases leaves the totals for ACE and Orca within a few sentences of the original judge, while about one verdict in six changes. The judge column is meaningful as a total, not sentence by sentence.'))
     return fold('Checking the judge against a person', 'The judge agrees with a person in most cases, nearly always when it sides with gold; where it sides with ACE, the gold is often the debatable reading. Paraphrasing the readings does not measurably help.', body, id_='judge-check')
 
+def exp_gold_corrected():
+    """Accuracy corrected for errors in gold, from a person's verdicts on samples of the judge's decisions."""
+    d1, d2 = load(f'{ORCA}/analysis/judge-check/olga-verdicts.json'), load(f'{ORCA}/analysis/judge-check2/olga-verdicts.json')
+    aj, oj = load(ACE_JUDGE), load(BEST_JUDGE)
+    if not (d1 and d2 and aj and oj):
+        return ''
+    from math import sqrt
+    def wilson(k, n, z=1.96):
+        p = k / n; d = 1 + z * z / n; c = (p + z * z / (2 * n)) / d; h = z * sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
+        return c - h, c, c + h
+    c1, c2 = d1['counts'], d2['counts']
+    n1, n2 = sum(c1.values()), sum(c2.values())
+    def est(same, v, lenient):
+        k1 = c1.get('ACE', 0) + (c1.get('both', 0) if lenient else 0)
+        k2 = c2.get('ACE', 0) + (c2.get('both', 0) if lenient else 0)
+        a, b = wilson(k1, n1), wilson(k2, n2)
+        jp, jg, jb, jn = v.get('orca', 0), v.get('reference', 0), v.get('both', 0), v.get('neither', 0)
+        mid = same + jp * a[1] + jg * b[1] + (jb if lenient else 0)
+        lo = same + jp * a[0] + jg * b[0]
+        hi = same + jp * a[2] + jg * b[2] + jb + jn
+        return f"{100 * mid / N:.1f}% <span class=\"cnt\">({100 * lo / N:.1f}–{100 * hi / N:.1f})</span>"
+    ace = T['ace']['all']['same MRS']; orca = BEST['counts']['same MRS']
+    rows = [f'<tr><td>ACE, first-ranked parse</td>' + td(pct(ace, N)) + td(est(ace, aj['verdicts'], True), True) + td(est(ace, aj['verdicts'], False)) + '</tr>',
+            f'<tr><td>Orca (replay), DeBERTa-v3 large</td>' + td(pct(orca, N)) + td(est(orca, oj['verdicts'], True), True) + td(est(orca, oj['verdicts'], False)) + '</tr>']
+    t = table([(f'Redwoods dev ({N:,} sentences)', ''), ('Same meaning as gold', 'n'), ('Corrected: right, or both readings acceptable', 'n hl'), ('Corrected: strictly right', 'n')], rows)
+    body = t + notes('Sentences with the same meaning as gold count as right. For the others, the share where the parser\'s reading is actually right comes from a person\'s verdicts on 30 random cases where the judge sided with the parser and 30 where it sided with gold (' + link('judge-check', 'Checking the judge against a person') + '), scaled to all such sentences.',
+                     'In brackets: the range from the uncertainty of 30-case samples (95%) and from counting the judge\'s unreviewed "both" and "neither" verdicts as all right or all wrong.',
+                     'Assumptions: a parser that agrees with gold is right; and the judge errs on Orca\'s disagreements as it does on ACE\'s (only ACE\'s were reviewed by a person).',
+                     'Exact match understates both parsers; the gap between them narrows a little once gold errors are taken into account.')
+    return fold('Accuracy corrected for errors in gold', 'Exact match against gold understates both parsers by several points; Orca stays well behind ACE.', body, id_='gold-corrected')
+
+
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
     body = steps + '    <div id="examples" class="stack" style="gap:28px"></div>\n'
@@ -1167,7 +1199,7 @@ def rebuild(s):
     body = ('\n' + tiles() + '\n'
             + question('what', 'What Orca is', 'A tagger proposes a whole derivation of the grammar, and the grammar checks it by unification; there is no chart.', how_shown, tagger_fold)
             + question('good', 'How good is it?', 'Replay is several times faster than ACE and clearly less accurate; adding a chart, or sending the hard sentences to ACE, buys back most of the gap at some of the speed.',
-                       summary() + '    <h3>The modes side by side</h3>\n' + modes(), exp_supertag_ace() + exp_hybrid() + exp_ace() + exp_judge_check())
+                       summary() + '    <h3>The modes side by side</h3>\n' + modes(), exp_supertag_ace() + exp_hybrid() + exp_ace() + exp_judge_check() + exp_gold_corrected())
             + question('wrong', 'Where does it go wrong?', 'Mostly in proposing: for most wrong sentences the right meaning is never among the analyses found, and failures grow with length. What Orca does output is about as precise as ACE\'s.',
                        results(), exp_edm() + exp_replay_rate())
             + question('beyond', 'Does it hold beyond the treebank?', 'Partly: on novels and news replay agrees with ACE less than on the treebank and chart mode much more; on generated sentences, and where ACE fails, the judge often sides with Orca.',
