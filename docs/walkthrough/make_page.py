@@ -1255,7 +1255,8 @@ def rebuild(s):
     j = s.index('</p>', i) + 4
     s = s[:i] + ('<p class="lede">A neural tagger proposes a complete derivation of the English Resource Grammar; the grammar '
                  'replays it by unification and accepts it or says where it breaks. Accepted derivations give the full '
-                 'feature structure and the MRS.</p>') + s[j:]
+                 'feature structure and the MRS. Try it on your own sentences: <a href="https://orca.grupolys.org">orca.grupolys.org</a>.</p>') + s[j:]
+    s = s.replace('Orca: Omnilingual Replayable Constraint-based Analysis', 'Orca: Open Replayable Constraint-based Analysis')
     start = s.index('</header>') + len('</header>\n')
     end = s.index('</div>\n\n<script>')
     how_shown, tagger_fold = how()
