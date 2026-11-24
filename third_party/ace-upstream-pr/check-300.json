@@ -1,0 +1,65 @@
+{
+ "sentences": 300,
+ "stock": "/mnt/kesha/orca/third_party/build/ace-upstream/main-stock/ace",
+ "patched": "/mnt/kesha/orca/third_party/build/ace-upstream/main-patched/ace",
+ "grammar image": "/mnt/kesha/orca/third_party/build/ace-upstream/erg-2025-main.dat",
+ "(a) without the flag": {
+  "first-best": {
+   "identical": true,
+   "bytes": 3054069,
+   "stock seconds": 166.4063811302185,
+   "patched seconds": 165.99991369247437
+  },
+  "n-best (20)": {
+   "identical": true,
+   "bytes": 52350405,
+   "stock seconds": 167.9065225124359,
+   "patched seconds": 167.0846393108368
+  }
+ },
+ "(b) with the flag": {
+  "first-best": {
+   "items compared": 300,
+   "patched items": 300,
+   "identical": 300,
+   "differ": [],
+   "stock seconds (one run per sentence)": 53.477500915527344,
+   "patched seconds (one process)": 41.42049217224121,
+   "ms per sentence stock": 178.25833638509116,
+   "ms per sentence patched": 138.06830724080405
+  },
+  "n-best (20)": {
+   "items compared": 300,
+   "patched items": 300,
+   "identical": 300,
+   "differ": [],
+   "stock seconds (one run per sentence)": 54.4410617351532,
+   "patched seconds (one process)": 42.32036876678467,
+   "ms per sentence stock": 181.470205783844,
+   "ms per sentence patched": 141.06789588928223
+  }
+ },
+ "(c) restriction changes": {
+  "items": [
+   {
+    "disabled": "bark_v1",
+    "has _bark_v_1": false,
+    "expected": false,
+    "same as stock with -L": true
+   },
+   {
+    "disabled": "",
+    "has _bark_v_1": true,
+    "expected": true,
+    "same as stock with -L": true
+   },
+   {
+    "disabled": "bark_v1",
+    "has _bark_v_1": false,
+    "expected": false,
+    "same as stock with -L": true
+   }
+  ],
+  "ok": true
+ }
+}
