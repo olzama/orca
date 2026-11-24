@@ -450,6 +450,31 @@ def exp_properties():
     return fold('Tense, number, information structure', 'Orca now outputs them; requiring them to match changes the headline little.', body, id_='properties')
 
 
+def exp_ace_current():
+    d = load(f'{ORCA}/analysis/orca-ace/dev-current.json')
+    if not d:
+        return ''
+    S = d['systems']; sy = [('replay', 'Replay'), ('chart', 'Chart'), ('fallback', 'Fallback'), ('ace', 'ACE')]
+    say = {'all': 'All', 'under 10': 'Under 10 words', '10 to 19': '10 to 19 words', '20 to 29': '20 to 29 words', '30 and over': '30 words or more'}
+    rows = []
+    for b in ['all'] + d['bands']:
+        n = S['replay']['by band'][b]['sentences']
+        rows.append(f'<tr><td>{"&nbsp;&nbsp;" if b != "all" else ""}{say[b]}</td>' + td(f'{n:,}')
+                    + ''.join(td(pct(S[k]['by band'][b]['same MRS'], n), True) for k, _ in sy)
+                    + ''.join(td(pct(S[k]['by band'][b]['with MRS'], n)) for k, _ in sy) + '</tr>')
+    t = table([('Redwoods dev, raw text', ''), ('Sentences', 'n')] + [(nm, 'n hl') for _, nm in sy] + [(nm, 'n') for _, nm in sy], rows,
+              group=[('', 2), ('Same meaning as gold', 4), ('Any analysis', 4)])
+    prow = lambda k, nm: (f'<tr><td>{nm}</td>' + td(f"{S[k]['precision']['analyzed']:,}") + td(pct(S[k]['precision']['right meaning'], S[k]['precision']['analyzed']), True)
+                          + td(p1(S[k]['precision']['predicate precision'])) + td(p1(S[k]['precision']['link precision'])) + '</tr>')
+    t2 = table([('Current system', ''), ('Sentences it analyzes', 'n'), ('Right meaning, of those', 'n hl'), ('Its predicates that are in gold (%)', 'n'), ('Its links that are in gold (%)', 'n')],
+               [prow(k, nm) for k, nm in sy])
+    return ('    <h3>The current system</h3>\n' + t + cap('DeBERTa-v3 large tagger from raw text, current parser defaults; chart and fallback as in the mode table.')
+            + t2 + cap('Only the sentences each system analyzes.')
+            + notes('<b>Memory limits for ACE on this page:</b> ACE alone on dev gets 6 GB per sentence and retries failures at 16 GB, then 28 GB; chart and fallback modes give restricted ACE 6 GB for the chart and 7 GB for unpacking; Where ACE fails uses 6 GB and 300 s per sentence. One Orca process uses about 3.4 GB.',
+                    NOT_YET + 'the current system on several cores (the machine was busy).')
+            + '    <h3>The first pipeline</h3>\n')
+
+
 def exp_ace():
     rows = []
     for b, label in BANDS:
@@ -475,11 +500,10 @@ def exp_ace():
                     + td(p1(a['preds']['precision'])) + td(p1(a['links']['precision'])) + '</tr>')
     prec = table([('System', ''), ('Sentences it analyzes', 'n'), ('Right meaning, of those', 'n hl'),
                   ('Its predicates that are in gold (%)', 'n'), ('Its links that are in gold (%)', 'n')], rows)
-    body = (by_len + cap('BERT-base, treebank only, treebank tokens: the first pipeline. For the current tagger by length, see ' + link('wrong', 'Where the wrong sentences go wrong') + '.')
+    body = (exp_ace_current() + by_len + cap('BERT-base, treebank only, treebank tokens: the first pipeline, kept for its speed comparison on several cores.')
             + speed + cap('Dev sentences average about 12 words. ACE\'s time includes retries with more memory.')
-            + prec + cap('Only the sentences each system analyzes.')
-            + notes(NOT_YET + 'the length breakdown, the six-core speed and the precision table for the current system.'))
-    return fold('Orca and ACE', 'Faster at every setting; behind on long sentences.', body, id_='orca-ace')
+            + prec + cap('Only the sentences each system analyzes.'))
+    return fold('Orca and ACE', 'Faster at every setting and about as precise; behind on long sentences, where chart and fallback modes close part of the gap.', body, id_='orca-ace')
 
 
 def exp_llm():
