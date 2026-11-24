@@ -118,6 +118,29 @@ def run_restricted(text, disabled, timeout=60, ace=ACE, dat=DAT, trees=False):
     return line, None, secs
 
 
+def run_restricted_nbest(text, disabled, n, timeout=60, ace=ACE, dat=DAT):
+    """ACE's n best analyses with the given lexemes disabled, best first: [(maxent score, mrs, derivation), ...]
+    (strings; empty when ACE finds nothing). The score is ACE's MaxEnt score of the parse (:ascore), read from
+    ACE's [incr tsdb()] output; called directly, like run_restricted, so the long -L list stays one argument."""
+    import re
+    cmd = [ace, '-g', dat, '-n', str(max(1, n)), '--tsdb-stdout', f'--timeout={timeout}',
+           '--max-chart-megabytes=6000', '--max-unpack-megabytes=7000']
+    if disabled:
+        cmd += ['-L', ' '.join(sorted(disabled))]
+    p = subprocess.run(cmd, input=text + '\n', capture_output=True, text=True, timeout=timeout + 30)
+    field = re.compile(r'\(:([a-z-]+) \. ?("(?:[^"\\]|\\.)*"|[^()"]*)\)')
+    unq = lambda v: re.sub(r'\\(.)', r'\1', v[1:-1]) if v.startswith('"') else v.strip()
+    out = []
+    for block in re.split(r'(?=\(:result-id \. )', p.stdout)[1:]:
+        f = {k: unq(v) for k, v in field.findall(block)}
+        if f.get('mrs') and f.get('ascore'):
+            try:
+                out.append((float(f['ascore']), f['mrs'].strip(), (f.get('derivation') or '').strip() or None))
+            except ValueError:
+                continue
+    return out
+
+
 def parse_one(args):
     sid, item, k, min_prob, timeout = args
     from delphin import mrs as M

@@ -80,3 +80,27 @@ def test_distinct_readings_margin():
     assert len(out) == 2                                       # FOX is 4.0 below the best
     out = _run(readings=1, margin=1.0)
     assert len(out) == 1
+
+
+def test_chart_readings_group_select_and_mass():
+    """Chart mode (O97): ACE's n best parses grouped by MRS, scored by the best parse, softmax mass summed per reading."""
+    import orca_parse
+    enc = lambda m: simplemrs.encode(m)
+    parses = [(5.0, enc(DOG), 'd1'), (4.8, enc(DOG), 'd2'), (4.5, enc(CAT), 'd3'), (1.0, enc(FOX), 'd4')]
+    obj = types.SimpleNamespace(readings=3, margin=None)
+    out = orca_parse.Parser.chart_readings(obj, parses)
+    assert [r['maxent score'] for r in out] == [5.0, 4.5, 1.0]
+    assert out[0]['_ace_derivation'] == 'd1'                    # the reading's best parse
+    z = sum(math.exp(s - 5.0) for s in (5.0, 4.8, 4.5, 1.0))
+    assert abs(out[0]['probability'] - (1 + math.exp(-0.2)) / z) < 1e-9
+    obj = types.SimpleNamespace(readings=5, margin=1.0)
+    assert len(orca_parse.Parser.chart_readings(obj, parses)) == 2   # FOX is 4.0 below the best
+    obj = types.SimpleNamespace(readings=1, margin=None)
+    assert len(orca_parse.Parser.chart_readings(obj, parses)) == 1
+
+
+def test_strip_private():
+    import orca_parse
+    r = {'mrs': 'x', '_tokens': [1], 'readings': [{'probability': 0.5, '_tree': object(), '_mrs_obj': object(), '_ace_derivation': 'd'}]}
+    orca_parse.strip_private(r)
+    assert '_tokens' not in r and r['readings'] == [{'probability': 0.5}]

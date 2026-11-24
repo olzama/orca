@@ -152,6 +152,11 @@ button.v.rel { border-color: currentColor; border-style: dashed; }
 details.frag { border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; background: var(--well); }
 details.frag summary { color: var(--fg); font-weight: 500; }
 details.frag summary .small { margin-left: 6px; }
+/* several readings */
+.rtabs { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rtabs button { font: 500 0.9rem var(--body); padding: 6px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; font-variant-numeric: tabular-nums; }
+.rtabs button[aria-selected="true"] { background: var(--accent-soft); color: var(--fg); border-color: var(--accent); font-weight: 600; }
+.rtabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -183,6 +188,11 @@ details.frag summary .small { margin-left: 6px; }
   </section>
 
   <div id="results" class="hidden" style="display:flex;flex-direction:column;gap:28px">
+    <section class="panel hidden" id="readings-panel">
+      <h2>Readings</h2>
+      <p class="small" id="readings-note">The sentence has more than one reading the grammar accepts and the ranking model finds close. Choose one to see its meaning, derivation and feature structure.</p>
+      <div class="rtabs" id="readings-tabs" role="tablist" aria-label="Readings"></div>
+    </section>
     <section class="panel">
       <h2>Meaning</h2>
       <p class="small" id="dmrs-caption">Predicates and the links between them (dashed links are scope).</p>
@@ -663,12 +673,9 @@ function show(r) {
     status.innerHTML = `<b>No analysis.</b> No derivation the grammar accepts was found within ${r.replays ?? 0} replays (${esc(r.outcome || '')}).`;
   }
   showFragments(r);
-  $('dmrs').replaceChildren(r.dmrs ? drawDmrs(r.dmrs, r.ace && r.ace.dmrs) : el('p', 'small', 'No analysis.'));
-  $('dmrs-caption').textContent = 'The meaning as a DMRS graph: predicates and the links between them (dashed links are scope).' + (r.ace && r.ace.dmrs ? ' Orange marks what ACE’s analysis does not have.' : '');
-  $('mrsview').replaceChildren(drawMrs(r.mrs_view, r.input || $('input').value, r.tokens));
-  $('mrs').textContent = r.mrs || '';
-  drawFs(r.fs, $('fs'), 'fs', r.ace && r.ace.fs, r.fs_note);
-  $('tree').replaceChildren(r.derivation ? drawTree(toRaw(r.derivation)) : el('p', 'small', 'No derivation.'));
+  CURRENT = r;
+  buildTabs(r);
+  showReading(r, 0);
 
   let t = '<tr><th>Step</th><th class="n">ms</th></tr>';
   STEPS.forEach(([k, name]) => { if (k in r.seconds) t += `<tr><td>${name}</td><td class="n">${ms(r.seconds[k])}</td></tr>`; });
@@ -701,12 +708,67 @@ function show(r) {
   } else ap.classList.add('hidden');
 }
 
+let CURRENT = null, SENTENCE = '';
+function buildTabs(r) {
+  const rds = r.readings || [], panel = $('readings-panel'), tabs = $('readings-tabs');
+  if (!r.mrs || rds.length < 2) { panel.classList.add('hidden'); tabs.replaceChildren(); return; }
+  panel.classList.remove('hidden');
+  tabs.replaceChildren(...rds.map((rd, i) => {
+    const b = el('button');
+    b.type = 'button'; b.setAttribute('role', 'tab'); b.id = 'reading-tab-' + i;
+    b.setAttribute('aria-selected', i === 0 ? 'true' : 'false'); b.tabIndex = i === 0 ? 0 : -1;
+    b.textContent = `Reading ${i + 1} · ${Math.round(100 * (rd.probability || 0))}%`;
+    b.addEventListener('click', () => selectReading(i));
+    b.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const j = (i + (e.key === 'ArrowRight' ? 1 : rds.length - 1)) % rds.length;
+      selectReading(j); $('reading-tab-' + j).focus();
+    });
+    return b;
+  }));
+}
+function selectReading(i) {
+  if (!CURRENT) return;
+  [...$('readings-tabs').children].forEach((b, j) => { b.setAttribute('aria-selected', j === i ? 'true' : 'false'); b.tabIndex = j === i ? 0 : -1; });
+  showReading(CURRENT, i);
+}
+function showReading(r, i) {
+  const text = r.input || $('input').value;
+  if (i === 0) {
+    $('dmrs').replaceChildren(r.dmrs ? drawDmrs(r.dmrs, r.ace && r.ace.dmrs) : el('p', 'small', 'No analysis.'));
+    $('dmrs-caption').textContent = 'The meaning as a DMRS graph: predicates and the links between them (dashed links are scope).' + (r.ace && r.ace.dmrs ? ' Orange marks what ACE’s analysis does not have.' : '');
+    $('mrsview').replaceChildren(drawMrs(r.mrs_view, text, r.tokens));
+    $('mrs').textContent = r.mrs || '';
+    drawFs(r.fs, $('fs'), 'fs', r.ace && r.ace.fs, r.fs_note);
+    $('tree').replaceChildren(r.derivation ? drawTree(toRaw(r.derivation)) : el('p', 'small', 'No derivation.'));
+    return;
+  }
+  const rd = r.readings[i];
+  $('dmrs').replaceChildren(rd.dmrs ? drawDmrs(rd.dmrs, r.dmrs) : el('p', 'small', 'No graph for this reading.'));
+  $('dmrs-caption').textContent = `Reading ${i + 1} as a DMRS graph (dashed links are scope). Orange marks what reading 1 does not have.`;
+  $('mrsview').replaceChildren(drawMrs(rd.mrs_view, text, r.tokens));
+  $('mrs').textContent = rd.mrs || '';
+  $('tree').replaceChildren(rd.derivation ? drawTree(toRaw(rd.derivation)) : el('p', 'small', 'No derivation.'));
+  if (rd.fs !== undefined) { drawFs(rd.fs, $('fs'), 'fs', null, rd.fs_note); return; }
+  $('fs').replaceChildren(el('p', 'small', 'Rebuilding this reading’s feature structure…'));
+  fetch('api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sentence: SENTENCE, fs_for: i }) })
+    .then(res => res.json())
+    .then(x => {
+      if (x.error) throw new Error(x.error);
+      rd.fs = x.fs; rd.fs_note = x.fs_note;
+      if (CURRENT === r && $('reading-tab-' + i) && $('reading-tab-' + i).getAttribute('aria-selected') === 'true') drawFs(rd.fs, $('fs'), 'fs', null, rd.fs_note);
+    })
+    .catch(e => { if (CURRENT === r) $('fs').replaceChildren(el('p', 'small', 'Could not load this reading’s feature structure: ' + esc(e.message))); });
+}
+
 async function run() {
   const sentence = $('input').value.trim();
   if (!sentence) return;
   const btn = $('go');
   btn.disabled = true; btn.textContent = 'Parsing…';
   try {
+    SENTENCE = sentence;
     const res = await fetch('api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sentence, ace: $('ace').checked }) });
     let r;
     try { r = await res.json(); }

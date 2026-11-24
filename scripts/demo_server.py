@@ -24,7 +24,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, '..'))
 
-from orca_parse import DEFAULTS, Parser, ace_parse  # noqa: E402
+from orca_parse import DEFAULTS, Parser, ace_parse, dmrs_json  # noqa: E402
 from ace_sign import replay_sign  # noqa: E402
 
 PAGE = os.path.join(HERE, '..', 'docs', 'demo', 'index.html')
@@ -72,6 +72,71 @@ def fs_view(fg, root, limit=150000):
         nodes[n] = [fg.type(n2), [[f, v] for f, v in arcs]]
         todo.extend(v for _, v in arcs)
     return {'root': C.deref(root), 'nodes': nodes, 'truncated': bool(todo)}
+
+
+READINGS, MARGIN = 5, 1.25   # several readings (O97): at most 5, within 1.25 (MaxEnt, log space) of the best
+
+
+def reading_options(req):
+    """readings and margin from the request: readings 1-10 (default 5), margin >= 0 or null for none (default 1.25)."""
+    try:
+        k = min(10, max(1, int(req.get('readings', READINGS))))
+    except (TypeError, ValueError):
+        k = READINGS
+    mg = req.get('margin', MARGIN)
+    try:
+        mg = None if mg is None else max(0.0, float(mg))
+    except (TypeError, ValueError):
+        mg = MARGIN
+    return k, mg
+
+
+def reading_tree(rd):
+    """The derivation tree of a reading, in the page's tree format."""
+    try:
+        if rd.get('_tree') is not None:
+            return PARSER.tree_json(rd['_tree'])
+        if rd.get('_ace_derivation'):
+            from delphin import derivation as D
+            from encode_treebank import to_tree
+            return PARSER.tree_json(to_tree(D.from_string(rd['_ace_derivation'])))
+    except Exception:
+        return None
+    return None
+
+
+def reading_fs(rd, path):
+    """The whole sign of a reading: replayed from its derivation (Orca's) or rebuilt from ACE's derivation."""
+    if rd.get('_tree') is not None:
+        try:
+            PARSER.fg.reset()
+            fs, _ = PARSER.fg.replay_tree(rd['_tree'], path)
+            return fs_view(PARSER.fg, fs), None
+        except Exception as e:
+            return None, f'could not rebuild this reading\'s sign ({type(e).__name__})'
+    if rd.get('_ace_derivation'):
+        sign, how = replay_sign(PARSER.fg, rd['_ace_derivation'])
+        return (fs_view(PARSER.fg, sign), None) if sign is not None else (None, how)
+    return None, 'no derivation'
+
+
+def reading_views(r):
+    """The readings list for the page: the first is the top-level analysis; the others carry their own
+    MRS view, DMRS and tree. Their feature structures are fetched on demand (they can be large)."""
+    out = []
+    for i, rd in enumerate(r.get('readings') or []):
+        v = {'probability': rd.get('probability'), 'maxent score': rd.get('maxent score')}
+        if i > 0:
+            m = rd.get('_mrs_obj')
+            v['mrs'] = rd.get('mrs')
+            v['mrs_view'] = mrs_view(m)
+            try:
+                v['dmrs'] = dmrs_json(m) if m is not None else None
+            except Exception:
+                v['dmrs'] = None
+            v['derivation'] = reading_tree(rd)
+        out.append(v)
+    return out
 
 
 def same_mrs(a, b):
@@ -149,7 +214,21 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self._send(400, json.dumps({'error': f'Please enter at most {MAX_WORDS} words.'}), 'application/json')
                 return
             with LOCK:
+                PARSER.readings, PARSER.margin = reading_options(req)
                 r = PARSER.parse(text)
+                fs_for = req.get('fs_for')
+                if fs_for is not None:                    # the sign of one further reading, fetched when its tab opens
+                    rds = r.get('readings') or []
+                    try:
+                        i = int(fs_for)
+                    except (TypeError, ValueError):
+                        i = -1
+                    if not 0 <= i < len(rds):
+                        self._send(400, json.dumps({'error': 'no such reading'}), 'application/json')
+                        return
+                    fsv, note = reading_fs(rds[i], r.get('_tokens'))
+                    self._send(200, json.dumps({'reading': i, 'fs': fsv, 'fs_note': note}, ensure_ascii=False), 'application/json')
+                    return
                 m = r.pop('_mrs_obj', None)
                 r['mrs_view'] = mrs_view(m)
                 fs = r.pop('_fs', None)
@@ -162,6 +241,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     r['fs_note'] = None if sign is not None else how
                 else:
                     r['fs'] = None
+                if r.get('readings'):
+                    r['readings'] = reading_views(r)
+                r.pop('_tokens', None)
                 if req.get('ace'):
                     a = ace_parse(text, timeout=ACE_TIMEOUT)
                     am = a.pop('_mrs_obj', None)

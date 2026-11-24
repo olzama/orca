@@ -219,6 +219,11 @@ class Parser:
         out['_fs'] = fs                    # the whole sign; valid until the next parse resets the grammar's memory
         if self.readings > 1 or self.margin is not None:
             out['readings'] = self.distinct_readings(scored, path, m)
+            if len(scored) > 1:                # collecting readings replayed other derivations: rebuild the best one's sign
+                self.fg.reset()
+                fs, _ = self.fg.replay_tree(tr, [p[1] for p in path])
+                out['_fs'] = fs
+            out['_tokens'] = [p[1] for p in path]   # for replaying a further reading's derivation (the demo)
             lap('readings')
         if self.all_mrs:
             out['_all_mrs'] = []
@@ -268,8 +273,35 @@ class Parser:
             else:
                 if len(reps) >= kmax:
                     continue                        # a further reading would exceed k; keep adding mass to returned ones
-                reps.append([sc, nm, m, math.exp(sc - mx) / z])
-        return [{'maxent score': r[0], 'probability': r[3], 'mrs': simplemrs.encode(r[2], indent=True)} for r in reps]
+                reps.append([sc, nm, m, math.exp(sc - mx) / z, tr])
+        # '_tree' and '_mrs_obj' are for callers that draw the reading (the demo); strip_private() drops them from saved output
+        return [{'maxent score': r[0], 'probability': r[3], 'mrs': simplemrs.encode(r[2], indent=True), '_mrs_obj': r[2], '_tree': r[4]} for r in reps]
+
+    def chart_readings(self, parses):
+        """Several readings in chart mode, from ACE's n best restricted parses [(maxent score, mrs string, derivation)]:
+        parses with the same MRS form one reading (scored by its best parse); probability is a softmax over the
+        returned parses' MaxEnt scores, summed per reading; at most self.readings, within self.margin of the best."""
+        from delphin import mrs as M
+        from delphin.codecs import simplemrs
+        from compare_mrs import normalized
+        import readings_eval as RE
+        items = []
+        for sc, mrs_s, der in parses:
+            try:
+                m = simplemrs.decode(mrs_s)
+                items.append((sc, normalized(m), (m, der)))
+            except Exception:
+                continue
+        same = lambda x, y: bool(M.is_isomorphic(x, y, properties=False))
+        rds = RE.group_readings(items, same)
+        probs = RE.softmax_mass(rds)
+        keep = RE.select([rd['score'] for rd in rds], k=max(1, self.readings), margin=self.margin)
+        out = []
+        for i in keep:
+            m, der = max(rds[i]['members'], key=lambda x: x[0])[1]
+            out.append({'maxent score': rds[i]['score'], 'probability': probs[i], 'mrs': simplemrs.encode(m, indent=True),
+                        '_mrs_obj': m, '_ace_derivation': der})
+        return out
 
     def chart_parse(self, text, path, top, rforms, forms, out, lap, after_replay=False):
         """ACE restricted to the tagger's lexical entries (top chart_k labels per token, probability
@@ -277,10 +309,15 @@ class Parser:
         from delphin import derivation as D
         from delphin.codecs import simplemrs
         from encode_treebank import to_tree
-        from supertag_ace import allowed_and_disabled, run_restricted
+        from supertag_ace import allowed_and_disabled, run_restricted, run_restricted_nbest
         allowed, disabled, unresolved = allowed_and_disabled({'path': path, 'top': top}, self.chart_k, self.chart_min_prob,
                                                              self.lx, self.chart_orth, self.chart_generic)
-        mrs_s, deriv_s, _ = run_restricted(text, disabled, self.chart_timeout, self.ace, self.dat, trees=True)
+        several = self.readings > 1 or self.margin is not None
+        if several:            # O97: ACE's n best restricted parses; several parses usually share one meaning
+            parses = run_restricted_nbest(text, disabled, max(20, 4 * self.readings), self.chart_timeout, self.ace, self.dat)
+            mrs_s, deriv_s = (parses[0][1], parses[0][2]) if parses else (None, None)
+        else:
+            mrs_s, deriv_s, _ = run_restricted(text, disabled, self.chart_timeout, self.ace, self.dat, trees=True)
         lap('chart')
         out['chart'] = {'allowed entries': len(allowed), 'disabled entries': len(disabled), 'unresolved labels': unresolved,
                         'after replay': after_replay}
@@ -311,6 +348,10 @@ class Parser:
         except Exception:
             out['dmrs'] = None
         out['_mrs_obj'] = m
+        if several:
+            out['accepted derivations'] = len(parses)
+            out['readings'] = self.chart_readings(parses)
+            lap('readings')
         if self.all_mrs:
             out['_all_mrs'] = [m]
         return out
@@ -321,6 +362,15 @@ class Parser:
             entry = t.entry[6:] if t.entry.startswith('entry:') else t.entry
             return {'entry': entry, 'type': self.lx.type_of.get(entry, ''), 'forms': list(t.forms)}
         return {'label': t.label, 'children': [self.tree_json(c) for c in t.children]}
+
+
+def strip_private(r):
+    """Drop the in-memory helpers ('_tree', '_mrs_obj', '_ace_derivation') from each reading, for saved output."""
+    r.pop('_tokens', None)
+    for rd in r.get('readings') or []:
+        for k in [k for k in rd if k.startswith('_')]:
+            rd.pop(k)
+    return r
 
 
 def ace_parse(text, ace=DEFAULTS['ace'], dat=DEFAULTS['dat'], timeout=30):
@@ -375,6 +425,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False,
         m = r.pop('_mrs_obj', None)
         r.pop('_fs', None)
         r.pop('_ace_derivation', None)
+        strip_private(r)
         g = normalized(simplemrs.decode(gold[s['id']]))
 
         def is_gold(x):
@@ -454,6 +505,7 @@ def main():
         r.pop('_mrs_obj', None)
         r.pop('_fs', None)
         r.pop('_ace_derivation', None)
+        strip_private(r)
         print(json.dumps(r, indent=1, ensure_ascii=False))
 
 
