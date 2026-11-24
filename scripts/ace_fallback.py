@@ -26,8 +26,8 @@ ACE = '/home/olga/delphin/tools/ACE/ace-0.9.34/ace'
 DAT = os.path.join(ROOT, 'data/ace/erg-2025.dat')
 
 
-def buckets():
-    run = json.load(open(RUN))
+def buckets(path=None):
+    run = json.load(open(path or RUN))
     out = {}
     for x in run['records']:
         out[x['id']] = ('right' if x['same MRS'] else 'none' if not x['accepted']
@@ -107,7 +107,7 @@ def auc(y, s):
 def cmd_route(a):
     import pickle
     import numpy as np
-    run, b = buckets()
+    run, b = buckets(a.run)
     ace = {r['id']: str(r['same MRS']) == 'True' for r in json.load(open(ACE_EVAL))['records']}
     tags = pickle.load(open(os.path.join(ROOT, 'data/bench/dev-debertav3large-tags.pkl'), 'rb'))['items']
     cands = {}
@@ -139,18 +139,24 @@ def cmd_route(a):
     # other sentences: ACE's mean over all of dev in our comparison runs (first pass plus 16 GB and 28 GB retries)
     ACE_DEV_MEAN = (1276.6 + 437.8 + 301.5) / 2062
     rest = sorted([j for j in range(len(ids)) if not none[j]], key=lambda j: -score[j])
-    curve = []
+    curve, sent = [], {}
     for extra in (0, 50, 100, 200, 300, 400, 600, 800, 1000, len(rest)):
         send = set(np.where(none)[0]) | set(rest[:extra])
         right = sum((ace_ok[j] if j in send else orca_ok[j]) for j in range(len(ids)))
         secs = run_secs + sum(ace_none.get(ids[j], ACE_DEV_MEAN) for j in send)
         curve.append({'sent to ACE': len(send), 'exact': int(right),
                       'sentences per second': round(len(ids) / secs, 2)})
+        sent[len(send)] = sorted(ids[j] for j in send)
     out = {'sentences': len(ids), 'orca exact': int(orca_ok.sum()), 'ace exact': int(ace_ok.sum()),
            'cv AUC (Orca wrong)': round(float(auc(y, score)), 3), 'ace seconds per sentence (measured on no-analysis)': ace_mean,
            'curve': curve, 'features': ['min leaf p', 'min tree p', 'mean log leaf p', 'mean log tree p', 'log replays', 'first try',
                                         'log accepted', 'tagger-cost margin of the two best accepted', 'log length', 'no analysis']}
+    out['run'] = os.path.relpath(a.run or RUN, ROOT)
+    out['ace seconds, sentences without a measured time'] = round(ACE_DEV_MEAN, 3)
+    out['no-analysis sentences without a measured ACE time'] = int(sum(1 for j in np.where(none)[0] if ids[j] not in ace_none))
     json.dump(out, open(a.out, 'w'), indent=1)
+    if a.sent_out:
+        json.dump(sent, open(a.sent_out, 'w'))
     print(json.dumps({k: v for k, v in out.items() if k != 'features'}, indent=1))
 
 
@@ -162,6 +168,8 @@ def main():
     ap.add_argument('--mb', type=int, default=16000)
     ap.add_argument('--cands')
     ap.add_argument('--time')
+    ap.add_argument('--run', help='Orca eval JSON to route from (default: the run before the repair cutoff change)')
+    ap.add_argument('--sent-out', help='write the ids sent to ACE at each curve point')
     ap.add_argument('--out', required=True)
     a = ap.parse_args()
     {'time': cmd_time, 'route': cmd_route}[a.cmd](a)

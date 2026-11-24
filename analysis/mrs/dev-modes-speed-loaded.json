@@ -1,0 +1,31 @@
+{
+ "when": "2026-11-24, kesha GPU 1, back to back; machine loaded (O89 training on GPU 0, raw-text ACE on 4 cores); load average 6.0-6.9 of 8 cores",
+ "runs": {
+  "replay": {
+   "same MRS": 1524,
+   "with MRS": 1924,
+   "sentences per second": 5.97,
+   "wall seconds": 345.6
+  },
+  "chart": {
+   "same MRS": 1616,
+   "with MRS": 1954,
+   "sentences per second": 3.17,
+   "wall seconds": 651.0
+  },
+  "fallback": {
+   "same MRS": 1574,
+   "with MRS": 2034,
+   "sentences per second": 4.49,
+   "wall seconds": 459.5
+  }
+ },
+ "log": [
+  "replay start 12:12:01 load average: 6.01, 6.03, 5.81",
+  "replay end 12:18:25 load average: 6.91, 6.39, 6.05",
+  "chart start 12:18:25 load average: 6.91, 6.39, 6.05",
+  "chart end 12:29:49 load average: 6.16, 6.27, 6.16",
+  "fallback start 12:29:49 load average: 6.16, 6.27, 6.16",
+  "fallback end 12:38:06 load average: 6.44, 6.30, 6.20"
+ ]
+}
