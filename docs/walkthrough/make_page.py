@@ -109,38 +109,47 @@ def question(id_, title, answer, shown, folds):
 
 
 def modes():
-    """Replay, chart, fallback and ACE on dev in one table."""
-    r = load(f'{ORCA}/analysis/ace-fallback/route.json')
-    full = {c['sent to ACE']: c for c in (r or {}).get('curve', [])}
-    ch = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-chart-0.001.json')
-    fb = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-fallback-0.001.json')
+    """Replay, chart, fallback and ACE on dev in one table: the current Orca run, speeds measured together."""
+    r = load(f'{ORCA}/analysis/ace-fallback/route-current.json')
+    sp = load(f'{ORCA}/analysis/mrs/dev-modes-speed-loaded.json')
+    e = load(f'{ORCA}/analysis/edm/dev-current.json')
+    if not (r and sp and e):
+        return ''
+    S, E = sp['runs'], e['systems']
+    full = {c['sent to ACE']: c for c in r['curve']}
+    none_n = N - BEST['counts']['with MRS']
+    half = min((k for k in full if k > none_n and k >= 0.4 * N), key=lambda k: abs(k - 0.45 * N), default=None)
+    step_sps = BEST['sentences per second']
+    def loaded(c):            # Orca under today's load, plus ACE's measured per-sentence time
+        ace_s = N / c['sentences per second'] - N / step_sps
+        return N / (N / S['replay']['sentences per second'] + ace_s)
+    f1 = lambda k: f"{100 * E[k]['EDM_NA']['f']:.1f}" if k in E else na('not scored')
     ace = T['ace']['all']
-    row = lambda name, ex, sp, an: f'<tr><td>{name}</td>' + td(ex, True) + td(sp) + td(an) + '</tr>'
-    rows = [row('Orca (replay): the headline', pct(BEST['counts']['same MRS'], N), f"{BEST['sentences per second']:.1f}", pct(BEST['counts']['with MRS'], N))]
-    if fb:
-        rows.append(row('Orca, then restricted ACE where it finds nothing (fallback mode)', pct(fb['counts']['same MRS'], N), f"{fb['sentences per second']:.1f}", pct(fb['counts']['with MRS'], N)))
-    if ch:
-        rows.append(row('Chart mode: ACE restricted to the tagger\'s entries', pct(ch['counts']['same MRS'], N), f"{ch['sentences per second']:.1f}", pct(ch['counts']['with MRS'], N)))
-    for k, name in ((156, 'Orca, then full ACE where it finds nothing *'), (956, 'Orca, then full ACE for the least certain half *')):
-        if k in full:
-            rows.append(row(name, pct(full[k]['exact'], N), f"{full[k]['sentences per second']:.1f}", na('not recorded')))
-    rows.append(row('ACE alone, full lexicon', pct(ace['same MRS'], N), f'{N / (ACE_PASS + ACE_RETRY):.1f}', pct(ace['with MRS'], N)))
-    t = table([('Redwoods dev, raw text', ''), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n'), ('Any analysis', 'n')], rows)
+    row = lambda name, ex, an, edm, spd: f'<tr><td>{name}</td>' + td(ex, True) + td(an) + td(edm) + td(spd) + '</tr>'
+    rows = [row('Orca (replay): the headline', pct(S['replay']['same MRS'], N), pct(S['replay']['with MRS'], N), f1('orca'), f"{S['replay']['sentences per second']:.1f}"),
+            row('Orca, then restricted ACE where it finds nothing (fallback mode)', pct(S['fallback']['same MRS'], N), pct(S['fallback']['with MRS'], N), f1('fallback'), f"{S['fallback']['sentences per second']:.1f}"),
+            row('Chart mode: ACE restricted to the tagger\'s entries', pct(S['chart']['same MRS'], N), pct(S['chart']['with MRS'], N), f1('chart'), f"{S['chart']['sentences per second']:.1f}")]
+    if none_n in full:
+        rows.append(row(f'Orca, then full ACE where it finds nothing ({none_n:,} sentences)', pct(full[none_n]['exact'], N), na('not recorded'), f1('ace-none'), f"{loaded(full[none_n]):.1f}"))
+    if half:
+        rows.append(row(f'Orca, then full ACE for the least certain {half:,}', pct(full[half]['exact'], N), na('not recorded'), f1('ace-half'), f"{loaded(full[half]):.1f}"))
+    rows.append(row('ACE alone, full lexicon', pct(ace['same MRS'], N), pct(ace['with MRS'], N), f1('ace'), f'{N / (ACE_PASS + ACE_RETRY):.1f}'))
+    t = table([('Redwoods dev, raw text', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('EDM<sub>NA</sub> F1', 'n'), ('Sentences per second', 'n')], rows)
     return (t
             + notes('Replay is Orca\'s own method and the headline; the other rows are different systems built on it. Fallback mode is the default for parsing corpora, chart mode where accuracy matters most.',
-                    'Restricted ACE: ACE with only the tagger\'s five best lexical entries per word (probability 0.001 or more). Counts and details in ' + link('chart', 'The tagger plus a chart') + ' and ' + link('fallback', 'Orca with a fallback') + '.',
-                    'The least certain half: first the sentences without an analysis, then those Orca is least sure of.',
-                    '* Built on the Orca run before the repair cutoff change (' + link('runs', 'parser versions') + '); these rows would move a little with the current run.',
-                    'On novels and news the modes come in the same order, with a wider gap between replay and chart mode (' + link('corpus', 'Novels and news') + ').',
-                    NOT_YET + 'the two full-ACE rows with the current Orca run, and any analysis for them; EDM for each mode.'))
+                    'Restricted ACE: ACE with only the tagger\'s five best lexical entries per word (probability 0.001 or more). Details in ' + link('chart', 'The tagger plus a chart') + ' and ' + link('fallback', 'Orca with a fallback') + '.',
+                    'Full ACE rows: sentences picked first where Orca finds nothing, then where it is least certain (a cross-validated model on Orca\'s own signals).',
+                    '<b>Speeds:</b> the three Orca modes measured back to back on 24 November, one GPU and one core, while kesha was busy with other jobs, so all run slower than on a quiet machine (the headline tile, from a quiet run, says ' + f'{step_sps:.1f}' + '). Full-ACE rows: Orca\'s speed under the same load plus ACE\'s measured time for each sentence sent. ACE alone: one core, measured earlier.',
+                    '<b>EDM<sub>NA</sub> F1:</b> predicates and arguments with partial credit (' + link('edm', 'EDM') + '); all and properties in that section.',
+                    'On novels and news the modes come in the same order, with a wider gap between replay and chart mode (' + link('corpus', 'Novels and news') + ').'))
 
 
 def runs():
     """Run-to-run spread, and the parser versions behind the tables."""
     seeds = exp_seeds()
     vers = [('Before the lookup fixes', 'dev-2025bothsurf-debertav3large-rawtext.json', 'Encoders; training on the judged sentences. BERT-base in From raw text, Training data, and Tense, number, information structure'),
-            ('With the lookup fixes', 'dev-2025bothsurf-debertav3large-rawtext-normlocate-rootcheck.json', 'The table above; the fallback rows; EDM fragments'),
-            ('<b>With the repair cutoff at 0.001 (current)</b>', None, 'The headline, the summary table, the error breakdown, averaging, chart mode')]
+            ('With the lookup fixes', 'dev-2025bothsurf-debertav3large-rawtext-normlocate-rootcheck.json', 'The table above'),
+            ('<b>With the repair cutoff at 0.001 (current)</b>', None, 'The headline, the summary table, the error breakdown, the modes and fallback tables, EDM and fragments, encoders (all data), averaging')]
     rows = []
     for name, f, used in vers:
         x = BEST if f is None else load(f'{ORCA}/analysis/mrs/{f}')
@@ -665,37 +674,35 @@ def exp_hausa(open_=False):
 
 
 def exp_edm():
-    e = load(f'{ORCA}/analysis/edm/dev.json')
+    e = load(f'{ORCA}/analysis/edm/dev-current.json') or load(f'{ORCA}/analysis/edm/dev.json')
     if not e:
         return ''
     S = e['systems']
-    def row(name, key, ind=False):
-        o, a = S['orca'][key], S['ace'][key]
-        cell = lambda x: f"{100 * x['p']:.1f} / {100 * x['r']:.1f} / <b>{100 * x['f']:.1f}</b>"
-        return f'<tr><td>{"&nbsp;&nbsp;" if ind else ""}{name}</td>' + td(cell(o)) + td(cell(a)) + '</tr>'
-    rows = [row('EDM: names, arguments, properties, tops', 'EDM' if 'EDM' in S['orca'] else 'all'),
-            row('EDM<sub>NA</sub>: names and arguments only', 'EDM_NA'),
-            row('Names (predicates)', 'names', True), row('Arguments', 'arguments', True),
-            row('Properties (tense, number … and names\' strings)', 'properties', True), row('Tops', 'tops', True)]
-    t = table([('Redwoods dev (2,062 sentences)', ''), (f'Orca ({BEST_NAME.split(" tagger")[0]}), from raw text', 'n hl'), ('ACE, first-ranked parse', 'n')], rows)
+    cell = lambda x: f"{100 * x['p']:.1f} / {100 * x['r']:.1f} / <b>{100 * x['f']:.1f}</b>"
+    names = [('orca', f'Orca ({BEST_NAME.split(" tagger")[0]}), replay'), ('fallback', '&nbsp;&nbsp;… then restricted ACE where it finds nothing'),
+             ('chart', 'Chart mode'), ('ace-none', 'Orca, then full ACE where it finds nothing'), ('ace-half', 'Orca, then full ACE for the least certain'),
+             ('ace', 'ACE alone, first-ranked parse')]
+    rows = [f'<tr><td>{nm}</td>' + td(cell(S[k]['EDM_NA'])) + td(cell(S[k]['EDM'] if 'EDM' in S[k] else S[k]['all'])) + '</tr>' for k, nm in names if k in S]
+    t = table([('Redwoods dev (2,062 sentences)', ''), ('EDM<sub>NA</sub>: names and arguments', 'n hl'), ('EDM: also properties and tops', 'n')], rows)
+    o, a = S['orca'], S['ace']
+    rows2 = [f'<tr><td>{nm}</td>' + td(cell(o[k])) + td(cell(a[k])) + '</tr>' for k, nm in
+             (('names', 'Names (predicates)'), ('arguments', 'Arguments'), ('properties', 'Properties (tense, number … and names\' strings)'), ('tops', 'Tops'))]
+    t2 = table([('By part, replay against ACE', ''), ('Orca, replay', 'n hl'), ('ACE', 'n')], rows2)
     body = t + notes('Precision / recall / F1, in %, over elementary dependencies tied to character spans (Dridan and Oepen 2011), micro-averaged; mtool, the MRP scorer, gives the same numbers.',
-                     'A sentence without an analysis counts as an empty graph, which lowers recall only.',
-                     'Partial credit: a sentence with one wrong argument still scores on the rest, unlike exact match.',
-                     'Scored on the run with the lookup fixes, before the repair cutoff change; chart and fallback modes are not scored yet.')
-    rx = load(f'{ORCA}/analysis/relaxed/dev.json')
+                     'A sentence without an analysis counts as an empty graph, which lowers recall only. Current parser defaults for every Orca row.',
+                     'Partial credit: a sentence with one wrong argument still scores on the rest, unlike exact match.') + t2
+    rx = load(f'{ORCA}/analysis/relaxed/dev-current.json') or load(f'{ORCA}/analysis/relaxed/dev.json')
     if rx:
         def prf(x):
-            p, r, f = (x.get(k) for k in ('p', 'r', 'f'))
-            return f"{100 * p:.1f} / {100 * r:.1f} / <b>{100 * f:.1f}</b>"
+            return f"{100 * x['p']:.1f} / {100 * x['r']:.1f} / <b>{100 * x['f']:.1f}</b>"
         e1, e2 = rx['EDM_NA (names, arguments)']['robust or fragments'], rx['EDM without tops (names, arguments, properties)']['robust or fragments']
         rows = [f'<tr><td>Words covered by some fragment</td>' + td(pct(rx['words covered'], rx['words']), True) + '</tr>',
                 f'<tr><td>&nbsp;&nbsp;… by fragments of two or more words</td>' + td(pct(rx['words in multi-word fragments'], rx['words'])) + '</tr>',
                 '<tr><td>EDM<sub>NA</sub> of the fragments against gold (P / R / F1)</td>' + td(prf(e1)) + '</tr>',
                 '<tr><td>EDM, properties included (P / R / F1)</td>' + td(prf(e2)) + '</tr>']
         body += ('    <h3>Fragments where there is no full analysis</h3>\n' + table([(f'The {rx["sentences"]} dev sentences without a full analysis', ''), ('', 'n')], rows)
-                 + notes('The largest pieces of the tagger\'s first guess that the grammar accepts, each with its own MRS; the ERG\'s robust root conditions rescue only one sentence. Without fragments these sentences score zero. Measured on the run before the repair cutoff change, which left more sentences without an analysis (' + link('runs', 'parser versions') + '). The parser returns fragments as a labeled fallback on the command line and in the demo, never counted as full analyses.'))
-    return fold('EDM, as published parsers report it', 'Orca is as precise as ACE; the gap is in recall, from sentences Orca does not analyze.', body, id_='edm')
-
+                 + notes('The largest pieces of the tagger\'s first guess that the grammar accepts, each with its own MRS; the ERG\'s robust root conditions rescue one sentence. Without fragments these sentences score zero. The parser returns fragments as a labeled fallback on the command line and in the demo, never counted as full analyses.'))
+    return fold('EDM, as published parsers report it', 'What Orca outputs is about as precise as ACE\'s; the gap is recall, from sentences without an analysis, and the fallbacks close most of it.', body, id_='edm')
 
 def exp_spanish():
     rp, mr = load(f'{ORCA}/analysis/srg/replay-0.3.6.json'), load(f'{ORCA}/analysis/srg/mrs-0.3.6.json')
@@ -779,6 +786,25 @@ def exp_seeds():
 
 
 def exp_hybrid():
+    rc = load(f'{ORCA}/analysis/ace-fallback/route-current.json')
+    sp = load(f'{ORCA}/analysis/mrs/dev-modes-speed-loaded.json')
+    if rc and sp:
+        rep = sp['runs']['replay']['sentences per second']; step = BEST['sentences per second']
+        loaded = lambda c: N / (N / rep + N / c['sentences per second'] - N / step)
+        none_n = N - BEST['counts']['with MRS']
+        rows = ['<tr><td>0 (Orca alone)</td>' + td(pct(rc['orca exact'], N), True) + td(f'{rep:.1f}') + '</tr>']
+        for c in rc['curve']:
+            n = c['sent to ACE']
+            name = f'{n:,}' + (' (where Orca finds no analysis)' if n == none_n else ' (all sentences, after Orca)' if n == N else '')
+            rows.append(f'<tr><td>{name}</td>' + td(pct(c['exact'], N), True) + td(f'{loaded(c):.1f}') + '</tr>')
+        rows.append('<tr><td><b>ACE alone</b>, full lexicon (the baseline)</td>' + td(pct(rc['ace exact'], N), True) + td(f'{N / (ACE_PASS + ACE_RETRY):.1f}') + '</tr>')
+        t = table([('Sentences sent to full ACE', ''), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n')], rows)
+        body = t + notes(f'Redwoods dev, raw text, current parser defaults. First the {none_n} sentences where Orca finds no analysis, then Orca\'s least certain ones, by a logistic model on Orca\'s own signals (tagger probabilities, replays, candidates), cross-validated on dev (AUC {rc["cv AUC (Orca wrong)"]:.2f} for spotting Orca\'s errors).',
+                         'Speed: Orca measured on 24 November while kesha was busy with other jobs, plus ACE\'s measured time for each sentence sent (one core). ACE alone: measured earlier.',
+                         'Sending everything equals ACE alone in accuracy at a lower speed; the gain per sentence sent falls off quickly after the uncertain half.',
+                         'Different systems from Orca alone, so they sit beside the headline, not in it.',
+                         NOT_YET + 'the same curve with restricted ACE as the fallback, and restricted then full ACE, on the current run (measured on the earlier run only).')
+        return fold('Orca with a fallback for the hard sentences', 'Routing the least certain half of the sentences to ACE comes close to ACE alone at a little more than its speed.', body, id_='fallback')
     r = load(f'{ORCA}/analysis/ace-fallback/route.json')
     cb = load(f'{ORCA}/analysis/supertag-ace/combined.json')
     if not r:
@@ -813,21 +839,24 @@ def exp_supertag_ace():
     if not c:
         return ''
     tag_s = (ms('tokens') + ms('tag')) / 1000            # Orca's tokens and tagging, per sentence (GPU)
-    rows = [f'<tr><td>Orca (replay of the tagger\'s labels, repair, ranking)</td>' + td(pct(BEST['counts']['same MRS'], N), True) + td(pct(BEST['counts']['with MRS'], N)) + td(f"{BEST['sentences per second']:.1f}") + '</tr>']
+    SP = (load(f'{ORCA}/analysis/mrs/dev-modes-speed-loaded.json') or {}).get('runs', {})
+    rows = [f'<tr><td>Orca (replay of the tagger\'s labels, repair, ranking)</td>' + td(pct(BEST['counts']['same MRS'], N), True) + td(pct(BEST['counts']['with MRS'], N))
+            + td(f"{SP['replay']['sentences per second']:.1f}" if SP else f"{BEST['sentences per second']:.1f}") + '</tr>']
     for cut in ('0.01', '0.001', '0.0001'):
         x = c[cut]
         run = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-chart-{cut}.json')
-        speed = f"{run['sentences per second']:.1f}" if run else f"{1 / (x['ace seconds per sentence'] + tag_s):.1f} (estimate)"
+        speed = (f"{SP['chart']['sentences per second']:.1f}" if SP and cut == '0.001' else na('not measured with the others') if SP
+                 else f"{run['sentences per second']:.1f}" if run else f"{1 / (x['ace seconds per sentence'] + tag_s):.1f} (estimate)")
         rows.append(f'<tr><td>ACE restricted to the tagger\'s lexical entries (top 5, probability ≥ {cut})</td>' + td(pct(x['same MRS'], N), True) + td(pct(x['parsed'], N))
                     + td(speed) + '</tr>')
     fb = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-fallback-0.001.json')
     if fb:
         rows.append(f'<tr><td>Orca, and restricted ACE (≥ 0.001) where Orca finds no analysis</td>' + td(pct(fb['counts']['same MRS'], N), True) + td(pct(fb['counts']['with MRS'], N))
-                    + td(f"{fb['sentences per second']:.1f}") + '</tr>')
+                    + td(f"{SP['fallback']['sentences per second']:.1f}" if SP else f"{fb['sentences per second']:.1f}") + '</tr>')
     rows.append(f'<tr><td>ACE, full lexicon</td>' + td(pct(T['ace']['all']['same MRS'], N), True) + td(pct(T['ace']['all']['with MRS'], N)) + td(f'{N / (ACE_PASS + ACE_RETRY):.1f}') + '</tr>')
     t = table([('Redwoods dev, raw text', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
     body = t + notes('Restricted ACE: the DeBERTa tagger\'s lexical labels become lexical entries (Orca\'s lookup); every other lexeme that could match a word is switched off (ACE -L), so ACE\'s chart and the ERG\'s ranking model work only with the tagger\'s choices. Tree labels are not used.',
-                     'Speed measured end to end on one kesha GPU (tagging) and one CPU core (ACE), while other jobs ran; the 0.01 row is an estimate.',
+                     'Speed measured end to end on one kesha GPU (tagging) and one CPU core (ACE); replay, the 0.001 row and the fallback row back to back on 24 November, while other jobs ran, so all slower than on a quiet machine. ACE alone: measured earlier.',
                      'The tagger gets lexical types right far more often than tree labels; the chart finds trees that label-by-label replay misses.')
     return fold('The tagger plus a chart: ACE restricted to the tagger\'s words', 'More accurate than replay (about five points) at less than half Orca\'s speed and almost three times ACE\'s.', body, id_='chart')
 
