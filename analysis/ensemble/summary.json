@@ -84,6 +84,12 @@
    "k": 5,
    "min_prob": 0.001,
    "wall seconds": 379.01497507095337
+  },
+  "ens2": {
+   "same MRS": 1625,
+   "exact": 1625,
+   "parsed": 1962,
+   "source": "analysis/ensemble/chart-ens2.json"
   }
  },
  "tagging accuracy": "file\twords\tleaf\ttree\tboth\tsentences all right\ns1.pkl\t25815\t95.32\t91.07\t89.20\t57.98 (1195/2061)\nseed2.pkl\t25815\t95.29\t90.89\t89.04\t58.52 (1206/2061)\ncv0.pkl\t25815\t94.87\t90.27\t88.14\t54.20 (1117/2061)\ncv1.pkl\t25815\t95.12\t90.73\t88.68\t56.23 (1159/2061)\ncv2.pkl\t25815\t94.92\t90.37\t88.20\t54.54 (1124/2061)\ncv3.pkl\t25815\t95.22\t90.44\t88.57\t56.14 (1157/2061)\ncv4.pkl\t25815\t95.10\t90.47\t88.50\t56.04 (1155/2061)\nens2.pkl\t25815\t95.41\t91.15\t89.34\t59.24 (1221/2061)\nens7.pkl\t25815\t95.45\t91.11\t89.32\t58.81 (1212/2061)\n"
