@@ -143,6 +143,44 @@ class Lexicon:
     def lookup(self, forms, lextype, lexrules) -> List[str]:
         """Entries of the type that can surface as these words under these
         lexical rules (given top-down, as in the tagger's label)."""
+        spellings = self._spellings(forms, lexrules)
+        found = []
+        for sp in spellings:
+            found += self.by_type_orth.get((lextype, ' '.join(sp)), [])
+        if found:
+            return found
+        # another grammar version (scripts/label_map.py): a type this grammar lacks, through its entries' new types
+        for t in getattr(self, 'type_map', {}).get(lextype, ()):
+            for sp in spellings:
+                found += self.by_type_orth.get((t, ' '.join(sp)), [])
+        if found:
+            return found
+        generic = list(self.generic.get(lextype, ()))
+        if generic:                    # the grammar's own unknown-word entries for this type come first
+            return generic
+        return self._fallback(spellings, lextype)
+
+    def fallback_entries(self, forms, lextype, lexrules) -> List[str]:
+        """The word fallback (O91) on its own: the word's entries of other types with the same part of speech,
+        if `word_fallback` is on (used where the grammar's lexical filtering removed the generic entries)."""
+        return self._fallback(self._spellings(forms, lexrules), lextype)
+
+    def _fallback(self, spellings, lextype) -> List[str]:
+        found = []
+        fb = getattr(self, 'word_fallback', False)
+        if fb == 'missing-type' and lextype in self._types():
+            fb = False                 # the type exists here: the tagger erred on this word; repair tries its alternatives
+        if fb:
+            # the word's own entries of other types with the same part of speech; replay decides among them
+            pos = lextype.split('_', 1)[0]
+            for sp in spellings:
+                for e in self._by_orth().get(' '.join(sp), ()):
+                    if self.type_of.get(e, '').split('_', 1)[0] == pos and e not in found:
+                        found.append(e)
+        return found
+
+    def _spellings(self, forms, lexrules):
+        """The spellings (tuples of lowercased words) the entry could have, undoing the lexical rules."""
         words = [f.lower().replace('\\', '') for f in forms]
         spellings = {tuple(words)}
         rule_map = getattr(self, 'rule_map', {})
@@ -158,31 +196,7 @@ class Lexicon:
                     spellings = new
                 # else: SRG-style rules match the POS tag (%suffix (vmm03p vmm03p0)), not the word, which is
                 # already the lemma: a pattern that cannot apply leaves the spelling as it is
-        found = []
-        for sp in spellings:
-            found += self.by_type_orth.get((lextype, ' '.join(sp)), [])
-        if found:
-            return found
-        # another grammar version (scripts/label_map.py): a type this grammar lacks, through its entries' new types
-        for t in getattr(self, 'type_map', {}).get(lextype, ()):
-            for sp in spellings:
-                found += self.by_type_orth.get((t, ' '.join(sp)), [])
-        if found:
-            return found
-        generic = list(self.generic.get(lextype, ()))
-        if generic:                    # the grammar's own unknown-word entries for this type come first
-            return generic
-        fb = getattr(self, 'word_fallback', False)
-        if fb == 'missing-type' and lextype in self._types():
-            fb = False                 # the type exists here: the tagger erred on this word; repair tries its alternatives
-        if fb:
-            # the word's own entries of other types with the same part of speech; replay decides among them
-            pos = lextype.split('_', 1)[0]
-            for sp in spellings:
-                for e in self._by_orth().get(' '.join(sp), ()):
-                    if self.type_of.get(e, '').split('_', 1)[0] == pos and e not in found:
-                        found.append(e)
-        return found
+        return spellings
 
     def _types(self):
         """Lexical types that have entries (or generic entries) in this grammar."""
@@ -302,6 +316,16 @@ def _leaf_candidates(grammar, lexicon, tree, tokens, strict=True):
                 cands = []
             else:
                 cands = lexicon.lookup(leaf.forms, leaf.entry.lower(), rules)
+            lf = getattr(lexicon, 'lexical_filter', None)
+            if lf is not None and cands and any(lf.is_generic(c) for c in cands):
+                # the grammar's lexical filtering (orca/tfs/lexfilter.py): a chart parser drops a generic
+                # (unknown-word) entry where, for example, a native entry covers the same token
+                toks = tokens[pos:pos + len(leaf.forms)]
+                # (a generic entry that does not unify with the token at all is dropped too: no parser builds it)
+                kept = [c for c in cands if lf.keeps(c, rules, leaf.forms, toks)]
+                if not kept:           # the word fallback (O91), if on, offers the word's native entries instead
+                    kept = lexicon.fallback_entries(leaf.forms, leaf.entry.lower(), rules)
+                cands = kept
             if len(cands) > 1:
                 toks = tokens[pos:pos + len(leaf.forms)]
                 keep = []

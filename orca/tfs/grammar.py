@@ -59,7 +59,7 @@ class Grammar:
             if section == 'type':
                 self.h.add_file(path)
             elif section == 'instance' and status in (
-                    'rule', 'lex-rule', 'lex-entry', 'generic-lex-entry', None):
+                    'rule', 'lex-rule', 'lex-entry', 'generic-lex-entry', 'lexical-filtering-rule', None):
                 for event, obj, _ in tdl.iterparse(path, encoding='utf-8'):
                     if event in ('TypeDefinition', 'LexicalRuleDefinition'):
                         name = obj.identifier.lower()

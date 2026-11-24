@@ -53,7 +53,7 @@ class Parser:
                  all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
                  normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False,
                  fragments=False, mode='replay', chart_k=5, chart_min_prob=0.001, chart_timeout=60, label_filter=None,
-                 label_map=None, word_fallback=False, readings=1, margin=None):
+                 label_map=None, word_fallback=False, readings=1, margin=None, lexical_filter=True):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -95,6 +95,9 @@ class Parser:
         self.me = MaxEnt(os.path.join(gdir, 'redwoods.mem'))
         self.generic = lambda e: g.status.get(e) == 'generic-lex-entry'
         self.fg = FastGrammar(g)
+        if lexical_filter:                          # O105: the grammar's lexical filtering of generic entries (orca/tfs/lexfilter.py)
+            from orca.tfs.lexfilter import LexicalFilter
+            self.lx.lexical_filter = LexicalFilter(self.fg, self.lx)
         if label_map:                               # O91: the tagger's grammar names mapped onto this grammar version (scripts/label_map.py)
             lm = json.load(open(label_map))
             self.lx.type_map, self.lx.rule_map = lm['types'], lm['rules']
@@ -486,6 +489,7 @@ def main():
     ap.add_argument('--chart-min-prob', type=float, default=0.001, help='chart: drop labels below this probability (the first is always kept)')
     ap.add_argument('--label-map', help='scripts/label_map.py output, when the grammar is another version than the tagger\'s (O91); off by default')
     ap.add_argument('--word-fallback', action='store_true', help='a word without an entry of the proposed lexical type: try its entries of the same part of speech (O91); off by default')
+    ap.add_argument('--no-lexical-filter', action='store_true', help='do not apply the grammar\'s lexical filtering to generic (unknown-word) entries (O105); on by default')
     ap.add_argument('--readings', type=int, default=1, help='return up to this many distinct readings (O97), best first, with MaxEnt score and probability; default 1')
     ap.add_argument('--margin', type=float, help='with or without --readings: only readings whose MaxEnt score is within this of the best (log space); off by default')
     ap.add_argument('--no-fragments', dest='fragments', action='store_false', help='parsing sentences: give no fragments when there is no full analysis (never used in --eval)')
@@ -496,7 +500,8 @@ def main():
                patterns=args.patterns, pattern_weight=args.pattern_weight, pattern_only_new=args.pattern_only_new,
                fragments=args.fragments and not args.eval, mode=args.mode or ('replay' if args.eval else 'fallback'), chart_k=args.chart_k,
                chart_min_prob=args.chart_min_prob, label_filter=args.label_filter,
-               label_map=args.label_map, word_fallback=args.word_fallback, readings=args.readings, margin=args.margin)
+               label_map=args.label_map, word_fallback=args.word_fallback, readings=args.readings, margin=args.margin,
+               lexical_filter=not args.no_lexical_filter)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
         return

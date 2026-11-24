@@ -73,6 +73,8 @@ def run(a):
         if a.map_rules:
             p.lx.rule_map = p.fg.rule_map = lm['rules']
     p.lx.word_fallback = 'missing-type' if a.word_fallback_missing_only else a.word_fallback
+    if a.no_lexical_filter:              # O105: on by default in the Parser
+        p.lx.lexical_filter = None
     gold = load_gold(a.gold_mrs) if a.gold_mrs else {}
     pats = None
     if a.patterns:
@@ -148,7 +150,8 @@ def run(a):
            'gold among accepted': sum(any(c.get('same_mrs') for c in kb) for kb in GOLDFLAGS) if gold else None,
            'replays': sum(r.get('replays', 0) for r in recs.values()),
            'sentences': len(items), 'repair seconds': rep_secs, 'repair seconds per sentence': rep_secs / max(1, len(items)),
-           'any analysis': n_any, 'label filter': a.label_filter, 'skipped by the label filter': getattr(args, '_n_filtered', None), 'patterns': a.patterns, 'pattern_weight': a.pattern_weight if a.patterns else None,
+           'any analysis': n_any, 'lexical filter': not a.no_lexical_filter,
+           'generic entries filtered': getattr(getattr(p.lx, 'lexical_filter', None), 'n_filtered', None), 'label filter': a.label_filter, 'skipped by the label filter': getattr(args, '_n_filtered', None), 'patterns': a.patterns, 'pattern_weight': a.pattern_weight if a.patterns else None,
            'pattern_only_new': a.pattern_only_new if a.patterns else None, 'records': recs}
     if gold:
         res['exact'] = n_exact
@@ -224,6 +227,7 @@ def main():
     ap.add_argument('--map-types', action='store_true', help='with --label-map: map lexical types this grammar lacks')
     ap.add_argument('--map-rules', action='store_true', help='with --label-map: map rules this grammar lacks (unambiguous renames only)')
     ap.add_argument('--word-fallback', action='store_true', help='a word without an entry of the proposed type: offer its entries of other types with the same part of speech')
+    ap.add_argument('--no-lexical-filter', action='store_true', help='do not apply the grammar\'s lexical filtering to generic entries (O105)')
     ap.add_argument('--word-fallback-missing-only', action='store_true', help='the word fallback only for lexical types this grammar does not have at all')
     a = ap.parse_args()
     {'prepare': prepare, 'run': run, 'compare': compare}[a.cmd](a)

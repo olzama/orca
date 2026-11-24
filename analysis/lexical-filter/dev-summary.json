@@ -1,0 +1,29 @@
+{
+ "what": "O105, Redwoods dev from raw text, saved DeBERTa-v3 large tags, repair_bench, current defaults, CPU",
+ "runs": {
+  "no filtering (before)": {
+   "exact": 1524,
+   "any analysis": 1924,
+   "gold among accepted": 1637,
+   "replays": 360972,
+   "generic entries filtered": null,
+   "repair seconds": 196.59155734349042
+  },
+  "lexical filtering": {
+   "exact": 1531,
+   "any analysis": 1907,
+   "gold among accepted": 1634,
+   "replays": 357084,
+   "generic entries filtered": 132,
+   "repair seconds": 173.26538153085858
+  },
+  "lexical filtering + word fallback": {
+   "exact": 1549,
+   "any analysis": 1935,
+   "gold among accepted": 1658,
+   "replays": 357750,
+   "generic entries filtered": 135,
+   "repair seconds": 195.495672066696
+  }
+ }
+}
