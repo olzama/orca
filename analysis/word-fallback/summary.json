@@ -1,0 +1,43 @@
+{
+ "what": "word-level fallback (O91) with lexical filtering (O105), Redwoods dev, saved tagger output per seed, repair_bench current defaults",
+ "runs": {
+  "seed1": {
+   "off": {
+    "exact": 1531,
+    "any analysis": 1907,
+    "gold among accepted": 1634,
+    "source": "analysis/lexical-filter/dev-summary.json"
+   },
+   "on": {
+    "exact": 1549,
+    "any analysis": 1935,
+    "gold among accepted": 1658
+   }
+  },
+  "seed2": {
+   "off": {
+    "exact": 1514,
+    "any analysis": 1899,
+    "gold among accepted": 1616
+   },
+   "on": {
+    "exact": 1526,
+    "any analysis": 1922,
+    "gold among accepted": 1634
+   }
+  },
+  "seed3": {
+   "off": {
+    "exact": 1528,
+    "any analysis": 1907,
+    "gold among accepted": 1636
+   },
+   "on": {
+    "exact": 1552,
+    "any analysis": 1942,
+    "gold among accepted": 1663
+   }
+  }
+ },
+ "decision": "fallback on by default from 24 Nov (gains on all three seeds); --no-word-fallback restores the old behavior"
+}

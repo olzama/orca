@@ -53,7 +53,7 @@ class Parser:
                  all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
                  normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False,
                  fragments=False, mode='replay', chart_k=5, chart_min_prob=0.001, chart_timeout=60, label_filter=None,
-                 label_map=None, word_fallback=False, readings=1, margin=None, lexical_filter=True):
+                 label_map=None, word_fallback=True, readings=1, margin=None, lexical_filter=True):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -493,7 +493,8 @@ def main():
     ap.add_argument('--label-filter', help='label filter table (scripts/label_filter.py), or "on" to compute on demand; off by default')
     ap.add_argument('--chart-min-prob', type=float, default=0.001, help='chart: drop labels below this probability (the first is always kept)')
     ap.add_argument('--label-map', help='scripts/label_map.py output, when the grammar is another version than the tagger\'s (O91); off by default')
-    ap.add_argument('--word-fallback', action='store_true', help='a word without an entry of the proposed lexical type: try its entries of the same part of speech (O91); off by default')
+    ap.add_argument('--word-fallback', dest='word_fallback', action='store_true', default=True, help='a word without an entry of the proposed lexical type: try its entries of the same part of speech (O91); on by default since 24 Nov (gains on three tagger seeds)')
+    ap.add_argument('--no-word-fallback', dest='word_fallback', action='store_false', help='do not try a word\'s entries of other lexical types')
     ap.add_argument('--no-lexical-filter', action='store_true', help='do not apply the grammar\'s lexical filtering to generic (unknown-word) entries (O105); on by default')
     ap.add_argument('--readings', type=int, default=1, help='return up to this many distinct readings (O97), best first, with MaxEnt score and probability; default 1')
     ap.add_argument('--margin', type=float, help='with or without --readings: only readings whose MaxEnt score is within this of the best (log space); off by default')
