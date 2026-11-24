@@ -268,6 +268,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if busy:
             self._send(503, json.dumps({'error': 'The parser is busy. Please try again in a moment.'}), 'application/json')
             return
+        t_start = time.perf_counter()
         try:
             n = int(self.headers.get('Content-Length', 0))
             req = json.loads(self.rfile.read(min(n, 100_000)) or b'{}')
@@ -278,12 +279,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if len(text.split()) > MAX_WORDS:
                 self._send(400, json.dumps({'error': f'Please enter at most {MAX_WORDS} words.'}), 'application/json')
                 return
+            t_asked = time.perf_counter()
             with LOCK:
+                t_lock = time.perf_counter()              # until here: waiting for other visitors' sentences
                 PARSER.readings, PARSER.margin = reading_options(req)
                 method = req.get('method') if req.get('method') in METHODS else 'chart'
                 PARSER.mode, budget = METHODS[method]
                 PARSER.args.budget = budget or BUDGET
                 r = PARSER.parse(text)
+                t_parsed = time.perf_counter()
                 fs_for = req.get('fs_for')
                 if fs_for is not None:                    # the sign of one further reading, fetched when its tab opens
                     rds = r.get('readings') or []
@@ -295,7 +299,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
                         self._send(400, json.dumps({'error': 'no such reading'}), 'application/json')
                         return
                     fsv, note = reading_fs(rds[i], r.get('_tokens'))
-                    self._send(200, json.dumps({'reading': i, 'fs': fsv, 'fs_note': note}, ensure_ascii=False), 'application/json')
+                    now = time.perf_counter()
+                    self._send(200, json.dumps({'reading': i, 'fs': fsv, 'fs_note': note,
+                                                'server': {'parse': t_parsed - t_lock, 'views': now - t_parsed, 'total': now - t_start}},
+                                               ensure_ascii=False), 'application/json')
                     return
                 m = r.pop('_mrs_obj', None)
                 r['mrs_view'] = mrs_view(m)
@@ -312,6 +319,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 if r.get('readings'):
                     r['readings'] = reading_views(r)
                 r.pop('_tokens', None)
+                t_views = time.perf_counter()
                 if req.get('ace'):
                     a = ace_parse(text, timeout=ACE_TIMEOUT)
                     am = a.pop('_mrs_obj', None)
@@ -331,7 +339,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
                         a['fs_note'] = None if sign is not None else how
                     a['same as orca'] = same_mrs(m, am) if m is not None and am is not None else None
                     r['ace'] = a
-            self._send(200, json.dumps(r, ensure_ascii=False), 'application/json')
+                t_ace = time.perf_counter()
+            # where the server's time went, apart from the parser's own steps in r['seconds']: the page shows them apart
+            body = json.dumps(r, ensure_ascii=False)
+            now = time.perf_counter()
+            server = {'wait': t_lock - t_asked, 'parse': t_parsed - t_lock, 'views': t_views - t_parsed,
+                      'ace': t_ace - t_views, 'json': now - t_ace, 'total': now - t_start}
+            self._send(200, '{"server": ' + json.dumps(server) + ', ' + body[1:], 'application/json')
         except Exception as e:
             self._send(500, json.dumps({'error': f'{type(e).__name__}: {e}'[:500]}), 'application/json')
         finally:
