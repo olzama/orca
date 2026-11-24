@@ -79,7 +79,7 @@ def tiles():
     t = [('main', f'{100 * c["same MRS"] / N:.1f}%', 'exactly the gold meaning (predicates, arguments, scope: the usual measure in parsing work), from raw text'),
          ('', f'{100 * pr["same with properties"] / N:.1f}%' if pr else '…', 'the same, with tense, number and information structure too'),
          ('', f'{100 * (c["same MRS"] + jd["verdicts"]["orca"] + jd["verdicts"]["both"]) / N:.1f}%' if jd else '…',
-          'right according to the LLM judge' + ('' if jd else ' (being judged)')),
+          'right according to the LLM judge' ),
          ('', f'{100 * c["with MRS"] / N:.1f}%', 'get a full analysis the grammar accepts'),
          ('', f'{BEST["sentences per second"]:.1f}', f'sentences per second (ACE: {ace_sps:.1f})')]
     return ('  <section class="stack">\n    <div class="tiles">\n'
@@ -139,7 +139,8 @@ def modes():
             + notes('Replay is Orca\'s own method and the headline; the other rows are different systems built on it. Fallback mode is the default for parsing corpora, chart mode where accuracy matters most.',
                     'Restricted ACE: ACE with only the tagger\'s five best lexical entries per word (probability 0.001 or more). Details in ' + link('chart', 'The tagger plus a chart') + ' and ' + link('fallback', 'Orca with a fallback') + '.',
                     'Full ACE rows: sentences picked first where Orca finds nothing, then where it is least certain (a cross-validated model on Orca\'s own signals).',
-                    '<b>Speeds:</b> the three Orca modes measured back to back on 24 November, one GPU and one core, while kesha was busy with other jobs, so all run slower than on a quiet machine (the headline tile, from a quiet run, says ' + f'{step_sps:.1f}' + '). Full-ACE rows: Orca\'s speed under the same load plus ACE\'s measured time for each sentence sent. ACE alone: one core, measured earlier.',
+                    '<b>Speeds:</b> the three Orca modes were timed together in one session on one GPU and one CPU core, so they compare with each other; that session ran slower overall than the measurement behind the headline. Full-ACE rows add ACE\'s measured time for each sentence sent; ACE alone runs on one core.',
+
                     '<b>EDM<sub>NA</sub> F1:</b> predicates and arguments with partial credit (' + link('edm', 'EDM') + '); all and properties in that section.',
                     'On novels and news the modes come in the same order, with a wider gap between replay and chart mode (' + link('corpus', 'Novels and news') + ').'))
 
@@ -172,17 +173,17 @@ def summary():
                                    + ''.join(td(c, i in (0, 2)) for i, c in enumerate(cells)) + '</tr>')
     rows = [grp('Redwoods dev (e-mails, Wikipedia), compared with the annotators\' gold'),
             row('&nbsp;&nbsp;Orca (DeBERTa-v3 large), from raw text', N, pct(oc['same MRS'], N),
-                pct(props['same with properties'], N) if props else na('running'),
-                pct(oc['same MRS'] + jd['verdicts']['orca'] + jd['verdicts']['both'], N) if jd else na('being judged'),
+                pct(props['same with properties'], N) if props else na('not measured yet'),
+                pct(oc['same MRS'] + jd['verdicts']['orca'] + jd['verdicts']['both'], N) if jd else na('not measured yet'),
                 pct(oc['with MRS'], N), f"{BEST['sentences per second']:.1f}"),
             (row('&nbsp;&nbsp;Orca (BERT-base), from raw text', N, pct(bn['counts']['same MRS'], N),
-                 pct(bp['same with properties'], N) if bp else na('running'),
-                 pct(bn['counts']['same MRS'] + bbj['verdicts']['orca'] + bbj['verdicts']['both'], N) if bbj else na('being judged'),
-                 pct(bn['counts']['with MRS'], N), na('not comparable: measured while kesha was fully loaded') if BERT_NEW == BERT_CUR else f"{bn['sentences per second']:.1f}") if bn else
-             row('&nbsp;&nbsp;Orca (BERT-base), from raw text', N, na('re-running with the lookup fixes'), na('re-running'), na('re-running'), na('re-running'), na('re-running'))),
+                 pct(bp['same with properties'], N) if bp else na('not measured yet'),
+                 pct(bn['counts']['same MRS'] + bbj['verdicts']['orca'] + bbj['verdicts']['both'], N) if bbj else na('not measured yet'),
+                 pct(bn['counts']['with MRS'], N), na('not measured') if BERT_NEW == BERT_CUR else f"{bn['sentences per second']:.1f}") if bn else
+             row('&nbsp;&nbsp;Orca (BERT-base), from raw text', N, na('not measured yet'), na('not measured yet'), na('not measured yet'), na('not measured yet'), na('not measured yet'))),
             row('&nbsp;&nbsp;ACE, first-ranked parse', N, pct(ace['same MRS'], N),
                 pct(load(f'{ORCA}/analysis/mrs/dev-ace-properties.json')['same with properties'], N) if load(f'{ORCA}/analysis/mrs/dev-ace-properties.json') else na('not measured'),
-                pct(ace['same MRS'] + aj['verdicts']['orca'] + aj['verdicts']['both'], N) if aj else na('being judged'),
+                pct(ace['same MRS'] + aj['verdicts']['orca'] + aj['verdicts']['both'], N) if aj else na('not measured yet'),
                 pct(ace['with MRS'], N), f'{N / (ACE_PASS + ACE_RETRY):.1f}')]
     cnt, verdicts, _, labels = gen_counts()
     if verdicts:
@@ -194,7 +195,7 @@ def summary():
         GP = (load(f'{ORCA}/analysis/mrs/gen-properties-summary.json') or {}).get('by system', {})
         GS = (load(f'{ORCA}/analysis/mrs/gen-modes-speed-loaded.json') or {}).get('runs', {})
         gprop = lambda k, n: pct(GP[k]['same with properties'], n) if k in GP else na('not measured')
-        gspd = lambda m: na('measured under load: see ' + link('generated', 'Generated sentences')) if m in GS else na('not measured')
+        gspd = lambda m: na('see ' + link('generated', 'Generated sentences')) if m in GS else na('not measured')
         rows += [grp(f'Generated sentences on hard phenomena (rounds 1 to {len(labels)}), '
                      'compared with ACE\'s first-ranked parse, which nobody checked'),
                  row('&nbsp;&nbsp;Orca (DeBERTa-v3 large), from raw text', g['n'], pct(g['agree'], g['n']), gprop('debertav3large-current', g['n']), pct(g['agree'] + g['orca'] + g['both'], g['n']),
@@ -356,7 +357,7 @@ def results():
     bv = [0, 0, 0, 0]
     for x in (bb or {}).get('records', []):
         bv[3 if not x['accepted'] else 2 if not x['gold among accepted'] else 0 if x['same MRS'] else 1] += 1
-    rows = [mrow('BERT-base tagger', bv) if bb else f'<tr><td>BERT-base tagger</td>' + td(na('re-running with the current parser')) * 5 + '</tr>',
+    rows = [mrow('BERT-base tagger', bv) if bb else f'<tr><td>BERT-base tagger</td>' + td(na('not measured yet')) * 5 + '</tr>',
             mrow('<b>DeBERTa-v3 large tagger</b>', tot)]
     say = {'under 10': 'under 10 words', '10 to 19': '10 to 19 words', '20 to 29': '20 to 29 words', '30 and over': '30 words or more'}
     rows += [mrow(f'&nbsp;&nbsp;… of which sentences of {say[b]}', cnt[b]) for _, _, b in bands]
@@ -401,7 +402,7 @@ def exp_training():
                                 + td(pct(r['counts']['gold MRS among accepted'], N)) + '</tr>')
         t += (table([('DeBERTa-v3 large, current parser defaults; tagger trained on', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Gold among the analyses found', 'n')],
                     [drow('All data (590,721 sentences)', BEST), drow('All data and more 2025 news (663,219 sentences)', nw)])
-              + cap('Redwoods dev, from raw text. The added news (72,092 sentences of ACE\'s first parses, kept if they replay) is a different kind of text from Redwoods, so no gain is expected here; the test that matters is unseen news, which needs a fresh sample (roadmap O71).'))
+              + cap('Redwoods dev, from raw text. The added news (72,092 sentences of ACE\'s first parses, kept if they replay) is a different kind of text from Redwoods, so no gain is expected here; the test that matters is news the tagger has not seen, not measured yet.'))
     body = t + notes('Silver data: ACE\'s first parses of novels (1838 to 1921) and news (NYT 2023, 2025), with LLM-written counterparts, kept if they replay.',
                      'One run each; the run-to-run spread is about one point (' + link('runs', 'How much two runs differ') + ').')
     return fold('Training data', 'More grammar-licensed text helped up to now; halving it costs little.', body, id_='training-data')
@@ -431,11 +432,11 @@ def exp_properties():
     pd = load(BEST_PROPS)
     ic = load(BEST_ICONS)
     rows = [f'<tr><td>Predicates, arguments and scope only</td>{td(pct(p["same without properties"], n), True)}'
-            + td(pct(pd['same without properties'], n) if pd else na('running'), True) + '</tr>',
+            + td(pct(pd['same without properties'], n) if pd else na('not measured yet'), True) + '</tr>',
             f'<tr><td>… and also tense, aspect, mood, sentence force, number, person, gender</td>{td(pct(p["same with properties"], n), True)}'
-            + td(pct(pd['same with properties'], n) if pd else na('running'), True) + '</tr>',
+            + td(pct(pd['same with properties'], n) if pd else na('not measured yet'), True) + '</tr>',
             f'<tr><td>… or instead ICONS (information structure: topic, focus)</td>{td(na("not measured"))}'
-            + td(pct(ic['same with ICONS'], n) if ic else na('running'), True) + '</tr>']
+            + td(pct(ic['same with ICONS'], n) if ic else na('not measured yet'), True) + '</tr>']
     t1 = table([('What must match gold', ''), ('BERT-base', 'n hl'), ('DeBERTa-v3 large', 'n hl')], rows,
                group=[('', 1), ('Exact meaning, raw text, all data', 2)])
     lost = p['same without properties'] - p['same with properties']
@@ -470,7 +471,7 @@ def exp_ace_current():
     return ('    <h3>The current system</h3>\n' + t + cap('DeBERTa-v3 large tagger from raw text, current parser defaults; chart and fallback as in the mode table.')
             + t2 + cap('Only the sentences each system analyzes.')
             + notes('<b>Memory limits for ACE on this page:</b> ACE alone on dev gets 6 GB per sentence and retries failures at 16 GB, then 28 GB; chart and fallback modes give restricted ACE 6 GB for the chart and 7 GB for unpacking; Where ACE fails uses 6 GB and 300 s per sentence. One Orca process uses about 3.4 GB.',
-                    NOT_YET + 'the current system on several cores (the machine was busy).')
+                    NOT_YET + 'the current system on several cores.')
             + '    <h3>The first pipeline</h3>\n')
 
 
@@ -558,7 +559,7 @@ def exp_encoders(open_=False):
                 among = pct(rc['gold MRS among accepted'], N) if 'gold MRS among accepted' in rc else na('not measured')
                 raw = td(pct(rc['same MRS'], N), True) + td(pct(rc['with MRS'], N)) + td(among)
             else:
-                raw = td(na('evaluation queued')) + td(na('queued')) + td(na('queued'))
+                raw = td(na('not measured yet')) + td(na('not measured yet')) + td(na('not measured yet'))
             rows.append(f'<tr><td>&nbsp;&nbsp;{name}</td>' + td(size) + tag + raw + '</tr>')
     t = table([('Encoder', ''), ('Parameters', 'n'), ('Leaf labels right (%)', 'n'), ('Tree labels right (%)', 'n'),
                ('Every label of the sentence right (%)', 'n'), ('Right meaning chosen', 'n hl'), ('Any analysis', 'n'), ('Right meaning among the analyses found', 'n')],
@@ -640,8 +641,8 @@ def exp_generated():
             g3 = load(f'{ORCA}/analysis/mrs/gen-round3-bothsurf-{key}-rawtext.json')['counts']
             j3 = load(f'{ORCA}/analysis/adjudicate/gen-round3-{key}/score.json')
             n3 = g3['sentences']
-            return (f'<tr><td>{name}</td>' + td(pct(dv['same MRS'], N), True) + td(pct(dp['same with properties'], N) if dp else na('running'))
-                    + td(pct(dv['with MRS'], N)) + td(pct(g3['same MRS'], n3)) + td(pct(g3['same MRS'] + j3['verdicts']['orca'] + j3['verdicts'].get('both', 0), n3) if j3 else na('being judged'), True)
+            return (f'<tr><td>{name}</td>' + td(pct(dv['same MRS'], N), True) + td(pct(dp['same with properties'], N) if dp else na('not measured yet'))
+                    + td(pct(dv['with MRS'], N)) + td(pct(g3['same MRS'], n3)) + td(pct(g3['same MRS'] + j3['verdicts']['orca'] + j3['verdicts'].get('both', 0), n3) if j3 else na('not measured yet'), True)
                     + td(pct(g3['with MRS'], n3)) + '</tr>')
         t4 = table([('DeBERTa-v3 large, trained on', ''), ('Same meaning as gold', 'n hl'), ('… with tense, number and information structure too', 'n'), ('Any analysis', 'n'),
                     ('Same meaning as ACE', 'n'), ('Right according to the LLM judge', 'n hl'), ('Any analysis', 'n')],
@@ -677,9 +678,9 @@ def exp_generated():
     ds = load(f'{ORCA}/analysis/mrs/dev-modes-speed-loaded.json')
     if gs and ds:
         srow = lambda name, m: (f'<tr><td>{name}</td>' + td(f"{ds['runs'][m]['sentences per second']:.1f}") + td(f"{gs['runs'][m]['sentences per second']:.1f}", True) + '</tr>')
-        body += ('    <h3>Speed</h3>\n' + table([('Sentences per second, measured under the same load', ''), (f'Redwoods dev ({N:,})', 'n'), (f'Generated round 3 ({gs["runs"]["replay"]["sentences"]:,})', 'n hl')],
+        body += ('    <h3>Speed</h3>\n' + table([('Sentences per second, timed together', ''), (f'Redwoods dev ({N:,})', 'n'), (f'Generated round 3 ({gs["runs"]["replay"]["sentences"]:,})', 'n hl')],
                                                [srow('Orca (replay)', 'replay'), srow('Chart mode', 'chart')])
-                 + notes('Both measured on 24 November on one kesha GPU and one core while other jobs ran, so slower than on a quiet machine. Generated sentences are longer and harder than dev.'))
+                 + notes('Both timed in the same session on one GPU and one CPU core. Generated sentences are longer and harder than dev.'))
     return fold('Generated sentences', 'Harder than dev; ACE\'s own parses of them are often wrong.', body, id_='generated')
 
 
@@ -841,7 +842,7 @@ def exp_hybrid():
         rows.append('<tr><td><b>ACE alone</b>, full lexicon (the baseline)</td>' + td(pct(rc['ace exact'], N), True) + td(f'{N / (ACE_PASS + ACE_RETRY):.1f}') + '</tr>')
         t = table([('Sentences sent to full ACE', ''), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n')], rows)
         body = t + notes(f'Redwoods dev, raw text, current parser defaults. First the {none_n} sentences where Orca finds no analysis, then Orca\'s least certain ones, by a logistic model on Orca\'s own signals (tagger probabilities, replays, candidates), cross-validated on dev (AUC {rc["cv AUC (Orca wrong)"]:.2f} for spotting Orca\'s errors).',
-                         'Speed: Orca measured on 24 November while kesha was busy with other jobs, plus ACE\'s measured time for each sentence sent (one core). ACE alone: measured earlier.',
+                         'Speed: Orca timed in the same session as the mode table, plus ACE\'s measured time for each sentence sent (one core). ACE alone: one core.',
                          'Sending everything equals ACE alone in accuracy at a lower speed; the gain per sentence sent falls off quickly after the uncertain half.',
                          'Different systems from Orca alone, so they sit beside the headline, not in it.',
                          NOT_YET + 'the same curve with restricted ACE as the fallback, and restricted then full ACE, on the current run (measured on the earlier run only).')
@@ -897,7 +898,8 @@ def exp_supertag_ace():
     rows.append(f'<tr><td>ACE, full lexicon</td>' + td(pct(T['ace']['all']['same MRS'], N), True) + td(pct(T['ace']['all']['with MRS'], N)) + td(f'{N / (ACE_PASS + ACE_RETRY):.1f}') + '</tr>')
     t = table([('Redwoods dev, raw text', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
     body = t + notes('Restricted ACE: the DeBERTa tagger\'s lexical labels become lexical entries (Orca\'s lookup); every other lexeme that could match a word is switched off (ACE -L), so ACE\'s chart and the ERG\'s ranking model work only with the tagger\'s choices. Tree labels are not used.',
-                     'Speed measured end to end on one kesha GPU (tagging) and one CPU core (ACE); replay, the 0.001 row and the fallback row back to back on 24 November, while other jobs ran, so all slower than on a quiet machine. ACE alone: measured earlier.',
+                     'Speed end to end on one GPU (tagging) and one CPU core (ACE); replay, the 0.001 row and the fallback row timed together in one session.',
+
                      'The tagger gets lexical types right far more often than tree labels; the chart finds trees that label-by-label replay misses.')
     return fold('The tagger plus a chart: ACE restricted to the tagger\'s words', 'More accurate than replay (about five points) at less than half Orca\'s speed and almost three times ACE\'s.', body, id_='chart')
 
@@ -918,7 +920,7 @@ def exp_ensemble():
     xr, xc = (load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext-minprob001.json') or load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext.json')), load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext-chart-0.001.json')
     if xr:
         rows.append('<tr><td>One larger tagger: DeBERTa-v2 xlarge (about 900M parameters)</td>' + td(pct(xr['counts']['same MRS'], N), True) + td(pct(xr['counts']['with MRS'], N))
-                    + (td(pct(xr['counts']['gold MRS among accepted'], N)) if 'gold MRS among accepted' in xr['counts'] else td(na('not recorded'))) + (td(pct(xc['counts']['same MRS'], N), True) if xc else td(na('running'))) + '</tr>')
+                    + (td(pct(xr['counts']['gold MRS among accepted'], N)) if 'gold MRS among accepted' in xr['counts'] else td(na('not recorded'))) + (td(pct(xc['counts']['same MRS'], N), True) if xc else td(na('not measured yet'))) + '</tr>')
     t = table([('DeBERTa-v3 large taggers', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Gold among the analyses', 'n'), ('Same meaning as gold', 'n hl')], rows,
               group=[('', 1), ('Replay', 3), ('Chart mode', 1)])
     return ('    <h3>Averaging taggers, and a larger one</h3>\n' + t
@@ -961,8 +963,9 @@ def exp_corpus_modes(open_=False):
     body = t + notes('500 sentences each from held-out novel excerpts (human, LLM) and 2025 news (NYT, LLM). Reference: ACE\'s first parse, unchecked silver; Orca\'s grammar replays 1,917 of ACE\'s 1,927 derivations, so the grammar versions barely differ.',
                      '<b>Same as ACE</b> is a share of the sentences ACE parsed; <b>Any analysis</b> is a share of all sampled sentences.',
                      'Chart mode shares ACE\'s ranking model, so part of its agreement with ACE is built in.',
-                     '<b>Correction:</b> 815 of the 1,000 news sentences were already in Orca\'s training data (found on 24 November); the last rows split them. On unseen news, replay agrees with ACE about ten points less, chart mode barely changes. The novels were all unseen.',
-                     'Speeds are not shown: the machine was loaded by other jobs during these runs.')
+                     '815 of the 1,000 news sentences were in Orca\'s training data; the last rows split them. On unseen news, replay agrees with ACE about ten points less, while chart mode barely changes. The novels were all unseen.',
+
+                     'Speeds were not timed for these runs.')
     pairs = [('Fallback', 'ACE', 'judge-fallback'), ('Chart', 'replay', 'judge-chart-replay'), ('Chart', 'ACE', 'judge-chart-ace')]
     jrows, cost = [], 0
     for first, second, f in pairs:
@@ -1030,7 +1033,7 @@ def exp_label_filter():
                row('Labels down to probability 0.0001', 'base-0.0001'), row('&nbsp;&nbsp;… and the label filter', 'filter-0.0001')])
     body = t + notes('The filter skips, without a replay, label combinations the grammar can never accept: a leaf whose lexical type cannot take its rules, or a binary rule that cannot take the single-word daughters its tree label gives it. Checked with the most general sign of each label, so it never rules out anything the grammar would accept; on all Redwoods train and dev gold labels it rejects only sentences whose lexical type no longer has an entry in ERG 2025.',
                      'Redwoods dev from raw text; all four runs use the same saved tagger output, so differences come from the search alone. Repair time did not improve: checking every candidate costs about what the skipped replays saved.',
-                     'Gains are within the run-to-run spread of about one point, so the filter stays off (repair.py --label-filter).')
+                     'Gains are within the run-to-run spread of about one point, so the filter is off by default.')
     return fold('Ruling out label pairs the grammar can never combine', 'Sound, and it skips a quarter of the replays, but almost none of the skipped candidates would have been right.', body, id_='label-filter')
 
 
@@ -1063,7 +1066,7 @@ def exp_grammar_drift():
     body = (t + notes('The tagger and the MaxEnt ranking model are each used with their own grammar version (redwoods.mem of 2020 for the 2020 run); tokens are ERG 2025 preprocessing in both runs. Exact match against gold is not shown for 2020: the gold analyses are made with ERG 2025.',
                       'A label the grammar does not have counts as a rejected guess and repair moves on; no sentence fails with an error.')
             + t2 + notes('Each lost sentence counted once, by why the derivation chosen under ERG 2025 fails under ERG 2020. Most changed definitions are one constraint in one rule (flr-hd_rel-fin_c).',
-                         'Labels mapped to ERG 2020: a lexical type the grammar lacks is replaced by the type its lexical entries have there (40 of 108 missing types map this way; the rest are new words). Word-level fallback: where a word has no entry of the proposed type, its other entries of the same part of speech are tried after the grammar\'s generic entries, and replay decides. Neither needs retraining; both are options, off by default (orca_parse.py --label-map, --word-fallback).',
+                         'Labels mapped to ERG 2020: a lexical type the grammar lacks is replaced by the type its lexical entries have there (40 of 108 missing types map this way; the rest are new words). Word-level fallback: where a word has no entry of the proposed type, its other entries of the same part of speech are tried after the grammar\'s generic entries, and replay decides. Neither needs retraining; both are options, off by default.',
                          'The missing rules are new constructions, not renames, so none map. Changed definitions need retraining on data replayed under the new grammar.')
             + cap('The installed trunk and latest GitHub copies of the ERG are the same as ERG 2025, so 2020 is the only different version tested.'))
     return fold('When the grammar changes: the tagger against ERG 2020', 'Trained for ERG 2025, the tagger finds an analysis for clearly fewer sentences under ERG 2020; mapping labels and trying other entries of the same word win back about half, without retraining.', body, id_='grammar-drift')
@@ -1084,7 +1087,7 @@ def exp_judge_check():
     t = table([('Dev sentences where ACE\'s first parse differs from gold (288), a random sample per judge verdict', ''), ('Reviewed', 'n'),
                ('ACE\'s reading is right', 'n hl'), ('Both acceptable', 'n'), ('Gold is right', 'n hl'), ('Neither, or can\'t tell', 'n')], rows,
               group=[('', 2), ('The person\'s verdict', 4)])
-    body = t + notes('Olga Zamaraeva, 24 November 2026, blind: the two readings as DMRS graphs in random order, with a neutral paraphrase of each. In the second set, three cases she marked unsure were decided by Claude at her request, with the reasons recorded (all three for gold).',
+    body = t + notes('Olga Zamaraeva, 24 November 2026, blind: the two readings as DMRS graphs in random order, with a neutral paraphrase of each. In the second set, three cases she left undecided were decided by a second reviewer (Claude), with the reasons recorded (all three for gold).',
                      'When the judge sides with gold it is almost always right; when it sides with ACE, it is right more often than not, and otherwise the gold is right. So where the two readings differ, Redwoods gold is often the debatable one, and exact match against gold understates both ACE and Orca.',
                      'One reviewer and 30 cases per row: each share is uncertain by about twenty points either way.')
     jv = load(f'{ORCA}/analysis/judge-variants/score.json')
@@ -1096,8 +1099,8 @@ def exp_judge_check():
                  + table([('Judge variant, on the 60 reviewed cases', ''), ('Agrees with the person', 'n hl'), ('… counting \'both acceptable\' as compatible', 'n'), ('Agrees, without the three cases decided by Claude', 'n')],
                          [vrow(k) for k in ('v1', 'v2', 'v3', 'v4')])
                  + notes('Paraphrases: a plain-English statement of what each reading means, written by Claude from the differences alone and told not to say which is better. Documentation: the lexical types of differing predicates, with their descriptions and example sentences from the ERG.',
-                         f'Claude Opus on the subscription (${jv["cost_usd total"]:.2f}). The cases were chosen by the original judge\'s verdict, so compare the variants with each other, not the absolute rates with dev as a whole; 60 cases leave about twelve points of uncertainty.',
-                         'The judge with paraphrases is used from 24 November on.'))
+                         f'Claude Opus as the judge (${jv["cost_usd total"]:.2f} in all). The cases were chosen by the original judge\'s verdict, so compare the variants with each other, not the absolute rates with dev as a whole; 60 cases leave about twelve points of uncertainty.',
+                         'The judge with paraphrases is used for new judgments.'))
     return fold('Checking the judge against a person', 'The judge agrees with a person in most cases, nearly always when it sides with gold; where it sides with ACE, the gold is often the debatable reading.', body, id_='judge-check')
 
 def exp_examples():
