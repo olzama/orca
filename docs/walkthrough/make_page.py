@@ -779,10 +779,14 @@ def exp_ensemble():
         return (f'<tr><td>{name}</td>' + td(pct(r['exact'], N), True) + td(pct(r['any analysis'], N)) + td(pct(r['gold among accepted'], N))
                 + (td(pct(cx, N), True) if cx is not None else td(na('not run'))) + '</tr>')
     rows = [row('One tagger (seed 1)', 's1-top5'), row('Average of two (two seeds)', 'ens2'), row('Average of seven (two seeds, five folds)', 'ens7')]
+    xr, xc = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext.json'), load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext-chart-0.001.json')
+    if xr:
+        rows.append('<tr><td>One larger tagger: DeBERTa-v2 xlarge (about 900M parameters)</td>' + td(pct(xr['counts']['same MRS'], N), True) + td(pct(xr['counts']['with MRS'], N))
+                    + td(na('not recorded')) + (td(pct(xc['counts']['same MRS'], N), True) if xc else td(na('running'))) + '</tr>')
     t = table([('DeBERTa-v3 large taggers', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Gold among the analyses', 'n'), ('Same meaning as gold', 'n hl')], rows,
               group=[('', 1), ('Replay', 3), ('Chart mode', 1)])
-    return ('    <h3>Averaging taggers</h3>\n' + t
-            + notes('Label probabilities averaged per word; each extra model adds about 37 ms of tagging per sentence on GPU. One run each on dev; one tagger\'s run-to-run spread is about one point.'))
+    return ('    <h3>Averaging taggers, and a larger one</h3>\n' + t
+            + notes('Label probabilities averaged per word; each extra model adds about 37 ms of tagging per sentence on GPU. The xlarge tagger tags better word by word, but its exact meaning is within one run-to-run spread (about one point) of DeBERTa-v3 large. One run each on dev.'))
 
 
 def exp_corpus_modes():
