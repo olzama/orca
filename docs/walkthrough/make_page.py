@@ -1070,18 +1070,24 @@ def exp_grammar_drift():
 
 
 def exp_judge_check():
-    d = load(f'{ORCA}/analysis/judge-check/olga-verdicts.json')
-    if not d:
+    d1 = load(f'{ORCA}/analysis/judge-check/olga-verdicts.json')
+    d2 = load(f'{ORCA}/analysis/judge-check2/olga-verdicts.json')
+    if not d1:
         return ''
-    c = d['counts']; n = sum(c.values())
-    rows = [f'<tr><td>{name}</td>' + td(pct(c.get(k, 0), n), k == 'ACE') + '</tr>'
-            for name, k in (('ACE\'s reading is right', 'ACE'), ('Both readings are acceptable', 'both'), ('Gold is right', 'gold'), ('Neither is right', 'neither'), ("Can't tell", 'unsure')) if c.get(k)]
-    t = table([(f'Dev sentences where the judge preferred ACE\'s first parse over gold: a person\'s verdict ({n} of 111, random)', ''), ('Share', 'n hl')], rows)
-    body = t + notes('Olga Zamaraeva, 24 November 2026, blind: the two readings as DMRS graphs in random order, with a neutral paraphrase of each.',
-                     'Where the readings differ, Redwoods gold is often the debatable one, so exact match against gold understates both ACE and Orca; the judge column is the fairer measure.',
-                     'One reviewer, 30 cases: the share where ACE is right is uncertain by about twenty points either way. The other direction (the judge preferring gold) is not checked yet.')
-    return fold('Checking the judge against a person', 'Where the judge sided with ACE against gold, a person agreed or found both readings fine in most cases.', body, id_='judge-check')
-
+    def row(name, c, total):
+        n = sum(c.values())
+        return (f'<tr><td>{name}</td>' + td(f'{n:,} of {total}') + td(pct(c.get('ACE', 0), n), True) + td(pct(c.get('both', 0), n)) + td(pct(c.get('gold', 0), n), True)
+                + td(pct(c.get('neither', 0) + c.get('unsure', 0), n)) + '</tr>')
+    rows = [row('The judge preferred ACE\'s first parse', d1['counts'], 111)]
+    if d2:
+        rows.append(row('The judge preferred gold', d2['counts'], 154))
+    t = table([('Dev sentences where ACE\'s first parse differs from gold (288), a random sample per judge verdict', ''), ('Reviewed', 'n'),
+               ('ACE\'s reading is right', 'n hl'), ('Both acceptable', 'n'), ('Gold is right', 'n hl'), ('Neither, or can\'t tell', 'n')], rows,
+              group=[('', 2), ('The person\'s verdict', 4)])
+    body = t + notes('Olga Zamaraeva, 24 November 2026, blind: the two readings as DMRS graphs in random order, with a neutral paraphrase of each. In the second set, three cases she marked unsure were decided by Claude at her request, with the reasons recorded (all three for gold).',
+                     'When the judge sides with gold it is almost always right; when it sides with ACE, it is right more often than not, and otherwise the gold is right. So where the two readings differ, Redwoods gold is often the debatable one, and exact match against gold understates both ACE and Orca.',
+                     'One reviewer and 30 cases per row: each share is uncertain by about twenty points either way.')
+    return fold('Checking the judge against a person', 'The judge agrees with a person in most cases, nearly always when it sides with gold; where it sides with ACE, the gold is often the debatable reading.', body, id_='judge-check')
 
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
