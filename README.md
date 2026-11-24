@@ -1,4 +1,4 @@
-# Orca: Omnilingual Replayable Constraint-based Analysis
+# Orca: Open Replayable Constraint-based Analysis
 
 <img src="assets/orca-logo.svg" alt="Orca logo: an orca inside a replay arrow" width="140">
 
