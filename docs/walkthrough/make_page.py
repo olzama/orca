@@ -989,6 +989,20 @@ def exp_grammar_drift():
     return fold('When the grammar changes: the tagger against ERG 2020', 'Trained for ERG 2025, the tagger finds an analysis for clearly fewer sentences under ERG 2020; mapping labels and trying other entries of the same word win back about half, without retraining.', body, id_='grammar-drift')
 
 
+def exp_judge_check():
+    d = load(f'{ORCA}/analysis/judge-check/olga-verdicts.json')
+    if not d:
+        return ''
+    c = d['counts']; n = sum(c.values())
+    rows = [f'<tr><td>{name}</td>' + td(pct(c.get(k, 0), n), k == 'ACE') + '</tr>'
+            for name, k in (('ACE\'s reading is right', 'ACE'), ('Both readings are acceptable', 'both'), ('Gold is right', 'gold'), ('Neither is right', 'neither'), ("Can't tell", 'unsure')) if c.get(k)]
+    t = table([(f'Dev sentences where the judge preferred ACE\'s first parse over gold: a person\'s verdict ({n} of 111, random)', ''), ('Share', 'n hl')], rows)
+    body = t + notes('Olga Zamaraeva, 24 November 2026, blind: the two readings as DMRS graphs in random order, with a neutral paraphrase of each.',
+                     'Where the readings differ, Redwoods gold is often the debatable one, so exact match against gold understates both ACE and Orca; the judge column is the fairer measure.',
+                     'One reviewer, 30 cases: the share where ACE is right is uncertain by about twenty points either way. The other direction (the judge preferring gold) is not checked yet.')
+    return fold('Checking the judge against a person', 'Where the judge sided with ACE against gold, a person agreed or found both readings fine in most cases.', body, id_='judge-check')
+
+
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
     body = steps + '    <div id="examples" class="stack" style="gap:28px"></div>\n'
@@ -1046,7 +1060,7 @@ def rebuild(s):
     body = ('\n' + tiles() + '\n'
             + question('what', 'What Orca is', 'A tagger proposes a whole derivation of the grammar, and the grammar checks it by unification; there is no chart.', how_shown, tagger_fold)
             + question('good', 'How good is it?', 'Replay is several times faster than ACE and clearly less accurate; adding a chart, or sending the hard sentences to ACE, buys back most of the gap at some of the speed.',
-                       summary() + '    <h3>The modes side by side</h3>\n' + modes(), exp_supertag_ace() + exp_hybrid() + exp_ace())
+                       summary() + '    <h3>The modes side by side</h3>\n' + modes(), exp_supertag_ace() + exp_hybrid() + exp_ace() + exp_judge_check())
             + question('wrong', 'Where does it go wrong?', 'Mostly in proposing: for most wrong sentences the right meaning is never among the analyses found, and failures grow with length. What Orca does output is about as precise as ACE\'s.',
                        results(), exp_edm() + exp_replay_rate())
             + question('beyond', 'Does it hold beyond the treebank?', 'Partly: on novels and news replay agrees with ACE less than on the treebank and chart mode much more; on generated sentences, and where ACE fails, the judge often sides with Orca.',
