@@ -1,0 +1,166 @@
+{
+ "bands": [
+  "under 10",
+  "10 to 19",
+  "20 to 29",
+  "30 and over"
+ ],
+ "systems": {
+  "replay": {
+   "file": "analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-minprob001.json",
+   "by band": {
+    "all": {
+     "sentences": 2062,
+     "with MRS": 1924,
+     "same MRS": 1524
+    },
+    "under 10": {
+     "sentences": 953,
+     "with MRS": 929,
+     "same MRS": 844
+    },
+    "10 to 19": {
+     "sentences": 781,
+     "with MRS": 732,
+     "same MRS": 564
+    },
+    "20 to 29": {
+     "sentences": 213,
+     "with MRS": 177,
+     "same MRS": 90
+    },
+    "30 and over": {
+     "sentences": 115,
+     "with MRS": 86,
+     "same MRS": 26
+    }
+   },
+   "precision": {
+    "analyzed": 1924,
+    "right meaning": 1524,
+    "unreadable MRS": 0,
+    "predicate precision": 0.977365811597327,
+    "link precision": 0.9480136039167321
+   }
+  },
+  "chart": {
+   "file": "analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-chart-0.001.json",
+   "by band": {
+    "all": {
+     "sentences": 2062,
+     "with MRS": 1954,
+     "same MRS": 1616
+    },
+    "under 10": {
+     "sentences": 953,
+     "with MRS": 934,
+     "same MRS": 859
+    },
+    "10 to 19": {
+     "sentences": 781,
+     "with MRS": 744,
+     "same MRS": 611
+    },
+    "20 to 29": {
+     "sentences": 213,
+     "with MRS": 185,
+     "same MRS": 117
+    },
+    "30 and over": {
+     "sentences": 115,
+     "with MRS": 91,
+     "same MRS": 29
+    }
+   },
+   "precision": {
+    "analyzed": 1954,
+    "right meaning": 1616,
+    "unreadable MRS": 0,
+    "predicate precision": 0.9727808176210225,
+    "link precision": 0.9397498915714906
+   }
+  },
+  "fallback": {
+   "file": "analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-fallback-0.001.json",
+   "by band": {
+    "all": {
+     "sentences": 2062,
+     "with MRS": 2034,
+     "same MRS": 1574
+    },
+    "under 10": {
+     "sentences": 953,
+     "with MRS": 949,
+     "same MRS": 854
+    },
+    "10 to 19": {
+     "sentences": 781,
+     "with MRS": 771,
+     "same MRS": 586
+    },
+    "20 to 29": {
+     "sentences": 213,
+     "with MRS": 206,
+     "same MRS": 106
+    },
+    "30 and over": {
+     "sentences": 115,
+     "with MRS": 108,
+     "same MRS": 28
+    }
+   },
+   "precision": {
+    "analyzed": 2034,
+    "right meaning": 1574,
+    "unreadable MRS": 0,
+    "predicate precision": 0.972432804962095,
+    "link precision": 0.9371473247671493
+   }
+  },
+  "ace": {
+   "file": "analysis/mrs/dev-ace-final-as-eval.json",
+   "by band": {
+    "all": {
+     "sentences": 2062,
+     "with MRS": 2058,
+     "same MRS": 1767
+    },
+    "under 10": {
+     "sentences": 953,
+     "with MRS": 953,
+     "same MRS": 902
+    },
+    "10 to 19": {
+     "sentences": 781,
+     "with MRS": 781,
+     "same MRS": 672
+    },
+    "20 to 29": {
+     "sentences": 213,
+     "with MRS": 213,
+     "same MRS": 152
+    },
+    "30 and over": {
+     "sentences": 115,
+     "with MRS": 111,
+     "same MRS": 41
+    }
+   },
+   "precision": {
+    "analyzed": 2058,
+    "right meaning": 1767,
+    "unreadable MRS": 0,
+    "predicate precision": 0.9828301153297914,
+    "link precision": 0.9538941646253482
+   }
+  }
+ },
+ "memory": {
+  "how": "max RSS of one orca_parse.py process (GNU time -v), first 200 dev sentences, kesha GPU 1, 24 Nov 2026 (machine loaded); analysis/orca-ace/mem.sh",
+  "replay MB": 3363,
+  "chart MB": 3363,
+  "chart note": "covers the Python process (tagger, grammar, replay); the restricted ACE subprocess in chart mode is not included and was not measured separately",
+  "ace limits": "ACE alone on dev: 6 GB chart and unpacking per sentence, failures retried at 16 GB and then 28 GB (make_tables ACE_RETRY); chart and fallback modes (restricted ACE, supertag_ace.py): 6 GB chart, 7 GB unpacking; Where ACE fails: 6 GB, 300 s per sentence; raw-text corpus run (rawtext.py ace): 16 GB chart limit for the first 8 chunks, then 12 GB with 4 processes",
+  "six-core speed": "not measured: kesha CPUs busy (raw-text ACE, O89 training) on 24 Nov"
+ }
+}
