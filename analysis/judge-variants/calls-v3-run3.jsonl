@@ -1,0 +1,12 @@
+{"ids": ["c22", "c18", "d10", "c29", "d26"], "answers": {"c22": "BOTH", "c18": "BOTH", "d10": "B", "c29": "A", "d26": "NEITHER"}, "raw": "1: BOTH\n2: BOTH\n3: B\n4: A\n5: NEITHER", "cost_usd": 0.053096000000000004, "error": null}
+{"ids": ["c23", "c11", "c27", "c07", "d17"], "answers": {"c23": "B", "c11": "A", "c27": "A", "c07": "B", "d17": "A"}, "raw": "1: B\n2: A\n3: A\n4: B\n5: A", "cost_usd": 0.029744, "error": null}
+{"ids": ["c04", "c08", "c03", "d20", "c28"], "answers": {"c04": "B", "c08": "A", "c03": "A", "d20": "A", "c28": "A"}, "raw": "1: B\n2: A\n3: A\n4: A\n5: A", "cost_usd": 0.059188000000000004, "error": null}
+{"ids": ["c12", "d02", "d07", "c21", "c14"], "answers": {"c12": "A", "d02": "B", "d07": "B", "c21": "A", "c14": "A"}, "raw": "1: A\n2: B\n3: B\n4: A\n5: A", "cost_usd": 0.054683999999999996, "error": null}
+{"ids": ["d14", "c20", "d30", "d27", "d03"], "answers": {"d14": "BOTH", "c20": "A", "d30": "BOTH", "d27": "A", "d03": "A"}, "raw": "1: BOTH\n2: A\n3: BOTH\n4: A\n5: A", "cost_usd": 0.04399599999999999, "error": null}
+{"ids": ["c30", "d23", "c02", "c19", "d12"], "answers": {"c30": "A", "d23": "A", "c02": "A", "c19": "A", "d12": "BOTH"}, "raw": "1: A\n2: A\n3: A\n4: A\n5: BOTH", "cost_usd": 0.057915999999999995, "error": null}
+{"ids": ["c06", "d21", "d19", "c25", "d04"], "answers": {"c06": "A", "d21": "A", "d19": "B", "c25": "A", "d04": "B"}, "raw": "1: A\n2: A\n3: B\n4: A\n5: B", "cost_usd": 0.049507999999999996, "error": null}
+{"ids": ["d22", "d15", "c10", "c26", "d13"], "answers": {"d22": "B", "d15": "B", "c10": "B", "c26": "BOTH", "d13": "A"}, "raw": "1: B\n2: B\n3: B\n4: BOTH\n5: A", "cost_usd": 0.036628, "error": null}
+{"ids": ["d16", "d28", "d18", "c13", "c15"], "answers": {"d16": "B", "d28": "A", "d18": "B", "c13": "A", "c15": "A"}, "raw": "1: B\n2: A\n3: B\n4: A\n5: A", "cost_usd": 0.046544, "error": null}
+{"ids": ["d06", "c17", "d24", "c01", "d25"], "answers": {"d06": "B", "c17": "A", "d24": "A", "c01": "A", "d25": "A"}, "raw": "1: B\n2: A\n3: A\n4: A\n5: A", "cost_usd": 0.052823999999999996, "error": null}
+{"ids": ["c05", "d29", "d11", "d01", "d09"], "answers": {"c05": "B", "d29": "NEITHER", "d11": "B", "d01": "A", "d09": "B"}, "raw": "1: B\n2: NEITHER\n3: B\n4: A\n5: B", "cost_usd": 0.03746, "error": null}
+{"ids": ["c24", "c09", "d05", "d08", "c16"], "answers": {"c24": "B", "c09": "A", "d05": "B", "d08": "BOTH", "c16": "B"}, "raw": "1: B\n2: A\n3: B\n4: BOTH\n5: B", "cost_usd": 0.037216, "error": null}

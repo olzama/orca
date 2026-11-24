@@ -1,0 +1,289 @@
+{
+ "variants": {
+  "v1": "facts only (original judge)",
+  "v2": "+ paraphrases",
+  "v3": "+ paraphrases + ERG documentation",
+  "v4": "v3 three times, majority"
+ },
+ "results": {
+  "v1": {
+   "all 60": {
+    "cases": 60,
+    "answered": 60,
+    "exact": 40,
+    "lenient": 50
+   },
+   "set 1 (judge had preferred ACE)": {
+    "cases": 30,
+    "answered": 30,
+    "exact": 17,
+    "lenient": 22
+   },
+   "set 2 (judge had preferred gold)": {
+    "cases": 30,
+    "answered": 30,
+    "exact": 23,
+    "lenient": 28
+   },
+   "without the 3 decided by Claude": {
+    "cases": 57,
+    "answered": 57,
+    "exact": 37,
+    "lenient": 47
+   },
+   "answers": {
+    "NEITHER": 2,
+    "A": 31,
+    "B": 23,
+    "BOTH": 4
+   }
+  },
+  "v2": {
+   "all 60": {
+    "cases": 60,
+    "answered": 60,
+    "exact": 45,
+    "lenient": 52
+   },
+   "set 1 (judge had preferred ACE)": {
+    "cases": 30,
+    "answered": 30,
+    "exact": 19,
+    "lenient": 24
+   },
+   "set 2 (judge had preferred gold)": {
+    "cases": 30,
+    "answered": 30,
+    "exact": 26,
+    "lenient": 28
+   },
+   "without the 3 decided by Claude": {
+    "cases": 57,
+    "answered": 57,
+    "exact": 42,
+    "lenient": 49
+   },
+   "answers": {
+    "B": 25,
+    "A": 31,
+    "BOTH": 3,
+    "NEITHER": 1
+   }
+  },
+  "v3": {
+   "all 60": {
+    "cases": 60,
+    "answered": 60,
+    "exact": 40,
+    "lenient": 49
+   },
+   "set 1 (judge had preferred ACE)": {
+    "cases": 30,
+    "answered": 30,
+    "exact": 16,
+    "lenient": 22
+   },
+   "set 2 (judge had preferred gold)": {
+    "cases": 30,
+    "answered": 30,
+    "exact": 24,
+    "lenient": 27
+   },
+   "without the 3 decided by Claude": {
+    "cases": 57,
+    "answered": 57,
+    "exact": 37,
+    "lenient": 46
+   },
+   "answers": {
+    "B": 24,
+    "A": 30,
+    "BOTH": 4,
+    "NEITHER": 2
+   }
+  },
+  "v4": {
+   "all 60": {
+    "cases": 60,
+    "answered": 60,
+    "exact": 42,
+    "lenient": 51
+   },
+   "set 1 (judge had preferred ACE)": {
+    "cases": 30,
+    "answered": 30,
+    "exact": 17,
+    "lenient": 23
+   },
+   "set 2 (judge had preferred gold)": {
+    "cases": 30,
+    "answered": 30,
+    "exact": 25,
+    "lenient": 28
+   },
+   "without the 3 decided by Claude": {
+    "cases": 57,
+    "answered": 57,
+    "exact": 39,
+    "lenient": 48
+   },
+   "answers": {
+    "B": 22,
+    "A": 29,
+    "BOTH": 7,
+    "NEITHER": 2
+   }
+  }
+ },
+ "cost_usd": {
+  "v1": 0.409408,
+  "v2": 0.421624,
+  "v3": 0.550464,
+  "v3-run2": 0.554544,
+  "v3-run3": 0.5588040000000001
+ },
+ "cost_usd total": 2.49,
+ "variants disagree": [
+  {
+   "id": "c01",
+   "set": "set1",
+   "sentence": "⌊•⌊#Ghent University, Belgium: ⌊> Master of Marketing Analysis>⌋, an 8-month advanced master degree taught in English with strong emphasis on applications of predictive analytics in Analytical CRM.#⌋•⌋",
+   "person": "B",
+   "v1": "NEITHER",
+   "v2": "B",
+   "v3": "B",
+   "v4": "B"
+  },
+  {
+   "id": "c02",
+   "set": "set1",
+   "sentence": "do you sell the sportstuff h20 playstation?",
+   "person": "BOTH",
+   "v1": "A",
+   "v2": "A",
+   "v3": "B",
+   "v4": "A"
+  },
+  {
+   "id": "c03",
+   "set": "set1",
+   "sentence": "Are Compaq Presarios readily available, or are they on backorder?",
+   "person": "B",
+   "v1": "A",
+   "v2": "B",
+   "v3": "A",
+   "v4": "A"
+  },
+  {
+   "id": "c12",
+   "set": "set1",
+   "sentence": "According to the Institute of Russian Language of the Russian Academy of Sciences, an optional ⌊>acute accent>⌋ (⌊/⌊λзнак ударения¦ru¦знак ударения¦Langλ⌋/⌋) may, and sometimes should, be used to mark stress.",
+   "person": "A",
+   "v1": "B",
+   "v2": "B",
+   "v3": "B",
+   "v4": "A"
+  },
+  {
+   "id": "c18",
+   "set": "set1",
+   "sentence": "Do you have any laptops for sale?",
+   "person": "A",
+   "v1": "BOTH",
+   "v2": "A",
+   "v3": "BOTH",
+   "v4": "BOTH"
+  },
+  {
+   "id": "c20",
+   "set": "set1",
+   "sentence": "SYSTRAN has done extensive work for the ⌊>United States Department of Defense>⌋ and the ⌊>European Commission>⌋.",
+   "person": "A",
+   "v1": "A",
+   "v2": "B",
+   "v3": "B",
+   "v4": "B"
+  },
+  {
+   "id": "c22",
+   "set": "set1",
+   "sentence": "Do you have any left?",
+   "person": "A",
+   "v1": "A",
+   "v2": "A",
+   "v3": "A",
+   "v4": "BOTH"
+  },
+  {
+   "id": "c26",
+   "set": "set1",
+   "sentence": "It's unbelievable.",
+   "person": "BOTH",
+   "v1": "BOTH",
+   "v2": "A",
+   "v3": "A",
+   "v4": "BOTH"
+  },
+  {
+   "id": "c29",
+   "set": "set1",
+   "sentence": "I would like to order 399063",
+   "person": "B",
+   "v1": "A",
+   "v2": "B",
+   "v3": "A",
+   "v4": "A"
+  },
+  {
+   "id": "d05",
+   "set": "set2",
+   "sentence": "Others provide predictive analytics services in support of a wide range of business problems across industry verticals (⌊>Fifth C>⌋).",
+   "person": "BOTH",
+   "v1": "B",
+   "v2": "B",
+   "v3": "NEITHER",
+   "v4": "B"
+  },
+  {
+   "id": "d12",
+   "set": "set2",
+   "sentence": "Do you have the calendars organized monthly?",
+   "person": "BOTH",
+   "v1": "B",
+   "v2": "BOTH",
+   "v3": "BOTH",
+   "v4": "BOTH"
+  },
+  {
+   "id": "d14",
+   "set": "set2",
+   "sentence": "Thank you.",
+   "person": "A",
+   "v1": "BOTH",
+   "v2": "A",
+   "v3": "BOTH",
+   "v4": "BOTH"
+  },
+  {
+   "id": "d29",
+   "set": "set2",
+   "sentence": "In ⌊>linguistics>⌋, ⌊∗semantics∗⌋ is the subfield that is devoted to the study of meaning, as inherent at the levels of words, phrases, sentences, and even larger units of ⌊>discourse>⌋ (referred to as ⌊/texts/⌋).",
+   "person": "B",
+   "v1": "A",
+   "v2": "A",
+   "v3": "A",
+   "v4": "NEITHER"
+  },
+  {
+   "id": "d30",
+   "set": "set2",
+   "sentence": "Efficient marketing is a process of understanding the amount of variability and tailoring the marketing strategy for greater profitability.",
+   "person": "BOTH",
+   "v1": "B",
+   "v2": "BOTH",
+   "v3": "B",
+   "v4": "BOTH"
+  }
+ ],
+ "note": "60 cases: a difference of about 12 points or less between variants is not evidence."
+}

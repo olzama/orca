@@ -1,0 +1,2109 @@
+[
+ {
+  "id": "c01",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "ACE",
+  "sentence": "⌊•⌊#Ghent University, Belgium: ⌊> Master of Marketing Analysis>⌋, an 8-month advanced master degree taught in English with strong emphasis on applications of predictive analytics in Analytical CRM.#⌋•⌋",
+  "A": [
+   "advanced_a_1 -ARG1/EQ-> degree_n_of",
+   "appos -ARG1-> named(\"Belgium\")",
+   "appos -ARG1-> named(\"Belgium\")",
+   "appos -ARG2-> master_n_1",
+   "appos -MOD/EQ-> unknown",
+   "appos -MOD/EQ-> unknown",
+   "colon_p_namely -ARG1/EQ-> named(\"Belgium\")",
+   "compound -ARG1/EQ-> degree_n_of",
+   "node appos",
+   "node colon_p_namely",
+   "node master_n_1",
+   "node udef_q",
+   "node unknown",
+   "of_p -ARG1/EQ-> master_n_1",
+   "udef_q -RSTR/H-> master_n_1",
+   "unknown -ARG-> named(\"Belgium\")",
+   "with_p -ARG1/EQ-> degree_n_of"
+  ],
+  "B": [
+   "advanced_a_1 -ARG1/EQ-> master_n_1",
+   "appos -ARG1-> named(\"Master\")",
+   "appos -MOD/EQ-> colon_v_id",
+   "colon_v_id -ARG1-> named(\"Belgium\")",
+   "colon_v_id -ARG2-> named(\"Master\")",
+   "compound -ARG1/EQ-> master_n_1",
+   "node colon_v_id",
+   "node named(\"Master\")",
+   "node proper_q",
+   "of_p -ARG1/EQ-> named(\"Master\")",
+   "proper_q -RSTR/H-> named(\"Master\")",
+   "with_p -ARG1/EQ-> teach_v_1"
+  ],
+  "interp": {
+   "A": "The colon introduces an apposition between \"Belgium\" and the common noun \"master\" (\"master of Marketing Analysis\"), not a name. In \"an 8-month advanced master degree\", \"advanced\" modifies \"degree\", and \"with strong emphasis on applications...\" attaches to the degree.",
+   "B": "\"Master of Marketing Analysis\" is a proper name, and the colon identifies \"Belgium\" with that named programme, which is then in apposition with the degree description. \"Advanced\" modifies \"master\" (the head of \"master degree\"), and \"with strong emphasis on applications...\" attaches to \"taught\": it was taught in English with that emphasis."
+  },
+  "doc": [
+   "    appos: apposition: ARG1 and ARG2 refer to the same thing",
+   "    colon_p_namely: a colon read as \"namely\": ARG2 specifies ARG1",
+   "    master_n_1 (master; type n_-_c_le): Intransitive count noun (icn) <ex>The dog barked.",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)",
+   "    unknown: a fragment that is not a full sentence; ARG is its content",
+   "    colon_v_id: a colon read as identity: ARG1 is ARG2",
+   "    named: a proper name",
+   "    proper_q: quantifier of a proper name"
+  ]
+ },
+ {
+  "id": "c02",
+  "set": "set1",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "do you sell the sportstuff h20 playstation?",
+  "A": [
+   "compound -ARG1/EQ-> named(\"Playstation\")",
+   "node named(\"Playstation\")",
+   "sell_v_1 -ARG2-> named(\"Playstation\")",
+   "sportstuff/jj_u_unknown -ARG1/EQ-> named(\"Playstation\")",
+   "the_q -RSTR/H-> named(\"Playstation\")"
+  ],
+  "B": [
+   "compound -ARG1/EQ-> playstation_n_1",
+   "node playstation_n_1",
+   "sell_v_1 -ARG2-> playstation_n_1",
+   "sportstuff/jj_u_unknown -ARG1/EQ-> named(\"h20\")",
+   "the_q -RSTR/H-> playstation_n_1"
+  ],
+  "interp": {
+   "A": "\"Playstation\" is a proper name, the head of the noun phrase. \"Sportstuff\" modifies the Playstation, and \"h20\" is a compound modifier of it: the Playstation that is sportstuff and of the h20 kind.",
+   "B": "\"playstation\" is a common noun. \"Sportstuff\" modifies \"h20\", and \"sportstuff h20\" as a whole is the compound modifier of \"playstation\": a playstation of the sportstuff h20 sort."
+  },
+  "doc": [
+   "    named: a proper name",
+   "    playstation_n_1 (playstation; type n_-_c_le): Intransitive count noun (icn) <ex>The dog barked."
+  ]
+ },
+ {
+  "id": "c03",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "Are Compaq Presarios readily available, or are they on backorder?",
+  "A": [
+   "available_a_to-for -ARG1-> presario_n_1",
+   "compound -ARG1/EQ-> presario_n_1",
+   "node presario_n_1",
+   "udef_q -RSTR/H-> presario_n_1"
+  ],
+  "B": [
+   "available_a_to-for -ARG1-> named(\"Presarios\")",
+   "compound -ARG1/EQ-> named(\"Presarios\")",
+   "node named(\"Presarios\")",
+   "udef_q -RSTR/H-> named(\"Presarios\")"
+  ],
+  "interp": {
+   "A": "\"Presarios\" is a common noun (presario, plural), modified by \"Compaq\" in a compound: Compaq-made presarios as a kind of item.",
+   "B": "\"Presarios\" is a proper name, with \"Compaq\" as a compound modifier of that name. The question is about the things named Presarios from Compaq."
+  },
+  "doc": [
+   "    presario_n_1 (presario; type n_-_c_le): Intransitive count noun (icn) <ex>The dog barked.",
+   "    named: a proper name"
+  ]
+ },
+ {
+  "id": "c04",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "ACE",
+  "sentence": "An independent clause consists of a subject verb and also demonstrates a complete thought: for example, \"I am sad.\"",
+  "A": [
+   "also_a_1 -ARG1/H-> and_c",
+   "and_c -ARG1-> consist_v_of",
+   "and_c -ARG2-> demonstrate_v_to",
+   "demonstrate_v_to -MOD/EQ-> consist_v_of"
+  ],
+  "B": [
+   "also_a_1 -ARG1/H-> demonstrate_v_to",
+   "and_c -ARG1/EQ-> consist_v_of",
+   "and_c -ARG2/EQ-> also_a_1"
+  ],
+  "interp": {
+   "A": "\"Also\" scopes over the whole coordination \"consists of a subject verb and demonstrates a complete thought\", so both properties together are what the clause also has.",
+   "B": "\"Also\" scopes only over \"demonstrates a complete thought\". \"And\" conjoins \"consists of a subject verb\" with \"also demonstrates a complete thought\"."
+  },
+  "doc": []
+ },
+ {
+  "id": "c05",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "ACE",
+  "sentence": "What do you have available just now?",
+  "A": [
+   "just_a_1 -ARG1/EQ-> loc_nonsp",
+   "node just_a_1"
+  ],
+  "B": [
+   "just_x_deg -ARG1/EQ-> now_a_1",
+   "node just_x_deg"
+  ],
+  "interp": {
+   "A": "\"Just\" is an adjective that applies to the whole time modifier \"now\" (the at-the-present-time relation), not to \"now\" itself.",
+   "B": "\"Just\" is a degree modifier of \"now\" (\"just now\" = right now, at this very moment), and that phrase locates the having in time."
+  },
+  "doc": [
+   "    just_a_1 (just, justly; type aj_-_i_le): Adj (intersective), no comp <ex>The beautiful dog won.",
+   "    just_a_1 (just, justly; type av_-_i-vp-x_le): Int, VP w/aux head <ex>B can indeed win.",
+   "    just_a_1 (just, justly; type av_-_i-vp_le): Intersective, VP <ex>B quickly won.",
+   "    just_x_deg (just, just_m; type av_-_dg-jomv_le): Deg, just-only-very-much <ex>B was notably red(der).",
+   "    just_x_deg (just, just_m; type av_-_dg-m_le): Deg, much-type <ex>B is much richer."
+  ]
+ },
+ {
+  "id": "c06",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "The subject is typically a ⌊>noun phrase>⌋, though other kinds of phrases (such as ⌊>gerund>⌋ phrases) work as well, and some languages allow subjects to be omitted.",
+  "A": [
+   "node typical_a_1",
+   "typical_a_1 -ARG1/EQ-> be_v_id"
+  ],
+  "B": [
+   "node typical_a_of-for",
+   "typical_a_of-for -ARG1/EQ-> be_v_id"
+  ],
+  "interp": {
+   "A": "\"Typically\" is the plain adverb of 'typical' (sense typical_a_1), modifying the 'is' clause: as a usual matter, the subject is a noun phrase.",
+   "B": "\"Typically\" is taken from the 'typical of/for' sense (typical_a_of-for), also modifying the 'is' clause: the subject being a noun phrase is what is characteristic of/for the subject, using the sense of 'typical' that can take an of/for complement (left unexpressed here)."
+  },
+  "doc": [
+   "    typical_a_1 (typically; type av_-_i-vp-po_le): Int, VP post-hd <ex>B ran fast.",
+   "    typical_a_of-for (typical, typically, typically_root; type aj_pp_i_le): Adj, pp comp w/sem empty prep <ex>B is sure of C.",
+   "    typical_a_of-for (typical, typically, typically_root; type aj_pp-vp_i-it-nt_le): Adj, opt PP, VP comps, it-subj, no tough alternation <ex>It is urgent for B to win. <nex>B is urgent to win.",
+   "    typical_a_of-for (typical, typically, typically_root; type aj_cp_i-it_le): Adj, CP comps, it-subj <ex>It is possible B won."
+  ]
+ },
+ {
+  "id": "c07",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "ACE",
+  "sentence": "I've heard that C-Technologies makes the very best PDAs on the market.",
+  "A": [
+   "compound -ARG2-> c-_n_1",
+   "node c-_n_1",
+   "node udef_q",
+   "udef_q -RSTR/H-> c-_n_1"
+  ],
+  "B": [
+   "compound -ARG2-> named(\"C\")",
+   "node named(\"C\")",
+   "node proper_q",
+   "proper_q -RSTR/H-> named(\"C\")"
+  ],
+  "interp": {
+   "A": "In \"C-Technologies\", the first part \"C-\" is analysed as a common noun (c-_n_1) forming a compound with \"Technologies\", i.e. technologies of a 'C-' kind.",
+   "B": "In \"C-Technologies\", the first part is analysed as the proper name \"C\" forming a compound with \"Technologies\", i.e. the name C plus 'Technologies' as a named company."
+  },
+  "doc": [
+   "    c-_n_1 (c_minus; type n_-_c_le): Intransitive count noun (icn) <ex>The dog barked.",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)",
+   "    named: a proper name",
+   "    proper_q: quantifier of a proper name"
+  ]
+ },
+ {
+  "id": "c08",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "Last year I bought a samsonite suitcase from you, but could not find the same sixe this year.",
+  "A": [
+   "but_c -ARG1/EQ-> buy_v_from",
+   "buy_v_from -ARG1-> pron",
+   "buy_v_from -ARG2-> suitcase_n_of",
+   "buy_v_from -ARG3-> pron",
+   "neg -MOD/EQ-> buy_v_from",
+   "node buy_v_from"
+  ],
+  "B": [
+   "but_c -ARG1/EQ-> buy_v_1",
+   "buy_v_1 -ARG1-> pron",
+   "buy_v_1 -ARG2-> suitcase_n_of",
+   "from_p_state -ARG1/EQ-> buy_v_1",
+   "from_p_state -ARG2-> pron",
+   "neg -MOD/EQ-> buy_v_1",
+   "node buy_v_1",
+   "node from_p_state"
+  ],
+  "interp": {
+   "A": "\"From you\" is an argument of the verb: \"buy from\" (buy_v_from) is one predicate in which \"you\" is the seller of the suitcase; 'could not find' shares the buyer 'I'.",
+   "B": "\"Buy\" is the plain transitive verb (buy_v_1) with buyer 'I' and thing bought 'suitcase', and \"from you\" is a separate modifier (from_p_state) attached to the buying event, saying it was from you."
+  },
+  "doc": [
+   "    buy_v_from (buy; type v_np-pp_e_le): Cmps NP(obl),PP(sel.obl) <ex>B compared C with D.",
+   "    buy_v_1 (buy; type v_np*_le): Cmps NP(opt) <ex>B cleaned the room.",
+   "    buy_v_1 (buy; type v_np-np_only_le): Cmps NP(obl),NP(obl), no dat alt <ex>B declared C the winner.",
+   "    from_p_state: the preposition \"from\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")"
+  ]
+ },
+ {
+  "id": "c09",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "i feel i am (over)due for an upgrade of my Palm Pilit.",
+  "A": [
+   "compound -ARG2-> named(\"Palm\")",
+   "node named(\"Palm\")",
+   "node proper_q",
+   "proper_q -RSTR/H-> named(\"Palm\")"
+  ],
+  "B": [
+   "compound -ARG2-> palm_n_1",
+   "node palm_n_1",
+   "node udef_q",
+   "udef_q -RSTR/H-> palm_n_1"
+  ],
+  "interp": {
+   "A": "In \"Palm Pilit\", \"Palm\" is a proper name (named \"Palm\") compounded with \"Pilit\", as in a product name from Palm.",
+   "B": "In \"Palm Pilit\", \"palm\" is the common noun 'palm' (palm_n_1, e.g. the hand's palm) compounded with \"Pilit\", i.e. a pilit of the palm kind."
+  },
+  "doc": [
+   "    named: a proper name",
+   "    proper_q: quantifier of a proper name",
+   "    palm_n_1 (palm; type n_-_mc-ed_le): Mass-count, okay for derived adj <ex>C is a high-powered cat.",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)"
+  ]
+ },
+ {
+  "id": "c10",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "ACE",
+  "sentence": "My laptop is just too heavy to schlep around anymore!",
+  "A": [
+   "just_a_1 -ARG1/EQ-> heavy_a_1",
+   "node just_a_1"
+  ],
+  "B": [
+   "just_x_deg -ARG1/EQ-> too_x_comp",
+   "node just_x_deg"
+  ],
+  "interp": {
+   "A": "\"Just\" is an adjective-modifying adverb (just_a_1) applying to \"heavy\": the laptop is just heavy, and 'too ... to schlep around' builds on that.",
+   "B": "\"Just\" is a degree specifier (just_x_deg) modifying \"too\": the laptop is just too heavy, i.e. 'just' intensifies the excess degree expressed by 'too ... to schlep around'."
+  },
+  "doc": [
+   "    just_a_1 (just, justly; type aj_-_i_le): Adj (intersective), no comp <ex>The beautiful dog won.",
+   "    just_a_1 (just, justly; type av_-_i-vp-x_le): Int, VP w/aux head <ex>B can indeed win.",
+   "    just_a_1 (just, justly; type av_-_i-vp_le): Intersective, VP <ex>B quickly won.",
+   "    just_x_deg (just, just_m; type av_-_dg-jomv_le): Deg, just-only-very-much <ex>B was notably red(der).",
+   "    just_x_deg (just, just_m; type av_-_dg-m_le): Deg, much-type <ex>B is much richer."
+  ]
+ },
+ {
+  "id": "c11",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "Semantics has been reported to drive the course of psychotherapeutic interventions.",
+  "A": [
+   "drive_v_1 -ARG1-> semantics_n_1",
+   "report_v_to -ARG2/H-> drive_v_1"
+  ],
+  "B": [
+   "in+order+to_x -ARG1/H-> report_v_to",
+   "in+order+to_x -ARG2/H-> drive_v_1",
+   "node in+order+to_x",
+   "report_v_to -ARG2-> semantics_n_1"
+  ],
+  "interp": {
+   "A": "Semantics is the subject of 'drive': it has been reported that semantics drives the course of psychotherapeutic interventions.",
+   "B": "'To drive the course of psychotherapeutic interventions' is a purpose clause ('in order to'): semantics has been reported by someone, so as to drive the course of the interventions."
+  },
+  "doc": [
+   "    in+order+to_x (in_order, to; type p_vp_inf-or-s_le): Prep, VP or S, inf <ex>B raced in order (for C) to win.",
+   "    in+order+to_x (in_order, to; type p_vp_bse_le): Prep, vp(bse) <ex>B won to avenge C."
+  ]
+ },
+ {
+  "id": "c12",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "According to the Institute of Russian Language of the Russian Academy of Sciences, an optional ⌊>acute accent>⌋ (⌊/⌊λзнак ударения¦ru¦знак ударения¦Langλ⌋/⌋) may, and sometimes should, be used to mark stress.",
+  "A": [
+   "according+to_p -ARG2-> named(\"Institute\")",
+   "appos -ARG1-> accent_n_1",
+   "appos -ARG2-> named(\"<foreign/>\")",
+   "compound -ARG1/EQ-> named(\"Language\")",
+   "may_v_modal -MOD/EQ-> appos",
+   "node appos",
+   "node named(\"Institute\")",
+   "node named(\"Language\")",
+   "node of_p",
+   "node proper_q",
+   "node proper_q",
+   "of_p -ARG1/EQ-> named(\"Institute\")",
+   "of_p -ARG1/EQ-> named(\"Institute\")",
+   "of_p -ARG2-> named(\"Language\")",
+   "proper_q -RSTR/H-> named(\"<foreign/>\")",
+   "proper_q -RSTR/H-> named(\"Language\")",
+   "should_v_modal -MOD/EQ-> appos",
+   "sometimes_a_1 -MOD/EQ-> appos",
+   "the_q -RSTR/H-> named(\"Institute\")"
+  ],
+  "B": [
+   "according+to_p -ARG2-> institute_n_of",
+   "compound -ARG1/EQ-> language_n_1",
+   "institute_n_of -ARG1-> language_n_1",
+   "node institute_n_of",
+   "node language_n_1",
+   "node parenthetical",
+   "node udef_q",
+   "node udef_q",
+   "of_p -ARG1/EQ-> institute_n_of",
+   "parenthetical -ARG1/EQ-> accent_n_1",
+   "parenthetical -ARG2-> named(\"<foreign/>\")",
+   "should_v_modal -MOD/EQ-> may_v_modal",
+   "sometimes_a_1 -ARG1/EQ-> should_v_modal",
+   "the_q -RSTR/H-> institute_n_of",
+   "udef_q -RSTR/H-> language_n_1",
+   "udef_q -RSTR/H-> named(\"<foreign/>\")"
+  ],
+  "interp": {
+   "A": "'Institute' and 'Language' are proper names, so 'the Institute of Russian Language' names a specific institution. The bracketed Russian phrase is an apposition to 'acute accent', and 'may', 'should' and 'sometimes' share their scope label with that apposition relation.",
+   "B": "'institute' and 'language' are common nouns: 'the institute of Russian language' is an institute whose subject is Russian language. The bracketed Russian phrase is a parenthetical aside about 'acute accent'. 'Should' is linked directly to 'may', and 'sometimes' modifies 'should' ('sometimes should')."
+  },
+  "doc": [
+   "    appos: apposition: ARG1 and ARG2 refer to the same thing",
+   "    named: a proper name",
+   "    of_p (of, of_poss; type p_np_i-nnm-nprd_le): Prep, NP, no noun mod, non-prd <ex>Pictures were taken of Kim.",
+   "    of_p (of, of_poss; type p_np_i-nm-poss_le): Prep, np, poss 'of' <ex>The cities of France grew.",
+   "    proper_q: quantifier of a proper name",
+   "    institute_n_of (institute, institute_post; type n_pp_mc-of-lhc_le): mc, PP-of comp, HC-LEX + <ex>The University of Washington professor arrives.",
+   "    institute_n_of (institute, institute_post; type n_-_tt-post_le): Title noun, follows head <ex>B street appeared.",
+   "    language_n_1 (language; type n_-_mc_le): Intrans noun, underspec mss-cnt <ex>B feared disaster.",
+   "    language_n_1 (language; type n_cp_c-bse_le): Cn, base form CP comp <ex>B's wish that C be in irks",
+   "    language_n_1 (language; type n_cp_m-optc_le): Mass, fin CP comp <ex>B got news that C won.",
+   "    parenthetical: a parenthetical attached to ARG1",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)"
+  ]
+ },
+ {
+  "id": "c13",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "Another issue not addressed by the nativist model was how perceptual cues are combined in thought, e.g. in ⌊>mental rotation>⌋.",
+  "A": [
+   "be_v_nv -ARG1-> issue_n_1",
+   "be_v_nv -ARG2/HEQ-> combine_v_cause",
+   "node be_v_nv"
+  ],
+  "B": [
+   "be_v_id -ARG1-> issue_n_1",
+   "be_v_id -ARG2-> nominalization",
+   "node be_v_id",
+   "node nominalization",
+   "node udef_q",
+   "nominalization -ARG1/HEQ-> combine_v_cause",
+   "udef_q -RSTR/H-> nominalization"
+  ],
+  "interp": {
+   "A": "'Was' links the issue to the embedded question as its content: the issue was the question of how perceptual cues are combined in thought.",
+   "B": "'Was' is identity between two things, and 'how perceptual cues are combined in thought' is turned into a noun-like entity: the issue is identical to the (way of) combining perceptual cues in thought."
+  },
+  "doc": [
+   "    be_v_nv: copula with a non-verbal predicate",
+   "    be_v_id: copula of identity: ARG1 is (the same as) ARG2",
+   "    nominalization: a verb phrase used as a noun (gerund)",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)"
+  ]
+ },
+ {
+  "id": "c14",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "Do you sell those and how fast can I get one?",
+  "A": [
+   "can_v_modal -ARG1/H-> get_v_1",
+   "fast_a_1 -ARG1/EQ-> get_v_1",
+   "get_v_1 -ARG1-> pron",
+   "get_v_1 -ARG2-> generic_entity",
+   "node get_v_1"
+  ],
+  "B": [
+   "can_v_modal -ARG1/H-> get_v_state",
+   "fast_a_1 -ARG1-> generic_entity",
+   "get_v_state -ARG1-> pron",
+   "get_v_state -ARG2-> generic_entity",
+   "get_v_state -ARG3/H-> fast_a_1",
+   "node get_v_state"
+  ],
+  "interp": {
+   "A": "'Get' means obtain, and 'fast' modifies the getting: how quickly can I obtain one?",
+   "B": "'Get' means cause to be in a state, and 'fast' is the resulting state of 'one': to what degree of fastness can I get one (make one become fast)?"
+  },
+  "doc": [
+   "    get_v_1 (get, get_prd; type v_pp_dir-noj_le): Cmps PP(obl,dir), no attrib adj for -ing form <ex>B got out of the room <nex>the getting contestant",
+   "    get_v_1 (get, get_prd; type v_np-np_only_le): Cmps NP(obl),NP(obl), no dat alt <ex>B declared C the winner.",
+   "    get_v_1 (get, get_prd; type v_np_ntr_le): Cmps NP(obl), no psv, no attr-adj for -ing <ex>B remains C.",
+   "    get_v_state (get_prd, get_prd_va; type v_np-prd_oeq-ntr_le): Cmps NP,Prd-phr, o-equi, no psv <ex>B wanted C ready.",
+   "    get_v_state (get_prd, get_prd_va; type v_vp_ssr-prp_le): Cmps VP(prp), s-s-rais <ex>It finished raining.",
+   "    get_v_state (get_prd, get_prd_va; type v_prd_seq-va_le): Cmps VP or AP, s-equi <ex>B became frustrated."
+  ]
+ },
+ {
+  "id": "c15",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "Following the break-up of ⌊>1991>⌋, several of the newly independent states have encouraged their native languages, which has partly reversed the privileged status of Russian, though its role as the language of post-Soviet national intercourse throughout the region has continued.",
+  "A": [
+   "compound -ARG1/EQ-> national_a_1",
+   "node udef_q",
+   "post-_a_1 -ARG1/EQ-> named(\"Soviet\")",
+   "subord -ARG1/H-> though_p_1",
+   "though_p_1 -ARG1/H-> encourage_v_1",
+   "udef_q -RSTR/H-> named(\"Soviet\")"
+  ],
+  "B": [
+   "compound -ARG1/EQ-> intercourse_n_1",
+   "node proper_q",
+   "post-_a_1 -ARG1/EQ-> intercourse_n_1",
+   "proper_q -RSTR/H-> named(\"Soviet\")",
+   "subord -ARG1/H-> encourage_v_1",
+   "though_p_1 -ARG1/H-> subord"
+  ],
+  "interp": {
+   "A": "'Post-' attaches to 'Soviet' ('post-Soviet'), which combines with 'national' as a modifier of 'intercourse'. 'Though' attaches to the encouraging clause, and 'Following the break-up of 1991' scopes over the whole 'states have encouraged ..., though its role ... has continued' combination.",
+   "B": "'Post-' applies to 'intercourse', with 'Soviet' as a compound modifier ('post-(Soviet national intercourse)'). 'Following the break-up of 1991' attaches only to 'several ... states have encouraged their native languages', and 'though' takes that whole unit as the clause it contrasts with Russian's continued role."
+  },
+  "doc": [
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)",
+   "    proper_q: quantifier of a proper name"
+  ]
+ },
+ {
+  "id": "c16",
+  "set": "set1",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "Afterwards the influx from the countries of the former ⌊>Soviet Union>⌋ changed the statistics somewhat.",
+  "A": [
+   "change_v_cause -ARG2-> statistics_n_1",
+   "node statistics_n_1",
+   "the_q -RSTR/H-> statistics_n_1"
+  ],
+  "B": [
+   "change_v_cause -ARG2-> statistic_n_1",
+   "node statistic_n_1",
+   "the_q -RSTR/H-> statistic_n_1"
+  ],
+  "interp": {
+   "A": "'statistics' is the plural-only noun statistics_n_1 (statistics as a body of data or a field), and the influx changed that whole thing somewhat.",
+   "B": "'statistics' is the plural of the count noun 'statistic' (statistic_n_1), so the influx changed a set of individual statistics, i.e. particular figures, somewhat."
+  },
+  "doc": [
+   "    statistics_n_1 (statistics; type n_-_m_le): Intransitive mass noun (imn) <ex>Dignity is desirable.",
+   "    statistic_n_1 (statistic; type n_-_c_le): Intransitive count noun (icn) <ex>The dog barked.",
+   "    statistic_n_1 (statistic; type n_cp_c-optc_le): Cn, finite CP comp, opt cmplzer <ex>B has a feeling C fell."
+  ]
+ },
+ {
+  "id": "c17",
+  "set": "set1",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "In certain applications it is sufficient to directly predict the dependent variable without focusing on the underlying relationships between variables.",
+  "A": [
+   "node underlying_a_1",
+   "underlying_a_1 -ARG1/EQ-> relationship_n_of"
+  ],
+  "B": [
+   "compound -ARG1/EQ-> relationship_n_of",
+   "compound -ARG2-> nominalization",
+   "node compound",
+   "node nominalization",
+   "node udef_q",
+   "node underlie_v_1",
+   "nominalization -ARG1/HEQ-> underlie_v_1",
+   "udef_q -RSTR/H-> nominalization"
+  ],
+  "interp": {
+   "A": "'underlying' is an ordinary adjective (underlying_a_1) modifying 'relationships': the relationships between variables that are underlying or basic.",
+   "B": "'underlying' is a nominalized verb (underlie_v_1) forming a noun-noun compound with 'relationships': relationships of the 'underlying' kind, with 'underlying' read as the act of underlying something."
+  },
+  "doc": [
+   "    underlying_a_1 (underlying; type aj_-_i_le): Adj (intersective), no comp <ex>The beautiful dog won.",
+   "    compound: noun-noun compound: ARG1 the head noun, ARG2 the modifier noun",
+   "    nominalization: a verb phrase used as a noun (gerund)",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)",
+   "    underlie_v_1 (underlie, underly; type v_np_ntr_le): Cmps NP(obl), no psv, no attr-adj for -ing <ex>B remains C.",
+   "    underlie_v_1 (underlie, underly; type v_np_n3s-bse_le): Cmps NP(oblig), non-3sg or base <ex>They underly C."
+  ]
+ },
+ {
+  "id": "c18",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "Do you have any laptops for sale?",
+  "A": [
+   "for-sale_a_1 -ARG1-> laptop_n_1",
+   "have_v_prd -ARG3/H-> for-sale_a_1",
+   "node for-sale_a_1"
+  ],
+  "B": [
+   "for_p -ARG1-> laptop_n_1",
+   "for_p -ARG2-> sale_n_of",
+   "have_v_prd -ARG3/H-> for_p",
+   "idiom_q_i -RSTR/H-> sale_n_of",
+   "node for_p",
+   "node idiom_q_i",
+   "node sale_n_of"
+  ],
+  "interp": {
+   "A": "'for sale' is one fixed adjective (for-sale_a_1) used as the predicate of 'have': do you have any laptops that are available to buy?",
+   "B": "'for sale' is built compositionally: the preposition 'for' plus the noun 'sale' (sale_n_of, with an idiom quantifier), giving 'do you have any laptops [intended] for sale', with the laptops related to a sale by 'for'."
+  },
+  "doc": [
+   "    for-sale_a_1 (for_sale; type aj_-_i_le): Adj (intersective), no comp <ex>The beautiful dog won.",
+   "    for_p (for, for_nbar; type p_np_i_le): Prep, np, intersective <ex>B sang for C.",
+   "    for_p (for, for_nbar; type p_nb_i-nm-any_le): Prep, nbar, noun mod, any onset <ex>The sonata for violin was popular.",
+   "    idiom_q_i: quantifier inside an idiom",
+   "    sale_n_of (sale, sale_i; type n_-_c-brno_le): Icn, no det, no mod <ex>B was in line.",
+   "    sale_n_of (sale, sale_i; type n_pp_mc-of_le): Mc, PP-of comp <ex>Loss of memory is common."
+  ]
+ },
+ {
+  "id": "c19",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "Which brands of PCs do you have in stock?",
+  "A": [
+   "have_v_prd -ARG1-> pron",
+   "have_v_prd -ARG2-> brand_n_of",
+   "have_v_prd -ARG3/H-> in_p_loc",
+   "in_p_loc -ARG1-> brand_n_of",
+   "in_p_loc -ARG2-> stock_n_1",
+   "node have_v_prd",
+   "node in_p_loc"
+  ],
+  "B": [
+   "have_v_1 -ARG1-> pron",
+   "have_v_1 -ARG2-> brand_n_of",
+   "in_p_state -ARG1/EQ-> have_v_1",
+   "in_p_state -ARG2-> stock_n_1",
+   "node have_v_1",
+   "node in_p_state"
+  ],
+  "interp": {
+   "A": "'in stock' is the secondary predicate of 'have' (have_v_prd), describing the brands: which brands of PCs do you have such that they are in stock (in_p_loc, with the brands as its subject)?",
+   "B": "'have' is plain possession (have_v_1), and 'in stock' (in_p_state) modifies the having event: which brands of PCs do you have, with the having being in a state of stock?"
+  },
+  "doc": [
+   "    have_v_prd (have-prd, have_oeq; type v_np-prd_oeq-ntr_le): Cmps NP,Prd-phr, o-equi, no psv <ex>B wanted C ready.",
+   "    have_v_prd (have-prd, have_oeq; type v_np-vpslnp_oeq_le): Cmps NP and VP/NP, o-equi <ex>B had C to talk to.",
+   "    in_p_loc (in; type p_np_i-reg_le): Prep, np, non-temp <ex>B stood behind C.",
+   "    in_p_loc (in; type pp_-_i-dir-nomodn_le): PP, no n_mod <ex>we stayed in.",
+   "    in_p_loc (in; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    have_v_1 (have-poss, have_prp; type v_np_poss_le): Cmps NP, only have <ex>B has C.",
+   "    have_v_1 (have-poss, have_prp; type v_np_poss-cx_le): Cmps NP, only contracted have (no extraction) <ex>They've no idea.",
+   "    have_v_1 (have-poss, have_prp; type v_np-vp_aeq-prp_le): Cmps NP,VP (prprt), a-equi <ex>B had trouble sleeping.",
+   "    in_p_state: the preposition \"in\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")"
+  ]
+ },
+ {
+  "id": "c20",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "SYSTRAN has done extensive work for the ⌊>United States Department of Defense>⌋ and the ⌊>European Commission>⌋.",
+  "A": [
+   "and_c -ARG1-> named(\"Department\")",
+   "and_c -ARG2-> named(\"Commission\")",
+   "compound -ARG1/EQ-> named(\"Commission\")",
+   "compound -ARG1/EQ-> named(\"Department\")",
+   "compound -ARG1/EQ-> named(\"States\")",
+   "compound -ARG2-> named(\"European\")",
+   "compound -ARG2-> named(\"States\")",
+   "compound -ARG2-> named(\"United\")",
+   "node compound",
+   "node compound",
+   "node named(\"Commission\")",
+   "node named(\"Defense\")",
+   "node named(\"Department\")",
+   "node named(\"European\")",
+   "node named(\"States\")",
+   "node named(\"United\")",
+   "node proper_q",
+   "node proper_q",
+   "node proper_q",
+   "node proper_q",
+   "of_p -ARG1/EQ-> named(\"Department\")",
+   "of_p -ARG2-> named(\"Defense\")",
+   "proper_q -RSTR/H-> named(\"Defense\")",
+   "proper_q -RSTR/H-> named(\"European\")",
+   "proper_q -RSTR/H-> named(\"States\")",
+   "proper_q -RSTR/H-> named(\"United\")",
+   "the_q -RSTR/H-> named(\"Commission\")",
+   "the_q -RSTR/H-> named(\"Department\")"
+  ],
+  "B": [
+   "and_c -ARG1-> department_n_of",
+   "and_c -ARG2-> commission_n_of",
+   "compound -ARG1/EQ-> department_n_of",
+   "compound -ARG2-> named_n(\"United_States\")",
+   "european_a_1 -ARG1/EQ-> commission_n_of",
+   "node commission_n_of",
+   "node defense_n_1",
+   "node department_n_of",
+   "node european_a_1",
+   "node named_n(\"United_States\")",
+   "node udef_q",
+   "node udef_q",
+   "of_p -ARG1/EQ-> department_n_of",
+   "of_p -ARG2-> defense_n_1",
+   "the_q -RSTR/H-> commission_n_of",
+   "the_q -RSTR/H-> department_n_of",
+   "udef_q -RSTR/H-> defense_n_1",
+   "udef_q -RSTR/H-> named_n(\"United_States\")"
+  ],
+  "interp": {
+   "A": "Every capitalized word is a proper name: 'Department' and 'Commission' are named entities, modified by compounds with the names 'United', 'States' and 'European', and 'of Defense' has 'Defense' as a name. The conjunction joins the named 'Department' and the named 'Commission'.",
+   "B": "'Department', 'Defense' and 'Commission' are common nouns (department_n_of, defense_n_1, commission_n_of), 'United States' is a single compound name modifying 'department', and 'European' is the adjective european_a_1 modifying 'commission'. The conjunction joins a department of defense and a European commission."
+  },
+  "doc": [
+   "    compound: noun-noun compound: ARG1 the head noun, ARG2 the modifier noun",
+   "    named: a proper name",
+   "    proper_q: quantifier of a proper name",
+   "    commission_n_of (commission; type n_pp_mc-of_le): Mc, PP-of comp <ex>Loss of memory is common.",
+   "    commission_n_of (commission; type n_vp_c_le): Cn, VP comp <ex>B has the ability to win.",
+   "    defense_n_1 (defense; type n_-_mc_le): Intrans noun, underspec mss-cnt <ex>B feared disaster.",
+   "    defense_n_1 (defense; type n_cp_mc-optc_le): Mass-count, fin CP or S comp <ex>There is little chance he'll win.",
+   "    department_n_of (department; type n_pp_c-of-lhc_le): count noun, PP-of comp, HC-LEX + <ex>The Secretary of Education office called.",
+   "    european_a_1 (european; type aj_-_i-cap_le): Adj (intersective), no comp, capitalized <ex>The European dog won.",
+   "    named_n: a name used as a common noun",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)"
+  ]
+ },
+ {
+  "id": "c21",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "Today, since it includes a number of advanced statistical methods for regression and classification, it finds application in a wide variety of fields including ⌊>medical diagnostics>⌋, ⌊>credit card fraud detection>⌋, ⌊>face>⌋ and ⌊>speech recognition>⌋ and analysis of the ⌊>stock market>⌋.",
+  "A": [
+   "advanced_a_1 -ARG1/EQ-> method_n_of",
+   "in_p_loc -ARG1/EQ-> application_n_of",
+   "in_p_loc -ARG2-> variety_n_of-n",
+   "node advanced_a_1",
+   "node in_p_loc"
+  ],
+  "B": [
+   "advance_v_1 -ARG2/EQ-> method_n_of",
+   "in_p_state -ARG1/EQ-> find_v_1",
+   "in_p_state -ARG2-> variety_n_of-n",
+   "node advance_v_1",
+   "node in_p_state"
+  ],
+  "interp": {
+   "A": "'advanced' is an adjective meaning sophisticated or high-level, describing the statistical methods. 'in a wide variety of fields' is a locative modifier of the noun 'application': it is applications located in a wide variety of fields that it finds.",
+   "B": "'advanced' is the passive participle of the verb 'advance': these are statistical methods that someone has advanced, i.e. put forward. 'in a wide variety of fields' modifies the verb 'finds': the finding of application takes place in a wide variety of fields."
+  },
+  "doc": [
+   "    advanced_a_1 (advanced; type aj_-_i_le): Adj (intersective), no comp <ex>The beautiful dog won.",
+   "    in_p_loc (in; type p_np_i-reg_le): Prep, np, non-temp <ex>B stood behind C.",
+   "    in_p_loc (in; type pp_-_i-dir-nomodn_le): PP, no n_mod <ex>we stayed in.",
+   "    in_p_loc (in; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    advance_v_1 (advance; type v_np_noger_le): Cmps NP(obl,nongerund) <ex>B continued the tour.",
+   "    advance_v_1 (advance; type v_np-np_le): Cmps NP(obl),NP(obl), dative alt <ex>B gave C the book.",
+   "    advance_v_1 (advance; type v_pp*_dir_le): Cmps PP(opt,dir) <ex>B crept into the room.",
+   "    in_p_state: the preposition \"in\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")"
+  ]
+ },
+ {
+  "id": "c22",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "Do you have any left?",
+  "A": [
+   "have_v_prd -ARG1-> pron",
+   "have_v_prd -ARG2-> generic_entity",
+   "have_v_prd -ARG3/H-> leave_v_1",
+   "leave_v_1 -ARG2-> generic_entity",
+   "node have_v_prd"
+  ],
+  "B": [
+   "have_v_1 -ARG1-> pron",
+   "have_v_1 -ARG2-> generic_entity",
+   "leave_v_1 -ARG2/EQ-> generic_entity",
+   "node have_v_1"
+  ],
+  "interp": {
+   "A": "'have' is the small-clause verb that takes 'any' and a separate predicate 'left': do you have any (things) in the state of being left, i.e. is it the case that some remain for you?",
+   "B": "'have' is ordinary possession with object 'any', and 'left' is a participle modifying 'any': do you possess any (things) that are left over?"
+  },
+  "doc": [
+   "    have_v_prd (have-prd, have_oeq; type v_np-prd_oeq-ntr_le): Cmps NP,Prd-phr, o-equi, no psv <ex>B wanted C ready.",
+   "    have_v_prd (have-prd, have_oeq; type v_np-vpslnp_oeq_le): Cmps NP and VP/NP, o-equi <ex>B had C to talk to.",
+   "    have_v_1 (have-poss, have_prp; type v_np_poss_le): Cmps NP, only have <ex>B has C.",
+   "    have_v_1 (have-poss, have_prp; type v_np_poss-cx_le): Cmps NP, only contracted have (no extraction) <ex>They've no idea.",
+   "    have_v_1 (have-poss, have_prp; type v_np-vp_aeq-prp_le): Cmps NP,VP (prprt), a-equi <ex>B had trouble sleeping."
+  ]
+ },
+ {
+  "id": "c23",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "ACE",
+  "sentence": "Product Number:390502,104856,200513",
+  "A": [
+   "compound -ARG2-> named(\"Product\")",
+   "node named(\"Product\")",
+   "node proper_q",
+   "proper_q -RSTR/H-> named(\"Product\")"
+  ],
+  "B": [
+   "compound -ARG2-> product_n_1",
+   "node product_n_1",
+   "node udef_q",
+   "udef_q -RSTR/H-> product_n_1"
+  ],
+  "interp": {
+   "A": "'Product' is a proper name, Product, used as the first part of the compound 'Product Number'.",
+   "B": "'product' is the common noun meaning an item that is made or sold, used as the first part of the compound 'Product Number', i.e. a number identifying a product."
+  },
+  "doc": [
+   "    named: a proper name",
+   "    proper_q: quantifier of a proper name",
+   "    product_n_1 (product; type n_-_mc_le): Intrans noun, underspec mss-cnt <ex>B feared disaster.",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)"
+  ]
+ },
+ {
+  "id": "c24",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "Most models try to model the hazard rate by choosing the underlying distribution depending on the shape of the hazard function.",
+  "A": [
+   "by_p_means -ARG1/EQ-> try_v_1"
+  ],
+  "B": [
+   "by_p_means -ARG1/EQ-> model_v_1"
+  ],
+  "interp": {
+   "A": "'by choosing the underlying distribution ...' modifies 'try': choosing the distribution is the means by which most models try (to model the hazard rate).",
+   "B": "'by choosing the underlying distribution ...' modifies 'model': choosing the distribution is the means by which the hazard rate is modeled, and that is what most models try to do."
+  },
+  "doc": []
+ },
+ {
+  "id": "c25",
+  "set": "set1",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "Last year, I bought a cordless phone from your site.",
+  "A": [
+   "buy_v_from -ARG1-> pron",
+   "buy_v_from -ARG2-> phone_n_1",
+   "buy_v_from -ARG3-> site_n_1",
+   "loc_nonsp -ARG1/EQ-> buy_v_from",
+   "node buy_v_from"
+  ],
+  "B": [
+   "buy_v_1 -ARG1-> pron",
+   "buy_v_1 -ARG2-> phone_n_1",
+   "from_p_state -ARG1/EQ-> buy_v_1",
+   "from_p_state -ARG2-> site_n_1",
+   "loc_nonsp -ARG1/EQ-> buy_v_1",
+   "node buy_v_1",
+   "node from_p_state"
+  ],
+  "interp": {
+   "A": "'buy' is the three-argument verb 'buy from', and 'your site' is its source argument: I bought a cordless phone, with your site as the seller or source.",
+   "B": "'buy' is the plain two-argument verb, and 'from your site' is a separate prepositional modifier on the buying event: I bought a cordless phone, and that buying was from your site."
+  },
+  "doc": [
+   "    buy_v_from (buy; type v_np-pp_e_le): Cmps NP(obl),PP(sel.obl) <ex>B compared C with D.",
+   "    buy_v_1 (buy; type v_np*_le): Cmps NP(opt) <ex>B cleaned the room.",
+   "    buy_v_1 (buy; type v_np-np_only_le): Cmps NP(obl),NP(obl), no dat alt <ex>B declared C the winner.",
+   "    from_p_state: the preposition \"from\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")"
+  ]
+ },
+ {
+  "id": "c26",
+  "set": "set1",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "It's unbelievable.",
+  "A": [
+   "node unbelievable_a_1",
+   "unbelievable_a_1 -ARG1-> pron"
+  ],
+  "B": [
+   "believable_a_1 -ARG1-> pron",
+   "node believable_a_1",
+   "node un-_a_neg",
+   "un-_a_neg -ARG1/EQ-> believable_a_1"
+  ],
+  "interp": {
+   "A": "'Unbelievable' is treated as a single unanalysed adjective: 'it' has the property of being unbelievable.",
+   "B": "'Unbelievable' is built from parts: the negating prefix 'un-' applies to the adjective 'believable', so 'it' is not believable."
+  },
+  "doc": [
+   "    unbelievable_a_1 (unbelievable, unbelievably; type aj_-_i_le): Adj (intersective), no comp <ex>The beautiful dog won.",
+   "    unbelievable_a_1 (unbelievable, unbelievably; type av_-_s-cp-pr_le): Scop, S, pre-hd <ex>Obviously B won.",
+   "    believable_a_1 (believable; type aj_-_i_le): Adj (intersective), no comp <ex>The beautiful dog won.",
+   "    believable_a_1 (believable; type aj_cp_i_le): Adj, fin/inf CP comp <ex>B is sure C won.",
+   "    un-_a_neg: the prefix un- (not)"
+  ]
+ },
+ {
+  "id": "c27",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "The most popular choice for the non-linearity is the Gaussian.",
+  "A": [
+   "be_v_id -ARG2-> gaussian_n_1",
+   "node gaussian_n_1",
+   "the_q -RSTR/H-> gaussian_n_1"
+  ],
+  "B": [
+   "be_v_id -ARG2-> named(\"Gaussian\")",
+   "node named(\"Gaussian\")",
+   "the_q -RSTR/H-> named(\"Gaussian\")"
+  ],
+  "interp": {
+   "A": "'Gaussian' is an ordinary common noun (a Gaussian function or distribution), so 'the Gaussian' picks out that kind of thing as the most popular choice for the non-linearity.",
+   "B": "'Gaussian' is a proper name, so 'the Gaussian' refers to a specific named entity called 'Gaussian' as the most popular choice for the non-linearity."
+  },
+  "doc": [
+   "    gaussian_n_1 (gaussian; type n_-_c_le): Intransitive count noun (icn) <ex>The dog barked.",
+   "    named: a proper name"
+  ]
+ },
+ {
+  "id": "c28",
+  "set": "set1",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "i need a new PalmPilot.",
+  "A": [
+   "a_q -RSTR/H-> palm+pilot_n_1",
+   "need_v_1 -ARG2-> palm+pilot_n_1",
+   "new_a_1 -ARG1/EQ-> palm+pilot_n_1",
+   "node palm+pilot_n_1"
+  ],
+  "B": [
+   "a_q -RSTR/H-> named(\"PalmPilot\")",
+   "need_v_1 -ARG2-> named(\"PalmPilot\")",
+   "new_a_1 -ARG1/EQ-> named(\"PalmPilot\")",
+   "node named(\"PalmPilot\")"
+  ],
+  "interp": {
+   "A": "'PalmPilot' is a common noun (a kind of device, a palm pilot): the speaker needs some new device of that kind.",
+   "B": "'PalmPilot' is a proper name: the speaker needs a new instance of the thing named 'PalmPilot'."
+  },
+  "doc": [
+   "    palm+pilot_n_1 (palmpilot; type n_-_c_le): Intransitive count noun (icn) <ex>The dog barked.",
+   "    named: a proper name"
+  ]
+ },
+ {
+  "id": "c29",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "I would like to order 399063",
+  "A": [
+   "node number_q",
+   "number_q -RSTR/H-> card(\"399063\")",
+   "order_v_1 -ARG2-> card(\"399063\")"
+  ],
+  "B": [
+   "card(\"399063\") -ARG1/EQ-> generic_entity",
+   "node generic_entity",
+   "node udef_q",
+   "order_v_1 -ARG2-> generic_entity",
+   "udef_q -RSTR/H-> generic_entity"
+  ],
+  "interp": {
+   "A": "'399063' is the thing ordered, a bare number: the speaker would like to order the number 399063 itself.",
+   "B": "'399063' modifies an unexpressed noun: the speaker would like to order some item (an implicit entity) identified by or numbering 399063, such as item number 399063."
+  },
+  "doc": [
+   "    number_q: quantifier of a number used as a noun phrase",
+   "    generic_entity: an unexpressed or generic thing (e.g. the head of \"the rich\", \"half\")",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)"
+  ]
+ },
+ {
+  "id": "c30",
+  "set": "set1",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "It's important that I get 30 pdas for my staff by Tuesday.",
+  "A": [
+   "by_p_temp -ARG1/EQ-> get_v_1",
+   "for_p -ARG1/EQ-> pda_n_1",
+   "get_v_1 -ARG1-> pron",
+   "get_v_1 -ARG2-> pda_n_1",
+   "important_a_for -ARG1/H-> get_v_1",
+   "node get_v_1"
+  ],
+  "B": [
+   "by_p_temp -ARG1/EQ-> get_v_state",
+   "for_p -ARG1-> pda_n_1",
+   "get_v_state -ARG1-> pron",
+   "get_v_state -ARG2-> pda_n_1",
+   "get_v_state -ARG3/H-> for_p",
+   "important_a_for -ARG1/H-> get_v_state",
+   "node get_v_state"
+  ],
+  "interp": {
+   "A": "'Get' means obtain: it's important that I obtain 30 pdas by Tuesday, and 'for my staff' modifies 'pdas' (30 pdas meant for my staff).",
+   "B": "'Get' is the causative or resultative sense with a third argument: it's important that I get 30 pdas to be 'for my staff' (bring it about that they are for my staff) by Tuesday, with 'for my staff' as the resulting state rather than a modifier of 'pdas'."
+  },
+  "doc": [
+   "    get_v_1 (get, get_prd; type v_pp_dir-noj_le): Cmps PP(obl,dir), no attrib adj for -ing form <ex>B got out of the room <nex>the getting contestant",
+   "    get_v_1 (get, get_prd; type v_np-np_only_le): Cmps NP(obl),NP(obl), no dat alt <ex>B declared C the winner.",
+   "    get_v_1 (get, get_prd; type v_np_ntr_le): Cmps NP(obl), no psv, no attr-adj for -ing <ex>B remains C.",
+   "    get_v_state (get_prd, get_prd_va; type v_np-prd_oeq-ntr_le): Cmps NP,Prd-phr, o-equi, no psv <ex>B wanted C ready.",
+   "    get_v_state (get_prd, get_prd_va; type v_vp_ssr-prp_le): Cmps VP(prp), s-s-rais <ex>It finished raining.",
+   "    get_v_state (get_prd, get_prd_va; type v_prd_seq-va_le): Cmps VP or AP, s-equi <ex>B became frustrated."
+  ]
+ },
+ {
+  "id": "d01",
+  "set": "set2",
+  "by": "claude",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "Some of the models commonly used are Kaplan-Meier, Cox proportional hazard model (non parametric).",
+  "A": [
+   "proportional_a_1 -ARG1/EQ-> hazard_n_1"
+  ],
+  "B": [
+   "proportional_a_1 -ARG1/EQ-> model_n_of"
+  ],
+  "interp": {
+   "A": "'proportional' modifies 'hazard': the model is a Cox model of proportional hazards, i.e. [Cox [proportional hazard] model].",
+   "B": "'proportional' modifies 'model': it is a proportional model of hazards, i.e. [Cox proportional [hazard model]]."
+  },
+  "doc": []
+ },
+ {
+  "id": "d02",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "How can I get information on 2002 calendars?",
+  "A": [
+   "card(\"2002\") -ARG1/EQ-> calendar_n_1",
+   "node card(\"2002\")"
+  ],
+  "B": [
+   "compound -ARG1/EQ-> calendar_n_1",
+   "compound -ARG2-> yofc(\"2002\")",
+   "node compound",
+   "node proper_q",
+   "node yofc(\"2002\")",
+   "proper_q -RSTR/H-> yofc(\"2002\")"
+  ],
+  "interp": {
+   "A": "'2002' is a cardinal number modifying 'calendars': information on two thousand and two calendars, counted as a quantity.",
+   "B": "'2002' is a year name in a compound with 'calendars': information on calendars for the year 2002."
+  },
+  "doc": [
+   "    card: cardinal number",
+   "    compound: noun-noun compound: ARG1 the head noun, ARG2 the modifier noun",
+   "    proper_q: quantifier of a proper name",
+   "    yofc: year"
+  ]
+ },
+ {
+  "id": "d03",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "Scoring models process a customer’s ⌊>credit history>⌋, ⌊>loan application>⌋, customer data, etc., in order to rank-order individuals by their likelihood of making future credit payments on time.",
+  "A": [
+   "by_p_state -ARG1/EQ-> rank-order_v_1",
+   "by_p_state -ARG2-> likelihood_n_of",
+   "def_explicit_q -RSTR/H-> implicit_conj",
+   "node by_p_state",
+   "on+time_a_1 -ARG1/EQ-> make_v_1",
+   "poss -ARG1/EQ-> implicit_conj",
+   "udef_q -RSTR/H-> history_n_of"
+  ],
+  "B": [
+   "by_p_loc -ARG1/EQ-> individual_n_1",
+   "by_p_loc -ARG2-> likelihood_n_of",
+   "def_explicit_q -RSTR/H-> history_n_of",
+   "node by_p_loc",
+   "on+time_a_1 -ARG1/EQ-> rank-order_v_1",
+   "poss -ARG1/EQ-> history_n_of",
+   "udef_q -RSTR/H-> implicit_conj"
+  ],
+  "interp": {
+   "A": "'a customer's' is the possessor of the whole list ('credit history, loan application'). 'by their likelihood...' says how the models rank-order individuals. 'on time' modifies 'making future credit payments': the likelihood of paying on time.",
+   "B": "'a customer's' is the possessor of 'credit history' only, and the list as a whole has no determiner. 'by their likelihood...' attaches to 'individuals' as a locative-type modifier (individuals by their likelihood). 'on time' modifies 'rank-order': the ranking itself is done on time."
+  },
+  "doc": [
+   "    by_p_state: the preposition \"by\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")",
+   "    by_p_loc (by, by_p; type pp_-_i-dir-nomod_le): PP, directional, not modifier <ex>The years went by.",
+   "    by_p_loc (by, by_p; type p_np_i-dgsp_le): Prep, np, no meas-np specifier. Only *by* <ex>B stood right by C."
+  ]
+ },
+ {
+  "id": "d04",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "When I checked recently, you were out of stock on the Canon 647384.",
+  "A": [
+   "node on_p_loc",
+   "on_p_loc -ARG1/EQ-> stock_n_1",
+   "on_p_loc -ARG2-> card(\"647384\")"
+  ],
+  "B": [
+   "node on_p_state",
+   "on_p_state -ARG1/EQ-> out+of_p",
+   "on_p_state -ARG2-> card(\"647384\")"
+  ],
+  "interp": {
+   "A": "'on the Canon 647384' modifies the noun 'stock': the stock in question is the stock of the Canon 647384, and you were out of that stock.",
+   "B": "'on the Canon 647384' modifies the state 'out of (stock)': your being out of stock holds with respect to the Canon 647384."
+  },
+  "doc": [
+   "    on_p_loc (on; type p_np_i-reg_le): Prep, np, non-temp <ex>B stood behind C.",
+   "    on_p_loc (on; type pp_-_i-nomodn_le): PP, intersective, no n_mod <ex>B slept on.",
+   "    on_p_loc (on; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    on_p_state: the preposition \"on\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")"
+  ]
+ },
+ {
+  "id": "d05",
+  "set": "set2",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "Others provide predictive analytics services in support of a wide range of business problems across industry verticals (⌊>Fifth C>⌋).",
+  "A": [
+   "across_p_loc -ARG1/EQ-> support_n_of",
+   "in_p_loc -ARG1/EQ-> service_n_1",
+   "in_p_loc -ARG2-> support_n_of",
+   "node in_p_loc",
+   "node parenthetical",
+   "node udef_q",
+   "parenthetical -ARG1/EQ-> verticals/nns_u_unknown",
+   "parenthetical -ARG2-> named(\"C\")",
+   "predictive_a_1 -ARG1/EQ-> service_n_1",
+   "udef_q -RSTR/H-> named(\"C\")"
+  ],
+  "B": [
+   "across_p_loc -ARG1/EQ-> range_n_of",
+   "appos -ARG1-> verticals/nns_u_unknown",
+   "appos -ARG2-> named(\"C\")",
+   "appos -MOD/EQ-> range_n_of",
+   "in_p_state -ARG1/EQ-> provide_v_1",
+   "in_p_state -ARG2-> support_n_of",
+   "node appos",
+   "node in_p_state",
+   "node proper_q",
+   "predictive_a_1 -ARG1/EQ-> analytics_n_1",
+   "proper_q -RSTR/H-> named(\"C\")"
+  ],
+  "interp": {
+   "A": "'in support of a wide range of business problems' modifies 'services' (services in support of ...). 'across industry verticals' modifies 'support'. 'predictive' modifies 'services', giving predictive [analytics services]. '(Fifth C)' is a parenthetical remark on 'verticals'.",
+   "B": "'in support of ...' modifies the providing: they provide the services in support of the problems. 'across industry verticals' modifies 'range'. 'predictive' modifies 'analytics', giving [predictive analytics] services. 'Fifth C' is an apposition naming the industry verticals, attached within the 'range' phrase."
+  },
+  "doc": [
+   "    in_p_loc (in; type p_np_i-reg_le): Prep, np, non-temp <ex>B stood behind C.",
+   "    in_p_loc (in; type pp_-_i-dir-nomodn_le): PP, no n_mod <ex>we stayed in.",
+   "    in_p_loc (in; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    parenthetical: a parenthetical attached to ARG1",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)",
+   "    appos: apposition: ARG1 and ARG2 refer to the same thing",
+   "    in_p_state: the preposition \"in\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")",
+   "    proper_q: quantifier of a proper name"
+  ]
+ },
+ {
+  "id": "d06",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "when do you expect the new Kyocera camera to become available?",
+  "A": [
+   "loc_nonsp -ARG1/EQ-> expect_v_1"
+  ],
+  "B": [
+   "loc_nonsp -ARG1/EQ-> become_v_id"
+  ],
+  "interp": {
+   "A": "\"When\" modifies \"expect\": the question asks at what time you hold the expectation that the new Kyocera camera will become available.",
+   "B": "\"When\" modifies \"become\": the question asks at what time you expect the new Kyocera camera to become available."
+  },
+  "doc": []
+ },
+ {
+  "id": "d07",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "⌊•⌊#factors internal to language, such as the problem of resolving ⌊>indexical>⌋ or ⌊>anaphora>⌋ (e.g. ⌊/this x/⌋, ⌊/him/⌋, ⌊/last week/⌋).",
+  "A": [
+   "appos -ARG1-> factor_n_1",
+   "appos -ARG2-> week_n_1",
+   "appos -MOD/EQ-> unknown",
+   "implicit_conj -ARG1-> generic_entity",
+   "implicit_conj -ARG2-> fw_seq",
+   "node appos",
+   "node generic_entity",
+   "node proper_q",
+   "proper_q -RSTR/H-> named(\"X\")",
+   "this_q_dem -RSTR/H-> generic_entity"
+  ],
+  "B": [
+   "implicit_conj -ARG1-> fw_seq",
+   "implicit_conj -ARG2-> week_n_1",
+   "this_q_dem -RSTR/H-> named(\"X\")"
+  ],
+  "interp": {
+   "A": "\"This\" is a standalone demonstrative pronoun and \"X\" is a separate proper name, so \"this\" and \"x\" are two separate items in the example list. \"Last week\" is treated as an apposition to \"factors\" rather than as a member of the example list.",
+   "B": "\"This x\" is one demonstrative noun phrase, with \"this\" as a determiner on the name \"X\". \"Last week\" is a member of the example list, conjoined with the preceding example (\"him\")."
+  },
+  "doc": [
+   "    appos: apposition: ARG1 and ARG2 refer to the same thing",
+   "    generic_entity: an unexpressed or generic thing (e.g. the head of \"the rich\", \"half\")",
+   "    proper_q: quantifier of a proper name"
+  ]
+ },
+ {
+  "id": "d08",
+  "set": "set2",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "Do you carry Sony Vaio laptop models?",
+  "A": [
+   "compound -ARG1/EQ-> model_n_of"
+  ],
+  "B": [
+   "compound -ARG1/EQ-> laptop_n_1"
+  ],
+  "interp": {
+   "A": "\"Sony Vaio\" modifies the compound \"laptop models\": the question asks about laptop models of the Sony Vaio kind.",
+   "B": "\"Sony Vaio\" modifies \"laptop\" alone, giving \"Sony Vaio laptop\": the question asks about models of the Sony Vaio laptop."
+  },
+  "doc": []
+ },
+ {
+  "id": "d09",
+  "set": "set2",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "⌊>Machine learning>⌋, a branch of artificial intelligence, was originally employed to develop techniques to enable computers to learn.",
+  "A": [
+   "enable_v_1 -MOD/EQ-> technique_n_1",
+   "node with_p",
+   "with_p -ARG1/EQ-> enable_v_1",
+   "with_p -ARG2/EQ-> technique_n_1"
+  ],
+  "B": [
+   "enable_v_1 -ARG1-> technique_n_1",
+   "eventuality -ARG1/HEQ-> enable_v_1",
+   "eventuality -MOD/EQ-> technique_n_1",
+   "node eventuality"
+  ],
+  "interp": {
+   "A": "\"To enable computers to learn\" is an infinitival relative on \"techniques\" in which the techniques are the means: techniques with which to enable computers to learn.",
+   "B": "\"Techniques\" is the subject of \"enable\": techniques that themselves enable computers to learn."
+  },
+  "doc": [
+   "    with_p: implicit \"with\" relation (instrument or accompaniment)",
+   "    eventuality: an unexpressed event (e.g. in an infinitival relative)"
+  ]
+ },
+ {
+  "id": "d10",
+  "set": "set2",
+  "by": "claude",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "Do you have it and how much does it cost?",
+  "A": [
+   "and_c -ARG2/EQ-> cost_v_3",
+   "cost_v_3 -ARG1-> pron",
+   "cost_v_3 -ARG2-> generic_entity",
+   "cost_v_3 -MOD/EQ-> have_v_1",
+   "node cost_v_3"
+  ],
+  "B": [
+   "and_c -ARG2/EQ-> cost_v_1",
+   "cost_v_1 -ARG1-> pron",
+   "cost_v_1 -ARG2-> generic_entity",
+   "cost_v_1 -MOD/EQ-> have_v_1",
+   "node cost_v_1"
+  ],
+  "interp": {
+   "A": "\"Cost\" is the ERG's cost_v_3 entry. It takes \"it\" and \"how much\" as its arguments: the question asks how much it costs, under that lexical entry of \"cost\".",
+   "B": "\"Cost\" is the ERG's cost_v_1 entry, with the same arguments \"it\" and \"how much\": the question asks how much it costs, under that other lexical entry of \"cost\"."
+  },
+  "doc": [
+   "    cost_v_3 (cost_v7; type v_np_bse_le): Cmps NP(obl), regular instead of normal irregular morphology <ex>We should cost the proposal.",
+   "    cost_v_3 (cost_v7; type v_np_past_le): Cmps NP(obl), regular instead of normal irregular morphology <ex>We already costed the proposal.",
+   "    cost_v_3 (cost_v7; type v_np_pr-3s_le): Cmps NP(obl), regular instead of normal irregular morphology <ex>He always costs the proposals early.",
+   "    cost_v_1 (cost, cost_in; type v_pp_le): Cmps PP(obl) <ex>The cat felt like a dog.",
+   "    cost_v_1 (cost, cost_in; type v_np*-np_only_le): Cmps NP(obl),NP(opt), no dat alt <ex>The book will cost (Kim) a great deal.",
+   "    cost_v_1 (cost, cost_in; type v_np_ntr_le): Cmps NP(obl), no psv, no attr-adj for -ing <ex>B remains C."
+  ]
+ },
+ {
+  "id": "d11",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "any S100 left in the inventory?",
+  "A": [
+   "leave_v_1 -ARG1-> named(\"S100\")"
+  ],
+  "B": [
+   "leave_v_1 -ARG2/EQ-> named(\"S100\")",
+   "node unknown",
+   "unknown -ARG-> named(\"S100\")"
+  ],
+  "interp": {
+   "A": "\"S100\" is the subject of an intransitive \"left\": the question is whether any S100 has itself left (gone away) in the inventory, with \"left\" acting as the main verb of a reduced sentence.",
+   "B": "\"S100\" is the thing that was left: the fragment is a bare noun phrase, \"any S100 (that was) left in the inventory?\", with \"left in the inventory\" as a passive participle modifying S100, meaning remaining in the inventory."
+  },
+  "doc": [
+   "    unknown: a fragment that is not a full sentence; ARG is its content"
+  ]
+ },
+ {
+  "id": "d12",
+  "set": "set2",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "Do you have the calendars organized monthly?",
+  "A": [
+   "have_v_1 -ARG1-> pron",
+   "have_v_1 -ARG2-> calendar_n_1",
+   "node have_v_1",
+   "organize_v_1 -ARG2/EQ-> calendar_n_1"
+  ],
+  "B": [
+   "have_v_prd -ARG1-> pron",
+   "have_v_prd -ARG2-> calendar_n_1",
+   "have_v_prd -ARG3/H-> organize_v_1",
+   "node have_v_prd",
+   "organize_v_1 -ARG2-> calendar_n_1"
+  ],
+  "interp": {
+   "A": "\"have\" means possess, and \"organized monthly\" describes the calendars: do you have (own) the calendars that are organized monthly?",
+   "B": "\"have\" is the causative or resultative \"have\" taking a predicate complement: do you have the calendars in the state of being organized monthly, that is, have you got them organized monthly?"
+  },
+  "doc": [
+   "    have_v_1 (have-poss, have_prp; type v_np_poss_le): Cmps NP, only have <ex>B has C.",
+   "    have_v_1 (have-poss, have_prp; type v_np_poss-cx_le): Cmps NP, only contracted have (no extraction) <ex>They've no idea.",
+   "    have_v_1 (have-poss, have_prp; type v_np-vp_aeq-prp_le): Cmps NP,VP (prprt), a-equi <ex>B had trouble sleeping.",
+   "    have_v_prd (have-prd, have_oeq; type v_np-prd_oeq-ntr_le): Cmps NP,Prd-phr, o-equi, no psv <ex>B wanted C ready.",
+   "    have_v_prd (have-prd, have_oeq; type v_np-vpslnp_oeq_le): Cmps NP and VP/NP, o-equi <ex>B had C to talk to."
+  ]
+ },
+ {
+  "id": "d13",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "It was red and came with a coupon to buy another one for half the price.",
+  "A": [
+   "and_c -ARG2/EQ-> come_v_1",
+   "buy_v_1 -MOD/EQ-> coupon_n_1",
+   "come_v_1 -MOD/EQ-> red_a_1",
+   "node with_p",
+   "with_p -ARG1/EQ-> buy_v_1",
+   "with_p -ARG2/EQ-> coupon_n_1"
+  ],
+  "B": [
+   "and_c -ARG2/EQ-> in+order+to_x",
+   "in+order+to_x -ARG1/H-> come_v_1",
+   "in+order+to_x -ARG2/H-> buy_v_1",
+   "in+order+to_x -MOD/EQ-> red_a_1",
+   "node in+order+to_x"
+  ],
+  "interp": {
+   "A": "\"to buy another one for half the price\" modifies \"coupon\": it came with a coupon that can be used to buy another one at half price.",
+   "B": "\"to buy another one for half the price\" is a purpose clause (\"in order to\") attached to \"came with a coupon\": it came with a coupon in order to buy another one for half the price."
+  },
+  "doc": [
+   "    with_p: implicit \"with\" relation (instrument or accompaniment)",
+   "    in+order+to_x (in_order, to; type p_vp_inf-or-s_le): Prep, VP or S, inf <ex>B raced in order (for C) to win.",
+   "    in+order+to_x (in_order, to; type p_vp_bse_le): Prep, vp(bse) <ex>B won to avenge C."
+  ]
+ },
+ {
+  "id": "d14",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "Thank you.",
+  "A": [
+   "node thank+you_v_1",
+   "thank+you_v_1 -ARG1-> pron"
+  ],
+  "B": [
+   "node thank_v_for",
+   "thank_v_for -ARG2-> pron"
+  ],
+  "interp": {
+   "A": "\"thank you\" is a single fixed expression, with an implicit speaker as the one doing the thanking.",
+   "B": "\"thank\" is the ordinary verb (thank someone for something), and \"you\" is its object, the person being thanked, with no overt subject."
+  },
+  "doc": [
+   "    thank+you_v_1 (thank_you; type v_-_imp_le): No cmps, unergative, hd_imp_c only <ex>Begone!",
+   "    thank_v_for (thank_you_for; type v_np-pp*_e-imp_le): Cmps NP(obl),PP(sel,opt), hd_imp_c <ex>Thank you for D."
+  ]
+ },
+ {
+  "id": "d15",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "If it is possible to send it to Japan, I would like to know a price quote for what it will cost to send 390613 to Japan.",
+  "A": [
+   "card(\"390613\") -ARG1/EQ-> generic_entity",
+   "node generic_entity",
+   "node udef_q",
+   "send_v_1 -ARG2-> generic_entity",
+   "to_p -ARG1/EQ-> generic_entity",
+   "udef_q -RSTR/H-> generic_entity"
+  ],
+  "B": [
+   "node number_q",
+   "number_q -RSTR/H-> card(\"390613\")",
+   "send_v_1 -ARG2-> card(\"390613\")",
+   "send_v_1 -ARG3/H-> to_p",
+   "to_p -ARG1-> card(\"390613\")"
+  ],
+  "interp": {
+   "A": "\"390613\" is a cardinal number counting implicit things: what it will cost to send 390613 items to Japan, with \"to Japan\" modifying those items.",
+   "B": "\"390613\" itself names the thing being sent (e.g., an item numbered 390613): what it will cost to send item 390613, with \"to Japan\" as the destination argument of \"send\"."
+  },
+  "doc": [
+   "    generic_entity: an unexpressed or generic thing (e.g. the head of \"the rich\", \"half\")",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)",
+   "    number_q: quantifier of a number used as a noun phrase"
+  ]
+ },
+ {
+  "id": "d16",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "The total number of words in Russian is difficult to reckon because of the ability to agglutinate and create manifold compounds, diminutives, etc. (see ⌊>Word Formation>⌋ under ⌊>Russian grammar>⌋).",
+  "A": [
+   "ability_n_1 -ARG1/H-> agglutinate_v_cause",
+   "agglutinate_v_cause -ARG2-> implicit_conj",
+   "and_c -ARG1/EQ-> agglutinate_v_cause",
+   "because+of_p -ARG1/EQ-> reckon_v_1",
+   "create_v_1 -MOD/EQ-> agglutinate_v_cause",
+   "node agglutinate_v_cause",
+   "node under_p",
+   "parenthetical -ARG1/EQ-> implicit_conj",
+   "under_p -ARG1/EQ-> formation_n_of",
+   "under_p -ARG2-> grammar_n_1"
+  ],
+  "B": [
+   "ability_n_1 -ARG1/H-> agglutinate_v_1",
+   "and_c -ARG1/EQ-> agglutinate_v_1",
+   "because+of_p -ARG1/EQ-> difficult_a_for",
+   "create_v_1 -MOD/EQ-> agglutinate_v_1",
+   "node agglutinate_v_1",
+   "node under_p_state",
+   "parenthetical -ARG1/EQ-> ability_n_1",
+   "under_p_state -ARG1/EQ-> see_v_1",
+   "under_p_state -ARG2-> grammar_n_1"
+  ],
+  "interp": {
+   "A": "'Agglutinate' is transitive here: the ability is to agglutinate and create a list of things, namely manifold compounds, diminutives, etc. 'Because of the ability' modifies 'reckon', the parenthetical attaches to that list, and 'under Russian grammar' locates 'Word Formation' (the Word Formation section under Russian grammar).",
+   "B": "'Agglutinate' is intransitive: the ability to agglutinate, and to create compounds and the rest. 'Because of the ability' modifies 'difficult' (it is difficult because of the ability), the parenthetical comments on 'the ability', and 'under Russian grammar' modifies 'see' (see Word Formation, looking under Russian grammar)."
+  },
+  "doc": [
+   "    agglutinate_v_cause (agglutinate; type v_np_noger_le): Cmps NP(obl,nongerund) <ex>B continued the tour.",
+   "    under_p (under; type p_np_i_le): Prep, np, intersective <ex>B sang for C.",
+   "    under_p (under; type pp_-_i_le): PP, intersective <ex>B saw C above.",
+   "    agglutinate_v_1 (agglutinate; type v_-_unacc_le): No cmps, unaccusative <ex>The plate gleamed.",
+   "    under_p_state: the preposition \"under\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")"
+  ]
+ },
+ {
+  "id": "d17",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "Please send me the quote for what it will cost to send it by DHL.",
+  "A": [
+   "by_p_state -ARG1/EQ-> send_v_1",
+   "by_p_state -ARG2-> named(\"DHL\")",
+   "node by_p_state"
+  ],
+  "B": [
+   "by_p_loc -ARG1-> pron",
+   "by_p_loc -ARG2-> named(\"DHL\")",
+   "node by_p_loc",
+   "send_v_1 -ARG3/H-> by_p_loc"
+  ],
+  "interp": {
+   "A": "'By DHL' gives the manner or means of the second 'send': what it will cost to send it using DHL.",
+   "B": "'By DHL' is a spatial location and fills the destination slot of the second 'send': what it will cost to send it so that it ends up by (next to) DHL."
+  },
+  "doc": [
+   "    by_p_state: the preposition \"by\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")",
+   "    by_p_loc (by, by_p; type pp_-_i-dir-nomod_le): PP, directional, not modifier <ex>The years went by.",
+   "    by_p_loc (by, by_p; type p_np_i-dgsp_le): Prep, np, no meas-np specifier. Only *by* <ex>B stood right by C."
+  ]
+ },
+ {
+  "id": "d18",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "⌊#Once a rule is selected and splits a node into two, the same logic is applied to each “child” node (i.e. it is a recursive procedure)#⌋",
+  "A": [
+   "def_implicit_q -RSTR/H-> basic_numbered_hour(\"2\")",
+   "into_p_state -ARG2-> basic_numbered_hour(\"2\")",
+   "node basic_numbered_hour(\"2\")",
+   "node def_implicit_q"
+  ],
+  "B": [
+   "into_p_state -ARG2-> card(\"2\")",
+   "node card(\"2\")",
+   "node number_q",
+   "number_q -RSTR/H-> card(\"2\")"
+  ],
+  "interp": {
+   "A": "'Two' is a clock time, two o'clock: the rule splits a node into two o'clock.",
+   "B": "'Two' is a plain cardinal number: the rule splits a node into two (parts)."
+  },
+  "doc": [
+   "    basic_numbered_hour: (no lexical entry; grammar-internal or unknown word)",
+   "    def_implicit_q: implicit definite quantifier",
+   "    card: cardinal number",
+   "    number_q: quantifier of a number used as a noun phrase"
+  ]
+ },
+ {
+  "id": "d19",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "These problems plague firms all across the spectrum and some examples of likely victims are ⌊>credit card issuers>⌋, insurance companies, retail merchants, manufacturers, business to business suppliers and even services providers.",
+  "A": [
+   "and_c -ARG1-> business_n_1",
+   "compound -ARG2-> business_n_1",
+   "node to_p",
+   "to_p -ARG1/EQ-> business_n_1",
+   "to_p -ARG2-> supplier_n_of"
+  ],
+  "B": [
+   "and_c -ARG1-> supplier_n_of",
+   "compound -ARG2-> interval",
+   "interval_p_end -ARG1/EQ-> interval",
+   "interval_p_end -ARG2-> business_n_1",
+   "interval_p_start -ARG1/EQ-> interval",
+   "interval_p_start -ARG2-> business_n_1",
+   "node interval",
+   "node interval_p_end",
+   "node interval_p_start",
+   "node udef_q",
+   "udef_q -RSTR/H-> interval"
+  ],
+  "interp": {
+   "A": "'To' is an ordinary preposition. The list item is 'business', modified by the compound 'business' and by 'to suppliers': (business) business to suppliers.",
+   "B": "'Business to business' is a range expression (from business to business) that modifies 'suppliers' as a compound. The list item is 'suppliers': business-to-business suppliers."
+  },
+  "doc": [
+   "    to_p (to; type p_np_i-nnm_le): Prep, NP, no noun mod <ex>B ran to the house.",
+   "    to_p (to; type p_np_i-nm-no-tm-to_le): Prep, np, non-temp noun mod, only \"to\" in order to exclude measure-adv degree-spec to avoid ambig. <ex>The price rose to $10 million.",
+   "    interval: interval",
+   "    interval_p_end: end of an interval",
+   "    interval_p_start: start of an interval",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)"
+  ]
+ },
+ {
+  "id": "d20",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "Nevertheless more than half of the population of the ⌊>Baltic states>⌋ are able to hold a conversation in Russian and almost all have at least some familiarity with the most basic spoken and written phrases.",
+  "A": [
+   "able_a_1 -ARG1-> part_of",
+   "all_q -RSTR/H-> generic_entity",
+   "almost_x_deg -MOD/EQ-> all_q",
+   "and_c -ARG1-> able_a_1",
+   "and_c -ARG2/EQ-> have_v_1",
+   "compound -ARG1/EQ-> state_n_of",
+   "compound -ARG2-> named_n(\"Baltic\")",
+   "half_q -RSTR/H-> generic_entity",
+   "have_v_1 -ARG1-> generic_entity",
+   "have_v_1 -ARG2-> familiarity_n_1",
+   "hold_v_1 -ARG1-> part_of",
+   "in_p_state -ARG1/EQ-> hold_v_1",
+   "in_p_state -ARG2-> named(\"Russian\")",
+   "more_comp -ARG1/EQ-> much-many_a",
+   "more_comp -ARG2-> generic_entity",
+   "much-many_a -ARG1/EQ-> part_of",
+   "nevertheless_a_1 -MOD/EQ-> have_v_1",
+   "node all_q",
+   "node compound",
+   "node generic_entity",
+   "node generic_entity",
+   "node have_v_1",
+   "node in_p_state",
+   "node more_comp",
+   "node much-many_a",
+   "node udef_q",
+   "of_p -ARG2-> state_n_of",
+   "the_q -RSTR/H-> state_n_of",
+   "udef_q -RSTR/H-> named_n(\"Baltic\")",
+   "udef_q -RSTR/H-> part_of",
+   "with_p -ARG1/EQ-> familiarity_n_1"
+  ],
+  "B": [
+   "able_a_1 -ARG1-> state_n_of",
+   "all_a_1 -ARG1/EQ-> have_v_prd",
+   "almost_x_deg -ARG1/EQ-> all_a_1",
+   "and_c -ARG1/EQ-> hold_v_1",
+   "and_c -ARG2/EQ-> have_v_prd",
+   "half_q -RSTR/H-> part_of",
+   "have_v_prd -ARG1-> state_n_of",
+   "have_v_prd -ARG2-> familiarity_n_1",
+   "have_v_prd -ARG3/H-> with_p",
+   "have_v_prd -MOD/EQ-> hold_v_1",
+   "hold_v_1 -ARG1-> state_n_of",
+   "in_p_loc -ARG1/EQ-> conversation_n_1",
+   "in_p_loc -ARG2-> named(\"Russian\")",
+   "more+than_p -ARG1/EQ-> able_a_1",
+   "more+than_p -ARG2-> part_of",
+   "node all_a_1",
+   "node have_v_prd",
+   "node in_p_loc",
+   "node more+than_p",
+   "of_p -ARG2-> named_n(\"Baltic\")",
+   "the_q -RSTR/H-> named_n(\"Baltic\")",
+   "udef_q -RSTR/H-> state_n_of",
+   "with_p -ARG1-> familiarity_n_1"
+  ],
+  "interp": {
+   "A": "Two clauses are joined by 'and'. The subject of 'able' is the people making up more than half of the population of the Baltic states, where 'Baltic states' is a compound. They are able to hold a conversation, doing so in Russian. Then, nevertheless, almost all people have familiarity, and 'with the phrases' modifies 'familiarity'.",
+   "B": "The subject is the 'states of the Baltic', and 'more than half of the population' compares with 'able': the states are able, more than half of the population. Those states both hold a conversation and have familiarity, with 'in Russian' modifying 'conversation' (a conversation in Russian). 'Almost all' acts as a modifier of 'have'. 'Have' is the predicative 'have X with Y': they have familiarity with the phrases."
+  },
+  "doc": [
+   "    all_q (all, all_do_be, all_long; type d_-_prt-plm_le): Det, partv, plural-mass <ex>B has enough rice.",
+   "    all_q (all, all_do_be, all_long; type n_cp_do-be-all_le): Do-be `all' <ex>All he did was compete.",
+   "    all_q (all, all_do_be, all_long; type d_ap_all-long_le): Det, only `all', with post-mod noun <ex>It ran all day long.",
+   "    compound: noun-noun compound: ARG1 the head noun, ARG2 the modifier noun",
+   "    generic_entity: an unexpressed or generic thing (e.g. the head of \"the rich\", \"half\")",
+   "    have_v_1 (have-poss, have_prp; type v_np_poss_le): Cmps NP, only have <ex>B has C.",
+   "    have_v_1 (have-poss, have_prp; type v_np_poss-cx_le): Cmps NP, only contracted have (no extraction) <ex>They've no idea.",
+   "    have_v_1 (have-poss, have_prp; type v_np-vp_aeq-prp_le): Cmps NP,VP (prprt), a-equi <ex>B had trouble sleeping.",
+   "    in_p_state: the preposition \"in\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")",
+   "    more_comp: comparative \"more/-er\": ARG1 is compared",
+   "    much-many_a: the quantity sense of much/many/more/less",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)",
+   "    all_a_1 (all, all_adj, all_det; type av_-_i-ap_le): Intersective, AdjP <ex>B was sub-optimal",
+   "    all_a_1 (all, all_adj, all_det; type av_-_i-vp-x_le): Int, VP w/aux head <ex>B can indeed win.",
+   "    all_a_1 (all, all_adj, all_det; type d_-_all-tm_le): Det, with time noun, only 'all' <ex>B slept all afternoon.",
+   "    have_v_prd (have-prd, have_oeq; type v_np-prd_oeq-ntr_le): Cmps NP,Prd-phr, o-equi, no psv <ex>B wanted C ready.",
+   "    have_v_prd (have-prd, have_oeq; type v_np-vpslnp_oeq_le): Cmps NP and VP/NP, o-equi <ex>B had C to talk to.",
+   "    in_p_loc (in; type p_np_i-reg_le): Prep, np, non-temp <ex>B stood behind C.",
+   "    in_p_loc (in; type pp_-_i-dir-nomodn_le): PP, no n_mod <ex>we stayed in.",
+   "    in_p_loc (in; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    more+than_p (more_than; type p_np_i_le): Prep, np, intersective <ex>B sang for C.",
+   "    more+than_p (more_than; type p_cp_s_le): Prep, S, subord <ex>B won since C lost.",
+   "    more+than_p (more_than; type p_np-pp_i-more-than_le): Prep, np, pp, more-than <ex>B was more a gardner than a farmer."
+  ]
+ },
+ {
+  "id": "d21",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "ACE",
+  "sentence": "What brands of cordless phone do you have in stock?",
+  "A": [
+   "have_v_prd -ARG1-> pron",
+   "have_v_prd -ARG2-> brand_n_of",
+   "have_v_prd -ARG3/H-> in_p_loc",
+   "in_p_loc -ARG1-> brand_n_of",
+   "in_p_loc -ARG2-> stock_n_1",
+   "node have_v_prd",
+   "node in_p_loc"
+  ],
+  "B": [
+   "have_v_1 -ARG1-> pron",
+   "have_v_1 -ARG2-> brand_n_of",
+   "in_p_state -ARG1/EQ-> have_v_1",
+   "in_p_state -ARG2-> stock_n_1",
+   "node have_v_1",
+   "node in_p_state"
+  ],
+  "interp": {
+   "A": "'Have' is the predicative 'have X in stock': you have the brands of cordless phone such that those brands are in stock. 'in stock' describes the brands.",
+   "B": "'Have' is plain possession: you have the brands. 'in stock' modifies the having itself, as the state that the having is in."
+  },
+  "doc": [
+   "    have_v_prd (have-prd, have_oeq; type v_np-prd_oeq-ntr_le): Cmps NP,Prd-phr, o-equi, no psv <ex>B wanted C ready.",
+   "    have_v_prd (have-prd, have_oeq; type v_np-vpslnp_oeq_le): Cmps NP and VP/NP, o-equi <ex>B had C to talk to.",
+   "    in_p_loc (in; type p_np_i-reg_le): Prep, np, non-temp <ex>B stood behind C.",
+   "    in_p_loc (in; type pp_-_i-dir-nomodn_le): PP, no n_mod <ex>we stayed in.",
+   "    in_p_loc (in; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    have_v_1 (have-poss, have_prp; type v_np_poss_le): Cmps NP, only have <ex>B has C.",
+   "    have_v_1 (have-poss, have_prp; type v_np_poss-cx_le): Cmps NP, only contracted have (no extraction) <ex>They've no idea.",
+   "    have_v_1 (have-poss, have_prp; type v_np-vp_aeq-prp_le): Cmps NP,VP (prprt), a-equi <ex>B had trouble sleeping.",
+   "    in_p_state: the preposition \"in\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")"
+  ]
+ },
+ {
+  "id": "d22",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "gold",
+  "sentence": "My Toshiba 797986 just crashed.",
+  "A": [
+   "compound -ARG1/EQ-> just_n_1",
+   "compound -ARG2-> card(\"797986\")",
+   "crash_v_1 -ARG1-> just_n_1",
+   "def_explicit_q -RSTR/H-> just_n_1",
+   "node compound",
+   "node just_n_1",
+   "node number_q",
+   "number_q -RSTR/H-> card(\"797986\")",
+   "poss -ARG1/EQ-> just_n_1"
+  ],
+  "B": [
+   "crash_v_1 -ARG1-> card(\"797986\")",
+   "def_explicit_q -RSTR/H-> card(\"797986\")",
+   "just_a_1 -ARG1/EQ-> crash_v_1",
+   "node just_a_1",
+   "poss -ARG1/EQ-> card(\"797986\")"
+  ],
+  "interp": {
+   "A": "'just' is a noun at the head of the subject: the thing that crashed is 'my Toshiba 797986 just'. '797986' is a compound modifier of that noun 'just'.",
+   "B": "'just' is an adverb modifying 'crashed': my Toshiba 797986 crashed just now. The subject is headed by '797986'."
+  },
+  "doc": [
+   "    compound: noun-noun compound: ARG1 the head noun, ARG2 the modifier noun",
+   "    just_n_1 (just; type n_-_c-pl-def_le): Icn, plur, definite det <ex>The poor are numerous.",
+   "    number_q: quantifier of a number used as a noun phrase",
+   "    just_a_1 (just, justly; type aj_-_i_le): Adj (intersective), no comp <ex>The beautiful dog won.",
+   "    just_a_1 (just, justly; type av_-_i-vp-x_le): Int, VP w/aux head <ex>B can indeed win.",
+   "    just_a_1 (just, justly; type av_-_i-vp_le): Intersective, VP <ex>B quickly won."
+  ]
+ },
+ {
+  "id": "d23",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "The ⌊>Box-Jenkins>⌋ methodology (1976) developed by George Box and G.M. Jenkins combines the AR and MA models to produce the ⌊>ARMA>⌋ (autoregressive moving average) model which is the cornerstone of stationary time series analysis.",
+  "A": [
+   "autoregressive/jj_u_unknown -ARG1/EQ-> average_n_of",
+   "compound -ARG1/EQ-> named(\"Jenkins\")",
+   "compound -ARG1/EQ-> series_n_of",
+   "compound -ARG2-> named(\"Box\")",
+   "move_v_1 -ARG1/EQ-> average_n_of",
+   "node average_n_of",
+   "node named(\"Box\")",
+   "node proper_q",
+   "node yofc(\"1976\")",
+   "parenthetical -ARG2-> average_n_of",
+   "parenthetical -ARG2-> yofc(\"1976\")",
+   "proper_q -RSTR/H-> named(\"Box\")",
+   "stationary_a_1 -ARG1/EQ-> analysis_n_of",
+   "udef_q -RSTR/H-> average_n_of",
+   "udef_q -RSTR/H-> yofc(\"1976\")"
+  ],
+  "B": [
+   "autoregressive/jj_u_unknown -ARG1-> named(\"ARMA\")",
+   "compound -ARG1/EQ-> analysis_n_of",
+   "compound -ARG1/EQ-> methodology_n_1",
+   "compound -ARG2-> box_n_of",
+   "node average_a_1",
+   "node box_n_of",
+   "node card(\"1976\")",
+   "node subord",
+   "node subord",
+   "parenthetical -ARG2-> autoregressive/jj_u_unknown",
+   "parenthetical -ARG2-> card(\"1976\")",
+   "stationary_a_1 -ARG1/EQ-> time_n_of",
+   "subord -ARG1/H-> autoregressive/jj_u_unknown",
+   "subord -ARG1/H-> move_v_1",
+   "subord -ARG2/H-> average_a_1",
+   "subord -ARG2/H-> subord",
+   "subord -MOD/EQ-> named(\"ARMA\")",
+   "udef_q -RSTR/H-> box_n_of",
+   "udef_q -RSTR/H-> card(\"1976\")"
+  ],
+  "interp": {
+   "A": "'Box' is a proper name compounded with 'Jenkins' (Box-Jenkins), and '(1976)' is a year. '(autoregressive moving average)' is a parenthetical noun phrase headed by 'average', modified by 'autoregressive' and 'moving'. 'stationary' modifies 'analysis' in 'time series analysis'.",
+   "B": "'box' is a common noun compounded with 'methodology', and '1976' is a plain number. 'autoregressive', 'moving' and 'average' (here an adjective) form a chain of subordinate, clause-like modifiers attached to 'ARMA', and the parenthetical is headed by 'autoregressive'. 'stationary' modifies 'time', and 'series' forms a compound with 'analysis'."
+  },
+  "doc": [
+   "    average_n_of (average, average_i; type n_-_c-brno_le): Icn, no det, no mod <ex>B was in line.",
+   "    average_n_of (average, average_i; type n_pp_c-nocnh-of_le): Cn, PP-of, excl nonhd in n-n <ex>This make of cars is good.",
+   "    average_n_of (average, average_i; type n_pp_c-gr-sg-of_le): Cn, group, PP-of comp, singular only <ex>A lot of birds fly.",
+   "    named: a proper name",
+   "    proper_q: quantifier of a proper name",
+   "    yofc: year",
+   "    average_a_1 (average; type aj_-_i_le): Adj (intersective), no comp <ex>The beautiful dog won.",
+   "    box_n_of (box; type n_pp_c-of_le): Cn, PP-of <ex>B's the winner of the race",
+   "    card: cardinal number",
+   "    subord: subordinate clause linking (ARG1 main, ARG2 subordinate)"
+  ]
+ },
+ {
+  "id": "d24",
+  "set": "set2",
+  "by": "claude",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "The focus lies on establishing a mathematical equation as a model to represent the interactions between the different variables in consideration.",
+  "A": [
+   "eventuality -ARG1/HEQ-> represent_v_1",
+   "eventuality -MOD/EQ-> model_n_of",
+   "node eventuality",
+   "represent_v_1 -ARG1-> model_n_of"
+  ],
+  "B": [
+   "node with_p",
+   "represent_v_1 -MOD/EQ-> model_n_of",
+   "with_p -ARG1/EQ-> represent_v_1",
+   "with_p -ARG2/EQ-> model_n_of"
+  ],
+  "interp": {
+   "A": "'to represent the interactions' is a relative modifier of 'model', and the model is the representer: a model that represents the interactions between the variables.",
+   "B": "'to represent the interactions' modifies 'model' with the model as an instrument: a model with which to represent the interactions. The model is not the subject of 'represent'."
+  },
+  "doc": [
+   "    eventuality: an unexpressed event (e.g. in an infinitival relative)",
+   "    with_p: implicit \"with\" relation (instrument or accompaniment)"
+  ]
+ },
+ {
+  "id": "d25",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "However, in certain areas south of Moscow, e.g. in and around ⌊>Tula>⌋, ⌊λ/g/¦/g/¦IPAλ⌋ is pronounced as in the Moscow and northern dialects unless it precedes a voiceless plosive or a pause.",
+  "A": [
+   "and_c -ARG1/EQ-> in_p_loc",
+   "around_p -ARG1/EQ-> e+g_p",
+   "as_p -ARG1/EQ-> pronounce_v_1",
+   "e+g_p -ARG1/EQ-> place_n",
+   "in_p_loc -ARG1/EQ-> as_p",
+   "in_p_loc -ARG1/EQ-> e+g_p",
+   "in_p_loc -ARG2-> and_c",
+   "in_p_loc -ARG2-> named(\"Tula\")",
+   "in_p_state -ARG1/EQ-> pronounce_v_1",
+   "node as_p",
+   "node e+g_p",
+   "node in_p_loc",
+   "node in_p_loc",
+   "pronounce_v_1 -ARG2-> named(\"<ipa/>\")",
+   "the_q -RSTR/H-> and_c",
+   "udef_q -RSTR/H-> named(\"Moscow\")",
+   "unless_p_1 -ARG1/H-> pronounce_v_1"
+  ],
+  "B": [
+   "and_c -ARG1/EQ-> in_p_state",
+   "around_p -ARG1/EQ-> in_p_state",
+   "as_x_prd -ARG1/H-> pronounce_v_1",
+   "as_x_prd -ARG2/H-> in_p_dir",
+   "in_p_state -ARG1-> pronounce_v_1",
+   "in_p_state -ARG1/EQ-> in_p_state",
+   "in_p_state -ARG2-> named(\"Tula\")",
+   "node as_x_prd",
+   "node in_p_dir",
+   "node in_p_state",
+   "pronounce_v_1 -ARG2-> and_c",
+   "pronounce_v_1 -ARG3-> named(\"<ipa/>\")",
+   "the_q -RSTR/H-> named(\"Moscow\")",
+   "udef_q -RSTR/H-> and_c",
+   "unless_p_1 -ARG1/H-> as_x_prd"
+  ],
+  "interp": {
+   "A": "'e.g. in and around Tula' modifies 'areas south of Moscow'. 'as in the Moscow and northern dialects' modifies 'pronounced': the IPA sound is pronounced the way it is in those dialects. 'the' covers the coordination 'Moscow and northern dialects'. 'unless it precedes...' restricts the pronouncing.",
+   "B": "'in and around Tula' modifies the pronouncing directly. 'the' applies only to 'Moscow'. 'Moscow and northern dialects' is the second argument of 'pronounced', and the IPA symbol is a third argument. 'as' links the pronouncing to 'in the ... dialects' as a predicative comparison, and 'unless it precedes...' takes scope over that whole as-construction."
+  },
+  "doc": [
+   "    as_p (as, as_cln, as_prdp; type pp_-_i_le): PP, intersective <ex>B saw C above.",
+   "    as_p (as, as_cln, as_prdp; type p_np_i_le): Prep, np, intersective <ex>B sang for C.",
+   "    as_p (as, as_cln, as_prdp; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    e+g_p (e_g, e_g_cma; type p_np_i-nmob_le): Prep, np, no gap, not extractable <ex>B arises, e.g. on Monday.",
+   "    e+g_p (e_g, e_g_cma; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    e+g_p (e_g, e_g_cma; type p_cp_s-notop_le): Prep, S, no prep stranding <ex>After B lost, C won.",
+   "    in_p_loc (in; type p_np_i-reg_le): Prep, np, non-temp <ex>B stood behind C.",
+   "    in_p_loc (in; type pp_-_i-dir-nomodn_le): PP, no n_mod <ex>we stayed in.",
+   "    in_p_loc (in; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    as_x_prd (as; type p_prd_s-v-p_le): Prep, pred-phr, non-adjective <ex>B won as in Paris.",
+   "    in_p_dir: (no lexical entry; grammar-internal or unknown word)",
+   "    in_p_state: the preposition \"in\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")"
+  ]
+ },
+ {
+  "id": "d26",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "In a network created by people analyzing their understanding of the word (such as ⌊>Wordnet>⌋) the links and decomposition structures of the network are few in number and kind; and include \"part of\", \"kind of\", and similar links.",
+  "A": [
+   "and_c -ARG1-> generic_entity",
+   "be_v_id -ARG2-> and_c",
+   "fw_seq -ARG1/EQ-> quoted(\"kind\")",
+   "implicit_conj -ARG1-> fw_seq",
+   "implicit_conj -ARG1/EQ-> be_v_id",
+   "implicit_conj -ARG2-> and_c",
+   "implicit_conj -ARG2/EQ-> and_c",
+   "in_p_loc -ARG2-> number_n_grm",
+   "in_p_state -ARG1/EQ-> be_v_id",
+   "include_v_1 -ARG2-> implicit_conj",
+   "node implicit_conj",
+   "node implicit_conj",
+   "node proper_q",
+   "node udef_q",
+   "proper_q -RSTR/H-> quoted(\"kind\")",
+   "quoted(\"of\") -MOD/EQ-> quoted(\"kind\")",
+   "such+as_p -ARG1/EQ-> network_n_of",
+   "udef_q -RSTR/H-> implicit_conj"
+  ],
+  "B": [
+   "and_c -ARG1-> number_n_grm",
+   "and_c -ARG1/EQ-> be_v_id",
+   "be_v_id -ARG2-> generic_entity",
+   "fw_seq -ARG1/EQ-> fw_seq",
+   "fw_seq -ARG1/EQ-> fw_seq",
+   "fw_seq -ARG2/EQ-> quoted(\"kind\")",
+   "in_p_loc -ARG2-> and_c",
+   "in_p_state -ARG1/EQ-> and_c",
+   "include_v_1 -ARG1-> and_c",
+   "include_v_1 -ARG2-> and_c",
+   "node fw_seq",
+   "quoted(\"kind\") -MOD/EQ-> quoted(\"part\")",
+   "quoted(\"of\") -MOD/EQ-> quoted(\"part\")",
+   "such+as_p -ARG1/EQ-> word_n_of"
+  ],
+  "interp": {
+   "A": "\"Such as Wordnet\" gives an example of a network. \"Few in number\" and \"kind\" are coordinated as what the links and structures are. The two clauses before and after the semicolon are joined without an overt conjunction, and the list after \"include\" coordinates the quoted sequence (\"kind\" modified by \"of\") with \"similar links\".",
+   "B": "\"Such as Wordnet\" gives an example of \"the word\". \"In\" takes the coordination \"number and kind\", so the links are few in number and in kind. The two clauses are joined by \"and\", and \"part of\", \"kind of\" form one quoted word sequence (\"part\" modified by \"kind\" and \"of\") coordinated with \"similar links\" as what the links and structures include."
+  },
+  "doc": [
+   "    implicit_conj: coordination without a conjunction word (list or comma)",
+   "    proper_q: quantifier of a proper name",
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)",
+   "    fw_seq: (no lexical entry; grammar-internal or unknown word)"
+  ]
+ },
+ {
+  "id": "d27",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "Before the ⌊>dissolution of the Soviet Union>⌋, the overwhelming majority of ⌊>Russophone>⌋s in North America were Russian-speaking ⌊>Jews>⌋.",
+  "A": [
+   "node udef_q",
+   "udef_q -RSTR/H-> named(\"Russophones\")"
+  ],
+  "B": [
+   "node proper_q",
+   "proper_q -RSTR/H-> named(\"Russophones\")"
+  ],
+  "interp": {
+   "A": "\"Russophones\" is a name used as a bare plural with no determiner, meaning Russophones in general.",
+   "B": "\"Russophones\" is a proper name referring to one named entity, with an ordinary proper-name quantifier."
+  },
+  "doc": [
+   "    udef_q: implicit quantifier of a bare noun phrase (no determiner)",
+   "    proper_q: quantifier of a proper name"
+  ]
+ },
+ {
+  "id": "d28",
+  "set": "set2",
+  "by": "olga",
+  "person": "A",
+  "person verdict": "gold",
+  "sentence": "It measures predictive power of the model i.e. the proportion of the total variation in the dependent variable that is “explained” (accounted for) by variation in the independent variables.",
+  "A": [
+   "by_p_state -ARG1-> explain_v_to",
+   "by_p_state -ARG2-> variation_n_of",
+   "explain_v_to -ARG2-> proportion_n_1",
+   "i+e_p -ARG1/EQ-> measure_v_1",
+   "in_p_loc -ARG1/EQ-> variation_n_of",
+   "in_p_loc -ARG2-> variable_n_1",
+   "node by_p_state",
+   "node in_p_loc",
+   "node subord",
+   "subord -ARG1/H-> explain_v_to",
+   "subord -ARG2/H-> account_v_for",
+   "subord -MOD/EQ-> proportion_n_1"
+  ],
+  "B": [
+   "account_v_for -ARG1-> variation_n_of",
+   "account_v_for -ARG2/EQ-> model_n_of",
+   "explain_v_to -ARG2/EQ-> variable_n_1",
+   "i+e_p -ARG1/EQ-> model_n_of",
+   "in_p_state -ARG1/EQ-> account_v_for",
+   "in_p_state -ARG2-> variable_n_1",
+   "node in_p_state"
+  ],
+  "interp": {
+   "A": "\"I.e.\" attaches to the whole measuring clause. The proportion is what is \"explained\", with \"(accounted for)\" as a subordinate gloss on it. \"By variation in the independent variables\" says what does the explaining, and \"in the dependent variable\" locates the variation.",
+   "B": "\"I.e.\" attaches to \"the model\", so the model is glossed as the proportion. The dependent variable is what is \"explained\", and \"accounted for\" takes the variation and the model as its arguments, modified by \"in the independent variables\"."
+  },
+  "doc": [
+   "    by_p_state: the preposition \"by\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")",
+   "    in_p_loc (in; type p_np_i-reg_le): Prep, np, non-temp <ex>B stood behind C.",
+   "    in_p_loc (in; type pp_-_i-dir-nomodn_le): PP, no n_mod <ex>we stayed in.",
+   "    in_p_loc (in; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    subord: subordinate clause linking (ARG1 main, ARG2 subordinate)",
+   "    in_p_state: the preposition \"in\" in its state sense: ARG1 is in that state or relation to ARG2 (e.g. \"in use\", \"by hand\")"
+  ]
+ },
+ {
+  "id": "d29",
+  "set": "set2",
+  "by": "olga",
+  "person": "B",
+  "person verdict": "ACE",
+  "sentence": "In ⌊>linguistics>⌋, ⌊∗semantics∗⌋ is the subfield that is devoted to the study of meaning, as inherent at the levels of words, phrases, sentences, and even larger units of ⌊>discourse>⌋ (referred to as ⌊/texts/⌋).",
+  "A": [
+   "as_p -ARG1/EQ-> refer_v_to",
+   "as_p -ARG2-> text_n_of",
+   "even_x_deg -MOD/EQ-> udef_q",
+   "level_n_of -ARG1-> implicit_conj",
+   "node as_p",
+   "node mean_v_1",
+   "node nominalization",
+   "node subord",
+   "nominalization -ARG1/HEQ-> subord",
+   "refer_v_to -ARG2/EQ-> unit_n_of",
+   "study_n_of -ARG1-> nominalization",
+   "subord -ARG1/H-> mean_v_1",
+   "subord -ARG2/H-> inherent_a_1",
+   "udef_q -RSTR/H-> nominalization"
+  ],
+  "B": [
+   "comp_equal -ARG2-> text_n_of",
+   "even_x_deg -ARG1/EQ-> more_comp",
+   "inherent_a_1 -ARG1/EQ-> study_n_of",
+   "node meaning_n_of",
+   "node of_p",
+   "of_p -ARG1/EQ-> level_n_of",
+   "of_p -ARG2-> implicit_conj",
+   "refer_v_to -ARG2/EQ-> discourse_n_1",
+   "study_n_of -ARG1-> meaning_n_of",
+   "udef_q -RSTR/H-> meaning_n_of"
+  ],
+  "interp": {
+   "A": "\"Meaning\" is the verb \"mean\" nominalized (the study of meaning something). \"As inherent at the levels...\" is a subordinate clause attached to that meaning. \"Referred to as texts\" describes the larger units, and \"even\" modifies a noun phrase.",
+   "B": "\"Meaning\" is a noun (the study of meaning), and \"inherent\" is predicated of the study itself. \"Even\" modifies the comparative \"larger\", and \"referred to\" describes \"discourse\", with \"as texts\" read as an equative comparison."
+  },
+  "doc": [
+   "    as_p (as, as_cln, as_prdp; type pp_-_i_le): PP, intersective <ex>B saw C above.",
+   "    as_p (as, as_cln, as_prdp; type p_np_i_le): Prep, np, intersective <ex>B sang for C.",
+   "    as_p (as, as_cln, as_prdp; type p_pp_i-coprd_le): Prep, pp, no lex-pp complements, not modifying PPs <ex>B wins except on clay.",
+   "    mean_v_1 (mean; type v_np*_le): Cmps NP(opt) <ex>B cleaned the room.",
+   "    mean_v_1 (mean; type v_prd_seq-va_le): Cmps VP or AP, s-equi <ex>B became frustrated.",
+   "    mean_v_1 (mean; type v_nb_quote_le): Cmps Nbar(obl,pred nom,quoted-word) <ex>B can't spell `supersede'.",
+   "    nominalization: a verb phrase used as a noun (gerund)",
+   "    subord: subordinate clause linking (ARG1 main, ARG2 subordinate)",
+   "    meaning_n_of (meaning; type n_pp_mc-of_le): Mc, PP-of comp <ex>Loss of memory is common.",
+   "    of_p (of, of_poss; type p_np_i-nnm-nprd_le): Prep, NP, no noun mod, non-prd <ex>Pictures were taken of Kim.",
+   "    of_p (of, of_poss; type p_np_i-nm-poss_le): Prep, np, poss 'of' <ex>The cities of France grew."
+  ]
+ },
+ {
+  "id": "d30",
+  "set": "set2",
+  "by": "olga",
+  "person": "BOTH",
+  "person verdict": "both",
+  "sentence": "Efficient marketing is a process of understanding the amount of variability and tailoring the marketing strategy for greater profitability.",
+  "A": [
+   "for_p -ARG1/EQ-> strategy_n_of"
+  ],
+  "B": [
+   "for_p -ARG1/EQ-> tailor_v_1"
+  ],
+  "interp": {
+   "A": "\"For greater profitability\" modifies \"the marketing strategy\": a strategy for greater profitability, which is what gets tailored.",
+   "B": "\"For greater profitability\" modifies \"tailoring\": the strategy is tailored in order to get greater profitability."
+  },
+  "doc": []
+ }
+]
