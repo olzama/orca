@@ -382,8 +382,15 @@ def exp_training():
     t2 = table([('Forms as typed, from raw text; tagger trained on', ''), ('Right meaning chosen', 'n hl'), ('Any analysis', 'n'),
                 ('Right meaning among the analyses found', 'n')], rows)
     t = t + cap('BERT-base, treebank tokens.') + t2 + cap('BERT-base. Half the silver data, chosen at random, costs little.')
+    nw = load(f'{ORCA}/analysis/mrs/dev-2025bothnews25surf-debertav3large-rawtext.json')
+    if nw:
+        drow = lambda name, r: (f'<tr><td>{name}</td>' + td(pct(r['counts']['same MRS'], N), True) + td(pct(r['counts']['with MRS'], N))
+                                + td(pct(r['counts']['gold MRS among accepted'], N)) + '</tr>')
+        t += (table([('DeBERTa-v3 large, current parser defaults; tagger trained on', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Gold among the analyses found', 'n')],
+                    [drow('All data (590,721 sentences)', BEST), drow('All data and more 2025 news (663,219 sentences)', nw)])
+              + cap('Redwoods dev, from raw text. The added news (72,092 sentences of ACE\'s first parses, kept if they replay) is a different kind of text from Redwoods, so no gain is expected here; the test that matters is unseen news, which needs a fresh sample (roadmap O71).'))
     body = t + notes('Silver data: ACE\'s first parses of novels (1838 to 1921) and news (NYT 2023, 2025), with LLM-written counterparts, kept if they replay.',
-                     'One run each; seed variation not measured.')
+                     'One run each; the run-to-run spread is about one point (' + link('runs', 'How much two runs differ') + ').')
     return fold('Training data', 'More grammar-licensed text helped up to now; halving it costs little.', body, id_='training-data')
 
 
