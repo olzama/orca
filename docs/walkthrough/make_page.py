@@ -954,6 +954,31 @@ def exp_label_filter():
     return fold('Ruling out label pairs the grammar can never combine', 'Sound, and it skips a quarter of the replays, but almost none of the skipped candidates would have been right.', body, id_='label-filter')
 
 
+def exp_grammar_drift():
+    d = load(f'{ORCA}/analysis/grammar-drift/compare-2025-2020.json')
+    if not d:
+        return ''
+    c = d['counts']
+    rows = [f'<tr><td>ERG 2025 (the grammar the tagger was trained for)</td>' + td(pct(c['A: first guess accepted'], N)) + td(pct(c['A: any analysis'], N), True)
+            + td(f"{c['A: replays'] / N:.0f}") + td(na('the reference run')) + '</tr>',
+            f'<tr><td>ERG 2020, same tagger output</td>' + td(pct(c['B: first guess accepted'], N)) + td(pct(c['B: any analysis'], N), True)
+            + td(f"{c['B: replays'] / N:.0f}") + td(pct(c['both analyzed: same MRS'], c['both analyzed'])) + '</tr>']
+    t = table([('Redwoods dev, DeBERTa-v3 large tags from raw text', ''), ('First guess accepted', 'n'), ('Any analysis', 'n hl'), ('Replays per sentence', 'n'),
+               ('Same MRS as under ERG 2025, where both have one', 'n')], rows)
+    w = d['A analyzed, B not: why']
+    lost = sum(w.values())
+    names = {'unification failure in B': 'A rule or type with the same name has a changed definition', 'chosen derivation uses a name B lacks': 'A lexical type or rule that ERG 2020 does not have',
+             'missing name or entry in B': 'The word has no entry of that type in ERG 2020'}
+    t2 = table([(f'Sentences analyzed under ERG 2025 but not under ERG 2020 ({lost:,})', ''), ('Share', 'n')],
+               [f'<tr><td>{names.get(k, k)}</td>' + td(pct(v, lost)) + '</tr>' for k, v in sorted(w.items(), key=lambda kv: -kv[1])])
+    body = (t + notes('The tagger and the MaxEnt ranking model are each used with their own grammar version (redwoods.mem of 2020 for the 2020 run); tokens are ERG 2025 preprocessing in both runs. Exact match against gold is not shown for 2020: the gold analyses are made with ERG 2025.',
+                      'A label the grammar does not have counts as a rejected guess and repair moves on; no sentence fails with an error.')
+            + t2 + notes('Each lost sentence counted once, by why the derivation chosen under ERG 2025 fails under ERG 2020. Most changed definitions are one constraint in one rule (flr-hd_rel-fin_c).',
+                         'About half of the losses could be recovered by mapping labels between versions (renamed types found through their lexical entries, and other entries of the same word); changed definitions need retraining on data replayed under the new grammar.')
+            + cap('The installed trunk and latest GitHub copies of the ERG are the same as ERG 2025, so 2020 is the only different version tested.'))
+    return fold('When the grammar changes: the tagger against ERG 2020', 'Trained for ERG 2025, the tagger finds an analysis for clearly fewer sentences under ERG 2020; label mapping could win back about half.', body, id_='grammar-drift')
+
+
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
     body = steps + '    <div id="examples" class="stack" style="gap:28px"></div>\n'
@@ -1019,7 +1044,7 @@ def rebuild(s):
             + question('better', 'What makes it better?', 'A stronger encoder and more silver data each add a few points; differences of about one point are within run-to-run spread; LLMs help offline only.',
                        '', exp_encoders(open_=True) + runs() + exp_training() + exp_label_filter() + exp_rawtext() + exp_llm() + exp_llm_rank())
             + question('grammars', 'Does it work with other grammars?', 'So far, yes: Orca replays the Hausa and Spanish grammars\' own parses once ERG-specific assumptions are removed, and a first Spanish tagger works.',
-                       '', exp_hausa(open_=True) + exp_spanish())
+                       '', exp_hausa(open_=True) + exp_spanish() + exp_grammar_drift())
             + question('reference', 'Reference', 'Further measures and worked examples.', '', exp_properties() + exp_examples()) + '\n')
     s = s[:start] + body + s[end:]
     if 'details.fold' not in s:
