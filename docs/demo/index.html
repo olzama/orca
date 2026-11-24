@@ -199,6 +199,10 @@ details.rhelp > summary::-webkit-details-marker { display: none; }
 details.rhelp[open] { flex-basis: 100%; }
 details.rhelp p { margin-top: 6px; max-width: 70ch; }
 select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); max-width: 100%; }
+.examples { display: flex; flex-direction: column; gap: 14px; }
+.examples h3 { font: 600 0.72rem var(--body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.examples p { margin-bottom: 8px; }
+#examples-long .chip { border-radius: 10px; }
 </style>
 </head>
 <body>
@@ -242,7 +246,10 @@ select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--li
       <label class="check"><input type="checkbox" id="nomargin"> no margin</label>
       <details class="rhelp"><summary aria-label="What these settings mean">?</summary><p class="small">Readings are the distinct meanings among the grammar’s best parses. A reading is shown only if its score is within the margin of the best one: at margin 1.25, its best parse is at least about 29% as likely as the top parse. A larger margin shows more readings; at most 1 reading shows only the top one.</p></details>
     </div>
-    <div class="chips" id="examples"></div>
+    <div class="examples">
+      <div><h3>Short sentences</h3><div class="chips" id="examples"></div></div>
+      <div><h3>Long sentences</h3><p class="small">Try these with “Also parse with ACE” switched on: on these two, Orca answers about three times faster than ACE on this server, with the same meaning.</p><div class="chips" id="examples-long"></div></div>
+    </div>
   </section>
 
   <div id="status" class="verdict hidden" role="status"></div>
@@ -374,6 +381,12 @@ const EXAMPLES = [
   "The committee, which met on Tuesday, couldn't agree on a budget.",
   "My husband's birthdya is next week.",
   "Every farmer who owns a donkey feeds it.",
+];
+// long sentences, where a chart limited to the tagger's candidates is several times faster than ACE's full chart
+// (measured on the demo server: about 2 s against 6 to 7 s, same meaning)
+const LONG_EXAMPLES = [
+  "Models capture relationships among many factors to allow assessment of risk or potential associated with a particular set of conditions, guiding decision making for candidate transactions.",
+  "As a result standard regression techniques cannot be applied to time series data and methodology has been developed to decompose the trend, seasonal and cyclical component of the series.",
 ];
 
 /* drawing code from the walkthrough page */
@@ -982,7 +995,9 @@ async function run() {
 
 $('go').addEventListener('click', run);
 $('input').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); } });
-$('examples').replaceChildren(...EXAMPLES.map(s => { const b = el('button', 'chip', esc(s)); b.type = 'button'; b.addEventListener('click', () => { $('input').value = s; run(); }); return b; }));
+const exampleChip = s => { const b = el('button', 'chip', esc(s)); b.type = 'button'; b.addEventListener('click', () => { $('input').value = s; run(); }); return b; };
+$('examples').replaceChildren(...EXAMPLES.map(exampleChip));
+$('examples-long').replaceChildren(...LONG_EXAMPLES.map(exampleChip));
 $('types-body').addEventListener('click', e => { const t = e.target.closest('[data-name]'); if (t) lookupType(t.dataset.name); });
 $('types-go').addEventListener('click', () => lookupType($('types-q').value));
 $('types-q').addEventListener('keydown', e => { if (e.key === 'Enter') lookupType($('types-q').value); });
