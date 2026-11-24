@@ -30,7 +30,7 @@ sys.setrecursionlimit(20000)
 
 DEFAULTS = {
     'grammar': os.path.join(ROOT, 'data/erg/2025/english.tdl'),
-    'tagger': os.path.join(ROOT, 'data/models/tagger-2025bothall-bert'),
+    'tagger': os.path.join(ROOT, 'data/models/tagger-2025bothsurf-debertav3large'),   # the headline tagger (word forms as typed)
     'ace': '/home/olga/delphin/tools/ACE/ace-0.9.34/ace',
     'dat': os.path.join(ROOT, 'data/ace/erg-2025.dat'),
 }
