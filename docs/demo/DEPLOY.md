@@ -19,3 +19,7 @@
 - `scripts/supertag_ace.py`: `run_restricted_nbest` (ACE `-n K --tsdb-stdout`, reads each parse's MaxEnt score).
 - `docs/demo/index.html`: the reading tabs.
 - No new dependencies. Restart the server to pick up the change (deploy_demo.sh does this when loaded files change).
+
+## Reading controls on the page (24 November 2026, later)
+
+Below the Parse button there are now three controls: "At most N readings" (1 to 10, default 5; 1 shows only the top reading, the old behavior), "within M of the best" (the margin, default 1.25, in steps of 0.25) and "no margin". A "?" next to them explains them in plain English. The page sends them with every parse request and with the request for a further reading's feature structure, and remembers them in the viewer's browser. No server change: the server already accepted `readings` and `margin`. Only `docs/demo/index.html` changed; a page reload is enough, no restart.
