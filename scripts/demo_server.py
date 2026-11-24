@@ -32,7 +32,7 @@ LOCK = threading.Lock()
 PARSER = None
 MAX_CHARS = 1000
 MAX_WORDS = 60           # longer sentences are refused
-PER_MINUTE = 10          # requests per visitor per minute
+PER_MINUTE = 30          # requests per visitor per minute
 MAX_WAITING = 4          # requests waiting for the parser; more get "busy"
 ACE_TIMEOUT = 10         # seconds for the ACE comparison
 RECENT = defaultdict(deque)
@@ -99,12 +99,19 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self._send(200, f.read(), 'text/html; charset=utf-8')
         elif self.path == '/api/info':
             self._send(200, json.dumps({'tagger': PARSER.tagger_name, 'note': measured_note()}), 'application/json')
+        elif self.path == '/api/loaded':
+            # the project files this process has loaded: deploy_demo.sh restarts only when one of them changed
+            root = os.path.realpath(os.path.join(HERE, '..')) + os.sep
+            files = {os.path.realpath(f) for f in (getattr(m, '__file__', None) for m in list(sys.modules.values())) if f}
+            self._send(200, json.dumps(sorted(f[len(root):] for f in files if f.startswith(root) and '.venv' not in f)), 'application/json')
         else:
             self._send(404, 'not found', 'text/plain')
 
     def visitor(self):
-        # behind a tunnel every request comes from 127.0.0.1; the tunnel passes the real address on
-        return self.headers.get('CF-Connecting-IP') or self.client_address[0]
+        # behind a tunnel or a reverse proxy every request comes from 127.0.0.1; the proxy passes the real address on
+        if self.client_address[0] in ('127.0.0.1', '::1'):
+            return self.headers.get('CF-Connecting-IP') or self.headers.get('X-Real-IP') or self.client_address[0]
+        return self.client_address[0]
 
     def limited(self):
         now, q = time.time(), RECENT[self.visitor()]
@@ -161,7 +168,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     a['mrs_view'] = mrs_view(am)
                     der = a.pop('_derivation', None)       # ACE prints no feature structure: rebuild it by replaying its derivation
                     if der:
+                        try:                               # the same tree view as Orca's derivation
+                            from delphin import derivation as D
+                            from encode_treebank import to_tree
+                            a['derivation'] = PARSER.tree_json(to_tree(D.from_string(der)))
+                        except Exception:
+                            a['derivation'] = None
+                        t0 = time.perf_counter()           # not ACE's time: Orca rebuilding the sign for display
                         sign, how = replay_sign(PARSER.fg, der)
+                        a['sign seconds'] = time.perf_counter() - t0
                         a['fs'] = fs_view(PARSER.fg, sign) if sign is not None else None
                         a['fs_note'] = None if sign is not None else how
                     a['same as orca'] = same_mrs(m, am) if m is not None and am is not None else None
