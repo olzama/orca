@@ -1,0 +1,18 @@
+{
+ "what": "O106 part 2: can restricted ACE (chart mode) keep one process with a per-sentence lexical restriction? Measured 24 Nov 2026 on kesha (loaded: two trainings, raw-text ACE), ACE 0.9.34, ERG 2025 image 292 MB",
+ "ace supports per-item restriction": false,
+ "why": {
+  "-L": "a single global string set once from the command line (main.c:224 disable_signs), checked by substring at lexical lookup (morpho.c:279); no command changes it per item outside LUI mode, and LUI colon commands don't touch it (main.c handle_lui_colon_command)",
+  "YY input (-y)": "tokens carry id, span, string, orthographic rule and POS tags only (yy.c yy_read_token); no lexical entry or type field, so YY cannot restrict entries per token"
+ },
+ "timings ms": {
+  "start and grammar load, no sentence (median of 15)": 29.0,
+  "start-up breakdown": "process exec about 1 ms (ace -V); the rest is touching the lazily mmapped image (MAP_PRIVATE, freeze.c:472): about 5,240 minor page faults, 64 MB RSS, no major faults",
+  "one short sentence, no -L (median)": 36.0,
+  "-L list per dev sentence": "median 60 lexemes, 991 characters (max 1,509)",
+  "chart step per call with -L, 40 dev sentences (median / mean)": [49.1, 54.6],
+  "same sentence repeated inside one process, per extra sentence (median / mean)": [13.6, 18.1]
+ },
+ "conclusion": "about 35 ms of a median 49 ms chart step is ACE start-up; removing it needs a per-item restriction ACE does not have",
+ "options": ["patch ACE: a per-line directive in the normal input loop that sets disable_signs for the next item (about 10 lines in main.c; same lookup code, so identical parses); needs our own ACE build, also on the demo server", "ask upstream (Woodley Packard) for a per-item -L or a YY field naming allowed lexical entries", "huge pages for the image (MAP_HUGETLB is commented out in freeze.c) would cut the page faults but needs a rebuild and system configuration", "report chart-mode time net of start-up meanwhile (the demo now shows the split)"]
+}
