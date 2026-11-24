@@ -170,6 +170,24 @@ details.frag summary .small { margin-left: 6px; }
 .about { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 28px; border-top: 1px solid var(--line); padding-top: 14px; }
 .about h3 { font: 600 0.72rem var(--body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
 .about p { font-size: 0.95rem; color: var(--muted); max-width: 100ch; }
+svg text[data-name] { cursor: pointer; }
+svg text[data-name]:hover { text-decoration: underline; }
+.drawer { position: fixed; top: 0; right: 0; height: 100vh; width: min(500px, 94vw); background: var(--surface); border-left: 1px solid var(--line); box-shadow: -10px 0 28px rgba(0, 0, 0, 0.14); transform: translateX(105%); transition: transform 0.18s ease; z-index: 50; display: flex; flex-direction: column; }
+.drawer.open { transform: none; }
+.drawer-head { display: flex; gap: 8px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.drawer-head input { flex: 1; min-width: 0; font: 0.85rem var(--mono); padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--well); color: var(--fg); }
+.drawer-head button { font: 0.82rem var(--body); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.drawer-head button:disabled { opacity: 0.4; cursor: default; }
+.drawer-body { overflow: auto; padding: 16px 18px 28px; display: flex; flex-direction: column; gap: 14px; }
+.drawer-body h3 { font: 600 0.72rem var(--body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.tname { font: 600 1.05rem var(--mono); overflow-wrap: anywhere; }
+.tkind { display: inline-block; font: 500 0.75rem var(--body); background: var(--accent-soft); border-radius: 10px; padding: 1px 9px; margin-left: 8px; vertical-align: middle; }
+.tchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tchip { font: 0.78rem var(--mono); background: var(--well); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; cursor: pointer; color: var(--accent); }
+.tchip:hover { border-color: var(--accent); }
+pre.tdl { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--well); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+pre.tdl .ref { color: var(--accent); cursor: pointer; text-decoration: underline dotted; }
+.tex { font-size: 0.9rem; margin: 2px 0 0; padding-left: 18px; }
 </style>
 </head>
 <body>
@@ -230,7 +248,7 @@ details.frag summary .small { margin-left: 6px; }
 
     <section class="panel">
       <h2>Derivation</h2>
-      <p class="small">Purple boxes are words, with their lexical type (gray) and lexical rules (purple). Blue boxes are syntactic rules; a box with several names is a chain of unary rules.</p>
+      <p class="small">Purple boxes are words, with their lexical type (gray) and lexical rules (purple). Blue boxes are syntactic rules; a box with several names is a chain of unary rules. Click any label to look it up in the grammar: what it is for, the types above and below it in the hierarchy, and its definition.</p>
       <div id="tree"></div>
     </section>
 
@@ -306,6 +324,16 @@ SOFTWARE.</pre></div></details>
   </footer>
 </div>
 
+<aside class="drawer" id="types" aria-label="Grammar lookup" aria-hidden="true">
+  <div class="drawer-head">
+    <button type="button" id="types-back" title="Back to the previous name" disabled>←</button>
+    <input id="types-q" placeholder="a rule or type name, such as sb-hd_mc_c or head" aria-label="Name to look up in the grammar" spellcheck="false">
+    <button type="button" id="types-go">Look up</button>
+    <button type="button" id="types-close" title="Close (Esc)">✕</button>
+  </div>
+  <div class="drawer-body" id="types-body"></div>
+</aside>
+
 <script>
 const NS = 'http://www.w3.org/2000/svg';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -366,7 +394,7 @@ function drawTree(raw) {
     boxes += `<rect class="node ${leaf ? 'leaf' : 'phr'}" x="${n.x - n.w / 2}" y="${n.y}" width="${n.w}" height="${h}" rx="7"></rect>`;
     n.labels.forEach((l, i) => {
       const kind = !leaf ? 'rule' : (i === n.labels.length - 1 ? 'lextype' : (/lr$/.test(l) ? 'lexrule' : 'rule'));
-      boxes += `<text class="${kind}" x="${n.x}" y="${n.y + 16 + i * LH}" text-anchor="middle">${esc(l)}</text>`;
+      boxes += `<text class="${kind}" data-name="${esc(l)}" x="${n.x}" y="${n.y + 16 + i * LH}" text-anchor="middle">${esc(l)}</text>`;
     });
     if (leaf) {
       edges += `<path class="stem" d="M${n.x} ${n.y + h} V${wordY - 18}"></path>`;
@@ -379,9 +407,67 @@ function drawTree(raw) {
     });
   })(root);
   svg.innerHTML = edges + boxes;
+  svg.addEventListener('click', e => { const t = e.target.closest('text[data-name]'); if (t) lookupType(t.dataset.name); });
   const frame = el('div', 'scroll pad'); frame.appendChild(svg);
   return frame;
 }
+
+// Grammar lookup: a name from the derivation (rule, lexical rule, lexical type) or typed in, as the grammar defines it
+const typeTrail = [];
+function typeChips(title, names, total) {
+  const box = el('div');
+  box.appendChild(el('h3', '', esc(title) + (total > names.length ? ` (${names.length} of ${total})` : ` (${names.length})`)));
+  const chips = el('div', 'tchips');
+  names.forEach(n => { const c = el('button', 'tchip', esc(n)); c.type = 'button'; c.dataset.name = n; chips.appendChild(c); });
+  box.appendChild(chips);
+  return box;
+}
+function showType(t) {
+  const body = $('types-body');
+  body.replaceChildren();
+  const head = el('div');
+  head.appendChild(el('span', 'tname', esc(t.name)));
+  if (t.kind) head.appendChild(el('span', 'tkind', esc(t.kind)));
+  body.appendChild(head);
+  if (!t.found) { body.appendChild(el('p', 'small', 'The grammar has no definition under this name.')); return; }
+  if (t.doc) body.appendChild(el('p', '', esc(t.doc)));
+  if (t.ex && t.ex.length) {
+    const ex = el('div'); ex.appendChild(el('h3', '', 'Examples in the grammar’s documentation'));
+    ex.appendChild(el('ul', 'tex', t.ex.map(x => `<li>${esc(x)}</li>`).join('')));
+    if (t.ex.some(x => x.startsWith('*'))) ex.appendChild(el('p', 'small', 'A star marks a sentence the grammar should reject.'));
+    body.appendChild(ex);
+  }
+  if (t.supertypes.length) body.appendChild(typeChips(t.kind === 'type' || t.kind === 'lexical type' ? 'Supertypes' : 'Its type', t.supertypes, t.supertypes.length));
+  if (t.subtypes.length) body.appendChild(typeChips('Subtypes', t.subtypes, t['subtypes total']));
+  if (t.instances.length) body.appendChild(typeChips(t.kind === 'lexical type' ? 'Lexical entries of this type' : 'Rules and entries defined from this type', t.instances, t['instances total']));
+  t.definitions.forEach(d => {
+    const box = el('div'); box.appendChild(el('h3', '', `Definition · ${esc(d.file)}, line ${d.line}`));
+    const known = new Set(d.names);
+    const pre = el('pre', 'tdl');
+    pre.innerHTML = d.text.split(/([A-Za-z_*][\w\-+*.\/]*)/).map((w, i) => i % 2 && known.has(w.toLowerCase()) ? `<span class="ref" data-name="${esc(w.toLowerCase())}">${esc(w)}</span>` : esc(w)).join('');
+    box.appendChild(pre);
+    body.appendChild(box);
+  });
+  if (!t.definitions.length) body.appendChild(el('p', 'small', 'A basic type with no written definition of its own.'));
+  body.scrollTop = 0;
+}
+async function lookupType(name, keep) {
+  name = String(name || '').trim();
+  if (!name) return;
+  const d = $('types');
+  d.classList.add('open'); d.setAttribute('aria-hidden', 'false');
+  $('types-q').value = name;
+  if (!keep && typeTrail[typeTrail.length - 1] !== name) typeTrail.push(name);
+  $('types-back').disabled = typeTrail.length < 2;
+  $('types-body').replaceChildren(el('p', 'small', 'Looking up …'));
+  try {
+    const res = await fetch('api/type?name=' + encodeURIComponent(name));
+    const t = await res.json();
+    if (t.error) throw new Error(t.error);
+    showType(t);
+  } catch (e) { $('types-body').replaceChildren(el('p', 'small', 'The lookup did not work: ' + esc(e.message))); }
+}
+function closeTypes() { const d = $('types'); d.classList.remove('open'); d.setAttribute('aria-hidden', 'true'); }
 function drawDmrs(d, other) {
   const key = (g, l) => g.nodes[l[0]][0] + '>' + g.nodes[l[1]][0] + ':' + l[2] + '/' + l[3];
   const otherKeys = other ? new Set(other.links.map(l => key(other, l))) : null;
@@ -816,6 +902,12 @@ async function run() {
 $('go').addEventListener('click', run);
 $('input').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); } });
 $('examples').replaceChildren(...EXAMPLES.map(s => { const b = el('button', 'chip', esc(s)); b.type = 'button'; b.addEventListener('click', () => { $('input').value = s; run(); }); return b; }));
+$('types-body').addEventListener('click', e => { const t = e.target.closest('[data-name]'); if (t) lookupType(t.dataset.name); });
+$('types-go').addEventListener('click', () => lookupType($('types-q').value));
+$('types-q').addEventListener('keydown', e => { if (e.key === 'Enter') lookupType($('types-q').value); });
+$('types-back').addEventListener('click', () => { if (typeTrail.length > 1) { typeTrail.pop(); lookupType(typeTrail[typeTrail.length - 1], true); } });
+$('types-close').addEventListener('click', closeTypes);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTypes(); });
 </script>
 </body>
 </html>

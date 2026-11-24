@@ -18,8 +18,8 @@ if [[ "${1:-}" == "--data" ]]; then
 fi
 
 # -i lists what changed; the page is read on every request, code needs a restart
-CHANGED=$(rsync -aRi --exclude '__pycache__' --exclude '*.so' --exclude '*.pyc' \
-    orca scripts docs/demo setup.py LICENSE "analysis/mrs/dev-$NAME-rawtext.json" "$HOST:$DEST/" | grep -E '^[<>]f' || true)
+CHANGED=$(rsync -aRi --exclude '__pycache__' --exclude '*.so' --exclude '*.pyc' --exclude 'HANDOFF.md' \
+    orca scripts kelp/__init__.py kelp/docs.py docs/demo setup.py LICENSE "analysis/mrs/dev-$NAME-rawtext.json" "$HOST:$DEST/" | grep -E '^[<>]f' || true)
 if [[ -z "$CHANGED" && "${1:-}" != "--data" ]]; then echo "Nothing changed."; exit 0; fi
 echo "$CHANGED" | sed 's/^[^ ]* /  updated: /'
 

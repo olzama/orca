@@ -15,6 +15,7 @@ import argparse
 import http.server
 import json
 import os
+import re
 import sys
 import threading
 import time
@@ -148,6 +149,55 @@ def same_mrs(a, b):
         return None
 
 
+TYPES = None             # the grammar's definitions for the page's type lookup (built in main)
+LOOKUPS_PER_MINUTE = 240
+RECENT_LOOKUPS = defaultdict(deque)
+_SUPERS = re.compile(r':[=+<]\s*((?:[^\s&\[\]"<>,.#]+\s*&\s*)*[^\s&\[\]"<>,.#]+)')
+_KIND_BY_FILE = {'constructions.tdl': 'syntactic rule', 'inflr.tdl': 'lexical rule', 'lexrinst.tdl': 'lexical rule',
+                 'lexrinst-tok.tdl': 'lexical rule', 'lexicon.tdl': 'lexical entry', 'lexicon-rbst.tdl': 'lexical entry',
+                 'gle.tdl': 'generic lexical entry', 'roots.tdl': 'root condition'}
+
+
+def build_types(grammar_file, hierarchy):
+    """What the page's type lookup needs: the grammar's definitions as written (kelp.docs.Lookup), the
+    authored type hierarchy in both directions, and for each type the instances (rules, entries) defined from it."""
+    from kelp.docs import Lookup
+    lk = Lookup(os.path.dirname(os.path.abspath(grammar_file)))
+    parents = {t: list(ps) for t, ps in hierarchy.parents.items()}
+    children = defaultdict(list)
+    for t, ps in parents.items():
+        for q in ps:
+            children[q].append(t)
+    instances = defaultdict(list)
+    for name, d in lk.info.items():
+        if name not in parents and d['type'] in parents:
+            instances[d['type']].append(name)
+    return {'lookup': lk, 'parents': parents, 'children': children, 'instances': instances}
+
+
+def type_view(query, limit=300):
+    """One name in the grammar: what it is, its documentation, the types above and below it, and its definition."""
+    lk, parents = TYPES['lookup'], TYPES['parents']
+    q = query.strip().lower()[:200]
+    got = lk.get(q)
+    defs = got['definitions']
+    info = lk.info.get(q) or {}
+    is_type = q in parents
+    if is_type:
+        supers = parents[q]
+    else:                                  # an instance (rule, lexical entry): the types its definition names
+        m = _SUPERS.search(re.sub(r'%(?:prefix|suffix)[^\n]*\n|""".*?"""', '', defs[0]['text'], flags=re.S)) if defs else None
+        supers = [t.strip().lower() for t in m.group(1).split('&')] if m else []
+        supers = [t for t in supers if t in parents]
+    kind = ('type' if is_type else _KIND_BY_FILE.get(defs[0]['file'], 'instance') if defs else None)
+    if is_type and q.endswith('_le'):
+        kind = 'lexical type'
+    subs, inst = sorted(TYPES['children'].get(q, [])), sorted(TYPES['instances'].get(q, []))
+    return {'name': q, 'found': bool(defs) or is_type, 'kind': kind, 'doc': info.get('doc', ''), 'ex': info.get('ex', []),
+            'supertypes': supers, 'subtypes': subs[:limit], 'subtypes total': len(subs),
+            'instances': inst[:limit], 'instances total': len(inst), 'definitions': defs}
+
+
 class Handler(http.server.BaseHTTPRequestHandler):
     def _send(self, code, body, ctype):
         data = body.encode('utf-8') if isinstance(body, str) else body
@@ -169,6 +219,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
             root = os.path.realpath(os.path.join(HERE, '..')) + os.sep
             files = {os.path.realpath(f) for f in (getattr(m, '__file__', None) for m in list(sys.modules.values())) if f}
             self._send(200, json.dumps(sorted(f[len(root):] for f in files if f.startswith(root) and '.venv' not in f)), 'application/json')
+        elif self.path.startswith('/api/type?'):
+            from urllib.parse import parse_qs, urlsplit
+            name = (parse_qs(urlsplit(self.path).query).get('name') or [''])[0]
+            if self.limited(RECENT_LOOKUPS, LOOKUPS_PER_MINUTE):
+                self._send(429, json.dumps({'error': 'Too many lookups. Please wait a little.'}), 'application/json')
+            elif not name.strip() or TYPES is None:
+                self._send(400, json.dumps({'error': 'no name given'}), 'application/json')
+            else:
+                self._send(200, json.dumps(type_view(name), ensure_ascii=False), 'application/json')
         else:
             self._send(404, 'not found', 'text/plain')
 
@@ -178,12 +237,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.headers.get('CF-Connecting-IP') or self.headers.get('X-Real-IP') or self.client_address[0]
         return self.client_address[0]
 
-    def limited(self):
-        now, q = time.time(), RECENT[self.visitor()]
+    def limited(self, recent=RECENT, per_minute=None):
+        now, q = time.time(), recent[self.visitor()]
         with COUNT_LOCK:
             while q and now - q[0] > 60:
                 q.popleft()
-            if len(q) >= PER_MINUTE:
+            if len(q) >= (per_minute or PER_MINUTE):
                 return True
             q.append(now)
         return False
@@ -284,6 +343,8 @@ def main():
     args = ap.parse_args()
     PARSER = Parser(tagger=args.tagger, fragments=True, mode='chart')   # the demo shows one sentence at a time: the most accurate mode
     PARSER.parse('The dog barked.')
+    global TYPES
+    TYPES = build_types(DEFAULTS['grammar'], PARSER.fg.h)
     srv = http.server.ThreadingHTTPServer((args.host, args.port), Handler)
     print(f'Orca demo ready: http://{args.host}:{args.port}', flush=True)
     srv.serve_forever()
