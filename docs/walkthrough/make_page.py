@@ -1087,6 +1087,17 @@ def exp_judge_check():
     body = t + notes('Olga Zamaraeva, 24 November 2026, blind: the two readings as DMRS graphs in random order, with a neutral paraphrase of each. In the second set, three cases she marked unsure were decided by Claude at her request, with the reasons recorded (all three for gold).',
                      'When the judge sides with gold it is almost always right; when it sides with ACE, it is right more often than not, and otherwise the gold is right. So where the two readings differ, Redwoods gold is often the debatable one, and exact match against gold understates both ACE and Orca.',
                      'One reviewer and 30 cases per row: each share is uncertain by about twenty points either way.')
+    jv = load(f'{ORCA}/analysis/judge-variants/score.json')
+    if jv:
+        R = jv['results']
+        vrow = lambda k: (f'<tr><td>{jv["variants"][k][0].upper() + jv["variants"][k][1:]}</td>' + td(pct(R[k]['all 60']['exact'], 60), True) + td(pct(R[k]['all 60']['lenient'], 60))
+                          + td(pct(R[k]['without the 3 decided by Claude']['exact'], 57)) + '</tr>')
+        body += ('    <h3>Can the judge do better?</h3>\n'
+                 + table([('Judge variant, on the 60 reviewed cases', ''), ('Agrees with the person', 'n hl'), ('… counting \'both acceptable\' as compatible', 'n'), ('Agrees, without the three cases decided by Claude', 'n')],
+                         [vrow(k) for k in ('v1', 'v2', 'v3', 'v4')])
+                 + notes('Paraphrases: a plain-English statement of what each reading means, written by Claude from the differences alone and told not to say which is better. Documentation: the lexical types of differing predicates, with their descriptions and example sentences from the ERG.',
+                         f'Claude Opus on the subscription (${jv["cost_usd total"]:.2f}). The cases were chosen by the original judge\'s verdict, so compare the variants with each other, not the absolute rates with dev as a whole; 60 cases leave about twelve points of uncertainty.',
+                         'The judge with paraphrases is used from 24 November on.'))
     return fold('Checking the judge against a person', 'The judge agrees with a person in most cases, nearly always when it sides with gold; where it sides with ACE, the gold is often the debatable reading.', body, id_='judge-check')
 
 def exp_examples():
