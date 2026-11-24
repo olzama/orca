@@ -1185,10 +1185,19 @@ def exp_readings():
     rows2 += [crow(k, v) for k, v in cv.items() if isinstance(v, dict) and 'gold in set' in v]
     t2 = table([('Output rule', ''), ('Gold meaning in the set returned', 'n hl'), ('Readings per sentence, on average', 'n'), ('Sentences given more than one reading', 'n')], rows2)
     dist = d['distinct readings per sentence']
+    dc = (load(f'{ORCA}/analysis/readings/dev-chart.json') or {}).get('summary')
+    t3 = ''
+    if dc:
+        g = dc['gold among top k distinct readings']; m = dc['margin 1.25, at most 5']
+        cr = [f'<tr><td>Top {k}</td>' + td(pct(g[k], N), k == '1') + '</tr>' for k in ('1', '2', '5')]
+        cr.append(f'<tr><td>Within the margin (at most five), {m["mean set size"]:.1f} readings per sentence on average</td>' + td(pct(m['gold in set'], N), True) + '</tr>')
+        cr.append(f'<tr><td>For comparison: ACE alone, first-ranked parse</td>' + td(pct(T['ace']['all']['same MRS'], N)) + '</tr>')
+        t3 = ('    <h3>Chart mode</h3>\n' + table([('Chart mode (ACE restricted to the tagger\'s entries), Redwoods dev', ''), ('Gold meaning among the readings', 'n hl')], cr)
+              + notes(f'ACE returns its {dc["n best asked"]} best parses within the tagger\'s entries; parses with the same meaning form one reading, ranked by the MaxEnt ranking model. Among its top five readings, chart mode contains the gold meaning about as often as ACE\'s single best parse matches it.'))
     body = (t1 + notes(f'Repair collects up to 30 derivations the grammar accepts; with an analysis, a sentence has {d["derivations per sentence (with an analysis)"]:.1f} on average, which collapse to {d["readings per sentence (with an analysis)"]:.1f} distinct meanings. Readings are ranked by the grammar\'s MaxEnt ranking model.',
                        'A second reading recovers most of the distance between the top reading and the ceiling (gold among all accepted derivations).')
             + t2 + notes('Margin: all readings whose ranking score is within a fixed distance of the best one, at most five; the distance is fitted on four fifths of dev and measured on the remaining fifth (five-fold cross-validation).',
-                         'Each reading comes with a probability from the ranking model, so a user can see how confident the choice was. One reading stays the default.'))
+                         'Each reading comes with a probability from the ranking model, so a user can see how confident the choice was. One reading stays the default.') + t3)
     return fold('When a sentence is ambiguous: several readings', 'Returning a second reading where the ranking model is unsure brings the gold meaning into the output for several more points of dev, at about 1.3 readings per sentence.', body, id_='readings')
 
 
