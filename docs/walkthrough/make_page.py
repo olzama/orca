@@ -1165,6 +1165,33 @@ def corrected_table():
                     'In brackets: the range from the uncertainty of the 30-case samples (95%) and from counting the judge\'s unreviewed "both" and "neither" verdicts as all right or all wrong.',
                     'Assumptions: a parser that agrees with gold is right; and, until Orca\'s own disagreements are reviewed, the judge errs on Orca\'s disagreements as it does on ACE\'s.'))
 
+def exp_readings():
+    d = load(f'{ORCA}/analysis/readings/dev-summary.json')
+    if not d:
+        return ''
+    say = {'all': 'All', 'under 10': 'Under 10 words', '10 to 19': '10 to 19 words', '20 to 29': '20 to 29 words', '30 and over': '30 words or more'}
+    rows = []
+    for b in ['all', 'under 10', '10 to 19', '20 to 29', '30 and over']:
+        x = d['gold among top k'] if b == 'all' else d['by length'][b]
+        n = N if b == 'all' else x['sentences']
+        rows.append(f'<tr><td>{"&nbsp;&nbsp;" if b != "all" else ""}{say[b]}</td>' + td(f'{n:,}') + ''.join(td(pct(x[k], n), k == '1') for k in ('1', '2', '3', '5')) + '</tr>')
+    t1 = table([('Redwoods dev, current parser', ''), ('Sentences', 'n'), ('Top reading', 'n hl'), ('Top 2', 'n'), ('Top 3', 'n'), ('Top 5', 'n')], rows,
+               group=[('', 2), ('Gold meaning among the distinct readings returned', 4)])
+    cv = d['cross-validated margin (target mean set size)']
+    def crow(k, v):
+        name = 'One reading (the default)' if k in ('1', '1.0') else f'Readings within a margin of the best, aiming at {k} on average'
+        return (f'<tr><td>{name}</td>' + td(pct(v['gold in set'], N), True) + td(f"{v['mean set size']:.2f}") + td(pct(v['more than one'], N)) + '</tr>')
+    rows2 = [crow('1', {'gold in set': d['top 1 only']['gold in set'] if isinstance(d.get('top 1 only'), dict) else d['gold among top k']['1'], 'mean set size': 1.0, 'more than one': 0})]
+    rows2 += [crow(k, v) for k, v in cv.items() if isinstance(v, dict) and 'gold in set' in v]
+    t2 = table([('Output rule', ''), ('Gold meaning in the set returned', 'n hl'), ('Readings per sentence, on average', 'n'), ('Sentences given more than one reading', 'n')], rows2)
+    dist = d['distinct readings per sentence']
+    body = (t1 + notes(f'Repair collects up to 30 derivations the grammar accepts; with an analysis, a sentence has {d["derivations per sentence (with an analysis)"]:.1f} on average, which collapse to {d["readings per sentence (with an analysis)"]:.1f} distinct meanings. Readings are ranked by the grammar\'s MaxEnt ranking model.',
+                       'A second reading recovers most of the distance between the top reading and the ceiling (gold among all accepted derivations).')
+            + t2 + notes('Margin: all readings whose ranking score is within a fixed distance of the best one, at most five; the distance is fitted on four fifths of dev and measured on the remaining fifth (five-fold cross-validation).',
+                         'Each reading comes with a probability from the ranking model, so a user can see how confident the choice was. One reading stays the default.'))
+    return fold('When a sentence is ambiguous: several readings', 'Returning a second reading where the ranking model is unsure brings the gold meaning into the output for several more points of dev, at about 1.3 readings per sentence.', body, id_='readings')
+
+
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
     body = steps + '    <div id="examples" class="stack" style="gap:28px"></div>\n'
@@ -1226,7 +1253,7 @@ def rebuild(s):
     body = ('\n' + tiles() + '\n'
             + question('what', 'What Orca is', 'A tagger proposes a whole derivation of the grammar, and the grammar checks it by unification; there is no chart.', how_shown, tagger_fold)
             + question('good', 'How good is it?', 'Replay is several times faster than ACE and clearly less accurate; adding a chart, or sending the hard sentences to ACE, buys back most of the gap at some of the speed.',
-                       corrected_table() + '    <h3>All measures</h3>\n' + summary() + '    <h3>The modes side by side</h3>\n' + modes(), exp_supertag_ace() + exp_hybrid() + exp_ace() + exp_judge_check())
+                       corrected_table() + '    <h3>All measures</h3>\n' + summary() + '    <h3>The modes side by side</h3>\n' + modes(), exp_readings() + exp_supertag_ace() + exp_hybrid() + exp_ace() + exp_judge_check())
             + question('wrong', 'Where does it go wrong?', 'Mostly in proposing: for most wrong sentences the right meaning is never among the analyses found, and failures grow with length. What Orca does output is about as precise as ACE\'s.',
                        results(), exp_edm() + exp_replay_rate())
             + question('beyond', 'Does it hold beyond the treebank?', 'Partly: on novels and news replay agrees with ACE less than on the treebank and chart mode much more; on generated sentences, and where ACE fails, the judge often sides with Orca.',
