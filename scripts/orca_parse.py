@@ -326,7 +326,9 @@ class Parser:
         out['chart'] = {'allowed entries': len(allowed), 'disabled entries': len(disabled), 'unresolved labels': unresolved,
                         'after replay': after_replay,
                         # how the chart step's time splits: the whole ACE process, and ACE's own figure for parsing
-                        'ace wall seconds': supertag_ace.LAST.get('wall seconds'), 'ace parse seconds': supertag_ace.LAST.get('parse seconds')}
+                        'ace wall seconds': supertag_ace.LAST.get('wall seconds'), 'ace parse seconds': supertag_ace.LAST.get('parse seconds'),
+                        # True: one kept ACE process (patched build), so there is no start-up in the wall time
+                        'ace persistent': bool(supertag_ace.LAST.get('persistent'))}
         if mrs_s is None:
             out['outcome'] = ('replay found nothing; ' if after_replay else '') + 'chart found nothing'
             out['accepted derivations'] = 0

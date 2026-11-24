@@ -114,7 +114,7 @@ def _timed(p, wall):
     ("NOTE: parsed 1 / 1 sentences, avg ..., time 0.00660s"); the rest is starting up and loading the grammar."""
     m = re.search(r'NOTE: parsed .*?time ([0-9.]+)s', p.stderr or '')
     LAST.clear()
-    LAST.update({'wall seconds': wall, 'parse seconds': float(m.group(1)) if m else None})
+    LAST.update({'wall seconds': wall, 'parse seconds': float(m.group(1)) if m else None, 'persistent': False})
 
 
 class RestrictedAce:
