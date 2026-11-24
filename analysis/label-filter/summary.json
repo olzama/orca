@@ -1,0 +1,65 @@
+{
+ "what": "O86 label filter, Redwoods dev from raw text, cached DeBERTa-v3 large tags (data/bench/dev-debertav3large-tags.pkl), repair_bench.py, CPU",
+ "sentences": 2062,
+ "runs": {
+  "base-0.001": {
+   "name": "Current defaults (cutoff 0.001), no filter",
+   "exact": 1524,
+   "with properties and ICONS": 1515,
+   "any analysis": 1924,
+   "gold among accepted": 1637,
+   "replays": 360972,
+   "skipped by the filter": null,
+   "repair seconds (loaded machine)": 196.6
+  },
+  "filter-0.001": {
+   "name": "Cutoff 0.001, label filter",
+   "exact": 1532,
+   "with properties and ICONS": 1522,
+   "any analysis": 1935,
+   "gold among accepted": 1647,
+   "replays": 273243,
+   "skipped by the filter": 423165,
+   "repair seconds (loaded machine)": 204.5
+  },
+  "base-0.0001": {
+   "name": "Cutoff 0.0001, no filter",
+   "exact": 1528,
+   "with properties and ICONS": 1516,
+   "any analysis": 1940,
+   "gold among accepted": 1670,
+   "replays": 582172,
+   "skipped by the filter": null,
+   "repair seconds (loaded machine)": 276.7
+  },
+  "filter-0.0001": {
+   "name": "Cutoff 0.0001, label filter",
+   "exact": 1533,
+   "with properties and ICONS": 1520,
+   "any analysis": 1952,
+   "gold among accepted": 1681,
+   "replays": 443489,
+   "skipped by the filter": 695187,
+   "repair seconds (loaded machine)": 292.2
+  }
+ },
+ "timing, same load, warm table": {
+  "no filter": 184.7,
+  "filter": 194.6
+ },
+ "table": {
+  "file": "data/label-filter/erg-2025.json (not in git; rebuild with repair_bench --label-filter-save)",
+  "keys": 67340,
+  "keys that fail": 21791,
+  "leaf keys": 4388,
+  "leaf keys that fail": 3
+ },
+ "soundness": {
+  "gold label sequences checked (Redwoods train+dev)": 88340,
+  "rejected": 26,
+  "why": "all 26 use n_-_pn-pl-unk_le, which has no entry in ERG 2025 (genericname_pl is now n_-_pn-unk_le); replay rejects them too",
+  "tagger candidates audited against replay": 3600,
+  "rejected by the filter": 1357,
+  "of those accepted by replay": 0
+ }
+}
