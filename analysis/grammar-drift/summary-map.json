@@ -1,0 +1,101 @@
+{
+ "reference": "analysis/grammar-drift/dev-2025.json",
+ "runs": {
+  "ERG 2025": {
+   "file": "analysis/grammar-drift/dev-2025.json",
+   "sentences": 2062,
+   "first guess accepted": 1503,
+   "any analysis": 1924,
+   "replays": 360972,
+   "replays per sentence": 175.05916585838992,
+   "both analyzed": 1924,
+   "same MRS as the reference": 1924,
+   "exact (gold)": 1524,
+   "repair seconds": 176.5961015149951
+  },
+  "ERG 2025, word fallback before generic entries": {
+   "file": "analysis/grammar-drift/dev-2025-fallback.json",
+   "sentences": 2062,
+   "first guess accepted": 1439,
+   "any analysis": 1841,
+   "replays": 343133,
+   "replays per sentence": 166.40785645004848,
+   "both analyzed": 1822,
+   "same MRS as the reference": 1757,
+   "exact (gold)": 1466,
+   "repair seconds": 178.16869520768523
+  },
+  "ERG 2025, word fallback after generic entries": {
+   "file": "analysis/grammar-drift/dev-2025-fallback2.json",
+   "sentences": 2062,
+   "first guess accepted": 1519,
+   "any analysis": 1941,
+   "replays": 358677,
+   "replays per sentence": 173.94616876818623,
+   "both analyzed": 1923,
+   "same MRS as the reference": 1912,
+   "exact (gold)": 1533,
+   "repair seconds": 191.9564483622089
+  },
+  "ERG 2020": {
+   "file": "analysis/grammar-drift/dev-2020.json",
+   "sentences": 2062,
+   "first guess accepted": 1297,
+   "any analysis": 1644,
+   "replays": 305557,
+   "replays per sentence": 148.18477206595537,
+   "both analyzed": 1642,
+   "same MRS as the reference": 1505,
+   "exact (gold)": null,
+   "repair seconds": 110.82126569841057
+  },
+  "ERG 2020, type map": {
+   "file": "analysis/grammar-drift/dev-2020-maptypes.json",
+   "sentences": 2062,
+   "first guess accepted": 1351,
+   "any analysis": 1715,
+   "replays": 325700,
+   "replays per sentence": 157.95344325897187,
+   "both analyzed": 1711,
+   "same MRS as the reference": 1570,
+   "exact (gold)": null,
+   "repair seconds": 121.8019037162885
+  },
+  "ERG 2020, type map, word fallback before generic": {
+   "file": "analysis/grammar-drift/dev-2020-maptypes-fallback.json",
+   "sentences": 2062,
+   "first guess accepted": 1325,
+   "any analysis": 1687,
+   "replays": 324228,
+   "replays per sentence": 157.2395732298739,
+   "both analyzed": 1668,
+   "same MRS as the reference": 1493,
+   "exact (gold)": null,
+   "repair seconds": 130.035599488765
+  },
+  "ERG 2020, type map, word fallback after generic": {
+   "file": "analysis/grammar-drift/dev-2020-maptypes-fallback2.json",
+   "sentences": 2062,
+   "first guess accepted": 1397,
+   "any analysis": 1776,
+   "replays": 338911,
+   "replays per sentence": 164.36032977691562,
+   "both analyzed": 1758,
+   "same MRS as the reference": 1603,
+   "exact (gold)": null,
+   "repair seconds": 137.63542393315583
+  },
+  "ERG 2020, type map, word fallback for missing types only": {
+   "file": "analysis/grammar-drift/dev-2020-maptypes-fallbackmissing.json",
+   "sentences": 2062,
+   "first guess accepted": 1351,
+   "any analysis": 1715,
+   "replays": 325016,
+   "replays per sentence": 157.62172647914645,
+   "both analyzed": 1711,
+   "same MRS as the reference": 1570,
+   "exact (gold)": null,
+   "repair seconds": 121.54976306948811
+  }
+ }
+}

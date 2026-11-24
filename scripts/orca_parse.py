@@ -52,7 +52,8 @@ class Parser:
                  dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.001, device=None,
                  all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
                  normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False,
-                 fragments=False, mode='replay', chart_k=5, chart_min_prob=0.001, chart_timeout=60, label_filter=None):
+                 fragments=False, mode='replay', chart_k=5, chart_min_prob=0.001, chart_timeout=60, label_filter=None,
+                 label_map=None, word_fallback=False):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -88,10 +89,15 @@ class Parser:
         g = Grammar(grammar)
         self.lx = Lexicon(g, gdir)
         self.lx.locate_missing = locate_missing
+        self.lx.word_fallback = word_fallback      # O91: a word without an entry of the proposed type: its entries of the same part of speech
         self.known = known_words(self.lx)
         self.me = MaxEnt(os.path.join(gdir, 'redwoods.mem'))
         self.generic = lambda e: g.status.get(e) == 'generic-lex-entry'
         self.fg = FastGrammar(g)
+        if label_map:                               # O91: the tagger's grammar names mapped onto this grammar version (scripts/label_map.py)
+            lm = json.load(open(label_map))
+            self.lx.type_map, self.lx.rule_map = lm['types'], lm['rules']
+            self.fg.rule_map = lm['rules']
         for name, status in g.status.items():           # rule templates, built once
             if status in ('rule', 'lex-rule'):
                 self.fg.instance(name)
@@ -381,6 +387,8 @@ def main():
     ap.add_argument('--chart-k', type=int, default=5, help='chart: tagger lexical labels per token')
     ap.add_argument('--label-filter', help='label filter table (scripts/label_filter.py), or "on" to compute on demand; off by default')
     ap.add_argument('--chart-min-prob', type=float, default=0.001, help='chart: drop labels below this probability (the first is always kept)')
+    ap.add_argument('--label-map', help='scripts/label_map.py output, when the grammar is another version than the tagger\'s (O91); off by default')
+    ap.add_argument('--word-fallback', action='store_true', help='a word without an entry of the proposed lexical type: try its entries of the same part of speech (O91); off by default')
     ap.add_argument('--no-fragments', dest='fragments', action='store_false', help='parsing sentences: give no fragments when there is no full analysis (never used in --eval)')
     args = ap.parse_args()
     p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget,
@@ -388,7 +396,8 @@ def main():
                locate_missing=args.locate_missing, normalized_lookup=args.normalized_lookup,
                patterns=args.patterns, pattern_weight=args.pattern_weight, pattern_only_new=args.pattern_only_new,
                fragments=args.fragments and not args.eval, mode=args.mode or ('replay' if args.eval else 'fallback'), chart_k=args.chart_k,
-               chart_min_prob=args.chart_min_prob, label_filter=args.label_filter)
+               chart_min_prob=args.chart_min_prob, label_filter=args.label_filter,
+               label_map=args.label_map, word_fallback=args.word_fallback)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
         return

@@ -66,6 +66,13 @@ def run(a):
     data = pickle.load(open(a.cache, 'rb'))
     p = Parser(tagger=a.tagger, device='cpu', **({'grammar': a.grammar} if a.grammar else {}))
     r = p.repair
+    if a.label_map:                      # O91: names the grammar lacks, mapped (scripts/label_map.py)
+        lm = json.load(open(a.label_map))
+        if a.map_types:
+            p.lx.type_map = lm['types']
+        if a.map_rules:
+            p.lx.rule_map = p.fg.rule_map = lm['rules']
+    p.lx.word_fallback = 'missing-type' if a.word_fallback_missing_only else a.word_fallback
     gold = load_gold(a.gold_mrs) if a.gold_mrs else {}
     pats = None
     if a.patterns:
@@ -212,6 +219,11 @@ def main():
     ap.add_argument('--ids', help='file with sentence ids to run (one per line)')
     ap.add_argument('--label-filter-save', help='write the label filter table (with the keys computed in this run) here')
     ap.add_argument('--label-filter', help='label filter table (scripts/label_filter.py), or "on" to compute on demand; changes search')
+    ap.add_argument('--label-map', help='scripts/label_map.py output: names of the tagger\'s grammar mapped onto this one (O91)')
+    ap.add_argument('--map-types', action='store_true', help='with --label-map: map lexical types this grammar lacks')
+    ap.add_argument('--map-rules', action='store_true', help='with --label-map: map rules this grammar lacks (unambiguous renames only)')
+    ap.add_argument('--word-fallback', action='store_true', help='a word without an entry of the proposed type: offer its entries of other types with the same part of speech')
+    ap.add_argument('--word-fallback-missing-only', action='store_true', help='the word fallback only for lexical types this grammar does not have at all')
     a = ap.parse_args()
     {'prepare': prepare, 'run': run, 'compare': compare}[a.cmd](a)
 

@@ -145,7 +145,9 @@ class Lexicon:
         lexical rules (given top-down, as in the tagger's label)."""
         words = [f.lower().replace('\\', '') for f in forms]
         spellings = {tuple(words)}
+        rule_map = getattr(self, 'rule_map', {})
         for rule in lexrules:
+            rule = rule_map.get(rule, rule)
             if rule in self.undo:
                 new = set()
                 for sp in spellings:
@@ -159,7 +161,45 @@ class Lexicon:
         found = []
         for sp in spellings:
             found += self.by_type_orth.get((lextype, ' '.join(sp)), [])
-        return found or list(self.generic.get(lextype, ()))
+        if found:
+            return found
+        # another grammar version (scripts/label_map.py): a type this grammar lacks, through its entries' new types
+        for t in getattr(self, 'type_map', {}).get(lextype, ()):
+            for sp in spellings:
+                found += self.by_type_orth.get((t, ' '.join(sp)), [])
+        if found:
+            return found
+        generic = list(self.generic.get(lextype, ()))
+        if generic:                    # the grammar's own unknown-word entries for this type come first
+            return generic
+        fb = getattr(self, 'word_fallback', False)
+        if fb == 'missing-type' and lextype in self._types():
+            fb = False                 # the type exists here: the tagger erred on this word; repair tries its alternatives
+        if fb:
+            # the word's own entries of other types with the same part of speech; replay decides among them
+            pos = lextype.split('_', 1)[0]
+            for sp in spellings:
+                for e in self._by_orth().get(' '.join(sp), ()):
+                    if self.type_of.get(e, '').split('_', 1)[0] == pos and e not in found:
+                        found.append(e)
+        return found
+
+    def _types(self):
+        """Lexical types that have entries (or generic entries) in this grammar."""
+        ts = getattr(self, '_type_set', None)
+        if ts is None:
+            ts = self._type_set = set(self.type_of.values()) | set(self.generic)
+        return ts
+
+    def _by_orth(self):
+        """Entries by spelling, any type (built on first use)."""
+        idx = getattr(self, '_orth_index', None)
+        if idx is None:
+            idx = collections.defaultdict(list)
+            for (t, orth), es in self.by_type_orth.items():
+                idx[orth].extend(es)
+            self._orth_index = idx
+        return idx
 
 
 def is_lexrule(lexicon, label):

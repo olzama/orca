@@ -126,6 +126,8 @@ class FastGrammar:
     # -- building blocks ---------------------------------------------------
 
     def instance(self, name):
+        if name not in self.g.instances:          # another grammar version: an unambiguous rename (scripts/label_map.py)
+            name = getattr(self, 'rule_map', {}).get(name, name)
         t = self._instances.get(name)
         if t is None:
             t = self._instances[name] = self.template(self.g.instance(name))
