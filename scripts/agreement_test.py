@@ -11,7 +11,7 @@ and with the one that doesn't:
       was / were
 Steps:
   make  --out DIR                    -> DIR/items.jsonl
-  orca  --out DIR [--tagger T]       -> DIR/orca.jsonl   (outcome, MRS)
+  orca  --out DIR [--tagger T] [--mode replay|chart|fallback]  -> DIR/orca.jsonl   (outcome, MRS)
   ace   --out DIR                    -> DIR/ace.jsonl    (ACE's first-ranked MRS, or none)
   score --out DIR                    -> DIR/score.json
 """
@@ -58,7 +58,7 @@ def orca(args):
     items = [json.loads(l) for l in open(os.path.join(args.out, 'items.jsonl'))]
     path = os.path.join(args.out, 'orca.jsonl')
     done = done_ids(path)
-    p = Parser(tagger=args.tagger)
+    p = Parser(tagger=args.tagger, mode=args.mode)
     with open(path, 'a') as f:
         for it in items:
             if it['id'] in done:
@@ -132,6 +132,7 @@ def main():
     ap.add_argument('cmd', choices=('make', 'orca', 'ace', 'score'))
     ap.add_argument('--out', required=True)
     ap.add_argument('--tagger', default=os.path.join(HERE, '..', 'data/models/tagger-2025bothsurf-bert'))
+    ap.add_argument('--mode', default='replay', choices=('replay', 'chart', 'fallback'), help='Orca parsing mode')
     args = ap.parse_args()
     {'make': make, 'orca': orca, 'ace': ace, 'score': score}[args.cmd](args)
 
