@@ -1113,17 +1113,25 @@ def exp_judge_check():
     d2 = load(f'{ORCA}/analysis/judge-check2/olga-verdicts.json')
     if not d1:
         return ''
-    def row(name, c, total):
+    def row(name, c, total, who='ACE'):
         n = sum(c.values())
-        return (f'<tr><td>{name}</td>' + td(f'{n:,} of {total}') + td(pct(c.get('ACE', 0), n), True) + td(pct(c.get('both', 0), n)) + td(pct(c.get('gold', 0), n), True)
+        return (f'<tr><td>{name}</td>' + td(f'{n:,} of {total}') + td(pct(c.get(who, 0), n), True) + td(pct(c.get('both', 0), n)) + td(pct(c.get('gold', 0), n), True)
                 + td(pct(c.get('neither', 0) + c.get('unsure', 0), n)) + '</tr>')
     rows = [row('The judge preferred ACE\'s first parse', d1['counts'], 111)]
     if d2:
         rows.append(row('The judge preferred gold', d2['counts'], 154))
-    t = table([('Dev sentences where ACE\'s first parse differs from gold (288), a random sample per judge verdict', ''), ('Reviewed', 'n'),
-               ('ACE\'s reading is right', 'n hl'), ('Both acceptable', 'n'), ('Gold is right', 'n hl'), ('Neither, or can\'t tell', 'n')], rows,
+    d3 = load(f'{ORCA}/analysis/judge-check3/olga-verdicts.json')
+    oj = load(BEST_JUDGE)
+    if d3 and oj:
+        cj = d3['counts by judge verdict']
+        rows = ([f'<tr><td colspan="6"><i>ACE: sentences where its first parse differs from gold ({sum(load(ACE_JUDGE)["verdicts"].values())})</i></td></tr>'] + rows
+                + [f'<tr><td colspan="6"><i>Orca: sentences where its reading differs from gold ({sum(oj["verdicts"].values())})</i></td></tr>',
+                   row('The judge preferred Orca\'s reading', cj['parser'], oj['verdicts'].get('orca', 0), 'Orca'),
+                   row('The judge preferred gold', cj['gold'], oj['verdicts'].get('reference', 0), 'Orca')])
+    t = table([('Dev sentences where a parser\'s reading differs from gold, a random sample per judge verdict', ''), ('Reviewed', 'n'),
+               ('The parser\'s reading is right', 'n hl'), ('Both acceptable', 'n'), ('Gold is right', 'n hl'), ('Neither, or can\'t tell', 'n')], rows,
               group=[('', 2), ('The person\'s verdict', 4)])
-    body = t + notes('Olga Zamaraeva, 24 November 2026, blind: the two readings as DMRS graphs in random order, with a neutral paraphrase of each. In the second set, three cases she left undecided were decided by a second reviewer (Claude), with the reasons recorded (all three for gold).',
+    body = t + notes('Olga Zamaraeva, 24 November 2026, blind: the two readings as DMRS graphs in random order, with a neutral paraphrase of each. Three ACE cases she left undecided were decided by a second reviewer (Claude), with the reasons recorded; four Orca cases repeat ACE cases (the same two readings) and carry the same verdict.',
                      'When the judge sides with gold it is almost always right; when it sides with ACE, it is right more often than not, and otherwise the gold is right. So where the two readings differ, Redwoods gold is often the debatable one, and exact match against gold understates both ACE and Orca.',
                      'One reviewer and 30 cases per row: each share is uncertain by about twenty points either way.')
     jv = load(f'{ORCA}/analysis/judge-variants/score.json')
@@ -1157,17 +1165,21 @@ def gold_corrected():
     def wilson(k, n, z=1.96):
         p = k / n; d = 1 + z * z / n; c = (p + z * z / (2 * n)) / d; h = z * sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
         return c - h, c, c + h
-    c1, c2 = d1['counts'], d2['counts']
-    n1, n2 = sum(c1.values()), sum(c2.values())
-    def est(same, v, lenient):
-        k1 = c1.get('ACE', 0) + (c1.get('both', 0) if lenient else 0)
-        k2 = c2.get('ACE', 0) + (c2.get('both', 0) if lenient else 0)
+    d3 = load(f'{ORCA}/analysis/judge-check3/olga-verdicts.json')
+    ace_rates = (d1['counts'], d2['counts'], 'ACE')
+    orca_rates = ((d3['counts by judge verdict']['parser'], d3['counts by judge verdict']['gold'], 'Orca') if d3 else ace_rates)
+    def est(same, v, lenient, rates):
+        c1, c2, who = rates
+        n1, n2 = sum(c1.values()), sum(c2.values())
+        k1 = c1.get(who, 0) + (c1.get('both', 0) if lenient else 0)
+        k2 = c2.get(who, 0) + (c2.get('both', 0) if lenient else 0)
         a, b = wilson(k1, n1), wilson(k2, n2)
         jp, jg, jb, jn = v.get('orca', 0), v.get('reference', 0), v.get('both', 0), v.get('neither', 0)
         return ((same + jp * a[0] + jg * b[0]) / N, (same + jp * a[1] + jg * b[1] + (jb if lenient else 0)) / N, (same + jp * a[2] + jg * b[2] + jb + jn) / N)
     ace = T['ace']['all']['same MRS']; orca = BEST['counts']['same MRS']
-    return {'ace': {'lenient': est(ace, aj['verdicts'], True), 'strict': est(ace, aj['verdicts'], False)},
-            'orca': {'lenient': est(orca, oj['verdicts'], True), 'strict': est(orca, oj['verdicts'], False)}}
+    return {'ace': {'lenient': est(ace, aj['verdicts'], True, ace_rates), 'strict': est(ace, aj['verdicts'], False, ace_rates)},
+            'orca': {'lenient': est(orca, oj['verdicts'], True, orca_rates), 'strict': est(orca, oj['verdicts'], False, orca_rates)},
+            'orca own rates': bool(d3)}
 
 
 def corrected_table():
@@ -1183,7 +1195,7 @@ def corrected_table():
     return ('    <h3>Accuracy corrected for errors in gold</h3>\n' + t
             + notes('Sentences with the same meaning as gold count as right. For the others, the share where the parser\'s reading is actually right comes from a person\'s verdicts on random cases where the LLM judge sided with the parser and where it sided with gold (' + link('judge-check', 'Checking the judge against a person') + '), scaled to all such sentences.',
                     'In brackets: the range from the uncertainty of the 30-case samples (95%) and from counting the judge\'s unreviewed "both" and "neither" verdicts as all right or all wrong.',
-                    'Assumptions: a parser that agrees with gold is right; and, until Orca\'s own disagreements are reviewed, the judge errs on Orca\'s disagreements as it does on ACE\'s.'))
+                    ('Each parser\'s correction uses a person\'s verdicts on that parser\'s own disagreements with gold (60 for each, half where the judge sided with the parser, half where it sided with gold). Assumption: a parser that agrees with gold is right.' if g.get('orca own rates') else 'Assumptions: a parser that agrees with gold is right; and, until Orca\'s own disagreements are reviewed, the judge errs on Orca\'s disagreements as it does on ACE\'s.')))
 
 def exp_readings():
     d = load(f'{ORCA}/analysis/readings/dev-summary.json')

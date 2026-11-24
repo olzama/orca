@@ -1,0 +1,362 @@
+{
+ "e01": {
+  "item": "ws212/1000007202230",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e02": {
+  "item": "ecpa/2231908",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e03": {
+  "item": "ecpa/2209111",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e04": {
+  "item": "ecpa/2249709",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e05": {
+  "item": "ecpa/2263608",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e06": {
+  "item": "ecpa/2272508",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e07": {
+  "item": "ecpa/2252108",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e08": {
+  "item": "ecpa/2210208",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e09": {
+  "item": "ecpa/2276708",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e10": {
+  "item": "ws212/1000007201100",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e11": {
+  "item": "ws212/1000007202270",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e12": {
+  "item": "ecpa/2269708",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e13": {
+  "item": "ws212/1000007500070",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e14": {
+  "item": "ws212/1000007200710",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e15": {
+  "item": "ecpa/2219508",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e16": {
+  "item": "ecpa/2260108",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e17": {
+  "item": "ecpa/2222008",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e18": {
+  "item": "ws212/1000007201050",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e19": {
+  "item": "ws212/1000007401080",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e20": {
+  "item": "ecpa/2282608",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e21": {
+  "item": "ecpa/2206008",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e22": {
+  "item": "ecpa/2253409",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e23": {
+  "item": "ecpa/2225409",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e24": {
+  "item": "ws212/1000007202450",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e25": {
+  "item": "ecpa/2289509",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e26": {
+  "item": "ws212/1000007600210",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e27": {
+  "item": "ecpa/2263309",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e28": {
+  "item": "ws212/1000007202220",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e29": {
+  "item": "ws212/1000007201070",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e30": {
+  "item": "ecpa/2209210",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e31": {
+  "item": "ecpa/2229208",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e32": {
+  "item": "ecpa/2279209",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e33": {
+  "item": "ws212/1000007400760",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e34": {
+  "item": "ws212/1000007200470",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e35": {
+  "item": "ws212/1000007400330",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e36": {
+  "item": "ws212/1000007201660",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e37": {
+  "item": "ws212/1000007400750",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e38": {
+  "item": "ecpa/2209009",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e39": {
+  "item": "ws212/1000007201570",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e40": {
+  "item": "ws212/1000007400420",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e41": {
+  "item": "ws212/1000007400270",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e42": {
+  "item": "ecpa/2236808",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e43": {
+  "item": "ws212/1000007201460",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e44": {
+  "item": "ecpa/2285910",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e45": {
+  "item": "ecpa/2227808",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e46": {
+  "item": "ecpa/2207208",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e47": {
+  "item": "ecpa/2242108",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e48": {
+  "item": "ws212/1000007401620",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e49": {
+  "item": "ecpa/2300708",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e50": {
+  "item": "ws212/1000007202490",
+  "orca": "B",
+  "gold": "A",
+  "judge": "parser"
+ },
+ "e51": {
+  "item": "ecpa/2230308",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e52": {
+  "item": "ws212/1000007401910",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e53": {
+  "item": "ecpa/2213508",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e54": {
+  "item": "ecpa/2273308",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e55": {
+  "item": "ecpa/2210608",
+  "orca": "A",
+  "gold": "B",
+  "judge": "gold"
+ },
+ "e56": {
+  "item": "ecpa/2228109",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e57": {
+  "item": "ws212/1000007202080",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e58": {
+  "item": "ws212/1000007200200",
+  "orca": "B",
+  "gold": "A",
+  "judge": "gold"
+ },
+ "e59": {
+  "item": "ws212/1000007201700",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ },
+ "e60": {
+  "item": "ws212/1000007201940",
+  "orca": "A",
+  "gold": "B",
+  "judge": "parser"
+ }
+}
