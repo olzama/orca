@@ -501,6 +501,9 @@ def exp_encoders(open_=False):
             k = 'bert' if (data == 'all' and key == 'bertbase') else key
             mp = f'{ORCA}/data/models/tagger-{model.format(k)}/metrics.json'
             rp = f'{ORCA}/analysis/mrs/' + ('dev-2025bothsurf-rawtext.json' if k == 'bert' else run.format(k))
+            if data == 'all':   # current parser defaults where re-run
+                cur = {'bert': BERT_CUR, 'debertav3large': f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-minprob001.json'}.get(k, f'{ORCA}/analysis/mrs/dev-2025bothsurf-{k}-rawtext-current.json')
+                rp = cur if os.path.exists(cur) else rp
             if os.path.exists(mp):
                 d = json.load(open(mp))['dev']
                 tag = td(p1(d['leaf_acc'])) + td(p1(d['tree_acc'])) + td(p1(d['exact_match']))
@@ -516,7 +519,7 @@ def exp_encoders(open_=False):
     t = table([('Encoder', ''), ('Parameters', 'n'), ('Leaf labels right (%)', 'n'), ('Tree labels right (%)', 'n'),
                ('Every label of the sentence right (%)', 'n'), ('Right meaning chosen', 'n hl'), ('Any analysis', 'n'), ('Right meaning among the analyses found', 'n')],
               rows, group=[('', 2), ('Tagging, dev', 3), ('Full pipeline from raw text, dev', 3)])
-    body = t + cap('Same recipe for all: forms as typed, 6 epochs, batch 32, learning rate 3e-5 (BERT-base) or 2e-5. One run each, measured before the lookup fixes (' + link('runs', 'parser versions') + '); DeBERTa-v3 large and BERT-base were re-run with the current parser (summary table), the other two were not.')
+    body = t + cap('Same recipe for all: forms as typed, 6 epochs, batch 32, learning rate 3e-5 (BERT-base) or 2e-5. One run each. All-data rows: current parser defaults. Treebank-only rows: measured before the lookup fixes (' + link('runs', 'parser versions') + '), so compare them only with each other.')
     body += exp_ensemble()
     return fold('Encoders', 'DeBERTa and XLM-R large lead, with the treebank alone and with all data.', body, open_=open_, id_='encoders')
 
