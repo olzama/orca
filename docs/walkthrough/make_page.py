@@ -27,7 +27,12 @@ BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_KEY}-rawtext-
 BEST_PROPS = f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_RUN}-properties.json'
 BEST_ICONS = f'{ORCA}/analysis/mrs/dev-2025bothsurf-{BEST_RUN}-icons.json'
 BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-bothsurf-{BEST_RUN}/score.json'
-BERT_NEW = f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext-normlocate.json'
+BERT_CUR = f'{ORCA}/analysis/mrs/dev-2025bothsurf-bert-rawtext-minprob001.json'   # BERT-base with the current defaults
+BERT_NEW = BERT_CUR if os.path.exists(BERT_CUR) else f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext-normlocate.json'
+BERT_PROPS = (f'{ORCA}/analysis/mrs/dev-2025bothsurf-bert-minprob001-properties.json' if BERT_NEW == BERT_CUR
+              else f'{ORCA}/analysis/mrs/dev-2025bothsurf-normlocate-rootcheck-properties.json')
+BERT_JUDGE = (f'{ORCA}/analysis/adjudicate/dev-bothsurf-bert-minprob001/score.json' if BERT_NEW == BERT_CUR
+              else f'{ORCA}/analysis/adjudicate/dev-bothsurf-normlocate/score.json')
 # Hausa: Orca's MRS against ACE's on the 357 parses of rounds 1-2 (commit 03fc7ea): same without properties, with properties and ICONS
 HAUSA_MRS = (357, 343, 343)
 ACE_JUDGE = f'{ORCA}/analysis/adjudicate/dev-ace/score.json'
@@ -152,7 +157,7 @@ def summary():
     oc = BEST['counts']
     jd, props, aj = load(BEST_JUDGE), load(BEST_PROPS), load(ACE_JUDGE)
     bj = load(f'{ORCA}/analysis/adjudicate/dev-bothsurf/score.json')
-    bn, bp, bbj = load(BERT_NEW), load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-normlocate-rootcheck-properties.json'), load(f'{ORCA}/analysis/adjudicate/dev-bothsurf-normlocate/score.json')
+    bn, bp, bbj = load(BERT_NEW), load(BERT_PROPS), load(BERT_JUDGE)
     ace = T['ace']['all']
     grp = lambda text: f'<tr><td colspan="7"><i>{text}</i></td></tr>'
     row = lambda name, n, *cells: (f'<tr><td>{name}</td>' + td(f'{n:,}')
@@ -263,7 +268,7 @@ def tagger_svg():
 
 def how():
     a = METRICS['args']
-    h = METRICS['history'][-1]
+    h = METRICS['dev']   # the saved checkpoint is the best epoch on dev, as in the Encoders table
     specs = [
         ('Encoder', f'{a["encoder"]}, all weights fine-tuned'),
         ('Word vector', 'first subword of each word; dropout 0.1'),
@@ -645,7 +650,7 @@ def exp_hausa(open_=False):
     body = t + notes('Grammar: HaG (Crysmann), built on the Grammar Matrix. Claude Sonnet wrote the sentences from HaG\'s lexicon, in plain spelling without tone marks.',
                      'Replay: Orca rebuilds ACE\'s first parse from its labels, finding entries in HaG\'s lexicon from the plain words. Properties use HaG\'s own mapping.',
                      'The MRS differences are one homograph: plain <i>nama</i> is both meat and animal. HaG\'s build has no ranking model, so ACE\'s choice between them is arbitrary; Orca offers both readings.',
-                     'Before two fixes, Orca assumed ERG habits: lexical-rule names, spelling rules, and a shorthand in definitions that the ERG uses only for lists.')
+                     'Before the fixes, Orca assumed ERG habits: lexical-rule names, spelling rules, and a shorthand in definitions that the ERG uses only for lists.')
     return fold('Another grammar: Hausa', 'Orca replays every Hausa parse ACE finds, after removing assumptions that held only for the ERG.', body, open_=open_, id_='hausa')
 
 
@@ -786,7 +791,7 @@ def exp_hybrid():
                ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n'), ('Same meaning as gold', 'n hl'), ('Sentences per second', 'n')], rows,
               group=[('', 1), ('Full ACE', 2), ('Restricted ACE (tagger\'s entries, ≥ 0.001)', 2), ('Restricted ACE, then full ACE if it finds nothing', 2)])
     body = t + notes('Redwoods dev, raw text, 2,062 sentences. First the sentences where Orca finds no analysis (156), then Orca\'s least certain ones, by a logistic model on Orca\'s own signals (tagger probabilities, replays, candidates), cross-validated on dev (AUC ' + f'{r["cv AUC (Orca wrong)"]:.2f}' + ' for spotting Orca\'s errors).',
-                     'Speed includes Orca\'s whole run. Full ACE time is measured on the no-analysis sentences (3.7 s each) and ACE\'s dev mean elsewhere; restricted ACE time is measured. Orca here is the run before the repair cutoff change (73.0%).',
+                     'Speed includes Orca\'s whole run. Full ACE time is measured on the no-analysis sentences (3.7 s each) and ACE\'s dev mean elsewhere; restricted ACE time is measured. Orca here is the run of 23 November with the lookup fixes, before the repair cutoff change; it has one exact match more than the run of 22 November in ' + link('runs', 'How much two runs differ') + ', with the same settings.',
                      'With restricted ACE, sending everything is worse than sending about half: where Orca is confident, its own analysis beats the fallback\'s. With full ACE, sending everything equals ACE alone at a lower speed.',
                      '<b>All sentences, after Orca</b> includes Orca\'s time; <b>ACE alone</b> is ACE without Orca, the baseline.',
                      'Different systems from Orca alone, so they sit beside the headline, not in it.')
