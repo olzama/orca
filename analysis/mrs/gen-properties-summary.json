@@ -1,0 +1,23 @@
+{
+ "what": "generated rounds 1-3, agreement with ACE first parse, with properties (check_properties.py) and with ICONS (check_icons.py), separately",
+ "by system": {
+  "debertav3large-current": {
+   "sentences": 6039,
+   "same without properties": 4039,
+   "same with properties": 4009,
+   "same with ICONS": 4039
+  },
+  "bert-current": {
+   "sentences": 6039,
+   "same without properties": 3946,
+   "same with properties": 3925,
+   "same with ICONS": 3944
+  },
+  "debertav3large-chart": {
+   "sentences": 6039,
+   "same without properties": 5157,
+   "same with properties": 5155,
+   "same with ICONS": 5157
+  }
+ }
+}

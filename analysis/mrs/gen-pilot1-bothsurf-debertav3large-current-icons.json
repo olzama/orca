@@ -1,0 +1,8 @@
+{
+ "sentences": 1932,
+ "gold with ICONS": 642,
+ "Orca with ICONS": 570,
+ "same without ICONS": 1286,
+ "same with ICONS": 1286,
+ "differ by kind": {}
+}

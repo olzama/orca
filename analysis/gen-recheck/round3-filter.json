@@ -1,0 +1,11 @@
+{
+ "gen-round3": {
+  "failed": {
+   "ReplayFailure": 2
+  },
+  "held out": 0,
+  "replayed": 1821,
+  "sentences": 1823,
+  "train": 1821
+ }
+}

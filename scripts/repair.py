@@ -177,6 +177,7 @@ def search(index):
     commit = getattr(args, 'commit', False) and n >= getattr(args, 'commit_min', 0)
     root_focus = getattr(args, 'root_focus', False) and n >= getattr(args, 'commit_min', 0)
     heap, seen, counter, n_replays = [(0.0, 0, (), None)], {()}, 1, 0
+    LAST['replays to first accepted'] = None
     stack, commits = [], 0
     accepted, first_right = None, None
     accepted_info, kbest = [], []
@@ -224,6 +225,7 @@ def search(index):
         if span is None:
             if accepted is None:
                 accepted = (leaf, tree, state)
+                LAST['replays to first accepted'] = n_replays
             if args.kbest <= 1:
                 break
             fs, resolved = accepted_info.pop()
@@ -288,6 +290,7 @@ def search(index):
             if replay(leaf, tree) is None:
                 if accepted is None:
                     accepted = (leaf, tree, state)
+                    LAST['replays to first accepted'] = n_replays
                 if args.kbest <= 1:
                     break
                 fs, resolved = accepted_info.pop()
@@ -361,6 +364,9 @@ def leaves_of(t):
 
 GOLD_MRS = {}
 _CURRENT = [None]
+# Replays spent up to and including the first accepted derivation of the last search() (None: none accepted).
+# A side channel, so search()'s return value stays as callers unpack it.
+LAST = {'replays to first accepted': None}
 
 
 def main():

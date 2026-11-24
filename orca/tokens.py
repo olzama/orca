@@ -76,12 +76,29 @@ def _form(tdl):
     return m.group(1)[1:-1] if m else ''
 
 
-def token_chart(sentence, ace, grammar_dat, timeout=10):
-    """The final token chart of one sentence: [(start, end, cfrom, cto, tdl)]."""
-    p = subprocess.run([ace, '-g', grammar_dat, '-vv', '--max-chart-megabytes=1'],
-                       input=sentence.replace('\n', ' ') + '\n', capture_output=True,
-                       text=True, timeout=timeout)
-    text = p.stdout + p.stderr
+def token_chart(sentence, ace, grammar_dat, timeout=10, retry_timeout=60):
+    """The final token chart of one sentence: [(start, end, cfrom, cto, tdl)].
+
+    ACE is only asked for its token mapping; on a busy machine it can still take
+    longer than `timeout`, so a timeout is retried once with `retry_timeout`. If
+    that also times out, whatever ACE printed is used if token mapping finished,
+    else the sentence gets no tokens (the caller reports 'no tokens') instead of
+    the whole run failing."""
+    cmd = [ace, '-g', grammar_dat, '-vv', '--max-chart-megabytes=1']
+    inp = sentence.replace('\n', ' ') + '\n'
+    text = None
+    for t in (timeout, retry_timeout):
+        try:
+            p = subprocess.run(cmd, input=inp, capture_output=True, text=True, timeout=t)
+            text = p.stdout + p.stderr
+            break
+        except subprocess.TimeoutExpired as e:
+            part = ''.join(x.decode(errors='replace') if isinstance(x, bytes) else (x or '') for x in (e.stdout, e.stderr))
+            if 'finished token mapping' in part:
+                text = part
+                break
+    if text is None:
+        return []
     out = []
     for line in text.splitlines():
         if line.startswith('finished token mapping'):

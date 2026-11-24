@@ -120,6 +120,7 @@ def run(a):
         rep_secs += time.perf_counter() - t
         GOLDFLAGS.append(kbest)
         rec = {'outcome': outcome.replace(', wrong', '').replace(', right', ''), 'replays': n_replays,
+               'replays to first accepted': r.LAST['replays to first accepted'],
                'kbest': [[c['leaf'], c['tree'], c['entries'], c['cost']] for c in kbest]}
         if kbest:
             scored = []

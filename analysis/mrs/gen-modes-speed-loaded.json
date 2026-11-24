@@ -1,0 +1,34 @@
+{
+ "when": "2026-11-24, kesha GPU 1, generated round 3 (1,819 sentences); chart 12:51-13:05, replay re-run after the tokenization-timeout fix; machine loaded (O89 training on GPU 0, raw-text ACE on 4 cores); load averages in the log",
+ "reference": "ACE first parse (data/generated/round3/profiles)",
+ "runs": {
+  "replay": {
+   "same MRS": 1316,
+   "with MRS": 1693,
+   "sentences": 1819,
+   "wall seconds": 467.7,
+   "sentences per second": 3.89,
+   "step-sum sentences per second": 4.52,
+   "no tokens": 0
+  },
+  "chart": {
+   "same MRS": 1532,
+   "with MRS": 1687,
+   "sentences": 1819,
+   "wall seconds": 803.2,
+   "sentences per second": 2.26,
+   "step-sum sentences per second": 2.49,
+   "no tokens": 0
+  }
+ },
+ "log": [
+  "replay start 12:44:54 load average: 6.03, 6.08, 6.09",
+  "replay end 12:51:43 load average: 7.96, 7.22, 6.61 wall 409.430322367",
+  "chart start 12:51:43 load average: 7.96, 7.22, 6.61",
+  "chart end 13:05:07 load average: 6.85, 6.78, 6.64 wall 803.208552673",
+  "DONE",
+  "replay (rerun after tokenization timeout fix) start 13:05:57 load average: 5.92, 6.53, 6.56",
+  "replay end 13:13:44 load average: 6.45, 6.72, 6.65 wall 467.725225792",
+  "DONE2"
+ ]
+}

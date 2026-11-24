@@ -1,0 +1,9 @@
+{
+ "sentences": 2288,
+ "same without properties": 1935,
+ "same with properties": 1933,
+ "differ by kind": {
+  "tense or aspect": 1,
+  "sentence force": 1
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "run": "analysis/replay-rate/dev-current-run.json",
+ "sentences": 2062,
+ "accepted": 1924,
+ "within k replays": {
+  "1": 1503,
+  "2": 1648,
+  "5": 1748,
+  "10": 1812,
+  "20": 1850,
+  "50": 1879,
+  "111": 1897,
+  "600": 1924
+ },
+ "median replays to first accepted, of accepted": 1
+}

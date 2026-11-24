@@ -181,6 +181,7 @@ class Parser:
         lap('repair')
         out['outcome'] = outcome.replace(', wrong', '').replace(', right', '')
         out['replays'] = n_replays
+        out['replays to first accepted'] = r.LAST['replays to first accepted']
         out['accepted derivations'] = len(kbest)
         out['candidate costs'] = sorted(c.get('cost') or 0.0 for c in kbest)   # routing signal (scripts/ace_fallback.py, rawtext.py)
         if not kbest and self.mode == 'fallback':
@@ -348,6 +349,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False,
         for k, v in r['seconds'].items():
             secs[k] += v
         recs.append({'id': s['id'], 'outcome': r.get('outcome'), 'same MRS': same, 'replays': r.get('replays'),
+                     'replays to first accepted': r.get('replays to first accepted'),
                      'accepted': r.get('accepted derivations', 0),
                      'gold among accepted': among if parser.all_mrs and m is not None else None,
                      **({'mrs': r.get('mrs'), 'labels': r.get('labels')} if save_mrs else {})})
