@@ -28,18 +28,26 @@ The dog barked.          <- parsed with the command-line -L (here: none)
 
 ## Testing
 
-All on ERG 2025 compiled with this branch's main, 300 random Redwoods dev sentences:
+How we tested it, with ERG 2025 (compiled with this branch's base, main at 31afda8) and 300 sentences drawn at random (fixed seed) from the Redwoods dev profiles:
+
+1. **Two builds from the same commit.** `main` as is ("stock") and `main` with this patch ("patched"), same compiler and flags; both report the same version.
+2. **Without the option, nothing changes.** Both builds parse the 300 sentences in one process each, first-best (`-1`) and 20-best (`-n 20`), with the same memory and time limits. We compare the console output item by item: the MRS and the derivation of every result, in rank order (timings excluded). Output is byte-identical.
+3. **With the option, the same parses as restarting ACE.** For each sentence we take a restriction list as a real caller would build it: our supertagger's five best lexical types per word (probability at least 0.001) turned into lexical entries, and every other lexeme that could match the sentence's words disabled, about 60 lexemes per sentence on average. Then:
+   - reference: stock `main` started once per sentence with `-L <that list>`;
+   - patched: one process started with `--per-item-disable`, fed `#DISABLE <that list>` followed by the sentence, for all 300 sentences in turn.
+   We compare item by item as in step 2, for `-1` and for `-n 20`.
+4. **The restriction really changes between inputs.** In one process: "The dog barked." with `#DISABLE bark_v1`, then a bare `#DISABLE`, then `#DISABLE bark_v1` again. Without `bark_v1` ACE gives only fragment analyses without the verb's predicate; with it, the ordinary parse. Each of the three outputs equals a separate stock run with the corresponding `-L`.
+5. **Timing.** Wall-clock time per sentence for step 3's two set-ups, on the same machine in the same session (it was running other jobs, so the absolute numbers are higher than on an idle machine).
 
 | Check | Result |
 |---|---|
-| Without the option: output of patched and unpatched main, `-1` and `-n 20` (MRS and derivation of every result, in order) | byte-identical |
-| With the option: one patched process with a `#DISABLE` line before each sentence, against unpatched main run once per sentence with the same `-L`, `-1` | 300 of 300 identical |
-| Same, `-n 20` | 300 of 300 identical |
-| The restriction really changes between inputs ("The dog barked." with `bark_v1` disabled, enabled, disabled again; each equal to a separate `-L` run) | passes |
+| Step 2, `-1` and `-n 20` | byte-identical |
+| Step 3, `-1` | 300 of 300 identical |
+| Step 3, `-n 20` | 300 of 300 identical |
+| Step 4 | passes |
+| Step 5, time per sentence, one ACE run per sentence → one process | 178 → 138 ms (`-n 20`: 182 → 141 ms) |
 
-Time per sentence in the second and third checks (restrictions of 60 lexemes on average, single process, machine otherwise loaded): 178 ms with one ACE run per sentence, 138 ms with one process and `#DISABLE` lines (`-n 20`: 182 and 141 ms).
-
-The same change on the 0.9.34 release passed the same checks and is used by our parser and its public demo.
+The same change on the 0.9.34 release passed the same checks (and a full run over all 2,062 dev sentences with identical results), and is used by our parser and its public demo. The test script is available on request.
 
 ## License
 
