@@ -4,13 +4,19 @@
 #   scripts/deploy_demo.sh           code and page (seconds); restarts the service only if Python or C code changed
 #   scripts/deploy_demo.sh --data    also the grammar, the tagger model and the compiled ACE grammar (slow, rarely needed)
 #
+# The tagger copied by --data is the demo's (DEMO_TAGGER, default DeBERTa-v3 large); a tagger with another encoder
+# also needs that encoder's files in ~/.cache/huggingface on asterix. The patched ACE (third_party/ace-orca/ace)
+# is copied by hand after a rebuild.
+#
 # Needs `ssh asterix` to work (see ~/.ssh/config). Nothing here needs sudo.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 HOST=asterix
 DEST=orca-demo
-TAGGER=$(.venv/bin/python -c "import sys; sys.path.insert(0, 'scripts'); from orca_parse import DEFAULTS; print(DEFAULTS['tagger'])" 2>/dev/null | xargs -r realpath --relative-to=.)
+# The demo's tagger is set in the service unit on asterix (--tagger); it is not the parser's default.
+TAGGER=${DEMO_TAGGER:-data/models/tagger-2025bothsurf-debertav3large}
 NAME=${TAGGER##*/tagger-}; NAME=${NAME%-bert}
+NOTE="analysis/mrs/dev-$NAME-rawtext.json"; [ -f "$NOTE" ] || NOTE=""
 
 if [[ "${1:-}" == "--data" ]]; then
     rsync -aR --info=stats1 --exclude 'data/erg/2025/tsdb' --exclude 'data/erg/2025/openproof' --exclude 'data/erg/2025/.git' \
@@ -19,7 +25,7 @@ fi
 
 # -i lists what changed; the page is read on every request, code needs a restart
 CHANGED=$(rsync -aRi --exclude '__pycache__' --exclude '*.so' --exclude '*.pyc' --exclude 'HANDOFF.md' \
-    orca scripts kelp/__init__.py kelp/docs.py docs/demo setup.py LICENSE "analysis/mrs/dev-$NAME-rawtext.json" "$HOST:$DEST/" | grep -E '^[<>]f' || true)
+    orca scripts kelp/__init__.py kelp/docs.py docs/demo setup.py LICENSE $NOTE "$HOST:$DEST/" | grep -E '^[<>]f' || true)
 if [[ -z "$CHANGED" && "${1:-}" != "--data" ]]; then echo "Nothing changed."; exit 0; fi
 echo "$CHANGED" | sed 's/^[^ ]* /  updated: /'
 
