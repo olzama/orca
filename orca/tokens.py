@@ -12,8 +12,13 @@ words the lexicon knows (+UW -) and others for generic entries (unknown
 words, names, numbers). They are kept as alternatives; replay picks the
 first one that unifies with the lexical entry (see FastGrammar._replay).
 """
+import atexit
+import os
 import re
+import select
 import subprocess
+import threading
+import time
 
 TOKEN_LINE = re.compile(r"^token #(\d+) le \S+ vtx \[(\d+)-(\d+)\] char \[(\d+)-(\d+)\] string '(.*?)' dag (#D\[.*)$")
 DEBUG = re.compile(r'#D\[|\]|"(?:\\.|[^"\\])*"|<\d+>=?|[^\s\[\]"]+')
@@ -76,27 +81,139 @@ def _form(tdl):
     return m.group(1)[1:-1] if m else ''
 
 
-def token_chart(sentence, ace, grammar_dat, timeout=10, retry_timeout=60):
-    """The final token chart of one sentence: [(start, end, cfrom, cto, tdl)].
+class AceTokenizer:
+    """One ACE process kept running for token mapping, fed one sentence at a time.
 
-    ACE is only asked for its token mapping; on a busy machine it can still take
-    longer than `timeout`, so a timeout is retried once with `retry_timeout`. If
-    that also times out, whatever ACE printed is used if token mapping finished,
-    else the sentence gets no tokens (the caller reports 'no tokens') instead of
-    the whole run failing."""
+    Starting ACE for every sentence costs more than the token mapping itself
+    (the grammar image is loaded each time), so the process is kept and each
+    sentence is written to its stdin. ACE flushes its output after every item,
+    and the output of an item ends with a `SKIP:` or `SENT:` line followed by
+    two empty lines; reading stops there. stderr is discarded: the token chart
+    (-vv) is printed on stdout.
+
+    The process is restarted after a timeout (it is then still busy with the
+    old sentence), when it dies, after `max_items` sentences, and in a forked
+    child (a pipe must not be shared between processes)."""
+
+    END_LINE = ('SKIP: ', 'SENT: ')
+
+    def __init__(self, ace, grammar_dat, max_items=2000):
+        self.cmd = [ace, '-g', grammar_dat, '-vv', '--max-chart-megabytes=1']
+        self.max_items = max_items
+        self.proc, self.pid, self.items = None, None, 0
+        self.lock = threading.Lock()
+
+    def _start(self):
+        self.close()
+        self.proc = subprocess.Popen(self.cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                     stderr=subprocess.DEVNULL, bufsize=0)
+        self.pid, self.items = os.getpid(), 0
+
+    def close(self):
+        p, self.proc = self.proc, None
+        if p is not None and self.pid == os.getpid():
+            try:
+                p.kill()
+                p.wait(timeout=5)
+            except Exception:
+                pass
+
+    def _read_item(self, timeout):
+        """stdout of the current item and how reading ended: 'done', 'timeout' or 'eof'."""
+        fd, buf, end = self.proc.stdout.fileno(), b'', time.monotonic() + timeout
+        while True:
+            left = end - time.monotonic()
+            if left <= 0:
+                return buf.decode(errors='replace'), 'timeout'
+            ready, _, _ = select.select([fd], [], [], left)
+            if not ready:
+                continue
+            chunk = os.read(fd, 1 << 16)
+            if not chunk:
+                return buf.decode(errors='replace'), 'eof'
+            buf += chunk
+            if buf.endswith(b'\n\n\n'):
+                text = buf.decode(errors='replace')
+                last = [l for l in text.splitlines() if l]
+                if last and any(l.startswith(self.END_LINE) for l in last[-12:]):
+                    return text, 'done'
+
+    def chart_text(self, sentence, timeout=10, retry_timeout=60):
+        """ACE's stdout for one sentence, or None (same semantics as one ACE run per sentence:
+        a timeout is retried once with `retry_timeout`; after a timeout, what was printed is
+        used if token mapping finished)."""
+        inp = (sentence.replace('\n', ' ') + '\n').encode()
+        with self.lock:
+            for t in (timeout, retry_timeout):
+                if self.proc is None or self.pid != os.getpid() or self.proc.poll() is not None \
+                        or self.items >= self.max_items:
+                    self._start()
+                try:
+                    self.proc.stdin.write(inp)
+                    self.proc.stdin.flush()
+                except (BrokenPipeError, OSError):
+                    self._start()
+                    self.proc.stdin.write(inp)
+                    self.proc.stdin.flush()
+                self.items += 1
+                text, how = self._read_item(t)
+                if how == 'done':
+                    return text
+                self.close()                    # still busy with this sentence, or gone: start afresh next time
+                if how == 'eof' or 'finished token mapping' in text:
+                    return text                 # as one ACE run per sentence: what it printed before exiting
+            return None
+
+
+_TOKENIZERS = {}
+_TOKENIZERS_LOCK = threading.Lock()
+
+
+def _tokenizer(ace, grammar_dat):
+    with _TOKENIZERS_LOCK:
+        tk = _TOKENIZERS.get((ace, grammar_dat))
+        if tk is None:
+            tk = _TOKENIZERS[(ace, grammar_dat)] = AceTokenizer(ace, grammar_dat)
+        return tk
+
+
+@atexit.register
+def _close_tokenizers():
+    for tk in list(_TOKENIZERS.values()):
+        tk.close()
+
+
+def _chart_text_per_call(sentence, ace, grammar_dat, timeout, retry_timeout):
+    """The old way: one ACE run per sentence (ORCA_TOKENS_PER_CALL=1)."""
     cmd = [ace, '-g', grammar_dat, '-vv', '--max-chart-megabytes=1']
     inp = sentence.replace('\n', ' ') + '\n'
-    text = None
     for t in (timeout, retry_timeout):
         try:
             p = subprocess.run(cmd, input=inp, capture_output=True, text=True, timeout=t)
-            text = p.stdout + p.stderr
-            break
+            return p.stdout + p.stderr
         except subprocess.TimeoutExpired as e:
             part = ''.join(x.decode(errors='replace') if isinstance(x, bytes) else (x or '') for x in (e.stdout, e.stderr))
             if 'finished token mapping' in part:
-                text = part
-                break
+                return part
+    return None
+
+
+def token_chart(sentence, ace, grammar_dat, timeout=10, retry_timeout=60, per_call=None):
+    """The final token chart of one sentence: [(start, end, cfrom, cto, tdl)].
+
+    ACE is only asked for its token mapping, by default in one ACE process kept
+    running (AceTokenizer); `per_call=True` or the environment variable
+    ORCA_TOKENS_PER_CALL=1 runs ACE once per sentence instead. On a busy machine
+    ACE can take longer than `timeout`, so a timeout is retried once with
+    `retry_timeout`. If that also times out, whatever ACE printed is used if
+    token mapping finished, else the sentence gets no tokens (the caller reports
+    'no tokens') instead of the whole run failing."""
+    if per_call is None:
+        per_call = os.environ.get('ORCA_TOKENS_PER_CALL', '') not in ('', '0')
+    if per_call:
+        text = _chart_text_per_call(sentence, ace, grammar_dat, timeout, retry_timeout)
+    else:
+        text = _tokenizer(ace, grammar_dat).chart_text(sentence, timeout, retry_timeout)
     if text is None:
         return []
     out = []

@@ -1,0 +1,10 @@
+{
+ "sentences": 2267,
+ "per call seconds": 110.05397605895996,
+ "persistent seconds": 47.68956923484802,
+ "per call ms per sentence": 48.54608560165856,
+ "persistent ms per sentence": 21.03642224739657,
+ "differences": [],
+ "empty per call": 3,
+ "empty persistent": 3
+}
