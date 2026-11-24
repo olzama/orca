@@ -1,0 +1,7 @@
+{
+ "what": "adjudicate.py --paraphrase on the 60 reviewed cases",
+ "exact": 39,
+ "lenient": 50,
+ "same as O96 v2 run": 51,
+ "cost_usd": 0.18
+}

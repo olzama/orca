@@ -1,0 +1,9 @@
+{
+ "sentences": 2062,
+ "agree": 1767,
+ "to judge": 288,
+ "differ only in scope or properties": 3,
+ "Orca: no analysis": 4,
+ "items from": "analysis/adjudicate/dev-ace",
+ "paraphrased": 287
+}

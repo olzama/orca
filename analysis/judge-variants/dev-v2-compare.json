@@ -1,0 +1,74 @@
+{
+ "ACE": {
+  "judged": 288,
+  "old": {
+   "reference": 154,
+   "orca": 111,
+   "both": 8,
+   "neither": 15
+  },
+  "v2": {
+   "reference": 151,
+   "orca": 99,
+   "both": 17,
+   "neither": 21
+  },
+  "right old": 1886,
+  "right v2": 1883,
+  "flips": 49,
+  "flip kinds": {
+   "reference->orca": 10,
+   "orca->reference": 10,
+   "orca->both": 9,
+   "reference->neither": 5,
+   "reference->both": 4,
+   "orca->neither": 4,
+   "both->reference": 3,
+   "neither->reference": 3,
+   "both->orca": 1
+  },
+  "paraphrased": 287,
+  "cost judge": 2.21,
+  "cost paraphrases": 3.08
+ },
+ "Orca": {
+  "judged": 397,
+  "old": {
+   "reference": 205,
+   "orca": 156,
+   "neither": 12,
+   "both": 24
+  },
+  "v2": {
+   "reference": 210,
+   "orca": 152,
+   "both": 26,
+   "neither": 9
+  },
+  "right old": 1704,
+  "right v2": 1702,
+  "flips": 85,
+  "flip kinds": {
+   "orca->reference": 23,
+   "reference->orca": 19,
+   "reference->both": 11,
+   "neither->reference": 8,
+   "both->orca": 8,
+   "both->reference": 6,
+   "orca->both": 5,
+   "orca->neither": 3,
+   "reference->neither": 2
+  },
+  "paraphrased": 390,
+  "cost judge": 2.82,
+  "cost paraphrases": 3.56
+ },
+ "60-case check": {
+  "what": "adjudicate.py --paraphrase on the 60 reviewed cases",
+  "exact": 39,
+  "lenient": 50,
+  "same as O96 v2 run": 51,
+  "cost_usd": 0.18
+ },
+ "note": "right = same MRS as gold + judge says this system's reading or BOTH, of 2,062 dev sentences; 'orca' in score files means the system judged (ACE in dev-ace)."
+}

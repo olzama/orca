@@ -8,9 +8,16 @@ answers A, B, BOTH (both acceptable readings of the sentence) or NEITHER.
 Orca then counts as right when it agrees with the reference, or when the judge
 picks Orca's reading or BOTH.
 
+With --paraphrase (prepare and run), each reading also gets a neutral plain-English
+paraphrase written by the model from the same facts (scripts/interpret_readings.py),
+and the judge sees it next to the facts ("v2" of roadmap O96, which agreed best with
+a person's verdicts on 60 dev cases). Off by default, so earlier results reproduce.
+prepare --items-from OLD_DIR reuses an earlier run's items (same sentences, same A/B
+order), so verdicts can be compared one by one.
+
 Usage:
-    adjudicate.py prepare --eval EVAL.json --profiles PROF_DIR [--sentences SENTS.txt] --out DIR
-    adjudicate.py run --out DIR [--batch 5] [--parallel 4] [--model M]
+    adjudicate.py prepare --eval EVAL.json --profiles PROF_DIR [--sentences SENTS.txt] --out DIR [--paraphrase] [--items-from OLD_DIR]
+    adjudicate.py run --out DIR [--batch 5] [--parallel 4] [--model M] [--paraphrase]
     adjudicate.py score --out DIR [--targets CALLS.jsonl]
 """
 import argparse
@@ -29,7 +36,57 @@ sys.path.insert(0, os.path.join(HERE, '..'))
 sys.setrecursionlimit(20000)
 
 
+def add_paraphrases(args, items):
+    """Neutral paraphrases of readings A and B for each item (resumable: paraphrases.jsonl)."""
+    from llm_label import call
+    from interpret_readings import SYSTEM as PSYSTEM, prompt as pprompt
+    log = os.path.join(args.out, 'paraphrases.jsonl')
+    got = {}
+    if os.path.exists(log):
+        for l in open(log):
+            got.update(json.loads(l).get('by_id', {}))
+    todo = [it for it in items if it['id'] not in got]
+    clean = lambda t: re.sub(r'\s+', ' ', re.sub(r'[⌊⌋•]', '', t)).strip()
+    batches = [[{'id': it['id'], 'sentence': clean(it['sentence']), 'A': it['A'], 'B': it['B']} for it in todo[i:i + 5]]
+               for i in range(0, len(todo), 5)]
+
+    def go(b):
+        try:
+            d = call(args.model, PSYSTEM, pprompt(b), args.out)
+            m = re.search(r'\{.*\}', d.get('result') or '', re.S)
+            res = json.loads(m.group(0)) if m else {}
+        except Exception as e:
+            d, res = {'error': str(e)[:300]}, {}
+        return {'ids': [c['id'] for c in b], 'by_id': {k: v for k, v in res.items() if k in {c['id'] for c in b}},
+                'cost_usd': d.get('total_cost_usd'), 'error': d.get('error')}
+
+    with concurrent.futures.ThreadPoolExecutor(args.parallel) as ex, open(log, 'a') as f:
+        for rec in ex.map(go, batches):
+            f.write(json.dumps(rec, ensure_ascii=False) + '\n')
+            f.flush()
+            got.update(rec['by_id'])
+            print('paraphrased', len(rec['by_id']), 'of', len(rec['ids']), flush=True)
+    for it in items:
+        if it['id'] in got:
+            it['interp'] = got[it['id']]
+    return sum(1 for it in items if 'interp' in it)
+
+
 def prepare(args):
+    if args.items_from:     # same items as an earlier run, for one-by-one comparison
+        items = [json.loads(l) for l in open(os.path.join(args.items_from, 'items.jsonl'))]
+        for it in items:
+            it.pop('interp', None)
+        st = dict(json.load(open(os.path.join(args.items_from, 'prepare.json'))), **{'items from': args.items_from})
+        os.makedirs(args.out, exist_ok=True)
+        if args.paraphrase:
+            st['paraphrased'] = add_paraphrases(args, items)
+        with open(os.path.join(args.out, 'items.jsonl'), 'w') as f:
+            for it in items:
+                f.write(json.dumps(it, ensure_ascii=False) + '\n')
+        json.dump(st, open(os.path.join(args.out, 'prepare.json'), 'w'), indent=1)
+        print(json.dumps(st, indent=1))
+        return
     from delphin import tsdb
     from delphin.codecs import simplemrs
     from compare_mrs import normalized
@@ -76,6 +133,8 @@ def prepare(args):
                       'A': o if orca_first else a, 'B': a if orca_first else o, 'orca': 'A' if orca_first else 'B'})
         st['to judge'] += 1
     os.makedirs(args.out, exist_ok=True)
+    if args.paraphrase:
+        st['paraphrased'] = add_paraphrases(args, items)
     with open(os.path.join(args.out, 'items.jsonl'), 'w') as f:
         for it in items:
             f.write(json.dumps(it, ensure_ascii=False) + '\n')
@@ -86,12 +145,18 @@ def prepare(args):
 SYSTEM = """You judge two semantic analyses of the same English sentence, produced by the English Resource Grammar. Each reading is shown only by what it has and the other lacks: predicates (node ...) and links (head -ROLE-> dependent). Predicate names are lemma_partofspeech_sense (n noun, v verb, a adjective or adverb, p preposition, q quantifier, c conjunction); ARG1, ARG2 ... are argument roles; /EQ and /H mark links that share a label or go through a scope relation; compound, appos, implicit_conj, udef_q, generic_entity, unknown and similar are grammar-internal predicates. Decide which reading is a correct analysis of the sentence as a careful human reader understands it. Answer A or B if exactly one is correct, BOTH if both are acceptable readings of this sentence, NEITHER if both are wrong. Answer with one line per sentence, "N: X", where N is the sentence number and X is A, B, BOTH or NEITHER. No other text."""
 
 
-def prompt(batch):
+# Variant v2 of roadmap O96 (scripts/judge_variants.py): the same instructions plus this sentence.
+PARAPHRASE_NOTE = "\nEach reading also comes with a plain-English paraphrase written by an assistant from the same facts; it can be wrong, so check it against the facts."
+
+
+def prompt(batch, paraphrase=False):
     parts = []
     for i, it in enumerate(batch, 1):
         parts.append(f'Sentence {i}: {it["sentence"]}')
         for L in 'AB':
             parts.append(f'  Reading {L}: ' + ('; '.join(it[L]) if it[L] else '(nothing beyond what both share)'))
+            if paraphrase and it.get('interp', {}).get(L):
+                parts.append(f'    Paraphrase of {L}: {it["interp"][L]}')
         parts.append('')
     return '\n'.join(parts)
 
@@ -111,7 +176,7 @@ def run(args):
 
     def go(batch):
         try:
-            data = call(args.model, SYSTEM, prompt(batch), args.out)
+            data = call(args.model, SYSTEM + (PARAPHRASE_NOTE if args.paraphrase else ''), prompt(batch, args.paraphrase), args.out)
             text = data.get('result') or ''
         except Exception as e:
             data, text = {'error': str(e)[:300]}, ''
@@ -161,6 +226,8 @@ def main():
     ap.add_argument('--batch', type=int, default=5)
     ap.add_argument('--parallel', type=int, default=4)
     ap.add_argument('--model', default='claude-opus-5-5')
+    ap.add_argument('--paraphrase', action='store_true', help='neutral paraphrases of both readings (O96 variant v2)')
+    ap.add_argument('--items-from', help='prepare: reuse the items of an earlier run (same A/B order)')
     args = ap.parse_args()
     {'prepare': prepare, 'run': run, 'score': score}[args.cmd](args)
 

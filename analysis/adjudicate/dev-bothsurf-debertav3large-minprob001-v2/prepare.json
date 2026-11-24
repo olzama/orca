@@ -1,0 +1,9 @@
+{
+ "sentences": 2062,
+ "to judge": 397,
+ "agree": 1524,
+ "Orca: no analysis": 138,
+ "differ only in scope or properties": 3,
+ "items from": "analysis/adjudicate/dev-bothsurf-debertav3large-minprob001",
+ "paraphrased": 390
+}
