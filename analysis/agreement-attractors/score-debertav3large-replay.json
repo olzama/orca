@@ -1,0 +1,400 @@
+{
+ "e1|grammatical|all": {
+  "n": 720,
+  "accepted at first try": 576,
+  "orca analysis": 690,
+  "ace judged": 720,
+  "ace analysis": 718,
+  "same as ace": 607,
+  "accepted after repair": 114,
+  "rejected, nothing left to try": 9,
+  "rejected, budget used": 21
+ },
+ "e1|grammatical|attractor matches": {
+  "n": 400,
+  "accepted at first try": 308,
+  "orca analysis": 376,
+  "ace judged": 400,
+  "ace analysis": 398,
+  "same as ace": 327,
+  "accepted after repair": 68,
+  "rejected, budget used": 17,
+  "rejected, nothing left to try": 7
+ },
+ "e1|grammatical|attractor mismatches": {
+  "n": 320,
+  "accepted at first try": 268,
+  "orca analysis": 314,
+  "ace judged": 320,
+  "ace analysis": 320,
+  "same as ace": 280,
+  "accepted after repair": 46,
+  "rejected, nothing left to try": 2,
+  "rejected, budget used": 4
+ },
+ "e1|grammatical|level 0": {
+  "n": 80,
+  "accepted at first try": 78,
+  "orca analysis": 80,
+  "ace judged": 80,
+  "ace analysis": 80,
+  "same as ace": 80,
+  "accepted after repair": 2
+ },
+ "e1|grammatical|level 1": {
+  "n": 160,
+  "accepted at first try": 117,
+  "orca analysis": 151,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 129,
+  "accepted after repair": 34,
+  "rejected, nothing left to try": 3,
+  "rejected, budget used": 6
+ },
+ "e1|grammatical|level 2": {
+  "n": 160,
+  "accepted at first try": 132,
+  "orca analysis": 153,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 133,
+  "accepted after repair": 21,
+  "rejected, budget used": 5,
+  "rejected, nothing left to try": 2
+ },
+ "e1|grammatical|level 3": {
+  "n": 160,
+  "accepted at first try": 126,
+  "orca analysis": 152,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 131,
+  "accepted after repair": 26,
+  "rejected, budget used": 4,
+  "rejected, nothing left to try": 4
+ },
+ "e1|grammatical|level 4": {
+  "n": 160,
+  "accepted at first try": 123,
+  "orca analysis": 154,
+  "ace judged": 160,
+  "ace analysis": 158,
+  "same as ace": 134,
+  "rejected, budget used": 6,
+  "accepted after repair": 31
+ },
+ "e1|grammatical|no top clause": {
+  "n": 80,
+  "accepted at first try": 78,
+  "orca analysis": 80,
+  "ace judged": 80,
+  "ace analysis": 80,
+  "same as ace": 80,
+  "accepted after repair": 2
+ },
+ "e1|grammatical|top clause, attractor matches": {
+  "n": 320,
+  "rejected, budget used": 17,
+  "orca analysis": 296,
+  "ace judged": 320,
+  "ace analysis": 318,
+  "same as ace": 247,
+  "accepted at first try": 230,
+  "accepted after repair": 66,
+  "rejected, nothing left to try": 7
+ },
+ "e1|grammatical|top clause, attractor mismatches": {
+  "n": 320,
+  "accepted at first try": 268,
+  "orca analysis": 314,
+  "ace judged": 320,
+  "ace analysis": 320,
+  "same as ace": 280,
+  "accepted after repair": 46,
+  "rejected, nothing left to try": 2,
+  "rejected, budget used": 4
+ },
+ "e1|ungrammatical|all": {
+  "n": 720,
+  "rejected, budget used": 624,
+  "orca analysis": 40,
+  "ace judged": 720,
+  "ace analysis": 599,
+  "same as ace": 25,
+  "rejected, nothing left to try": 56,
+  "accepted after repair": 25,
+  "accepted at first try": 15
+ },
+ "e1|ungrammatical|attractor matches": {
+  "n": 400,
+  "rejected, budget used": 359,
+  "orca analysis": 8,
+  "ace judged": 400,
+  "ace analysis": 279,
+  "same as ace": 6,
+  "rejected, nothing left to try": 33,
+  "accepted after repair": 4,
+  "accepted at first try": 4
+ },
+ "e1|ungrammatical|attractor mismatches": {
+  "n": 320,
+  "rejected, budget used": 265,
+  "orca analysis": 32,
+  "ace judged": 320,
+  "ace analysis": 320,
+  "same as ace": 19,
+  "accepted after repair": 21,
+  "rejected, nothing left to try": 23,
+  "accepted at first try": 11
+ },
+ "e1|ungrammatical|level 0": {
+  "n": 80,
+  "rejected, budget used": 60,
+  "orca analysis": 1,
+  "ace judged": 80,
+  "ace analysis": 5,
+  "same as ace": 1,
+  "rejected, nothing left to try": 19,
+  "accepted after repair": 1
+ },
+ "e1|ungrammatical|level 1": {
+  "n": 160,
+  "rejected, budget used": 129,
+  "orca analysis": 26,
+  "ace judged": 160,
+  "ace analysis": 140,
+  "same as ace": 12,
+  "accepted after repair": 15,
+  "rejected, nothing left to try": 5,
+  "accepted at first try": 11
+ },
+ "e1|ungrammatical|level 2": {
+  "n": 160,
+  "rejected, budget used": 146,
+  "orca analysis": 5,
+  "ace judged": 160,
+  "ace analysis": 143,
+  "same as ace": 5,
+  "rejected, nothing left to try": 9,
+  "accepted after repair": 3,
+  "accepted at first try": 2
+ },
+ "e1|ungrammatical|level 3": {
+  "n": 160,
+  "rejected, budget used": 148,
+  "orca analysis": 4,
+  "ace judged": 160,
+  "ace analysis": 154,
+  "same as ace": 3,
+  "rejected, nothing left to try": 8,
+  "accepted after repair": 2,
+  "accepted at first try": 2
+ },
+ "e1|ungrammatical|level 4": {
+  "n": 160,
+  "rejected, budget used": 141,
+  "orca analysis": 4,
+  "ace judged": 160,
+  "ace analysis": 157,
+  "same as ace": 4,
+  "accepted after repair": 4,
+  "rejected, nothing left to try": 15
+ },
+ "e1|ungrammatical|no top clause": {
+  "n": 80,
+  "rejected, budget used": 60,
+  "orca analysis": 1,
+  "ace judged": 80,
+  "ace analysis": 5,
+  "same as ace": 1,
+  "rejected, nothing left to try": 19,
+  "accepted after repair": 1
+ },
+ "e1|ungrammatical|top clause, attractor matches": {
+  "n": 320,
+  "rejected, budget used": 299,
+  "orca analysis": 7,
+  "ace judged": 320,
+  "ace analysis": 274,
+  "same as ace": 5,
+  "rejected, nothing left to try": 14,
+  "accepted after repair": 3,
+  "accepted at first try": 4
+ },
+ "e1|ungrammatical|top clause, attractor mismatches": {
+  "n": 320,
+  "rejected, budget used": 265,
+  "orca analysis": 32,
+  "ace judged": 320,
+  "ace analysis": 320,
+  "same as ace": 19,
+  "accepted after repair": 21,
+  "rejected, nothing left to try": 23,
+  "accepted at first try": 11
+ },
+ "e2|grammatical|all": {
+  "n": 480,
+  "accepted at first try": 389,
+  "orca analysis": 465,
+  "ace judged": 480,
+  "ace analysis": 477,
+  "same as ace": 443,
+  "rejected, budget used": 11,
+  "accepted after repair": 76,
+  "rejected, nothing left to try": 4
+ },
+ "e2|grammatical|complex": {
+  "n": 160,
+  "accepted at first try": 116,
+  "orca analysis": 148,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 130,
+  "accepted after repair": 32,
+  "rejected, budget used": 8,
+  "rejected, nothing left to try": 4
+ },
+ "e2|grammatical|level 1": {
+  "n": 120,
+  "accepted at first try": 101,
+  "orca analysis": 115,
+  "ace judged": 120,
+  "ace analysis": 118,
+  "same as ace": 109,
+  "rejected, budget used": 4,
+  "accepted after repair": 14,
+  "rejected, nothing left to try": 1
+ },
+ "e2|grammatical|level 2": {
+  "n": 120,
+  "accepted at first try": 102,
+  "orca analysis": 116,
+  "ace judged": 120,
+  "ace analysis": 119,
+  "same as ace": 110,
+  "accepted after repair": 14,
+  "rejected, budget used": 3,
+  "rejected, nothing left to try": 1
+ },
+ "e2|grammatical|level 3": {
+  "n": 120,
+  "accepted at first try": 97,
+  "orca analysis": 117,
+  "ace judged": 120,
+  "ace analysis": 120,
+  "same as ace": 112,
+  "accepted after repair": 20,
+  "rejected, budget used": 2,
+  "rejected, nothing left to try": 1
+ },
+ "e2|grammatical|level 4": {
+  "n": 120,
+  "accepted at first try": 89,
+  "orca analysis": 117,
+  "ace judged": 120,
+  "ace analysis": 120,
+  "same as ace": 112,
+  "accepted after repair": 28,
+  "rejected, budget used": 2,
+  "rejected, nothing left to try": 1
+ },
+ "e2|grammatical|none": {
+  "n": 160,
+  "accepted at first try": 160,
+  "orca analysis": 160,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 160
+ },
+ "e2|grammatical|simple": {
+  "n": 160,
+  "accepted at first try": 113,
+  "orca analysis": 157,
+  "ace judged": 160,
+  "ace analysis": 157,
+  "same as ace": 153,
+  "rejected, budget used": 3,
+  "accepted after repair": 44
+ },
+ "e2|ungrammatical|all": {
+  "n": 480,
+  "rejected, nothing left to try": 64,
+  "orca analysis": 211,
+  "ace judged": 480,
+  "ace analysis": 477,
+  "same as ace": 193,
+  "rejected, budget used": 205,
+  "accepted after repair": 211
+ },
+ "e2|ungrammatical|complex": {
+  "n": 160,
+  "rejected, nothing left to try": 13,
+  "orca analysis": 76,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 61,
+  "rejected, budget used": 71,
+  "accepted after repair": 76
+ },
+ "e2|ungrammatical|level 1": {
+  "n": 120,
+  "rejected, nothing left to try": 44,
+  "orca analysis": 45,
+  "ace judged": 120,
+  "ace analysis": 118,
+  "same as ace": 43,
+  "rejected, budget used": 31,
+  "accepted after repair": 45
+ },
+ "e2|ungrammatical|level 2": {
+  "n": 120,
+  "rejected, nothing left to try": 17,
+  "orca analysis": 33,
+  "ace judged": 120,
+  "ace analysis": 119,
+  "same as ace": 32,
+  "rejected, budget used": 70,
+  "accepted after repair": 33
+ },
+ "e2|ungrammatical|level 3": {
+  "n": 120,
+  "rejected, budget used": 63,
+  "orca analysis": 55,
+  "ace judged": 120,
+  "ace analysis": 120,
+  "same as ace": 51,
+  "accepted after repair": 55,
+  "rejected, nothing left to try": 2
+ },
+ "e2|ungrammatical|level 4": {
+  "n": 120,
+  "rejected, budget used": 41,
+  "orca analysis": 78,
+  "ace judged": 120,
+  "ace analysis": 120,
+  "same as ace": 67,
+  "accepted after repair": 78,
+  "rejected, nothing left to try": 1
+ },
+ "e2|ungrammatical|none": {
+  "n": 160,
+  "rejected, nothing left to try": 41,
+  "orca analysis": 14,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 13,
+  "rejected, budget used": 105,
+  "accepted after repair": 14
+ },
+ "e2|ungrammatical|simple": {
+  "n": 160,
+  "accepted after repair": 121,
+  "orca analysis": 121,
+  "ace judged": 160,
+  "ace analysis": 157,
+  "same as ace": 119,
+  "rejected, nothing left to try": 10,
+  "rejected, budget used": 29
+ }
+}

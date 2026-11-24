@@ -1,0 +1,120 @@
+{
+ "BERT-base replay": {
+  "first guess accepted": {
+   "attractor matches": [
+    144,
+    320
+   ],
+   "attractor mismatches": [
+    192,
+    320
+   ],
+   "difference (points)": 15.0,
+   "fisher p (two-sided)": 0.00019403536124491902,
+   "z": -3.8,
+   "z-test p": 0.00014499678270024405
+  },
+  "Orca finds an analysis": {
+   "attractor matches": [
+    284,
+    320
+   ],
+   "attractor mismatches": [
+    296,
+    320
+   ],
+   "difference (points)": 3.8,
+   "fisher p (two-sided)": 0.13522486460901056,
+   "z": -1.63,
+   "z-test p": 0.1036622730182959
+  },
+  "same MRS as ACE": {
+   "attractor matches": [
+    244,
+    320
+   ],
+   "attractor mismatches": [
+    249,
+    320
+   ],
+   "difference (points)": 1.6,
+   "fisher p (two-sided)": 0.7070783593050562,
+   "z": -0.47,
+   "z-test p": 0.6384477853516988
+  }
+ },
+ "DeBERTa replay": {
+  "first guess accepted": {
+   "attractor matches": [
+    230,
+    320
+   ],
+   "attractor mismatches": [
+    268,
+    320
+   ],
+   "difference (points)": 11.9,
+   "fisher p (two-sided)": 0.00040800129060459373,
+   "z": -3.62,
+   "z-test p": 0.00030028549550267585
+  },
+  "Orca finds an analysis": {
+   "attractor matches": [
+    296,
+    320
+   ],
+   "attractor mismatches": [
+    314,
+    320
+   ],
+   "difference (points)": 5.6,
+   "fisher p (two-sided)": 0.0011054657821367865,
+   "z": -3.37,
+   "z-test p": 0.0007621778735494778
+  },
+  "same MRS as ACE": {
+   "attractor matches": [
+    247,
+    320
+   ],
+   "attractor mismatches": [
+    280,
+    320
+   ],
+   "difference (points)": 10.3,
+   "fisher p (two-sided)": 0.000854119387425066,
+   "z": -3.42,
+   "z-test p": 0.0006237990623826886
+  }
+ },
+ "DeBERTa chart": {
+  "Orca finds an analysis": {
+   "attractor matches": [
+    318,
+    320
+   ],
+   "attractor mismatches": [
+    312,
+    320
+   ],
+   "difference (points)": -1.9,
+   "fisher p (two-sided)": 0.10662421537976682,
+   "z": 1.91,
+   "z-test p": 0.05582929463923956
+  },
+  "same MRS as ACE": {
+   "attractor matches": [
+    302,
+    320
+   ],
+   "attractor mismatches": [
+    306,
+    320
+   ],
+   "difference (points)": 1.3,
+   "fisher p (two-sided)": 0.5870302659403647,
+   "z": -0.73,
+   "z-test p": 0.4681599098544259
+  }
+ }
+}

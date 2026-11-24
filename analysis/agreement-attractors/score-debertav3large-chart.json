@@ -1,0 +1,339 @@
+{
+ "e1|grammatical|all": {
+  "n": 720,
+  "chart analysis": 710,
+  "orca analysis": 710,
+  "ace judged": 720,
+  "ace analysis": 718,
+  "same as ace": 688,
+  "chart found nothing": 10
+ },
+ "e1|grammatical|attractor matches": {
+  "n": 400,
+  "chart analysis": 398,
+  "orca analysis": 398,
+  "ace judged": 400,
+  "ace analysis": 398,
+  "same as ace": 382,
+  "chart found nothing": 2
+ },
+ "e1|grammatical|attractor mismatches": {
+  "n": 320,
+  "chart analysis": 312,
+  "orca analysis": 312,
+  "ace judged": 320,
+  "ace analysis": 320,
+  "same as ace": 306,
+  "chart found nothing": 8
+ },
+ "e1|grammatical|level 0": {
+  "n": 80,
+  "chart analysis": 80,
+  "orca analysis": 80,
+  "ace judged": 80,
+  "ace analysis": 80,
+  "same as ace": 80
+ },
+ "e1|grammatical|level 1": {
+  "n": 160,
+  "chart analysis": 156,
+  "orca analysis": 156,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 147,
+  "chart found nothing": 4
+ },
+ "e1|grammatical|level 2": {
+  "n": 160,
+  "chart analysis": 156,
+  "orca analysis": 156,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 152,
+  "chart found nothing": 4
+ },
+ "e1|grammatical|level 3": {
+  "n": 160,
+  "chart analysis": 158,
+  "orca analysis": 158,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 155,
+  "chart found nothing": 2
+ },
+ "e1|grammatical|level 4": {
+  "n": 160,
+  "chart analysis": 160,
+  "orca analysis": 160,
+  "ace judged": 160,
+  "ace analysis": 158,
+  "same as ace": 154
+ },
+ "e1|grammatical|no top clause": {
+  "n": 80,
+  "chart analysis": 80,
+  "orca analysis": 80,
+  "ace judged": 80,
+  "ace analysis": 80,
+  "same as ace": 80
+ },
+ "e1|grammatical|top clause, attractor matches": {
+  "n": 320,
+  "chart analysis": 318,
+  "orca analysis": 318,
+  "ace judged": 320,
+  "ace analysis": 318,
+  "same as ace": 302,
+  "chart found nothing": 2
+ },
+ "e1|grammatical|top clause, attractor mismatches": {
+  "n": 320,
+  "chart analysis": 312,
+  "orca analysis": 312,
+  "ace judged": 320,
+  "ace analysis": 320,
+  "same as ace": 306,
+  "chart found nothing": 8
+ },
+ "e1|ungrammatical|all": {
+  "n": 720,
+  "chart found nothing": 151,
+  "orca analysis": 569,
+  "ace judged": 720,
+  "ace analysis": 599,
+  "same as ace": 406,
+  "chart analysis": 569
+ },
+ "e1|ungrammatical|attractor matches": {
+  "n": 400,
+  "chart found nothing": 145,
+  "orca analysis": 255,
+  "ace judged": 400,
+  "ace analysis": 279,
+  "same as ace": 182,
+  "chart analysis": 255
+ },
+ "e1|ungrammatical|attractor mismatches": {
+  "n": 320,
+  "chart analysis": 314,
+  "orca analysis": 314,
+  "ace judged": 320,
+  "ace analysis": 320,
+  "same as ace": 224,
+  "chart found nothing": 6
+ },
+ "e1|ungrammatical|level 0": {
+  "n": 80,
+  "chart found nothing": 76,
+  "orca analysis": 4,
+  "ace judged": 80,
+  "ace analysis": 5,
+  "same as ace": 4,
+  "chart analysis": 4
+ },
+ "e1|ungrammatical|level 1": {
+  "n": 160,
+  "chart analysis": 132,
+  "orca analysis": 132,
+  "ace judged": 160,
+  "ace analysis": 140,
+  "same as ace": 89,
+  "chart found nothing": 28
+ },
+ "e1|ungrammatical|level 2": {
+  "n": 160,
+  "chart analysis": 128,
+  "orca analysis": 128,
+  "ace judged": 160,
+  "ace analysis": 143,
+  "same as ace": 93,
+  "chart found nothing": 32
+ },
+ "e1|ungrammatical|level 3": {
+  "n": 160,
+  "chart analysis": 148,
+  "orca analysis": 148,
+  "ace judged": 160,
+  "ace analysis": 154,
+  "same as ace": 122,
+  "chart found nothing": 12
+ },
+ "e1|ungrammatical|level 4": {
+  "n": 160,
+  "chart analysis": 157,
+  "orca analysis": 157,
+  "ace judged": 160,
+  "ace analysis": 157,
+  "same as ace": 98,
+  "chart found nothing": 3
+ },
+ "e1|ungrammatical|no top clause": {
+  "n": 80,
+  "chart found nothing": 76,
+  "orca analysis": 4,
+  "ace judged": 80,
+  "ace analysis": 5,
+  "same as ace": 4,
+  "chart analysis": 4
+ },
+ "e1|ungrammatical|top clause, attractor matches": {
+  "n": 320,
+  "chart analysis": 251,
+  "orca analysis": 251,
+  "ace judged": 320,
+  "ace analysis": 274,
+  "same as ace": 178,
+  "chart found nothing": 69
+ },
+ "e1|ungrammatical|top clause, attractor mismatches": {
+  "n": 320,
+  "chart analysis": 314,
+  "orca analysis": 314,
+  "ace judged": 320,
+  "ace analysis": 320,
+  "same as ace": 224,
+  "chart found nothing": 6
+ },
+ "e2|grammatical|all": {
+  "n": 480,
+  "chart analysis": 473,
+  "orca analysis": 473,
+  "ace judged": 480,
+  "ace analysis": 477,
+  "same as ace": 473,
+  "chart found nothing": 7
+ },
+ "e2|grammatical|complex": {
+  "n": 160,
+  "chart analysis": 156,
+  "orca analysis": 156,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 156,
+  "chart found nothing": 4
+ },
+ "e2|grammatical|level 1": {
+  "n": 120,
+  "chart analysis": 117,
+  "orca analysis": 117,
+  "ace judged": 120,
+  "ace analysis": 118,
+  "same as ace": 117,
+  "chart found nothing": 3
+ },
+ "e2|grammatical|level 2": {
+  "n": 120,
+  "chart analysis": 118,
+  "orca analysis": 118,
+  "ace judged": 120,
+  "ace analysis": 119,
+  "same as ace": 118,
+  "chart found nothing": 2
+ },
+ "e2|grammatical|level 3": {
+  "n": 120,
+  "chart analysis": 119,
+  "orca analysis": 119,
+  "ace judged": 120,
+  "ace analysis": 120,
+  "same as ace": 119,
+  "chart found nothing": 1
+ },
+ "e2|grammatical|level 4": {
+  "n": 120,
+  "chart analysis": 119,
+  "orca analysis": 119,
+  "ace judged": 120,
+  "ace analysis": 120,
+  "same as ace": 119,
+  "chart found nothing": 1
+ },
+ "e2|grammatical|none": {
+  "n": 160,
+  "chart analysis": 160,
+  "orca analysis": 160,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 160
+ },
+ "e2|grammatical|simple": {
+  "n": 160,
+  "chart analysis": 157,
+  "orca analysis": 157,
+  "ace judged": 160,
+  "ace analysis": 157,
+  "same as ace": 157,
+  "chart found nothing": 3
+ },
+ "e2|ungrammatical|all": {
+  "n": 480,
+  "chart analysis": 473,
+  "orca analysis": 473,
+  "ace judged": 480,
+  "ace analysis": 477,
+  "same as ace": 468,
+  "chart found nothing": 7
+ },
+ "e2|ungrammatical|complex": {
+  "n": 160,
+  "chart analysis": 156,
+  "orca analysis": 156,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 154,
+  "chart found nothing": 4
+ },
+ "e2|ungrammatical|level 1": {
+  "n": 120,
+  "chart analysis": 117,
+  "orca analysis": 117,
+  "ace judged": 120,
+  "ace analysis": 118,
+  "same as ace": 116,
+  "chart found nothing": 3
+ },
+ "e2|ungrammatical|level 2": {
+  "n": 120,
+  "chart analysis": 118,
+  "orca analysis": 118,
+  "ace judged": 120,
+  "ace analysis": 119,
+  "same as ace": 117,
+  "chart found nothing": 2
+ },
+ "e2|ungrammatical|level 3": {
+  "n": 120,
+  "chart analysis": 119,
+  "orca analysis": 119,
+  "ace judged": 120,
+  "ace analysis": 120,
+  "same as ace": 117,
+  "chart found nothing": 1
+ },
+ "e2|ungrammatical|level 4": {
+  "n": 120,
+  "chart analysis": 119,
+  "orca analysis": 119,
+  "ace judged": 120,
+  "ace analysis": 120,
+  "same as ace": 118,
+  "chart found nothing": 1
+ },
+ "e2|ungrammatical|none": {
+  "n": 160,
+  "chart analysis": 160,
+  "orca analysis": 160,
+  "ace judged": 160,
+  "ace analysis": 160,
+  "same as ace": 160
+ },
+ "e2|ungrammatical|simple": {
+  "n": 160,
+  "chart analysis": 157,
+  "orca analysis": 157,
+  "ace judged": 160,
+  "ace analysis": 157,
+  "same as ace": 154,
+  "chart found nothing": 3
+ }
+}
