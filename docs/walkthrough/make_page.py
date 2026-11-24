@@ -935,6 +935,25 @@ def exp_agreement():
     return fold('Agreement after distracting material', 'Wrong agreement is turned down; ACE finds strained readings that Orca does not.', body, id_='agreement')
 
 
+def exp_label_filter():
+    d = load(f'{ORCA}/analysis/label-filter/summary.json')
+    if not d:
+        return ''
+    R = d['runs']
+    def row(name, k):
+        r = R[k]
+        return (f'<tr><td>{name}</td>' + td(pct(r['exact'], N), True) + td(pct(r['with properties and ICONS'], N)) + td(pct(r['any analysis'], N))
+                + td(pct(r['gold among accepted'], N)) + td(f"{r['replays'] / N:.0f}") + '</tr>')
+    t = table([('Repair, DeBERTa-v3 large tags', ''), ('Same meaning as gold', 'n hl'), ('… with tense, number and information structure too', 'n'), ('Any analysis', 'n'),
+               ('Gold among the analyses found', 'n'), ('Replays per sentence', 'n')],
+              [row('Current defaults (labels down to probability 0.001)', 'base-0.001'), row('&nbsp;&nbsp;… and the label filter', 'filter-0.001'),
+               row('Labels down to probability 0.0001', 'base-0.0001'), row('&nbsp;&nbsp;… and the label filter', 'filter-0.0001')])
+    body = t + notes('The filter skips, without a replay, label combinations the grammar can never accept: a leaf whose lexical type cannot take its rules, or a binary rule that cannot take the single-word daughters its tree label gives it. Checked with the most general sign of each label, so it never rules out anything the grammar would accept; on all Redwoods train and dev gold labels it rejects only sentences whose lexical type no longer has an entry in ERG 2025.',
+                     'Redwoods dev from raw text; all four runs use the same saved tagger output, so differences come from the search alone. Repair time did not improve: checking every candidate costs about what the skipped replays saved.',
+                     'Gains are within the run-to-run spread of about one point, so the filter stays off (repair.py --label-filter).')
+    return fold('Ruling out label pairs the grammar can never combine', 'Sound, and it skips a quarter of the replays, but almost none of the skipped candidates would have been right.', body, id_='label-filter')
+
+
 def exp_examples():
     steps = open(os.path.join(HERE, 'steps-legend.html')).read()
     body = steps + '    <div id="examples" class="stack" style="gap:28px"></div>\n'
@@ -998,7 +1017,7 @@ def rebuild(s):
             + question('beyond', 'Does it hold beyond the treebank?', 'Partly: on novels and news replay agrees with ACE less than on the treebank and chart mode much more; on generated sentences, and where ACE fails, the judge often sides with Orca.',
                        '', exp_corpus_modes(open_=True) + exp_generated() + exp_beyond_ace() + exp_agreement())
             + question('better', 'What makes it better?', 'A stronger encoder and more silver data each add a few points; differences of about one point are within run-to-run spread; LLMs help offline only.',
-                       '', exp_encoders(open_=True) + runs() + exp_training() + exp_rawtext() + exp_llm() + exp_llm_rank())
+                       '', exp_encoders(open_=True) + runs() + exp_training() + exp_label_filter() + exp_rawtext() + exp_llm() + exp_llm_rank())
             + question('grammars', 'Does it work with other grammars?', 'So far, yes: Orca replays the Hausa and Spanish grammars\' own parses once ERG-specific assumptions are removed, and a first Spanish tagger works.',
                        '', exp_hausa(open_=True) + exp_spanish())
             + question('reference', 'Reference', 'Further measures and worked examples.', '', exp_properties() + exp_examples()) + '\n')
