@@ -98,6 +98,49 @@ class Tagger(nn.Module):
         return {k: v for k, v in self.state_dict().items() if k not in frozen}
 
 
+def attach_rejections(sents, path, leaf_stoi, tree_stoi):
+    """s['rej'] = [(kind, word position, label id)] for labels the grammar rejected at that word
+    (scripts/rejections.py). Labels outside the vocabulary or positions past the sentence are dropped."""
+    by_id = {}
+    for line in open(path, encoding='utf-8'):
+        r = json.loads(line)
+        by_id[r['id']] = r['rejected']
+    stoi, n = {'leaf': leaf_stoi, 'tree': tree_stoi}, 0
+    for s in sents:
+        rej = []
+        for kind, j, label in by_id.get(s['id'], ()):
+            i = stoi[kind].get(label)
+            if i and j < len(s['forms']) and s[kind][j] != label:
+                rej.append((kind, j, i))
+        if rej:
+            s['rej'] = rej
+            n += len(rej)
+    return n
+
+
+def unlikelihood(batch, kept, leaf_logits, tree_logits):
+    """Sum over rejected labels of -log(1 - p(label)), divided by the words in the batch
+    (so it is on the scale of the per-word cross-entropy). Words are flattened in batch
+    order, as collate returns them; words lost to truncation are skipped."""
+    idx = {'leaf': ([], []), 'tree': ([], [])}
+    off = 0
+    for s, k in zip(batch, kept):
+        for kind, j, i in s.get('rej', ()):
+            if j < k:
+                idx[kind][0].append(off + j)
+                idx[kind][1].append(i)
+        off += k
+    total = leaf_logits.new_zeros((), dtype=torch.float32)
+    for kind, logits in (('leaf', leaf_logits), ('tree', tree_logits)):
+        rows, labels = idx[kind]
+        if rows:
+            r = torch.tensor(rows, device=logits.device)
+            c = torch.tensor(labels, device=logits.device)
+            p = logits.float()[r].softmax(-1)[torch.arange(len(rows), device=logits.device), c]
+            total = total + (-torch.log1p(-p.clamp(max=1 - 1e-6))).sum()
+    return total / max(off, 1)
+
+
 def batches(sents, size, shuffle):
     order = list(range(len(sents)))
     if shuffle:
@@ -267,6 +310,9 @@ def main():
     ap.add_argument('--checkpoint-every', type=int, default=2000,
                     help='save a resumable checkpoint every this many steps (and on SIGTERM/SIGINT)')
     ap.add_argument('--resume', action='store_true', help='continue from OUT/checkpoint.pt if it exists')
+    ap.add_argument('--rejections', help='labels the grammar rejected (scripts/rejections.py merge: data/rejections/train-folds.jsonl); '
+                    'adds an unlikelihood term -W log(1 - p(rejected label)) at those words')
+    ap.add_argument('--rej-weight', type=float, default=1.0, help='W for --rejections, relative to the per-word cross-entropy')
     args = ap.parse_args()
     random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -310,6 +356,9 @@ def main():
         opt, lambda s: (s + 1) / warm if s < warm else max(0.0, (steps - s) / (steps - warm)))
     scaler = torch.amp.GradScaler(enabled=device.type == 'cuda')
     loss_fn = nn.CrossEntropyLoss()
+    if args.rejections:
+        n_rej = attach_rejections(train, args.rejections, leaf_stoi, tree_stoi)
+        print(f'rejections: {n_rej} rejected labels on {sum(1 for s in train if s.get("rej"))} training sentences, weight {args.rej_weight}', flush=True)
 
     best, history, step, skipped = -1.0, [], 0, 0
     ckpt_path = os.path.join(args.out, 'checkpoint.pt')
@@ -360,11 +409,13 @@ def main():
                 sys.exit(75)
             if step and step % args.checkpoint_every == 0 and pos > start_pos:
                 save_checkpoint(epoch, pos, epoch_rng)
-            ids, mask, first, leaf, tree, _ = collate(batch, tok, leaf_stoi, tree_stoi, device)
+            ids, mask, first, leaf, tree, kept = collate(batch, tok, leaf_stoi, tree_stoi, device)
             try:
                 with torch.autocast('cuda', dtype=torch.float16, enabled=device.type == 'cuda'):
                     leaf_logits, tree_logits = model(ids, mask, first)
                     loss = loss_fn(leaf_logits.float(), leaf) + loss_fn(tree_logits.float(), tree)
+                    if args.rejections:
+                        loss = loss + args.rej_weight * unlikelihood(batch, kept, leaf_logits, tree_logits)
                 opt.zero_grad(set_to_none=True)
                 scaler.scale(loss).backward()
             except torch.OutOfMemoryError:      # a batch of very long sentences
