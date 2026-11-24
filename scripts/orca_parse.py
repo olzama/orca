@@ -385,14 +385,16 @@ def ace_parse(text, ace=DEFAULTS['ace'], dat=DEFAULTS['dat'], timeout=30):
         resp = A.parse(dat, text, executable=ace, cmdargs=['-1', f'--timeout={timeout}'], stderr=open(os.devnull, 'w'))
         res = resp.results()
         secs = time.perf_counter() - t
+        own = resp.get('treal')                    # ACE's own measurement of the parse, in ms: without starting up and loading the grammar
+        own = own / 1000 if isinstance(own, (int, float)) else None
         if not res:
-            return {'seconds': secs, 'mrs': None}
+            return {'seconds': secs, 'parse seconds': own, 'mrs': None}
         m = simplemrs.decode(res[0]['mrs'])
         try:
             d = dmrs_json(m)
         except Exception:
             d = None
-        return {'seconds': secs, 'mrs': simplemrs.encode(m, indent=True), 'dmrs': d, '_mrs_obj': m,
+        return {'seconds': secs, 'parse seconds': own, 'mrs': simplemrs.encode(m, indent=True), 'dmrs': d, '_mrs_obj': m,
                 '_derivation': str(res[0].get('derivation') or '') or None}   # for the demo's feature-structure view (scripts/ace_sign.py)
     except Exception as e:
         return {'seconds': time.perf_counter() - t, 'mrs': None, 'error': str(e)[:200]}

@@ -56,9 +56,9 @@ th, td { text-align: left; padding: 6px 12px; border-bottom: 1px solid var(--lin
 th { font-weight: 600; color: var(--muted); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; }
 td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
 tr.total td { font-weight: 600; border-bottom: 0; }
-#time { width: 100%; }
-#time td:first-child { white-space: normal; }
-#time td.n { width: 6em; }
+#time, .timetable { width: 100%; }
+#time td:first-child, .timetable td:first-child { white-space: normal; }
+#time td.n, .timetable td.n { width: 6em; }
 pre { margin: 0; font: 0.78rem/1.5 var(--mono); }
 details summary { cursor: pointer; color: var(--accent); font-weight: 500; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
@@ -309,7 +309,8 @@ select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--li
     <section class="panel hidden" id="ace-panel">
       <h2>ACE, for comparison</h2>
       <div id="ace-verdict" class="verdict"></div>
-      <p class="small" id="ace-time"></p>
+      <div class="scroll"><table id="ace-time" class="timetable"></table></div>
+      <p class="small" id="ace-time-note"></p>
       <div id="ace-dmrs"></div>
       <details><summary>MRS</summary>
         <div id="ace-mrsview" style="margin-top:10px"></div>
@@ -886,7 +887,22 @@ function show(r) {
     else if (r.ace['same as orca']) { v.className = 'verdict ok'; v.innerHTML = '<b>Same meaning.</b> ACE’s first-ranked analysis has the same MRS as Orca’s.'; }
     else if (!r.mrs) { v.className = 'verdict chg'; v.innerHTML = '<b>Only ACE found an analysis.</b>'; }
     else { v.className = 'verdict chg'; v.innerHTML = '<b>Different meaning.</b> ACE’s first-ranked analysis differs from Orca’s; orange marks what Orca’s analysis does not have.'; }
-    $('ace-time').textContent = `ACE took ${ms(r.ace.seconds)} ms for this sentence, measured on its own: starting ACE, loading the compiled grammar and parsing for the first-ranked analysis. Orca’s time above does not include it.` + (r.ace['sign seconds'] != null ? ` Rebuilding ACE’s feature structure for display took another ${ms(r.ace['sign seconds'])} ms, which is not ACE’s work.` : '');
+    {
+      const a = r.ace, own = a['parse seconds'], sv = r.server || {};
+      const row = (name, s, cls) => `<tr${cls ? ` class="${cls}"` : ''}><td>${name}</td><td class="n">${ms(Math.max(0, s))}</td></tr>`;
+      const head = name => `<tr><th colspan="2">${name}</th></tr>`;
+      let t = '<tr><th>Step</th><th class="n">ms</th></tr>' + head('Producing the parse');
+      if (own != null) {
+        t += row('Starting ACE and loading the compiled grammar', a.seconds - own);
+        t += row('Parsing for the first-ranked analysis (ACE’s own measurement)', own);
+      }
+      t += row('ACE, total', a.seconds, 'total');
+      t += head('Showing it');
+      if (a['sign seconds'] != null) t += row('Server: rebuilding ACE’s feature structure by replay (Orca’s work; ACE prints none)', a['sign seconds']);
+      if (sv.ace != null) t += row('Server: the other views of ACE’s analysis and the comparison of meanings', sv.ace - a.seconds - (a['sign seconds'] || 0));
+      $('ace-time').innerHTML = t;
+      $('ace-time-note').textContent = 'The demo starts ACE anew for every sentence, while Orca’s models stay loaded; the first row shows what that costs. Orca’s time table does not include ACE’s time.';
+    }
     $('ace-tree').replaceChildren(r.ace.derivation ? drawTree(toRaw(r.ace.derivation)) : el('p', 'small', 'No derivation.'));
     $('ace-dmrs').replaceChildren(r.ace.dmrs ? drawDmrs(r.ace.dmrs, r.dmrs) : el('span'));
     $('ace-mrsview').replaceChildren(r.ace.mrs_view ? drawMrs(r.ace.mrs_view, r.input || $('input').value, r.tokens) : el('span'));
