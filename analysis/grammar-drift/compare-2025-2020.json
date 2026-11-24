@@ -1,0 +1,1407 @@
+{
+ "counts": {
+  "sentences": 2062,
+  "A: first guess accepted": 1503,
+  "B: first guess accepted": 1297,
+  "A: any analysis": 1924,
+  "B: any analysis": 1644,
+  "A: replays": 360972,
+  "B: replays": 305557,
+  "both analyzed": 1642,
+  "both analyzed: same MRS": 1505,
+  "B only": 2
+ },
+ "A analyzed, B not: why": {
+  "unification failure in B": 116,
+  "chosen derivation uses a name B lacks": 95,
+  "missing name or entry in B": 71
+ },
+ "most frequent details": {
+  "unification failure in B": [
+   [
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +",
+    95
+   ],
+   [
+    "hd-cmp_u_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +",
+    5
+   ],
+   [
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & adj",
+    4
+   ],
+   [
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & prep",
+    4
+   ],
+   [
+    "hdn_bnp_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.ALTMIN: implicit_q_rel & explicit_q_rel",
+    2
+   ],
+   [
+    "hdn-aj_rc_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: basic_nonpro_rel & pron_rel",
+    1
+   ],
+   [
+    "hd-cmp_u_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MOD.FIRST.LOCAL.CAT.HEAD: basic_noun & v_or_a_or_p",
+    1
+   ],
+   [
+    "aj-hdn_norm_c: ARGS.REST.FIRST.SYNSEM.LOCAL.AGR.DIV: - & +",
+    1
+   ],
+   [
+    "sp-hd_hc_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: meas_or_numq_rel & named_num_or_fract_rel",
+    1
+   ],
+   [
+    "hdn-np_app-idf-p_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CONT.HOOK.INDEX.SORT: entity & time",
+    1
+   ],
+   [
+    "aj-hdn_norm_c: ARGS.REST.FIRST.SYNSEM.LOCAL.AGR.PNG.PN: 3s & 3p",
+    1
+   ]
+  ],
+  "chosen derivation uses a name B lacks": [
+   [
+    "v_cp_fin-inf-q-mob_le",
+    30
+   ],
+   [
+    "n_-_pn-letter_le",
+    18
+   ],
+   [
+    "p_np_i-nm-no-tm-to_le",
+    16
+   ],
+   [
+    "c_xp_and-or-slash_le",
+    9
+   ],
+   [
+    "v_np_pr-n3s_le",
+    4
+   ],
+   [
+    "n_pp_c-gr-sg-of_le",
+    4
+   ],
+   [
+    "v_np_salut_le",
+    3
+   ],
+   [
+    "av_-_i-vp-po-nox_le",
+    3
+   ],
+   [
+    "n_-_pr-ad-temp_le",
+    2
+   ],
+   [
+    "frg-cl_runon_c",
+    1
+   ],
+   [
+    "hd_yesno-nmc_c",
+    1
+   ],
+   [
+    "v_pp_dir-noj_le",
+    1
+   ]
+  ],
+  "missing name or entry in B": [
+   [
+    "n_pp_mc-of-ns_le: missing lexical entry for \"\u2026\"",
+    17
+   ],
+   [
+    "n_pp_c-ns-of_le: missing lexical entry for \"\u2026\"",
+    9
+   ],
+   [
+    "aj_-_i_le: missing lexical entry for \"\u2026\"",
+    6
+   ],
+   [
+    "v_np-vp_sor_le: missing lexical entry for \"\u2026\"",
+    5
+   ],
+   [
+    "n_pp_mc-mod-of_le: missing lexical entry for \"\u2026\"",
+    4
+   ],
+   [
+    "av_-_i-vp-x_le: missing lexical entry for \"\u2026\"",
+    4
+   ],
+   [
+    "n_pp_m_le: missing lexical entry for \"\u2026\"",
+    4
+   ],
+   [
+    "n_-_mc_le: missing lexical entry for \"\u2026\"",
+    3
+   ],
+   [
+    "n_pp_mc-ns_le: missing lexical entry for \"\u2026\"",
+    3
+   ],
+   [
+    "n_-_c-ns_le: missing lexical entry for \"\u2026\"",
+    3
+   ],
+   [
+    "av_-_i-vp-po_le: missing lexical entry for \"\u2026\"",
+    3
+   ],
+   [
+    "v_np_ntr_le: missing lexical entry for \"\u2026\"",
+    2
+   ]
+  ]
+ },
+ "examples": {
+  "unification failure in B": [
+   [
+    "ecpa/2200710",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2201009",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2202208",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2203508",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2204308",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2204508",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2206308",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2208309",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ]
+  ],
+  "chosen derivation uses a name B lacks": [
+   [
+    "ecpa/2206609",
+    "v_np_pr-n3s_le"
+   ],
+   [
+    "ecpa/2206709",
+    "v_np_pr-n3s_le"
+   ],
+   [
+    "ecpa/2208611",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2208709",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2208710",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2209110",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ecpa/2209408",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2210508",
+    "v_cp_fin-inf-q-mob_le"
+   ]
+  ],
+  "missing name or entry in B": [
+   [
+    "ecpa/2222108",
+    "n_-_m_le: missing lexical entry for \"graphics\""
+   ],
+   [
+    "ecpa/2224508",
+    "n_-_mc_le: missing lexical entry for \"accounting\""
+   ],
+   [
+    "ecpa/2230408",
+    "n_pp_c-of_le: missing lexical entry for \"photo\""
+   ],
+   [
+    "ecpa/2243208",
+    "n_pp_mc-mod-of_le: missing lexical entry for \"life\""
+   ],
+   [
+    "ecpa/2245509",
+    "v_np_ntr_le: missing lexical entry for \"cost\""
+   ],
+   [
+    "ecpa/2246508",
+    "n_pp_mc-mod-of_le: missing lexical entry for \"life\""
+   ],
+   [
+    "ecpa/2248710",
+    "n_pp_mc-mod-of_le: missing lexical entry for \"life\""
+   ],
+   [
+    "ecpa/2254408",
+    "n_pp_c-ns-of_le: missing lexical entry for \"terms\""
+   ]
+  ]
+ },
+ "all": {
+  "unification failure in B": [
+   [
+    "ecpa/2200710",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2201009",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2202208",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2203508",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2204308",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2204508",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2206308",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2208309",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2208310",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2209209",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2210808",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2211409",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2220509",
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & adj"
+   ],
+   [
+    "ecpa/2220908",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2221909",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2224408",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2228709",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2231308",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2231309",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2237308",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2237708",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2238808",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2239608",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2239910",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2240008",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2241809",
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & prep"
+   ],
+   [
+    "ecpa/2243908",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2244009",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2244108",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2244409",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2244708",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2245908",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2246810",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2246908",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2247508",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2248208",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2249609",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2250908",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2251908",
+    "hdn_bnp_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.ALTMIN: implicit_q_rel & explicit_q_rel"
+   ],
+   [
+    "ecpa/2253208",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2254109",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2254808",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2267908",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2268608",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2269208",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2270308",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2270608",
+    "hdn-aj_rc_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: basic_nonpro_rel & pron_rel"
+   ],
+   [
+    "ecpa/2273808",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2274109",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2274408",
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & prep"
+   ],
+   [
+    "ecpa/2275008",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2275709",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2276108",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2276908",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2277109",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2279009",
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & adj"
+   ],
+   [
+    "ecpa/2281310",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2281612",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2285309",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2286011",
+    "hd-cmp_u_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MOD.FIRST.LOCAL.CAT.HEAD: basic_noun & v_or_a_or_p"
+   ],
+   [
+    "ecpa/2295809",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ecpa/2300408",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200020",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200150",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200180",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200190",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200220",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200260",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200290",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200420",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200430",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200660",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200680",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200880",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007200920",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007201010",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007201450",
+    "hd-cmp_u_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007201470",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007201870",
+    "aj-hdn_norm_c: ARGS.REST.FIRST.SYNSEM.LOCAL.AGR.DIV: - & +"
+   ],
+   [
+    "ws212/1000007202000",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007202250",
+    "hd-cmp_u_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007202340",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007202360",
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & prep"
+   ],
+   [
+    "ws212/1000007202440",
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & prep"
+   ],
+   [
+    "ws212/1000007400140",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007400150",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007400250",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007400510",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007400580",
+    "sp-hd_hc_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.MIN: meas_or_numq_rel & named_num_or_fract_rel"
+   ],
+   [
+    "ws212/1000007400590",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007400670",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007400780",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007400970",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401090",
+    "hd-cmp_u_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401240",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401270",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401370",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401570",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401620",
+    "hd-cmp_u_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401680",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401770",
+    "hdn-np_app-idf-p_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CONT.HOOK.INDEX.SORT: entity & time"
+   ],
+   [
+    "ws212/1000007401800",
+    "hd-cmp_u_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401820",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007401860",
+    "aj-hdn_norm_c: ARGS.REST.FIRST.SYNSEM.LOCAL.AGR.PNG.PN: 3s & 3p"
+   ],
+   [
+    "ws212/1000007600120",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007600140",
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & adj"
+   ],
+   [
+    "ws212/1000007600210",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007600330",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007600470",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007600490",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007600700",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007600730",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007600770",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ],
+   [
+    "ws212/1000007600850",
+    "aj-hd_int_c: ARGS.REST.FIRST.SYNSEM.LOCAL.CAT.HEAD: verbal & adj"
+   ],
+   [
+    "ws212/1000007700070",
+    "hdn_bnp_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.HEAD.MINORS.ALTMIN: implicit_q_rel & explicit_q_rel"
+   ],
+   [
+    "ws212/1000007700380",
+    "flr-hd_rel-fin_c: ARGS.FIRST.SYNSEM.LOCAL.CAT.VAL.SPR.FIRST.OPT: - & +"
+   ]
+  ],
+  "chosen derivation uses a name B lacks": [
+   [
+    "ecpa/2206609",
+    "v_np_pr-n3s_le"
+   ],
+   [
+    "ecpa/2206709",
+    "v_np_pr-n3s_le"
+   ],
+   [
+    "ecpa/2208611",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2208709",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2208710",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2209110",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ecpa/2209408",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2210508",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2211108",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2211208",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2211408",
+    "v_np_salut_le"
+   ],
+   [
+    "ecpa/2212008",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2212109",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2212209",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2212308",
+    "v_np_salut_le"
+   ],
+   [
+    "ecpa/2212408",
+    "v_np_salut_le"
+   ],
+   [
+    "ecpa/2212410",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2214808",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ecpa/2216508",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2216808",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ecpa/2217008",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2217009",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ecpa/2218508",
+    "frg-cl_runon_c"
+   ],
+   [
+    "ecpa/2219308",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ecpa/2219408",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ecpa/2219508",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ecpa/2219509",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ecpa/2220109",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ecpa/2222608",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ecpa/2225908",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2227908",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2230108",
+    "hd_yesno-nmc_c"
+   ],
+   [
+    "ecpa/2231908",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2233608",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2234208",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2238008",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2242909",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2245608",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2246808",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2247609",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2248808",
+    "n_-_pr-ad-temp_le"
+   ],
+   [
+    "ecpa/2248810",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ecpa/2249708",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ecpa/2249709",
+    "v_np_pr-n3s_le"
+   ],
+   [
+    "ecpa/2250709",
+    "v_pp_dir-noj_le"
+   ],
+   [
+    "ecpa/2251208",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ecpa/2251509",
+    "v_np_pr-n3s_le"
+   ],
+   [
+    "ecpa/2252808",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2263808",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2264809",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2267808",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2272411",
+    "v_np*_salut_le"
+   ],
+   [
+    "ecpa/2278209",
+    "n_pp_c-gr-sg-of_le"
+   ],
+   [
+    "ecpa/2284709",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2286608",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2287908",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2290508",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2290808",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2292008",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2292808",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2293908",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2294909",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2295908",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2299308",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ecpa/2300508",
+    "n_pp_c-gr-sg-of_le"
+   ],
+   [
+    "ws212/1000007200210",
+    "av_-_i-vp-po-nox_le"
+   ],
+   [
+    "ws212/1000007200320",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ws212/1000007200550",
+    "n_-_pr-ad-temp_le"
+   ],
+   [
+    "ws212/1000007200700",
+    "n_pp_c-gr-sg-of_le"
+   ],
+   [
+    "ws212/1000007200940",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ws212/1000007200970",
+    "v_cp_fin-inf-q-mob_le"
+   ],
+   [
+    "ws212/1000007200980",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007201100",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007201130",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ws212/1000007201160",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ws212/1000007201210",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007201220",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007201250",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007201570",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ws212/1000007201640",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007201650",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007202010",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ws212/1000007202080",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ws212/1000007202350",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ws212/1000007202370",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ws212/1000007202380",
+    "c_xp_and-or-slash_le"
+   ],
+   [
+    "ws212/1000007202410",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007202520",
+    "av_-_i-vp-po-nox_le"
+   ],
+   [
+    "ws212/1000007202550",
+    "n_pp_c-gr-sg-of_le"
+   ],
+   [
+    "ws212/1000007400360",
+    "n_-_ad-time-once_le"
+   ],
+   [
+    "ws212/1000007401200",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007600450",
+    "p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ws212/1000007600640",
+    "n_-_pn-letter_le"
+   ],
+   [
+    "ws212/1000007600660",
+    "n_-_pn-letter_le p_np_i-nm-no-tm-to_le"
+   ],
+   [
+    "ws212/1000007700130",
+    "av_-_i-vp-po-nox_le"
+   ]
+  ],
+  "missing name or entry in B": [
+   [
+    "ecpa/2222108",
+    "n_-_m_le: missing lexical entry for \"graphics\""
+   ],
+   [
+    "ecpa/2224508",
+    "n_-_mc_le: missing lexical entry for \"accounting\""
+   ],
+   [
+    "ecpa/2230408",
+    "n_pp_c-of_le: missing lexical entry for \"photo\""
+   ],
+   [
+    "ecpa/2243208",
+    "n_pp_mc-mod-of_le: missing lexical entry for \"life\""
+   ],
+   [
+    "ecpa/2245509",
+    "v_np_ntr_le: missing lexical entry for \"cost\""
+   ],
+   [
+    "ecpa/2246508",
+    "n_pp_mc-mod-of_le: missing lexical entry for \"life\""
+   ],
+   [
+    "ecpa/2248710",
+    "n_pp_mc-mod-of_le: missing lexical entry for \"life\""
+   ],
+   [
+    "ecpa/2254408",
+    "n_pp_c-ns-of_le: missing lexical entry for \"terms\""
+   ],
+   [
+    "ecpa/2260308",
+    "v_np-cp_fin-inf_le: missing lexical entry for \"show\""
+   ],
+   [
+    "ecpa/2260508",
+    "v_np_ntr_le: missing lexical entry for \"cost\""
+   ],
+   [
+    "ecpa/2268208",
+    "n_-_mc_le: missing lexical entry for \"buy\""
+   ],
+   [
+    "ecpa/2278108",
+    "n_pp_mc-mod-of_le: missing lexical entry for \"life\""
+   ],
+   [
+    "ecpa/2298008",
+    "v_np-cp_fin-inf_le: missing lexical entry for \"show\""
+   ],
+   [
+    "ws212/1000007200030",
+    "av_-_i-vp-x_le: missing lexical entry for \"rarely\""
+   ],
+   [
+    "ws212/1000007200110",
+    "n_pp_c-ns-of_le: missing lexical entry for \"term\""
+   ],
+   [
+    "ws212/1000007200250",
+    "n_pp_mc-ns_le: missing lexical entry for \"approach\""
+   ],
+   [
+    "ws212/1000007200610",
+    "n_-_mc_le: missing lexical entry for \"premium\""
+   ],
+   [
+    "ws212/1000007200840",
+    "n_pp_mc-ns_le: missing lexical entry for \"approaches\""
+   ],
+   [
+    "ws212/1000007201020",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"choice\""
+   ],
+   [
+    "ws212/1000007201050",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"choice\""
+   ],
+   [
+    "ws212/1000007201110",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classification\""
+   ],
+   [
+    "ws212/1000007201190",
+    "aj_-_i_le: missing lexical entry for \"underlying\""
+   ],
+   [
+    "ws212/1000007201340",
+    "aj_-_i_le: missing lexical entry for \"underlying\""
+   ],
+   [
+    "ws212/1000007201400",
+    "n_-_c-ns_le: missing lexical entry for \"path\""
+   ],
+   [
+    "ws212/1000007201530",
+    "n_pp_m_le: missing lexical entry for \"survival\""
+   ],
+   [
+    "ws212/1000007201540",
+    "n_pp_m_le: missing lexical entry for \"survival\""
+   ],
+   [
+    "ws212/1000007201600",
+    "n_-_c-ns_le: missing lexical entry for \"defect\""
+   ],
+   [
+    "ws212/1000007201620",
+    "n_pp_m_le: missing lexical entry for \"survival\""
+   ],
+   [
+    "ws212/1000007201630",
+    "n_pp_m_le: missing lexical entry for \"survival\""
+   ],
+   [
+    "ws212/1000007201660",
+    "aj_-_i_le: missing lexical entry for \"underlying\""
+   ],
+   [
+    "ws212/1000007201720",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classification\""
+   ],
+   [
+    "ws212/1000007201930",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classification\""
+   ],
+   [
+    "ws212/1000007201940",
+    "aj_-_i_le: missing lexical entry for \"underlying\""
+   ],
+   [
+    "ws212/1000007201970",
+    "av_-_i-vp-po_le: missing lexical entry for \"commonly\""
+   ],
+   [
+    "ws212/1000007202120",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"choice\""
+   ],
+   [
+    "ws212/1000007202160",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classifications\""
+   ],
+   [
+    "ws212/1000007202170",
+    "av_-_i-vp-x_le: missing lexical entry for \"commonly\""
+   ],
+   [
+    "ws212/1000007202200",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classification\""
+   ],
+   [
+    "ws212/1000007202280",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classification\""
+   ],
+   [
+    "ws212/1000007202390",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classification\""
+   ],
+   [
+    "ws212/1000007202420",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classification\""
+   ],
+   [
+    "ws212/1000007202540",
+    "v_np-vp_sor_le: missing lexical entry for \"allowing\""
+   ],
+   [
+    "ws212/1000007300030",
+    "v_np-vp_sor_le: missing lexical entry for \"allows\""
+   ],
+   [
+    "ws212/1000007400190",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classification\""
+   ],
+   [
+    "ws212/1000007400230",
+    "v_np-vp_sor_le: missing lexical entry for \"considered\""
+   ],
+   [
+    "ws212/1000007400330",
+    "n_pp_c-ns-of_le: missing lexical entry for \"terms\""
+   ],
+   [
+    "ws212/1000007400390",
+    "n_pp_c-of-lhc_le: missing lexical entry for \"republics\""
+   ],
+   [
+    "ws212/1000007400560",
+    "av_-_i-vp-x_le: missing lexical entry for \"regularly\""
+   ],
+   [
+    "ws212/1000007400600",
+    "av_-_i-vp-po_le: missing lexical entry for \"however\""
+   ],
+   [
+    "ws212/1000007400730",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"choice\""
+   ],
+   [
+    "ws212/1000007400760",
+    "n_pp_c-ns-of_le: missing lexical entry for \"subjects\""
+   ],
+   [
+    "ws212/1000007400800",
+    "aj_-_i-att_le: missing lexical entry for \"\u230a/de facto/\u230b\""
+   ],
+   [
+    "ws212/1000007400850",
+    "n_-_c-ns_le: missing lexical entry for \"variants\""
+   ],
+   [
+    "ws212/1000007401460",
+    "av_-_i-vp-po_le: missing lexical entry for \"however\""
+   ],
+   [
+    "ws212/1000007401650",
+    "v_np_noger_le: missing lexical entry for \"agglutinate\""
+   ],
+   [
+    "ws212/1000007401910",
+    "n_-_m-ns_le: missing lexical entry for \"peace\""
+   ],
+   [
+    "ws212/1000007401920",
+    "v_np-vp_sor_le: missing lexical entry for \"considered\""
+   ],
+   [
+    "ws212/1000007401950",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"expressions\""
+   ],
+   [
+    "ws212/1000007600060",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"expression\""
+   ],
+   [
+    "ws212/1000007600100",
+    "v_np-vp_sor_le: missing lexical entry for \"considered\""
+   ],
+   [
+    "ws212/1000007600180",
+    "n_pp_c-ns-of_le: missing lexical entry for \"terms\""
+   ],
+   [
+    "ws212/1000007600230",
+    "av_-_i-vp-x_le: missing lexical entry for \"ultimately\""
+   ],
+   [
+    "ws212/1000007600300",
+    "aj_-_i_le: missing lexical entry for \"dormant\""
+   ],
+   [
+    "ws212/1000007600390",
+    "aj_-_i_le: missing lexical entry for \"\u230a/game/\u230b\""
+   ],
+   [
+    "ws212/1000007600830",
+    "n_pp_mc-ns_le: missing lexical entry for \"approach\""
+   ],
+   [
+    "ws212/1000007700060",
+    "n_pp_c-ns-of_le: missing lexical entry for \"subject\""
+   ],
+   [
+    "ws212/1000007700100",
+    "n_pp_c-ns-of_le: missing lexical entry for \"subject\""
+   ],
+   [
+    "ws212/1000007700120",
+    "n_pp_c-ns-of_le: missing lexical entry for \"subject\""
+   ],
+   [
+    "ws212/1000007700140",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"classification\""
+   ],
+   [
+    "ws212/1000007700290",
+    "n_pp_c-ns-of_le: missing lexical entry for \"subject\""
+   ],
+   [
+    "ws212/1000007700370",
+    "n_pp_mc-of-ns_le: missing lexical entry for \"expressions\""
+   ]
+  ]
+ }
+}

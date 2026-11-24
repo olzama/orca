@@ -1,0 +1,1112 @@
+{
+ "tagger grammar": "data/erg/2025/english.tdl",
+ "other grammar": "data/erg/2020-orca/english.tdl",
+ "sentences": 2062,
+ "tokens": 25848,
+ "inventory: names the tagger knows, by kind": {
+  "lexical type": 1280,
+  "lexical rule": 99,
+  "unary rule": 55,
+  "phrasal rule": 204,
+  "root condition": 92
+ },
+ "inventory: of those, missing in the other grammar": {
+  "unary rule": 4,
+  "lexical rule": 4,
+  "lexical type": 90,
+  "phrasal rule": 18,
+  "root condition": 10
+ },
+ "first guess: missing names by kind (distinct names, label uses)": {
+  "lexical type": {
+   "names": 15,
+   "tokens": 148
+  },
+  "phrasal rule": {
+   "names": 1,
+   "tokens": 2
+  }
+ },
+ "first guess: sentences with a missing name": 128,
+ "labels repair may try: missing names by kind": {
+  "root condition": {
+   "names": 4,
+   "tokens": 26
+  },
+  "lexical type": {
+   "names": 32,
+   "tokens": 352
+  },
+  "phrasal rule": {
+   "names": 9,
+   "tokens": 42
+  }
+ },
+ "labels repair may try: sentences with a missing name": 295,
+ "most used missing names (first guess)": [
+  [
+   "lexical type",
+   "n_-_pn-letter_le",
+   43,
+   27
+  ],
+  [
+   "lexical type",
+   "v_cp_fin-inf-q-mob_le",
+   32,
+   32
+  ],
+  [
+   "lexical type",
+   "p_np_i-nm-no-tm-to_le",
+   30,
+   28
+  ],
+  [
+   "lexical type",
+   "c_xp_and-or-slash_le",
+   15,
+   12
+  ],
+  [
+   "lexical type",
+   "n_pp_c-gr-sg-of_le",
+   8,
+   8
+  ],
+  [
+   "lexical type",
+   "v_np_pr-n3s_le",
+   4,
+   4
+  ],
+  [
+   "lexical type",
+   "av_-_i-vp-po-nox_le",
+   4,
+   4
+  ],
+  [
+   "lexical type",
+   "v_np_salut_le",
+   3,
+   3
+  ],
+  [
+   "lexical type",
+   "n_-_pr-ad-temp_le",
+   2,
+   2
+  ],
+  [
+   "lexical type",
+   "p_np_i-nnm-nprd_le",
+   2,
+   2
+  ],
+  [
+   "phrasal rule",
+   "hd-cl_jd-prnth_c",
+   2,
+   2
+  ],
+  [
+   "lexical type",
+   "v_np*-np_only_le",
+   1,
+   1
+  ],
+  [
+   "lexical type",
+   "v_np*_salut_le",
+   1,
+   1
+  ],
+  [
+   "lexical type",
+   "n_-_pr-you-nonvoc_le",
+   1,
+   1
+  ],
+  [
+   "lexical type",
+   "n_-_ad-time-once_le",
+   1,
+   1
+  ],
+  [
+   "lexical type",
+   "n_-_m-era_le",
+   1,
+   1
+  ]
+ ],
+ "counterparts": {
+  "unary rule:conj-frg_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "unary rule:hdn_nom-year_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "unary rule:np_adv-mnp-def_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "unary rule:np_adv-mnp-nmod_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "lexical rule:j_n-yofc_dlr": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "lexical rule:v_aux-neg-gap_dlr": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "lexical rule:w_mwe-4-wb_dlr": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "lexical rule:w_rparen_plr": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "lexical type:aj_np_i-spr_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:aj_pp_i-nonfrml_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "aj_pp_i_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:av_-_approx_le": {
+   "entries": 4,
+   "entries in other grammar": 1,
+   "their types there": {
+    "av_-_dc-meas-po_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:av_-_dc-like-po-func-pnct_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:av_-_dc-mc-pr_le": {
+   "entries": 3,
+   "entries in other grammar": 3,
+   "their types there": {
+    "av_-_dc-pr_le": 3
+   },
+   "same supertypes there": [
+    "av_-_dc-pr_le"
+   ]
+  },
+  "lexical type:av_-_dc-nmc-pr_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:av_-_dg-v-nonlex_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "av_-_dg-v_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:av_-_i-ap-pp-po_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:av_-_i-vp-po-nox_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "av_-_i-vp-po-nmb_le": 1
+   },
+   "same supertypes there": [
+    "av_-_i-vp-po-nmb_le"
+   ]
+  },
+  "lexical type:av_-_i-vp-x-spr_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:av_-_s-cp-pr-nogap_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "av_-_s-cp-pr_le": 1
+   },
+   "same supertypes there": [
+    "av_-_s-cp-pr_le"
+   ]
+  },
+  "lexical type:c_-_and-all_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:c_xp_and-or-slash_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "c_xp_and-or_le": 1
+   },
+   "same supertypes there": [
+    "c_xp_and-or_le"
+   ]
+  },
+  "lexical type:c_xp_instead-v_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:fw_-_quoted_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:n_-_ad-time-once_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "av_-_i-vp-po_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_ad-time-twice_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "av_-_i-vp-po_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_c-meas-ed_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "n_-_c-meas_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_c-nochd-nottl_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "n_-_c_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_c-nocnh-ntc_le": {
+   "entries": 3,
+   "entries in other grammar": 3,
+   "their types there": {
+    "n_-_c-nocnh_le": 3
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_c-ns-maycap_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "n_-_c_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_c-pl-nomcase_le": {
+   "entries": 3,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:n_-_c-sg-ifl-cap_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "n_-_c-sg-ifl_le": 1
+   },
+   "same supertypes there": [
+    "n_-_c-sg-ifl_le"
+   ]
+  },
+  "lexical type:n_-_m-era_le": {
+   "entries": 14,
+   "entries in other grammar": 14,
+   "their types there": {
+    "n_-_pn_le": 14
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_mc-upper_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "n_-_mc_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_pn-letter_le": {
+   "entries": 25,
+   "entries in other grammar": 22,
+   "their types there": {
+    "n_-_pn_le": 22
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_pn-sg-cap_le": {
+   "entries": 3,
+   "entries in other grammar": 3,
+   "their types there": {
+    "n_-_pn-sg_le": 2,
+    "n_-_pn_le": 1
+   },
+   "same supertypes there": [
+    "n_-_pn-sg_le",
+    "n_-_pn_le"
+   ]
+  },
+  "lexical type:n_-_pn-three-lower_le": {
+   "entries": 3,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:n_-_pr-ad-temp-nom_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "n_-_pr-ad_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_pr-ad-temp_le": {
+   "entries": 5,
+   "entries in other grammar": 5,
+   "their types there": {
+    "n_-_pr-ad_le": 5
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_-_pr-you-nonvoc_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "n_-_pr-you_le": 1
+   },
+   "same supertypes there": [
+    "n_-_pr-you_le"
+   ]
+  },
+  "lexical type:n_-_quoted_le": {
+   "entries": 4,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:n_cp_mc-bse_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "n_cp_c-bse_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_nb_x-to-hyphen-y_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:n_np_c-month-day_le": {
+   "entries": 45,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:n_pp_c-gr-sg-of_le": {
+   "entries": 16,
+   "entries in other grammar": 16,
+   "their types there": {
+    "n_pp_c-gr-of_le": 16
+   },
+   "same supertypes there": []
+  },
+  "lexical type:n_pp_c-lhc_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "n_-_c_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:p_adv_ptcl_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:p_cp_i-bse-nmod_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:p_cp_s-bse-aux_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:p_cp_s-imp_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:p_nb_i-nm-any-slash_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "p_nb_i-nm_le": 1
+   },
+   "same supertypes there": [
+    "p_nb_i-nm_le"
+   ]
+  },
+  "lexical type:p_nb_i-nm-app_le": {
+   "entries": 6,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:p_np_i-nm-no-tm-to_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "p_np_i-nm-no-tm_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:p_np_i-nm-slash_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "p_np_i-nm_le": 1
+   },
+   "same supertypes there": [
+    "p_np_i-nm_le"
+   ]
+  },
+  "lexical type:p_np_i-nnm-nprd_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:p_np_i-nomnp_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "p_np_i_le": 1
+   },
+   "same supertypes there": [
+    "p_np_i_le"
+   ]
+  },
+  "lexical type:p_vp_fin_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:pp_-_i-dir-nomod_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "pp_-_i-dir-novmd_le": 1
+   },
+   "same supertypes there": [
+    "pp_-_i-dir-novmd_le"
+   ]
+  },
+  "lexical type:pt_-_s-dash-clstr_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_-_psv-prd-spr_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_ap_seq-idm_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_cp_bse-prop_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_cp_bse-sbjnct-fin_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_cp_bse-sbjnct_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_cp_fin-inf-q-mob_le": {
+   "entries": 3,
+   "entries in other grammar": 3,
+   "their types there": {
+    "v_cp_fin-inf-q_le": 3
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_cp_no-inv_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "v_cp_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_cp_psv_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_it-np-vp_aeq_le": {
+   "entries": 4,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_nb_quote_le": {
+   "entries": 3,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np*-np_only_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "v_np-np_only_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_np*_n3s-bse_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "v_np*_nfin_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_np*_salut_le": {
+   "entries": 10,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np-cp_q-mc_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np-prd_sor-pp_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "v_np-prd_oeq_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_np-rc_be-scop_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np-rc_been-scop_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np-rc_is-cx-scop_le": {
+   "entries": 3,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np-rc_is-n-scop_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np-rc_is-scop_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np-rc_was-scop_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np_bse_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np_idm_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np_it_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np_ntr-nogap_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "v_np_ntr_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_np_pr-n3s_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np_psp_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_np_salut_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_p-nb_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_pp-pp_e-e_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "v_pp-pp_e_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_pp-pp_oeq-as_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_pp_as_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_pp_dir-noj_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "v_pp_dir_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_pp_e-nopsv_le": {
+   "entries": 1,
+   "entries in other grammar": 1,
+   "their types there": {
+    "v_pp_e_le": 1
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_pp_psv_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_prd_am-aint_le": {
+   "entries": 2,
+   "entries in other grammar": 2,
+   "their types there": {
+    "v_prd_am-n_le": 2
+   },
+   "same supertypes there": []
+  },
+  "lexical type:v_vp_do-imp_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_vp_lemme-imp_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_vp_mdl-p-rather_le": {
+   "entries": 1,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "lexical type:v_vp_oght-ellip_le": {
+   "entries": 2,
+   "entries in other grammar": 0,
+   "their types there": {},
+   "same supertypes there": []
+  },
+  "phrasal rule:aj-nb_frg_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:cl-np_runon-conj_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:cl-np_runon-prn-conj_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:frg-cl_runon_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:hd-aj_int-aux-sl_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:hd-cl_jd-dsh_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:hd-cl_jd-prnth_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:hdn-np_app-mnp-npr_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:n-hdn_cpd-cma-mnp_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:n-hdn_j-n-cpd-pl_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:n-n_crd-mass-nom-t_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:n-n_crd-nocomma-m_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:n-n_crd-nondiv-dll-t_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:n-n_crd-nondiv-dlr-t_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:np-cl_lettitem_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:np-nb_numitem_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:np-np_crd-nocomma-m_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "phrasal rule:r-v_j-cpd_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:cl_cnj-scmp-frg_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:cl_cp-dash-frg_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:conj-frg_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:hd_yesno-nmc_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:hd_yesno-period_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:hdn_nom-year_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:np_adv-mnp-def_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:np_adv-mnp-nmod_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:np_nb-pr-frg_c": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  },
+  "root condition:root_exclam_ques": {
+   "same supertypes there": [
+    "sb-hd_mc_c",
+    "sb-hd_nmc_c",
+    "sb-hd_q_c",
+    "hd-cmp_u_c",
+    "hd-cmp_2_c"
+   ]
+  }
+ }
+}

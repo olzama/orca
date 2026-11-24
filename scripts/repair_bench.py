@@ -64,7 +64,7 @@ def run(a):
     from orca_parse import Parser
     from rerank import with_entries
     data = pickle.load(open(a.cache, 'rb'))
-    p = Parser(tagger=a.tagger, device='cpu')
+    p = Parser(tagger=a.tagger, device='cpu', **({'grammar': a.grammar} if a.grammar else {}))
     r = p.repair
     gold = load_gold(a.gold_mrs) if a.gold_mrs else {}
     pats = None
@@ -192,6 +192,7 @@ def main():
     ap.add_argument('--gold', default='data/encoded-2025-bothall-surface/dev.jsonl')
     ap.add_argument('--tagger', default='data/models/tagger-2025bothsurf-debertav3large')
     ap.add_argument('--cache', default='data/bench/dev-debertav3large-tags.pkl')
+    ap.add_argument('--grammar', help='english.tdl of another grammar version (default: the parser\'s, ERG 2025); tokens stay the cached ones')
     ap.add_argument('--out')
     ap.add_argument('--limit', type=int)
     ap.add_argument('--profile')
