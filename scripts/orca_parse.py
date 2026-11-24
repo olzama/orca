@@ -53,7 +53,7 @@ class Parser:
                  all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
                  normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False,
                  fragments=False, mode='replay', chart_k=5, chart_min_prob=0.001, chart_timeout=60, label_filter=None,
-                 label_map=None, word_fallback=False):
+                 label_map=None, word_fallback=False, readings=1, margin=None):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -68,6 +68,7 @@ class Parser:
         self.normalized_lookup = normalized_lookup     # replay with the preprocessed token forms (ACE's +FORM), tag the text as typed
         self.all_mrs = all_mrs                          # also read off the MRS of every accepted derivation
         self.fragments = fragments                      # with no full analysis, give labeled fragments (scripts/fragments.py); never counted
+        self.readings, self.margin = readings, margin   # O97: up to `readings` distinct readings, those within `margin` (MaxEnt, log space) of the best
         self.patterns = None                            # learned repair patterns (scripts/repair_patterns.py)
         if patterns:
             from repair_patterns import Patterns
@@ -216,6 +217,9 @@ class Parser:
             out['dmrs'] = None
         out['_mrs_obj'] = m
         out['_fs'] = fs                    # the whole sign; valid until the next parse resets the grammar's memory
+        if self.readings > 1 or self.margin is not None:
+            out['readings'] = self.distinct_readings(scored, path, m)
+            lap('readings')
         if self.all_mrs:
             out['_all_mrs'] = []
             for _, t2, _ in scored:
@@ -226,6 +230,46 @@ class Parser:
                 except Exception:
                     out['_all_mrs'].append(None)
         return out
+
+    def distinct_readings(self, scored, path, best_mrs):
+        """O97: distinct readings among the accepted derivations, best first. A reading's score is its best
+        derivation's MaxEnt score; its probability sums a softmax over all accepted derivations' scores. Derivations
+        are replayed in score order and only while a new reading could still be returned (at most self.readings,
+        within self.margin of the best), so the cost stays close to one MRS when the model is sure."""
+        import math
+        from delphin import mrs as M
+        from delphin.codecs import simplemrs
+        from compare_mrs import normalized, to_pydelphin
+        from orca.tfs.fast import extract
+        kmax = max(1, self.readings)
+        order = sorted(range(len(scored)), key=lambda i: -scored[i][0])
+        top_score = scored[order[0]][0]
+        mx = top_score
+        z = sum(math.exp(sc - mx) for sc, _, _ in scored)
+        reps = []                                   # [score, normalized mrs, mrs, probability]
+        for i in order:
+            sc, tr, _ = scored[i]
+            if self.margin is not None and top_score - sc > self.margin:
+                break
+            if i == order[0]:
+                m = best_mrs
+            else:
+                try:
+                    self.fg.reset()
+                    f2, _ = self.fg.replay_tree(tr, [p[1] for p in path])
+                    m = to_pydelphin(extract(self.fg, f2))
+                except Exception:
+                    continue
+            nm = normalized(m)
+            for r in reps:
+                if M.is_isomorphic(nm, r[1], properties=False):
+                    r[3] += math.exp(sc - mx) / z
+                    break
+            else:
+                if len(reps) >= kmax:
+                    continue                        # a further reading would exceed k; keep adding mass to returned ones
+                reps.append([sc, nm, m, math.exp(sc - mx) / z])
+        return [{'maxent score': r[0], 'probability': r[3], 'mrs': simplemrs.encode(r[2], indent=True)} for r in reps]
 
     def chart_parse(self, text, path, top, rforms, forms, out, lap, after_replay=False):
         """ACE restricted to the tagger's lexical entries (top chart_k labels per token, probability
@@ -391,6 +435,8 @@ def main():
     ap.add_argument('--chart-min-prob', type=float, default=0.001, help='chart: drop labels below this probability (the first is always kept)')
     ap.add_argument('--label-map', help='scripts/label_map.py output, when the grammar is another version than the tagger\'s (O91); off by default')
     ap.add_argument('--word-fallback', action='store_true', help='a word without an entry of the proposed lexical type: try its entries of the same part of speech (O91); off by default')
+    ap.add_argument('--readings', type=int, default=1, help='return up to this many distinct readings (O97), best first, with MaxEnt score and probability; default 1')
+    ap.add_argument('--margin', type=float, help='with or without --readings: only readings whose MaxEnt score is within this of the best (log space); off by default')
     ap.add_argument('--no-fragments', dest='fragments', action='store_false', help='parsing sentences: give no fragments when there is no full analysis (never used in --eval)')
     args = ap.parse_args()
     p = Parser(tagger=args.tagger, all_mrs=args.all_mrs, k=args.k, kbest=args.kbest, budget=args.budget,
@@ -399,7 +445,7 @@ def main():
                patterns=args.patterns, pattern_weight=args.pattern_weight, pattern_only_new=args.pattern_only_new,
                fragments=args.fragments and not args.eval, mode=args.mode or ('replay' if args.eval else 'fallback'), chart_k=args.chart_k,
                chart_min_prob=args.chart_min_prob, label_filter=args.label_filter,
-               label_map=args.label_map, word_fallback=args.word_fallback)
+               label_map=args.label_map, word_fallback=args.word_fallback, readings=args.readings, margin=args.margin)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
         return
