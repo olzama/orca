@@ -855,8 +855,9 @@ function showTime(r, c) {
     if (k === 'tokens') t += row('Tokens (the grammar’s preprocessing)', r.seconds.tokens, aOwn != null ? inside : null);
     else if (k === 'mrs') t += row(name, r.seconds.mrs, aOwn != null ? inside : null);
     else if (k === 'chart' && ch['ace parse seconds'] != null && ch['ace wall seconds'] != null) {   // the chart step runs ACE once, limited to the tagger's candidates
-      t += row('Chart: choosing the lexical entries ACE may use, reading its answer', r.seconds.chart - ch['ace wall seconds'], null);
-      t += row('Starting ACE and loading the compiled grammar', ch['ace wall seconds'] - ch['ace parse seconds'], aOwn != null ? a.seconds - aOwn : null);
+      const kept = ch['ace persistent'] === true;       // Orca keeps one ACE process running for the chart step: no start-up per sentence
+      t += row('Chart: choosing the lexical entries ACE may use, passing the sentence, reading its answer', r.seconds.chart - (kept ? ch['ace parse seconds'] : ch['ace wall seconds']), null);
+      if (!kept || a) t += row('Starting ACE and loading the compiled grammar', kept ? 'kept running' : ch['ace wall seconds'] - ch['ace parse seconds'], aOwn != null ? a.seconds - aOwn : null);
       t += row(a ? 'Parsing, as ACE measures it (for Orca: limited to the tagger’s candidates)' : 'Chart: parsing limited to the tagger’s candidates, as ACE measures it', ch['ace parse seconds'], aOwn);
       aceRows = true;
     } else t += row(name, r.seconds[k], null);
@@ -885,7 +886,7 @@ function showTime(r, c) {
   }
   $('time-counts').innerHTML = '<b>Counts.</b> ' + counts.map(esc).join(' · ') + '.';
   $('time-note').textContent = 'Times in milliseconds, for one sentence at a time on this server (no GPU). The first parse after the server starts is slower.'
-    + (a ? ' ACE is started anew for every sentence, and so is the ACE process inside Orca’s chart step; the table shows both start-ups in one row. An empty cell means the step does not exist for that parser; “within parsing” means ACE does it inside its parsing time. For ACE, “showing it” includes rebuilding its feature structure by replay, which is Orca’s work.' : '');
+    + (a ? ' For the comparison, ACE is started anew for every sentence. Orca’s chart step keeps one ACE process running where the server has the patched ACE for it (“kept running” in the table); otherwise it starts ACE for every sentence too. An empty cell means the step does not exist for that parser; “within parsing” means ACE does it inside its parsing time. For ACE, “showing it” includes rebuilding its feature structure by replay, which is Orca’s work.' : '');
   $('time-reading').textContent = '';
   const st = $('status-time');
   if (st && c) st.textContent = ` Parsing took ${ms(total)} ms of the ${ms(c.roundtrip + c.draw)} ms from pressing Parse to everything drawn.`;
