@@ -1,0 +1,18 @@
+{
+ "sentences": 300,
+ "first differ": [],
+ "nbest differ": [],
+ "times": {
+  "stock": {
+   "first-best ms per sentence": 155.44617732365927,
+   "n-best (20) ms per sentence": 167.46877272923788
+  },
+  "persistent": {
+   "first-best ms per sentence": 119.99481757481892,
+   "n-best (20) ms per sentence": 132.6533818244934
+  }
+ },
+ "first identical": 300,
+ "nbest identical": 300,
+ "parsed": 277
+}

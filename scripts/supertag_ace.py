@@ -9,7 +9,10 @@ Orca's lexicon lookup. Every other lexical entry that could match a word of the 
 so entries whose names contain an allowed name stay enabled), so ACE builds its chart, and ranks
 with the ERG's MaxEnt model, only over the entries the tagger proposed.
 
-ACE starts in about 0.04 s, so it is run once per sentence.
+Starting ACE costs about 35 ms a sentence (mostly paging in the grammar image). With the
+Orca-patched ACE (third_party/ace-orca, built by tools/build_ace_orca.sh), one restricted ACE
+process is kept running and each sentence's restriction is sent as a "#DISABLE ..." line
+(ACE --per-item-disable); without it, ACE is run once per sentence as before.
 
 Usage:
     supertag_ace.py --ids FILE|all --out OUT.json [--k 5] [--min-prob 0.001] [--workers 3]
@@ -19,9 +22,12 @@ import json
 import os
 import pickle
 import re
+import select
 import subprocess
 import sys
+import threading
 import time
+import atexit
 from concurrent.futures import ProcessPoolExecutor
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -31,6 +37,8 @@ sys.path.insert(0, ROOT)
 sys.setrecursionlimit(20000)
 ACE = '/home/olga/delphin/tools/ACE/ace-0.9.34/ace'
 DAT = os.path.join(ROOT, 'data/ace/erg-2025.dat')
+# ACE with the Orca patch (one process, per-sentence lexical restriction); off with ORCA_ACE_PERSISTENT=0
+ACE_PATCHED = os.environ.get('ORCA_ACE_PATCHED') or os.path.join(ROOT, 'third_party/ace-orca/ace')
 ERG = os.path.join(ROOT, 'data/erg/2025')
 
 _LX = _ORTH = _ALLGEN = _GOLD = None
@@ -109,18 +117,155 @@ def _timed(p, wall):
     LAST.update({'wall seconds': wall, 'parse seconds': float(m.group(1)) if m else None})
 
 
+class RestrictedAce:
+    """One patched ACE process kept running for restricted parsing (chart mode).
+
+    Each sentence is preceded by a "#DISABLE <names>" line (ACE --per-item-disable),
+    which sets the lexemes to disable exactly as -L does, for that sentence. ACE
+    flushes after every item; an item's output ends with two empty lines. stderr is
+    discarded (ACE prints per-item notes there). Restarted after a timeout, a crash,
+    `max_items` sentences, and in a forked child."""
+
+    def __init__(self, args, dat=DAT, ace=None, max_items=2000):
+        self.cmd = [ace or ACE_PATCHED, '-g', dat, '--per-item-disable'] + list(args)
+        self.max_items = max_items
+        self.proc, self.pid, self.items = None, None, 0
+        self.lock = threading.Lock()
+
+    def _start(self):
+        self.close()
+        self.proc = subprocess.Popen(self.cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                     stderr=subprocess.DEVNULL, bufsize=0)
+        self.pid, self.items = os.getpid(), 0
+
+    def close(self):
+        p, self.proc = self.proc, None
+        if p is not None and self.pid == os.getpid():
+            try:
+                p.kill()
+                p.wait(timeout=5)
+            except Exception:
+                pass
+
+    def _read_item(self, timeout):
+        fd, buf, end = self.proc.stdout.fileno(), b'', time.monotonic() + timeout
+        while True:
+            left = end - time.monotonic()
+            if left <= 0:
+                return buf.decode(errors='replace'), 'timeout'
+            ready, _, _ = select.select([fd], [], [], left)
+            if not ready:
+                continue
+            chunk = os.read(fd, 1 << 16)
+            if not chunk:
+                return buf.decode(errors='replace'), 'eof'
+            buf += chunk
+            if buf.endswith(b'\n\n\n') and buf.strip():
+                return buf.decode(errors='replace'), 'done'
+
+    def run(self, text, disabled, timeout):
+        """stdout of ACE for one sentence (as one ACE run would print it); raises
+        subprocess.TimeoutExpired like subprocess.run when ACE does not answer in time."""
+        line = ('#DISABLE ' + ' '.join(sorted(disabled))).rstrip() + '\n'
+        inp = (line + text.replace('\n', ' ') + '\n').encode()
+        with self.lock:
+            if self.proc is None or self.pid != os.getpid() or self.proc.poll() is not None \
+                    or self.items >= self.max_items:
+                self._start()
+            try:
+                self.proc.stdin.write(inp)
+                self.proc.stdin.flush()
+            except (BrokenPipeError, OSError):
+                self._start()
+                self.proc.stdin.write(inp)
+                self.proc.stdin.flush()
+            self.items += 1
+            out, how = self._read_item(timeout)
+            if how == 'done':
+                return out
+            self.close()
+            if how == 'eof':
+                return out
+            raise subprocess.TimeoutExpired(self.cmd, timeout, output=out)
+
+
+_PERSISTENT = {}
+_PERSISTENT_LOCK = threading.Lock()
+
+
+def _persistent(args, dat):
+    """The kept ACE process for these options, or None when the patched ACE is not available."""
+    if os.environ.get('ORCA_ACE_PERSISTENT', '1') == '0' or not os.access(ACE_PATCHED, os.X_OK):
+        return None
+    key = (tuple(args), dat)
+    with _PERSISTENT_LOCK:
+        r = _PERSISTENT.get(key)
+        if r is None:
+            r = _PERSISTENT[key] = RestrictedAce(args, dat)
+        return r
+
+
+@atexit.register
+def _close_persistent():
+    for r in list(_PERSISTENT.values()):
+        r.close()
+
+
+_VERSIONS = {}
+
+
+def _ace_version(path):
+    if path not in _VERSIONS:
+        try:
+            v = subprocess.run([path, '-V'], capture_output=True, text=True, timeout=10)
+            _VERSIONS[path] = (v.stdout + v.stderr).splitlines()[0].strip()
+        except Exception:
+            _VERSIONS[path] = None
+    return _VERSIONS[path]
+
+
+def _compatible(ace):
+    """The patched ACE can stand in for `ace` if it is the same ACE version (same grammar image format)."""
+    return ace == ACE_PATCHED or (_ace_version(ace) is not None and _ace_version(ace) == _ace_version(ACE_PATCHED))
+
+
+class _Out:
+    """The bits of a subprocess result the parsing code reads."""
+    def __init__(self, stdout, stderr=''):
+        self.stdout, self.stderr = stdout, stderr
+
+
+def _run(args, text, disabled, timeout, ace, dat, ace_time_field=False):
+    """One restricted ACE parse: the kept patched process if available (and ace is the default),
+    else one ACE run with -L. Records LAST timings."""
+    pr = _persistent(args, dat) if _compatible(ace) else None
+    t1 = time.time()
+    if pr is not None:
+        out = _Out(pr.run(text, disabled, timeout + 30))
+        wall = time.time() - t1
+        parse = wall                       # the process is already running: no start-up in this time
+        if ace_time_field:                 # ACE's own figure, from its [incr tsdb()] output (milliseconds)
+            m = re.search(r'\(:treal \. ([0-9]+)\)', out.stdout)
+            parse = int(m.group(1)) / 1000 if m else wall
+        LAST.clear()
+        LAST.update({'wall seconds': wall, 'parse seconds': parse, 'persistent': True})
+        return out, wall
+    cmd = [ace, '-g', dat] + list(args)
+    if disabled:
+        cmd += ['-L', ' '.join(sorted(disabled))]
+    p = subprocess.run(cmd, input=text + '\n', capture_output=True, text=True, timeout=timeout + 30)
+    wall = time.time() - t1
+    _timed(p, wall)
+    return p, wall
+
+
 def run_restricted(text, disabled, timeout=60, ace=ACE, dat=DAT, trees=False):
     """ACE's first-ranked analysis with the given lexemes disabled: (mrs, derivation, seconds);
     mrs and derivation are strings (derivation only with trees=True), None when ACE finds nothing."""
-    cmd = [ace, '-g', dat, '-1', f'--timeout={timeout}', '--max-chart-megabytes=6000', '--max-unpack-megabytes=7000']
+    args = ['-1', f'--timeout={timeout}', '--max-chart-megabytes=6000', '--max-unpack-megabytes=7000']
     if not trees:
-        cmd.append('-T')
-    if disabled:
-        cmd += ['-L', ' '.join(sorted(disabled))]
-    t1 = time.time()
-    p = subprocess.run(cmd, input=text + '\n', capture_output=True, text=True, timeout=timeout + 30)
-    secs = time.time() - t1
-    _timed(p, secs)
+        args.append('-T')
+    p, secs = _run(args, text, disabled, timeout, ace, dat)
     line = next((l for l in p.stdout.splitlines() if l.startswith('[')), None)
     if line is None:
         return None, None, secs
@@ -136,13 +281,9 @@ def run_restricted_nbest(text, disabled, n, timeout=60, ace=ACE, dat=DAT):
     (strings; empty when ACE finds nothing). The score is ACE's MaxEnt score of the parse (:ascore), read from
     ACE's [incr tsdb()] output; called directly, like run_restricted, so the long -L list stays one argument."""
     import re
-    cmd = [ace, '-g', dat, '-n', str(max(1, n)), '--tsdb-stdout', f'--timeout={timeout}',
-           '--max-chart-megabytes=6000', '--max-unpack-megabytes=7000']
-    if disabled:
-        cmd += ['-L', ' '.join(sorted(disabled))]
-    t1 = time.time()
-    p = subprocess.run(cmd, input=text + '\n', capture_output=True, text=True, timeout=timeout + 30)
-    _timed(p, time.time() - t1)
+    args = ['-n', str(max(1, n)), '--tsdb-stdout', f'--timeout={timeout}',
+            '--max-chart-megabytes=6000', '--max-unpack-megabytes=7000']
+    p, _ = _run(args, text, disabled, timeout, ace, dat, ace_time_field=True)
     field = re.compile(r'\(:([a-z-]+) \. ?("(?:[^"\\]|\\.)*"|[^()"]*)\)')
     unq = lambda v: re.sub(r'\\(.)', r'\1', v[1:-1]) if v.startswith('"') else v.strip()
     out = []

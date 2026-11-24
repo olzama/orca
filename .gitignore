@@ -21,3 +21,9 @@ __pycache__/
 # Cached ranking model
 *.mem.pkl
 tools/mtool/
+
+# ACE build (tools/build_ace_orca.sh): downloads, build tree and binary are not in git
+third_party/downloads/
+third_party/build/
+third_party/ace-orca-build/
+third_party/ace-orca/

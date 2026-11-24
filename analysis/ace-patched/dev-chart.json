@@ -1,0 +1,43 @@
+{
+ "what": "O106: chart mode on Redwoods dev (saved tags, top 5, >=0.001), patched ACE kept running vs the earlier stock run (analysis/supertag-ace/dev-all.json, 23 Nov, other load)",
+ "patched persistent summary": {
+  "sentences": 2062,
+  "parsed": 1954,
+  "same MRS": 1616,
+  "ace seconds per sentence": 0.1864982737024124,
+  "prep seconds per sentence": 0.0027671477727584763,
+  "k": 5,
+  "min_prob": 0.001,
+  "wall seconds": 220.19568490982056
+ },
+ "stock summary": {
+  "sentences": 2062,
+  "parsed": 1954,
+  "same MRS": 1616,
+  "ace seconds per sentence": 0.21723585945096094,
+  "prep seconds per sentence": 0.0025785376329542247,
+  "k": 5,
+  "min_prob": 0.001,
+  "wall seconds": 175.294269323349
+ },
+ "identical MRS": 2062,
+ "sentences": 2062,
+ "ace step ms median (patched, stock)": [
+  23.26953411102295,
+  59.31556224822998
+ ],
+ "ace step ms mean (patched, stock)": [
+  186.4982737024124,
+  217.23585945096093
+ ],
+ "same-conditions timing (300 sentences, back to back)": {
+  "stock": {
+   "first-best ms per sentence": 155.44617732365927,
+   "n-best (20) ms per sentence": 167.46877272923788
+  },
+  "persistent": {
+   "first-best ms per sentence": 119.99481757481892,
+   "n-best (20) ms per sentence": 132.6533818244934
+  }
+ }
+}
