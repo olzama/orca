@@ -192,19 +192,24 @@ def summary():
         gc = gen_counts(f'{BEST_KEY}-chart')[0].get('all')
         lo = g['agree'] + g['reference'] + g['both']
         hi = lo + g['none'] + g['scope']
+        GP = (load(f'{ORCA}/analysis/mrs/gen-properties-summary.json') or {}).get('by system', {})
+        GS = (load(f'{ORCA}/analysis/mrs/gen-modes-speed-loaded.json') or {}).get('runs', {})
+        gprop = lambda k, n: pct(GP[k]['same with properties'], n) if k in GP else na('not measured')
+        gspd = lambda m: na('measured under load: see ' + link('generated', 'Generated sentences')) if m in GS else na('not measured')
         rows += [grp(f'Generated sentences on hard phenomena (rounds 1 to {len(labels)}), '
                      'compared with ACE\'s first-ranked parse, which nobody checked'),
-                 row('&nbsp;&nbsp;Orca (DeBERTa-v3 large), from raw text', g['n'], pct(g['agree'], g['n']), na('not measured'), pct(g['agree'] + g['orca'] + g['both'], g['n']),
-                     pct(g['mrs'], g['n']), na('not measured')),
-                 (row('&nbsp;&nbsp;Orca (BERT-base), from raw text', gb['n'], pct(gb['agree'], gb['n']), na('not measured'), pct(gb['agree'] + gb['orca'] + gb['both'], gb['n']),
-                      pct(gb['mrs'], gb['n']), na('not measured')) if gb else ''),
-                 (row('&nbsp;&nbsp;Orca chart mode (DeBERTa-v3 large; ACE restricted to the tagger\'s entries)', gc['n'], pct(gc['agree'], gc['n']), na('not measured'), pct(gc['agree'] + gc['orca'] + gc['both'], gc['n']),
-                      pct(gc['mrs'], gc['n']), na('not measured')) if gc else ''),
+                 row('&nbsp;&nbsp;Orca (DeBERTa-v3 large), from raw text', g['n'], pct(g['agree'], g['n']), gprop('debertav3large-current', g['n']), pct(g['agree'] + g['orca'] + g['both'], g['n']),
+                     pct(g['mrs'], g['n']), gspd('replay')),
+                 (row('&nbsp;&nbsp;Orca (BERT-base), from raw text', gb['n'], pct(gb['agree'], gb['n']), gprop('bert-current', gb['n']), pct(gb['agree'] + gb['orca'] + gb['both'], gb['n']),
+                      pct(gb['mrs'], gb['n']), na('not timed')) if gb else ''),
+                 (row('&nbsp;&nbsp;Orca chart mode (DeBERTa-v3 large; ACE restricted to the tagger\'s entries)', gc['n'], pct(gc['agree'], gc['n']), gprop('debertav3large-chart', gc['n']), pct(gc['agree'] + gc['orca'] + gc['both'], gc['n']),
+                      pct(gc['mrs'], gc['n']), gspd('chart')) if gc else ''),
                  row('&nbsp;&nbsp;ACE, first-ranked parse', g['n'], na('the reference'), na('the reference'),
-                     f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), na('not measured'))]
+                     f'{100 * lo / g["n"]:.1f}–{100 * hi / g["n"]:.1f}%', pct(g['n'], g['n']), na('not timed on these'))]
     t = table([('Text and parser', ''), ('Sentences', 'n'), ('Same meaning as the reference', 'n hl'), ('… with tense, number and information structure too', 'n hl'),
                ('Right according to the LLM judge', 'n hl'), ('Any analysis', 'n'), ('Sentences per second', 'n')], rows)
-    c = notes('<b>… with tense, number and information structure too:</b> the variable properties (tense, aspect, mood, sentence force, number, person, gender) and ICONS must match as well; ICONS never break a match for either parser.',
+    c = notes('<b>… with tense, number and information structure too:</b> the variable properties (tense, aspect, mood, sentence force, number, person, gender) and ICONS must match as well; on dev ICONS never break a match, on generated text they break two of BERT-base\'s.',
+              '<b>Scope-only differences:</b> a few sentences differ from the reference only in quantifier scope; the judge is shown no difference there, so they count as wrong.',
               '<b>Same meaning as the reference:</b> on dev the reference is gold; on generated text it is ACE\'s unchecked first parse.',
               '<b>Run-to-run spread:</b> a second training run of the same tagger, with another random seed, gets about one point less exact meaning on dev (' + link('runs', 'How much two runs differ') + ').',
               '<b>Comparing with other work:</b> most semantic parsing evaluation scores predicates and arguments only (SDP\'s DM, AMR\'s Smatch, CCG dependencies, EDM<sub>NA</sub>), as the first column does; full EDM and MRP\'s EDS score count properties too.',
@@ -645,6 +650,13 @@ def exp_generated():
         body += ('    <h3>Checking the agreements</h3>\n' + t3
                  + notes(f'Rounds 1 and 2. Readings: up to eight distinct meanings from ACE\'s 30 best parses, in random order (${a["cost_usd"]:.2f}).',
                          'Inconclusive: the judge is unreliable when choosing among many readings, as the dev row shows.'))
+    gs = load(f'{ORCA}/analysis/mrs/gen-modes-speed-loaded.json')
+    ds = load(f'{ORCA}/analysis/mrs/dev-modes-speed-loaded.json')
+    if gs and ds:
+        srow = lambda name, m: (f'<tr><td>{name}</td>' + td(f"{ds['runs'][m]['sentences per second']:.1f}") + td(f"{gs['runs'][m]['sentences per second']:.1f}", True) + '</tr>')
+        body += ('    <h3>Speed</h3>\n' + table([('Sentences per second, measured under the same load', ''), (f'Redwoods dev ({N:,})', 'n'), (f'Generated round 3 ({gs["runs"]["replay"]["sentences"]:,})', 'n hl')],
+                                               [srow('Orca (replay)', 'replay'), srow('Chart mode', 'chart')])
+                 + notes('Both measured on 24 November on one kesha GPU and one core while other jobs ran, so slower than on a quiet machine. Generated sentences are longer and harder than dev.'))
     return fold('Generated sentences', 'Harder than dev; ACE\'s own parses of them are often wrong.', body, id_='generated')
 
 
@@ -759,13 +771,21 @@ def exp_beyond_ace():
 def exp_replay_rate():
     c = collections.Counter(r['outcome'] for r in BEST['records'])
     first, after = c['accepted at first try'], c['accepted after repair']
-    rows = [f'<tr><td>Orca, ERG (Redwoods dev, raw text): first guess accepted</td>' + td(f'{N:,}') + td(pct(first, N), True) + '</tr>',
-            f'<tr><td>&nbsp;&nbsp;… or after repair (up to 600 replays)</td>' + td(f'{N:,}') + td(pct(first + after, N), True) + '</tr>',
+    rr = load(f'{ORCA}/analysis/replay-rate/dev-current.json')
+    if rr:
+        first = rr['within k replays']['1']   # same run as the rows below (saved tagger output)
+    rows = [f'<tr><td>Orca, ERG (Redwoods dev, raw text): first guess accepted</td>' + td(f'{N:,}') + td(pct(first, N), True) + '</tr>']
+    if rr:
+        rows += [f'<tr><td>&nbsp;&nbsp;… or within {k} replays</td>' + td(f'{N:,}') + td(pct(rr['within k replays'][k], N), k == '111') + '</tr>' for k in ('10', '111', '600')]
+    else:
+        rows.append(f'<tr><td>&nbsp;&nbsp;… or after repair (up to 600 replays)</td>' + td(f'{N:,}') + td(pct(first + after, N), True) + '</tr>')
+    rows += [
             '<tr><td>Matsuzaki et al. 2007, Enju (WSJ dev): first CFG-filtered sequence accepted</td>' + td(na('not stated')) + td('94.9%', True) + '</tr>',
             '<tr><td>&nbsp;&nbsp;… or within 111 sequences</td>' + td(na('not stated')) + td('97.6%', True) + '</tr>']
     t = table([('Proposed derivation accepted by the grammar', ''), ('Sentences', 'n'), ('Share', 'n hl')], rows)
     body = t + notes('Enju is an HPSG derived from the Penn Treebank (12 schemata, lexical templates); its candidates pass a context-free approximation of the grammar before the check, and its supertagger proposes lexical entries only. Orca proposes lexical and rule labels and checks them directly.',
                      'Published rates for this kind of check exist only for treebank-derived grammars; these are the first for a large hand-built HPSG with full semantics.',
+                     'Orca rows: one run of repair on the saved tagger output with current defaults, counting replays until the first derivation the grammar accepts; 111 is the bound Matsuzaki et al. report.',
                      NOT_YET + 'the share accepted within k replays (Orca logs only the total).')
     return fold('Replay rate, compared with CFG filtering', 'Orca\'s first guess passes the ERG less often than Enju\'s filtered guess passes Enju; repair closes most of the gap.', body, id_='replay-rate')
 
