@@ -164,17 +164,12 @@ details.frag summary .small { margin-left: 6px; }
 .hero-links { display: flex; gap: 8px; flex-wrap: wrap; }
 .hero-links a { font: 500 0.88rem var(--body); text-decoration: none; color: var(--accent); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; }
 .hero-links a:hover { border-color: var(--accent); }
-.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
-.steps li { display: flex; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
-.steps .num { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--surface); font: 600 0.85rem/26px var(--display); text-align: center; }
-.steps b { font-family: var(--display); font-weight: 600; }
-.steps p { font-size: 0.9rem; color: var(--muted); margin-top: 2px; }
 .credit { background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; }
 .credit-tag { font: 600 0.72rem var(--body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
-.credit p { margin-top: 4px; max-width: 86ch; }
+.credit p { margin-top: 4px; max-width: 100ch; font-size: 0.95rem; }
 .about { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 28px; border-top: 1px solid var(--line); padding-top: 14px; }
 .about h3 { font: 600 0.72rem var(--body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
-.about p { font-size: 0.85rem; color: var(--muted); max-width: 100ch; }
+.about p { font-size: 0.95rem; color: var(--muted); max-width: 100ch; }
 </style>
 </head>
 <body>
@@ -188,11 +183,6 @@ details.frag summary .small { margin-left: 6px; }
       </nav>
     </div>
     <p class="lede">Type an English sentence and get a complete grammar analysis with its meaning (MRS).</p>
-    <ol class="steps">
-      <li><span class="num">1</span><div><b>Label</b><p>A neural tagger gives every word a label, and the labels decode to a full derivation. This is parsing as sequence labeling.</p></div></li>
-      <li><span class="num">2</span><div><b>Replay</b><p>The <a href="https://github.com/delph-in/erg">English Resource Grammar</a> (Flickinger 2000) checks the derivation by replay and repairs it where it fails.</p></div></li>
-      <li><span class="num">3</span><div><b>Rank</b><p>The grammar’s ranking model picks among the accepted derivations.</p></div></li>
-    </ol>
     <aside class="credit">
       <span class="credit-tag">The idea behind the parser</span>
       <p><b>Parsing as sequence labeling</b> comes from our group, LyS at Universidade da Coruña: Carlos Gómez-Rodríguez and David Vilares, <a href="https://aclanthology.org/D18-1162/">Constituent parsing as sequence labeling</a> (EMNLP 2018). Orca applies it to HPSG derivations and lets the grammar check every result.</p>
