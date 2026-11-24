@@ -75,6 +75,12 @@ def fs_view(fg, root, limit=150000):
     return {'root': C.deref(root), 'nodes': nodes, 'truncated': bool(todo)}
 
 
+# How the sentence is analyzed; the request's "method" picks one. Chart is the most accurate on dev and the default.
+METHODS = {'chart': ('chart', None),        # the tagger's candidate lexical entries, then a chart parser (ACE) limited to them
+           'fallback': ('fallback', None),  # label, replay, repair; the limited chart parser only where that finds nothing
+           'replay': ('replay', None),      # label, replay, repair: Orca's own method
+           'first': ('replay', 1)}          # label and replay only: the tagger's first derivation, no repair
+BUDGET = None                               # the parser's own repair budget, remembered at start
 READINGS, MARGIN = 5, 1.25   # several readings (O97): at most 5, within 1.25 (MaxEnt, log space) of the best
 
 
@@ -274,6 +280,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 return
             with LOCK:
                 PARSER.readings, PARSER.margin = reading_options(req)
+                method = req.get('method') if req.get('method') in METHODS else 'chart'
+                PARSER.mode, budget = METHODS[method]
+                PARSER.args.budget = budget or BUDGET
                 r = PARSER.parse(text)
                 fs_for = req.get('fs_for')
                 if fs_for is not None:                    # the sign of one further reading, fetched when its tab opens
@@ -343,7 +352,8 @@ def main():
     args = ap.parse_args()
     PARSER = Parser(tagger=args.tagger, fragments=True, mode='chart')   # the demo shows one sentence at a time: the most accurate mode
     PARSER.parse('The dog barked.')
-    global TYPES
+    global TYPES, BUDGET
+    BUDGET = PARSER.args.budget
     TYPES = build_types(DEFAULTS['grammar'], PARSER.fg.h)
     srv = http.server.ThreadingHTTPServer((args.host, args.port), Handler)
     print(f'Orca demo ready: http://{args.host}:{args.port}', flush=True)

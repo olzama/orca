@@ -188,6 +188,14 @@ svg text[data-name]:hover { text-decoration: underline; }
 pre.tdl { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--well); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
 pre.tdl .ref { color: var(--accent); cursor: pointer; text-decoration: underline dotted; }
 .tex { font-size: 0.9rem; margin: 2px 0 0; padding-left: 18px; }
+input[type=number] { font: 0.88rem var(--body); width: 4.5em; padding: 5px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); }
+input[type=number]:disabled { opacity: .5; }
+.ropts { margin-top: 8px; }
+details.rhelp > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; justify-content: center; width: 1.6em; height: 1.6em; border-radius: 50%; border: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
+details.rhelp > summary::-webkit-details-marker { display: none; }
+details.rhelp[open] { flex-basis: 100%; }
+details.rhelp p { margin-top: 6px; max-width: 70ch; }
+select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); max-width: 100%; }
 </style>
 </head>
 <body>
@@ -214,8 +222,22 @@ pre.tdl .ref { color: var(--accent); cursor: pointer; text-decoration: underline
     <textarea id="input" aria-label="Sentence" spellcheck="false">The old dog barked at Mr. Smith's mailman.</textarea>
     <div class="row">
       <button class="go" id="go">Parse</button>
+      <label class="check">Method
+        <select id="method" aria-label="How the sentence is analyzed">
+          <option value="chart" selected>Tagger, then a chart limited to its candidates (most accurate)</option>
+          <option value="fallback">Label, replay, repair; the limited chart only if that finds nothing</option>
+          <option value="replay">Label, replay, repair (Orca’s own method, no chart)</option>
+          <option value="first">Label and replay only (no repair, no chart)</option>
+        </select>
+      </label>
       <label class="check"><input type="checkbox" id="ace"> Also parse with ACE, to compare</label>
       <span class="small">Ctrl+Enter parses</span>
+    </div>
+    <div class="row ropts" role="group" aria-label="How many readings to show">
+      <label class="check" for="nreadings">At most <input type="number" id="nreadings" min="1" max="10" step="1" value="5"> readings</label>
+      <label class="check" for="margin">within <input type="number" id="margin" min="0" step="0.25" value="1.25"> of the best</label>
+      <label class="check"><input type="checkbox" id="nomargin"> no margin</label>
+      <details class="rhelp"><summary aria-label="What these settings mean">?</summary><p class="small">Readings are the distinct meanings among the grammar’s best parses. A reading is shown only if its score is within the margin of the best one: at margin 1.25, its best parse is at least about 29% as likely as the top parse. A larger margin shows more readings; at most 1 reading shows only the top one.</p></details>
     </div>
     <div class="chips" id="examples"></div>
   </section>
@@ -784,10 +806,18 @@ function show(r) {
   const total = Object.values(r.seconds).reduce((a, b) => a + b, 0);
   if (r.mrs) {
     status.className = 'verdict ok';
-    status.innerHTML = `<b>Analyzed.</b> ${r.outcome === 'accepted at first try' ? 'The tagger’s first derivation was accepted by the grammar' : 'The grammar rejected the tagger’s first derivation; repair found one it accepts'}, in ${ms(total)} ms.`;
+    const how = r.outcome === 'accepted at first try' ? 'The tagger’s first derivation was accepted by the grammar'
+      : r.outcome === 'chart analysis' ? 'A chart parser (ACE) limited to the tagger’s candidate lexical entries found it, and the grammar’s ranking model chose it'
+      : /chart analysis/.test(r.outcome || '') ? 'Replay and repair found nothing; a chart parser (ACE) limited to the tagger’s candidate lexical entries found it'
+      : 'The grammar rejected the tagger’s first derivation; repair found one it accepts';
+    status.innerHTML = `<b>Analyzed.</b> ${how}, in ${ms(total)} ms.`;
   } else {
     status.className = 'verdict bad';
-    status.innerHTML = `<b>No analysis.</b> No derivation the grammar accepts was found within ${r.replays ?? 0} replays (${esc(r.outcome || '')}).`;
+    const tried = METHOD === 'first' ? 'The grammar rejected the tagger’s first derivation, and repair is switched off'
+      : r.outcome === 'chart found nothing' ? 'The chart parser limited to the tagger’s candidate lexical entries found no analysis'
+      : /chart found nothing/.test(r.outcome || '') ? `No derivation the grammar accepts was found within ${r.replays ?? 0} replays, and the limited chart parser found none either`
+      : `No derivation the grammar accepts was found within ${r.replays ?? 0} replays (${esc(r.outcome || '')})`;
+    status.innerHTML = `<b>No analysis.</b> ${tried}.`;
   }
   showFragments(r);
   CURRENT = r;
@@ -825,7 +855,7 @@ function show(r) {
   } else ap.classList.add('hidden');
 }
 
-let CURRENT = null, SENTENCE = '';
+let CURRENT = null, SENTENCE = '', METHOD = 'chart', ROPTS = { readings: 5, margin: 1.25 };
 function buildTabs(r) {
   const rds = r.readings || [], panel = $('readings-panel'), tabs = $('readings-tabs');
   if (!r.mrs || rds.length < 2) { panel.classList.add('hidden'); tabs.replaceChildren(); return; }
@@ -869,7 +899,7 @@ function showReading(r, i) {
   $('tree').replaceChildren(rd.derivation ? drawTree(toRaw(rd.derivation)) : el('p', 'small', 'No derivation.'));
   if (rd.fs !== undefined) { drawFs(rd.fs, $('fs'), 'fs', null, rd.fs_note); return; }
   $('fs').replaceChildren(el('p', 'small', 'Rebuilding this reading’s feature structure…'));
-  fetch('api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sentence: SENTENCE, fs_for: i }) })
+  fetch('api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ sentence: SENTENCE, fs_for: i, method: METHOD }, ROPTS)) })
     .then(res => res.json())
     .then(x => {
       if (x.error) throw new Error(x.error);
@@ -879,14 +909,31 @@ function showReading(r, i) {
     .catch(e => { if (CURRENT === r) $('fs').replaceChildren(el('p', 'small', 'Could not load this reading’s feature structure: ' + esc(e.message))); });
 }
 
+// how many readings to show: sent with every parse request, remembered in this browser
+function readingOpts() {
+  let n = parseInt($('nreadings').value, 10); if (!(n >= 1)) n = 5; n = Math.min(10, n);
+  let m = parseFloat($('margin').value); if (!(m >= 0)) m = 1.25;
+  return { readings: n, margin: $('nomargin').checked ? null : m };
+}
+function saveReadingOpts() {
+  $('margin').disabled = $('nomargin').checked;
+  try { localStorage.setItem('orca-readings', JSON.stringify(readingOpts())); } catch (_) {}
+}
+try {
+  const o = JSON.parse(localStorage.getItem('orca-readings') || 'null');
+  if (o) { $('nreadings').value = o.readings; if (o.margin === null) $('nomargin').checked = true; else $('margin').value = o.margin; }
+} catch (_) {}
+$('margin').disabled = $('nomargin').checked;
+['nreadings', 'margin', 'nomargin'].forEach(id => $(id).addEventListener('change', saveReadingOpts));
+
 async function run() {
   const sentence = $('input').value.trim();
   if (!sentence) return;
   const btn = $('go');
   btn.disabled = true; btn.textContent = 'Parsing…';
   try {
-    SENTENCE = sentence;
-    const res = await fetch('api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sentence, ace: $('ace').checked }) });
+    SENTENCE = sentence; METHOD = $('method').value; ROPTS = readingOpts();
+    const res = await fetch('api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ sentence, ace: $('ace').checked, method: METHOD }, ROPTS)) });
     let r;
     try { r = await res.json(); }
     catch (_) { throw new Error(res.status >= 502 && res.status <= 504 ? 'The demo is restarting or briefly unavailable. Please try again in a minute.' : `The server gave an unexpected answer (HTTP ${res.status}).`); }
