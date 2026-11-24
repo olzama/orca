@@ -322,8 +322,11 @@ class Parser:
         else:
             mrs_s, deriv_s, _ = run_restricted(text, disabled, self.chart_timeout, self.ace, self.dat, trees=True)
         lap('chart')
+        import supertag_ace
         out['chart'] = {'allowed entries': len(allowed), 'disabled entries': len(disabled), 'unresolved labels': unresolved,
-                        'after replay': after_replay}
+                        'after replay': after_replay,
+                        # how the chart step's time splits: the whole ACE process, and ACE's own figure for parsing
+                        'ace wall seconds': supertag_ace.LAST.get('wall seconds'), 'ace parse seconds': supertag_ace.LAST.get('parse seconds')}
         if mrs_s is None:
             out['outcome'] = ('replay found nothing; ' if after_replay else '') + 'chart found nothing'
             out['accepted derivations'] = 0

@@ -203,6 +203,9 @@ select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--li
 .examples h3 { font: 600 0.72rem var(--body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
 .examples p { margin-bottom: 8px; }
 #examples-long .chip { border-radius: 10px; }
+.explain { border: 1px solid var(--line); border-radius: 8px; background: var(--well); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.ask { font: 500 0.88rem var(--body); text-decoration: none; color: var(--accent); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.ask:hover { border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -309,6 +312,16 @@ select { font: 0.88rem var(--body); padding: 6px 8px; border: 1px solid var(--li
     <section class="panel hidden" id="ace-panel">
       <h2>ACE, for comparison</h2>
       <div id="ace-verdict" class="verdict"></div>
+      <div id="ace-explain" class="explain hidden">
+        <p><b>What is the difference, in plain words?</b> An AI assistant can paraphrase the two meanings from the points where they differ.</p>
+        <div class="row">
+          <a class="ask" id="ask-chatgpt" target="_blank" rel="noopener">Ask ChatGPT</a>
+          <a class="ask" id="ask-claude" target="_blank" rel="noopener">Ask Claude</a>
+          <button type="button" class="ask" id="ask-copy">Copy the question</button>
+        </div>
+        <p class="small">The buttons open the assistant in a new tab with the question filled in, under your own account: a free account is enough, and you may have to sign in once. The demo itself sends nothing to any assistant. With “Copy the question” you can paste it into any other one. The answer is an informal reading aid and can be wrong; the graphs are what counts.</p>
+        <details><summary>The question that is asked</summary><pre id="ask-text" style="white-space:pre-wrap;margin-top:8px"></pre></details>
+      </div>
       <div class="scroll"><table id="ace-time" class="timetable"></table></div>
       <p class="small" id="ace-time-note"></p>
       <div id="ace-dmrs"></div>
@@ -823,7 +836,15 @@ function showTime(r, c) {
   const row = (name, s, cls) => `<tr${cls ? ` class="${cls}"` : ''}><td>${name}</td><td class="n">${ms(Math.max(0, s))}</td></tr>`;
   const head = name => `<tr><th colspan="2">${name}</th></tr>`;
   let t = '<tr><th>Step</th><th class="n">ms</th></tr>' + head('Producing the parse');
-  STEPS.forEach(([k, name]) => { if (k in r.seconds) t += row(name, r.seconds[k]); });
+  const ch = r.chart || {};
+  STEPS.forEach(([k, name]) => {
+    if (!(k in r.seconds)) return;
+    if (k === 'chart' && ch['ace parse seconds'] != null && ch['ace wall seconds'] != null) {   // the chart step runs ACE once: show its start-up apart, as in ACE's own table
+      t += row('Chart: choosing the lexical entries ACE may use, and reading its answer', r.seconds.chart - ch['ace wall seconds']);
+      t += row('Chart: starting ACE and loading the compiled grammar', ch['ace wall seconds'] - ch['ace parse seconds']);
+      t += row('Chart: parsing limited to the tagger’s candidates (ACE’s own measurement)', ch['ace parse seconds']);
+    } else t += row(name, r.seconds[k]);
+  });
   t += row('Parsing, total', total, 'total');
   t += head('Showing it');
   if (sv.total != null) {
@@ -843,6 +864,37 @@ function showTime(r, c) {
   if (st && c) st.textContent = ` Parsing took ${ms(total)} ms of the ${ms(c.roundtrip + c.draw)} ms from pressing Parse to everything drawn.`;
 }
 const painted = () => new Promise(done => requestAnimationFrame(() => setTimeout(done, 0)));
+
+// An informal paraphrase of two meanings that differ, asked of an assistant under the visitor's own account
+// (the same question Kelp asks: only what sets the readings apart, and no judgment of which is better).
+function dmrsFacts(d) {
+  const name = d.nodes.map(n => n[0] + (n[1] ? `("${n[1]}")` : '')), out = new Map();
+  const add = f => out.set(f, (out.get(f) || 0) + 1);
+  name.forEach(n => add('node ' + n));
+  d.links.forEach(l => add(`${name[l[0]]} -${l[2] || ''}${!l[3] || l[3] === 'NEQ' ? '' : '/' + l[3]}-> ${name[l[1]]}`));
+  return out;
+}
+function differenceQuestion(sentence, a, b) {
+  const fa = dmrsFacts(a), fb = dmrsFacts(b);
+  const only = (x, y) => [...x.keys()].filter(f => x.get(f) !== (y.get(f) || 0)).sort();
+  const list = fs => fs.length ? fs.join('; ') : '(no predicate or link that the other lacks)';
+  return 'Below are two semantic analyses of one sentence from the English Resource Grammar, each shown only by what the other lacks: predicates (node ...), and links (head -ROLE-> dependent; ARG1, ARG2 ... are argument roles; /EQ means the two share a scope label, /H that the link goes through a scope constraint; names are lemma_partofspeech_sense; udef_q, compound, appos, implicit_conj and similar are grammar-internal predicates).\n'
+    + 'For each reading, write one or two short sentences in plain English saying what the sentence means under that reading, focusing on exactly where the two differ (which word attaches to what, what modifies what, which sense of a word, what is the scope). Be concrete and use the sentence’s own words. Do not say which reading is better, more natural or more likely.\n\n'
+    + `Sentence: ${sentence}\nReading A: ${list(only(fa, fb))}\nReading B: ${list(only(fb, fa))}`;
+}
+function offerExplanation(r) {
+  const box = $('ace-explain');
+  const differ = r.ace && r.ace.mrs && r.mrs && r.ace['same as orca'] === false && r.dmrs && r.ace.dmrs;
+  box.classList.toggle('hidden', !differ);
+  if (!differ) return;
+  const q = differenceQuestion(r.input || $('input').value, r.dmrs, r.ace.dmrs), enc = encodeURIComponent(q);
+  $('ask-text').textContent = q + '\n\n(Reading A is Orca’s analysis, reading B is ACE’s.)';
+  const short = enc.length <= 6000;                       // longer questions do not fit in a link: copy them instead
+  $('ask-chatgpt').href = 'https://chatgpt.com/?q=' + enc; $('ask-claude').href = 'https://claude.ai/new?q=' + enc;
+  $('ask-chatgpt').classList.toggle('hidden', !short); $('ask-claude').classList.toggle('hidden', !short);
+  const c = $('ask-copy'); c.textContent = 'Copy the question';
+  c.onclick = () => navigator.clipboard.writeText(q).then(() => { c.textContent = 'Copied'; }, () => { c.textContent = 'Could not copy: open “The question that is asked” and copy it by hand'; });
+}
 
 function show(r) {
   const status = $('status');
@@ -887,6 +939,7 @@ function show(r) {
     else if (r.ace['same as orca']) { v.className = 'verdict ok'; v.innerHTML = '<b>Same meaning.</b> ACE’s first-ranked analysis has the same MRS as Orca’s.'; }
     else if (!r.mrs) { v.className = 'verdict chg'; v.innerHTML = '<b>Only ACE found an analysis.</b>'; }
     else { v.className = 'verdict chg'; v.innerHTML = '<b>Different meaning.</b> ACE’s first-ranked analysis differs from Orca’s; orange marks what Orca’s analysis does not have.'; }
+    offerExplanation(r);
     {
       const a = r.ace, own = a['parse seconds'], sv = r.server || {};
       const row = (name, s, cls) => `<tr${cls ? ` class="${cls}"` : ''}><td>${name}</td><td class="n">${ms(Math.max(0, s))}</td></tr>`;
@@ -901,7 +954,7 @@ function show(r) {
       if (a['sign seconds'] != null) t += row('Server: rebuilding ACE’s feature structure by replay (Orca’s work; ACE prints none)', a['sign seconds']);
       if (sv.ace != null) t += row('Server: the other views of ACE’s analysis and the comparison of meanings', sv.ace - a.seconds - (a['sign seconds'] || 0));
       $('ace-time').innerHTML = t;
-      $('ace-time-note').textContent = 'The demo starts ACE anew for every sentence, while Orca’s models stay loaded; the first row shows what that costs. Orca’s time table does not include ACE’s time.';
+      $('ace-time-note').textContent = 'The demo starts ACE anew for every sentence; the first row shows what that costs. Orca’s chart step starts ACE in the same way, and its table shows that start-up in a row of its own. Orca’s time table does not include the time of this comparison.';
     }
     $('ace-tree').replaceChildren(r.ace.derivation ? drawTree(toRaw(r.ace.derivation)) : el('p', 'small', 'No derivation.'));
     $('ace-dmrs').replaceChildren(r.ace.dmrs ? drawDmrs(r.ace.dmrs, r.dmrs) : el('span'));

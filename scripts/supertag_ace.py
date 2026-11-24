@@ -18,6 +18,7 @@ import argparse
 import json
 import os
 import pickle
+import re
 import subprocess
 import sys
 import time
@@ -97,6 +98,17 @@ def allowed_and_disabled(item, k, min_prob, lx=None, orth=None, allgen=None):
     return allowed, disabled, unresolved
 
 
+LAST = {}       # timing of the latest restricted run: 'wall seconds' (the whole ACE process) and 'parse seconds' (ACE's own figure)
+
+
+def _timed(p, wall):
+    """Record how the latest ACE run's time splits: ACE reports its own parsing time on stderr
+    ("NOTE: parsed 1 / 1 sentences, avg ..., time 0.00660s"); the rest is starting up and loading the grammar."""
+    m = re.search(r'NOTE: parsed .*?time ([0-9.]+)s', p.stderr or '')
+    LAST.clear()
+    LAST.update({'wall seconds': wall, 'parse seconds': float(m.group(1)) if m else None})
+
+
 def run_restricted(text, disabled, timeout=60, ace=ACE, dat=DAT, trees=False):
     """ACE's first-ranked analysis with the given lexemes disabled: (mrs, derivation, seconds);
     mrs and derivation are strings (derivation only with trees=True), None when ACE finds nothing."""
@@ -108,6 +120,7 @@ def run_restricted(text, disabled, timeout=60, ace=ACE, dat=DAT, trees=False):
     t1 = time.time()
     p = subprocess.run(cmd, input=text + '\n', capture_output=True, text=True, timeout=timeout + 30)
     secs = time.time() - t1
+    _timed(p, secs)
     line = next((l for l in p.stdout.splitlines() if l.startswith('[')), None)
     if line is None:
         return None, None, secs
@@ -127,7 +140,9 @@ def run_restricted_nbest(text, disabled, n, timeout=60, ace=ACE, dat=DAT):
            '--max-chart-megabytes=6000', '--max-unpack-megabytes=7000']
     if disabled:
         cmd += ['-L', ' '.join(sorted(disabled))]
+    t1 = time.time()
     p = subprocess.run(cmd, input=text + '\n', capture_output=True, text=True, timeout=timeout + 30)
+    _timed(p, time.time() - t1)
     field = re.compile(r'\(:([a-z-]+) \. ?("(?:[^"\\]|\\.)*"|[^()"]*)\)')
     unq = lambda v: re.sub(r'\\(.)', r'\1', v[1:-1]) if v.startswith('"') else v.strip()
     out = []
