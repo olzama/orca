@@ -108,6 +108,19 @@ def top_tokens(tree, leaf_labels, levels=2):
 _WORK = None
 
 
+def _label_filter(g, args):
+    """The LabelFilter for args.label_filter (a table path, or 'on' for no table), made once per process."""
+    spec = getattr(args, 'label_filter', None)
+    if not spec:
+        return None
+    lf = getattr(args, '_label_filter_obj', None)
+    if lf is None or lf.fg is not g:
+        from label_filter import LabelFilter
+        lf = LabelFilter(g, None if spec == 'on' else spec)
+        args._label_filter_obj = lf
+    return lf
+
+
 def search(index):
     """Best-first repair of one sentence. Runs in a worker process."""
     g, sents, tops, tokens, args, lexicon = _WORK
@@ -172,6 +185,11 @@ def search(index):
     mode = getattr(args, 'search', 'local') or 'local'
     distinct = getattr(args, 'distinct', False)
     tried, readings = set(), {}
+    # Label filter (O86, scripts/label_filter.py): candidates with a local configuration the grammar can never
+    # accept are skipped without a replay and do not count against the budget; their offending tokens are
+    # expanded as a replay failure's would be. A separate cap bounds the skipped ones.
+    lfilter = _label_filter(g, args)
+    n_filtered, filter_cap = 0, 20 * args.budget
 
     def keep(fs, resolved, leaf, tree, cost):
         """Add an accepted derivation to kbest; with `distinct`, only if its reading is new."""
@@ -179,7 +197,7 @@ def search(index):
             return
         kbest.append(candidate(fs, resolved, leaf, tree, cost))
 
-    while mode != 'global' and n_replays < args.budget:
+    while mode != 'global' and n_replays < args.budget and n_filtered < filter_cap:
         if not heap:
             if not stack:
                 break
@@ -189,9 +207,13 @@ def search(index):
         leaf, tree = assignment(state)
         if first_right is None:
             first_right = right(leaf, tree)
-        n_replays += 1
         tried.add(state)
-        span = replay(leaf, tree)
+        span = lfilter.check(forms, leaf, tree) if lfilter is not None else None
+        if span is None:
+            n_replays += 1
+            span = replay(leaf, tree)
+        else:
+            n_filtered += 1
         if getattr(args, 'trace', None) is not None:
             args.trace.append((len(state), None if span is None else (min(span), max(span), len(span)), round(cost, 2)))
         if (commit and span is not None and accepted is None and parent_span is not None
@@ -241,7 +263,7 @@ def search(index):
         avail = [1 + sum(1 for q in top[kind][j][1:] if q[2] >= gmin) for kind, j in pos]
         delta = lambda i, r: top[pos[i][0]][pos[i][1]][0][1] - top[pos[i][0]][pos[i][1]][r][1]
         heap2, cnt = [(0.0, 0, ())], 1
-        while heap2 and n_replays < args.budget:
+        while heap2 and n_replays < args.budget and n_filtered < filter_cap:
             cost, _, vec = heapq.heappop(heap2)
             last = vec[-1][0] if vec else -1
             if vec and vec[-1][1] + 1 < avail[last]:
@@ -259,6 +281,9 @@ def search(index):
             leaf, tree = assignment(state)
             if first_right is None:
                 first_right = right(leaf, tree)
+            if lfilter is not None and lfilter.check(forms, leaf, tree) is not None:
+                n_filtered += 1
+                continue
             n_replays += 1
             if replay(leaf, tree) is None:
                 if accepted is None:
@@ -269,6 +294,8 @@ def search(index):
                 keep(fs, resolved, leaf, tree, cost)
                 if len(kbest) >= args.kbest:
                     break
+    if lfilter is not None:
+        args._n_filtered = getattr(args, '_n_filtered', 0) + n_filtered
     if accepted is None:
         outcome = 'rejected, budget used' if n_replays >= args.budget else 'rejected, nothing left to try'
         leaf, tree = assignment(())

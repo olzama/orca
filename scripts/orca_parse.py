@@ -52,7 +52,7 @@ class Parser:
                  dat=DEFAULTS['dat'], k=5, kbest=30, budget=600, fanout=8, min_prob=0.001, device=None,
                  all_mrs=False, commit=False, commit_min=0, root_focus=False, locate_missing=True,
                  normalized_lookup=True, patterns=None, pattern_weight=1.0, pattern_only_new=False,
-                 fragments=False, mode='replay', chart_k=5, chart_min_prob=0.001, chart_timeout=60):
+                 fragments=False, mode='replay', chart_k=5, chart_min_prob=0.001, chart_timeout=60, label_filter=None):
         import torch
         from transformers import AutoTokenizer
         import repair
@@ -73,7 +73,8 @@ class Parser:
             self.patterns = Patterns(patterns, weight=pattern_weight, only_new=pattern_only_new)
             self.patterns_name = os.path.basename(patterns)
         self.args = SimpleNamespace(cache=True, kbest=kbest, budget=budget, fanout=fanout, min_prob=min_prob,
-                                    commit=commit, commit_min=commit_min, root_focus=root_focus)
+                                    commit=commit, commit_min=commit_min, root_focus=root_focus,
+                                    label_filter=label_filter)   # scripts/label_filter.py: skip label sequences the grammar can never accept
         self.device = torch.device(device or ('cuda' if torch.cuda.is_available() else 'cpu'))
         labels = json.load(open(os.path.join(tagger, 'labels.json')))
         self.itos = {'leaf': labels['leaf'], 'tree': labels['tree']}
@@ -345,7 +346,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False,
                      'gold among accepted': among if parser.all_mrs and m is not None else None,
                      **({'mrs': r.get('mrs'), 'labels': r.get('labels')} if save_mrs else {})})
     wall = time.perf_counter() - t0
-    res = {'tagger': parser.tagger_name, 'mode': parser.mode, 'chart_k': parser.chart_k, 'chart_min_prob': parser.chart_min_prob, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget,
+    res = {'tagger': parser.tagger_name, 'mode': parser.mode, 'chart_k': parser.chart_k, 'chart_min_prob': parser.chart_min_prob, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget, 'label_filter': parser.args.label_filter,
            'commit': parser.args.commit, 'commit_min': parser.args.commit_min, 'root_focus': parser.args.root_focus, 'locate_missing': parser.lx.locate_missing, 'normalized_lookup': parser.normalized_lookup, 'patterns': getattr(parser, 'patterns_name', None) if parser.patterns is not None else None, 'min_tokens': min_tokens, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
     with open(out_path, 'w') as f:
@@ -378,6 +379,7 @@ def main():
     ap.add_argument('--mode', choices=('replay', 'chart', 'fallback'), default=None,
                     help='replay: the tagger\'s labels replayed and repaired (default with --eval, the headline); chart: ACE restricted to the tagger\'s lexical entries; fallback: replay, and chart where replay finds nothing (default when parsing text)')
     ap.add_argument('--chart-k', type=int, default=5, help='chart: tagger lexical labels per token')
+    ap.add_argument('--label-filter', help='label filter table (scripts/label_filter.py), or "on" to compute on demand; off by default')
     ap.add_argument('--chart-min-prob', type=float, default=0.001, help='chart: drop labels below this probability (the first is always kept)')
     ap.add_argument('--no-fragments', dest='fragments', action='store_false', help='parsing sentences: give no fragments when there is no full analysis (never used in --eval)')
     args = ap.parse_args()
@@ -386,7 +388,7 @@ def main():
                locate_missing=args.locate_missing, normalized_lookup=args.normalized_lookup,
                patterns=args.patterns, pattern_weight=args.pattern_weight, pattern_only_new=args.pattern_only_new,
                fragments=args.fragments and not args.eval, mode=args.mode or ('replay' if args.eval else 'fallback'), chart_k=args.chart_k,
-               chart_min_prob=args.chart_min_prob)
+               chart_min_prob=args.chart_min_prob, label_filter=args.label_filter)
     if args.eval:
         evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
         return

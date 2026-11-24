@@ -78,6 +78,7 @@ def run(a):
         if getattr(a, k, None) is not None:
             setattr(args, k, getattr(a, k))
     args.search, args.distinct, args.global_min_prob = a.search, a.distinct, a.global_min_prob
+    args.label_filter = a.label_filter
     n_exact = n_any = 0
     items = list(data['items'].items())
     if a.ids:
@@ -132,12 +133,14 @@ def run(a):
                       'same_mrs': bool(c.get('same_mrs'))} for c in kbest]
             cands_out.write(json.dumps({'id': sid, 'forms': rforms, 'outcome': rec['outcome'], 'candidates': cands}, ensure_ascii=False) + '\n')
         recs[sid] = rec
+    if a.label_filter and a.label_filter_save and getattr(args, '_label_filter_obj', None) is not None:
+        args._label_filter_obj.save(a.label_filter_save)
     res = {'search': {'mode': a.search, 'distinct': a.distinct, 'global_min_prob': a.global_min_prob,
                       'budget': args.budget, 'kbest': args.kbest, 'min_prob': args.min_prob, 'fanout': args.fanout},
            'gold among accepted': sum(any(c.get('same_mrs') for c in kb) for kb in GOLDFLAGS) if gold else None,
            'replays': sum(r.get('replays', 0) for r in recs.values()),
            'sentences': len(items), 'repair seconds': rep_secs, 'repair seconds per sentence': rep_secs / max(1, len(items)),
-           'any analysis': n_any, 'patterns': a.patterns, 'pattern_weight': a.pattern_weight if a.patterns else None,
+           'any analysis': n_any, 'label filter': a.label_filter, 'skipped by the label filter': getattr(args, '_n_filtered', None), 'patterns': a.patterns, 'pattern_weight': a.pattern_weight if a.patterns else None,
            'pattern_only_new': a.pattern_only_new if a.patterns else None, 'records': recs}
     if gold:
         res['exact'] = n_exact
@@ -206,6 +209,8 @@ def main():
     ap.add_argument('--min-prob', type=float)
     ap.add_argument('--fanout', type=int)
     ap.add_argument('--ids', help='file with sentence ids to run (one per line)')
+    ap.add_argument('--label-filter-save', help='write the label filter table (with the keys computed in this run) here')
+    ap.add_argument('--label-filter', help='label filter table (scripts/label_filter.py), or "on" to compute on demand; changes search')
     a = ap.parse_args()
     {'prepare': prepare, 'run': run, 'compare': compare}[a.cmd](a)
 
