@@ -71,5 +71,5 @@
  "run": "analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-minprob001.json",
  "ace seconds, sentences without a measured time": 0.978,
  "no-analysis sentences without a measured ACE time": 1,
- "speed note": "sentences per second = 2,062 / (Orca run time + ACE time for the sentences sent). Orca time from the run's step sums (6.79 sentences per second, 23 November); ACE time measured per sentence for the no-analysis sentences (time-noanalysis.json, 23 November, one process), ACE's dev mean elsewhere. With the replay speed measured under load on 24 November (5.97, logs/modes-speed.log) the rows become: 138 sent 2.24, 938 sent 1.21, all 0.74."
+ "speed note": "sentences per second = 2,062 / (Orca run time + ACE time for the sentences sent). Orca time from the run's step sums (6.79 sentences per second, 23 November); ACE time measured per sentence for the no-analysis sentences (time-noanalysis.json, 23 November, one process), ACE's dev mean elsewhere. With the replay speed measured under load on 24 November (5.97, logs/modes-speed.log) the rows become: 138 sent 2.25, 938 sent 1.21, all 0.74."
 }
