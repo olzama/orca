@@ -1006,33 +1006,53 @@ def exp_corpus_modes(open_=False):
 
 
 def exp_agreement():
-    path = f'{ORCA}/analysis/agreement-attractors/score.json'
-    if not os.path.exists(path):
+    D = f'{ORCA}/analysis/agreement-attractors'
+    runs = [(n, load(f'{D}/{f}')) for n, f in (('BERT-base, replay', 'score.json'), ('DeBERTa-v3 large, replay', 'score-debertav3large-replay.json'), ('DeBERTa-v3 large, chart mode', 'score-debertav3large-chart.json'))]
+    runs = [(n, x) for n, x in runs if x]
+    if not runs:
         return ''
-    s = json.load(open(path))
-    def row(name, e, key):
-        g, u = s[f'e{e}|grammatical|{key}'], s[f'e{e}|ungrammatical|{key}']
-        n, m = g['n'], u['n']
-        return (f'<tr><td>{name}</td>' + td(f'{n:,}') + td(pct(g.get('accepted at first try', 0), n))
-                + td(pct(g['orca analysis'], n)) + td(pct(g['same as ace'], n), True)
-                + td(pct(m - u['orca analysis'], m), True) + td(pct(m - u['ace analysis'], m)) + '</tr>')
-    grp = lambda t: f'<tr><td colspan="7"><i>{t}</i></td></tr>'
+    base = runs[0][1]
+    grp = lambda t, k: f'<tr><td colspan="{2 + k}"><i>{t}</i></td></tr>'
     ind = '&nbsp;&nbsp;'
-    rows = ([grp('Experiment 1: subject, then verb; sometimes after a long clause with a noun of its own'), row('<b>All</b>', 1, 'all'),
-             row(ind + 'No clause before the subject', 1, 'no top clause'),
-             row(ind + 'A clause before it, whose noun has the subject\'s number', 1, 'top clause, attractor matches'),
-             row(ind + 'A clause before it, whose noun has the other number', 1, 'top clause, attractor mismatches'),
-             grp('Experiment 2: clefted subject, separated from its verb by embedded clauses'), row('<b>All</b>', 2, 'all')]
-            + [row(ind + f'{k} embedded clause{"s" if k > 1 else ""}', 2, f'level {k}') for k in (1, 2, 3, 4)])
-    t = table([('Stimuli', ''), ('Sentences of each kind', 'n'), ('Orca\'s first guess accepted', 'n'), ('Orca finds an analysis', 'n'),
-               ('Same meaning as ACE', 'n hl'), ('Orca finds no analysis', 'n hl'), ('ACE finds no analysis', 'n')], rows,
-              group=[('', 2), ('Verb agrees with the subject', 3), ('Verb does not agree', 2)])
-    body = t + notes('Chaves and Richter (2021) stimuli, each filled with the agreeing and the non-agreeing verb. Orca: BERT-base, raw text.',
-                     'ACE\'s readings make the verb agree with something else: <i>A scientist … said I thought the boys is lost</i> (the scientist is lost).',
-                     'A clause before the subject makes first guesses fail more often, whichever number its noun has; whether the difference between the two numbers is real has not been tested.',
-                     NOT_YET + 'the DeBERTa tagger, and chart mode, which shares ACE\'s chart and may accept the strained readings.')
-    return fold('Agreement after distracting material', 'Wrong agreement is turned down; ACE finds strained readings that Orca does not.', body, id_='agreement')
-
+    conds = ([('Experiment 1: subject, then verb; sometimes after a long clause with a noun of its own', None), ('<b>All</b>', (1, 'all')),
+              (ind + 'No clause before the subject', (1, 'no top clause')), (ind + 'A clause before it, whose noun has the subject\'s number', (1, 'top clause, attractor matches')),
+              (ind + 'A clause before it, whose noun has the other number', (1, 'top clause, attractor mismatches')),
+              ('Experiment 2: clefted subject, separated from its verb by embedded clauses', None), ('<b>All</b>', (2, 'all'))]
+             + [(ind + f'{k} embedded clause{"s" if k > 1 else ""}', (2, f'level {k}')) for k in (1, 2, 3, 4)])
+    k = len(runs)
+    def table_for(gram):
+        rows = []
+        for name, key in conds:
+            if key is None:
+                rows.append(grp(name, k + (1 if not gram else 0)))
+                continue
+            e, c = key
+            n = base[f'e{e}|grammatical|{c}']['n']
+            if gram:
+                cells = ''.join(td(pct(x[f'e{e}|grammatical|{c}']['same as ace'], n), True) for _, x in runs)
+            else:
+                cells = ''.join(td(pct(n - x[f'e{e}|ungrammatical|{c}']['orca analysis'], n), True) for _, x in runs)
+                cells += td(pct(n - base[f'e{e}|ungrammatical|{c}']['ace analysis'], n))
+            rows.append(f'<tr><td>{name}</td>' + td(f'{n:,}') + cells + '</tr>')
+        head = [('Stimuli', ''), ('Sentences of each kind', 'n')] + [(nm, 'n hl') for nm, _ in runs] + ([] if gram else [('ACE', 'n')])
+        return table(head, rows)
+    t1 = table_for(False)
+    t2 = table_for(True)
+    sg = load(f'{D}/attractor-significance.json') or {}
+    srows = []
+    for nm, key in (('BERT-base, replay', 'BERT-base replay'), ('DeBERTa-v3 large, replay', 'DeBERTa replay')):
+        v = (sg.get(key) or {}).get('first guess accepted')
+        if v:
+            a, b = v['attractor matches'], v['attractor mismatches']
+            srows.append(f'<tr><td>{nm}</td>' + td(pct(*a)) + td(pct(*b)) + td(f"{v['fisher p (two-sided)']:.4f}") + '</tr>')
+    t3 = table([('First guess accepted, verb agrees, clause before the subject', ''), ('Its noun has the subject\'s number', 'n'), ('Its noun has the other number', 'n'), ('p (Fisher\'s exact test)', 'n')], srows) if srows else ''
+    body = ('    <h3>Verb does not agree: no analysis found</h3>\n' + t1
+            + notes('Chaves and Richter (2021) stimuli, each filled with the agreeing and the non-agreeing verb. Raw text; BERT-base with an earlier version of the parser, DeBERTa-v3 large with the current one.',
+                    'A share near 100% means the wrong agreement is turned down. The grammar does license readings where the verb agrees with something else (<i>A scientist … said I thought the boys is lost</i>, read as the scientist being lost); ACE and chart mode find them almost every time, and the better tagger finds them in replay too, especially behind several embedded clauses.')
+            + '    <h3>Verb agrees: same meaning as ACE</h3>\n' + t2
+            + ('    <h3>Does the distracting noun\'s number matter?</h3>\n' + t3
+               + notes('In replay mode, first guesses fail more often when the noun in the preceding clause has the subject\'s own number, for both taggers. In chart mode the noun\'s number makes no reliable difference.') if t3 else ''))
+    return fold('Agreement after distracting material', 'Replay with the better tagger finds the strained agreement readings the grammar licenses about half the time behind long clauses; chart mode and ACE find them almost always.', body, id_='agreement')
 
 def exp_label_filter():
     d = load(f'{ORCA}/analysis/label-filter/summary.json')
