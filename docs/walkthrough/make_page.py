@@ -803,11 +803,24 @@ def exp_corpus_modes():
             c = M[m]['counts'][k]
             cells += td(pct(c['same as ACE'], c['ACE parsed']), True) + td(pct(c['analysis'], c['n']))
         rows.append(f'<tr><td>{name}</td>' + cells + '</tr>')
+    ns = load(f'{ORCA}/analysis/corpus-modes/news-split.json')
+    if ns:
+        for name, k in (('News not in Orca\'s training', 'news, not in training'), ('&nbsp;&nbsp;… human', 'news, not in training/human'), ('&nbsp;&nbsp;… LLM', 'news, not in training/LLM'),
+                        ('News in Orca\'s training', 'news, in training')):
+            c0 = ns['modes']['replay'].get(k)
+            if not c0:
+                continue
+            cells = td(f"{c0['ACE parsed']:,}")
+            for m in ('replay', 'fallback', 'chart'):
+                c = ns['modes'][m][k]
+                cells += td(pct(c['same as ACE'], c['ACE parsed']), True) + td(pct(c['analysis'], c['n']))
+            rows.append(f'<tr><td>{name}</td>' + cells + '</tr>')
     t = table([('Corpus sample (2,000 sentences)', ''), ('ACE parsed', 'n'), ('Same as ACE', 'n hl'), ('Any analysis', 'n'), ('Same as ACE', 'n hl'), ('Any analysis', 'n'),
                ('Same as ACE', 'n hl'), ('Any analysis', 'n')], rows, group=[('', 2), ('Replay', 2), ('Fallback', 2), ('Chart', 2)])
     j = load(f'{ORCA}/analysis/corpus-modes/judge-fallback/score.json')
     body = t + notes('500 sentences each from held-out novel excerpts (human, LLM) and 2025 news (NYT, LLM). Reference: ACE\'s first parse, unchecked silver; Orca\'s grammar replays 1,917 of ACE\'s 1,927 derivations, so the grammar versions barely differ.',
                      'Chart mode shares ACE\'s ranking model, so part of its agreement with ACE is built in.',
+                     '<b>Correction:</b> 815 of the 1,000 news sentences were already in Orca\'s training data (found on 24 November); the last rows split them. On unseen news, replay agrees with ACE about ten points less, chart mode barely changes. The novels were all unseen.',
                      'Speeds are not shown: the machine was loaded by other jobs during these runs.')
     pairs = [('Fallback', 'ACE', 'judge-fallback'), ('Chart', 'replay', 'judge-chart-replay'), ('Chart', 'ACE', 'judge-chart-ace')]
     jrows, cost = [], 0

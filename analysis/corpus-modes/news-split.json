@@ -1,0 +1,119 @@
+{
+ "note": "news sentences of the corpus-modes sample split by whether Orca trained on them (matched by source and item id)",
+ "modes": {
+  "replay": {
+   "news, not in training": {
+    "n": 185,
+    "ACE parsed": 180,
+    "same as ACE": 85,
+    "analysis": 164
+   },
+   "news, not in training/human": {
+    "n": 71,
+    "ACE parsed": 68,
+    "same as ACE": 34,
+    "analysis": 60
+   },
+   "news, in training": {
+    "n": 815,
+    "ACE parsed": 790,
+    "same as ACE": 453,
+    "analysis": 722
+   },
+   "news, in training/human": {
+    "n": 429,
+    "ACE parsed": 412,
+    "same as ACE": 207,
+    "analysis": 363
+   },
+   "news, in training/LLM": {
+    "n": 386,
+    "ACE parsed": 378,
+    "same as ACE": 246,
+    "analysis": 359
+   },
+   "news, not in training/LLM": {
+    "n": 114,
+    "ACE parsed": 112,
+    "same as ACE": 51,
+    "analysis": 104
+   }
+  },
+  "fallback": {
+   "news, not in training": {
+    "n": 185,
+    "ACE parsed": 180,
+    "same as ACE": 97,
+    "analysis": 182
+   },
+   "news, not in training/human": {
+    "n": 71,
+    "ACE parsed": 68,
+    "same as ACE": 39,
+    "analysis": 69
+   },
+   "news, in training": {
+    "n": 815,
+    "ACE parsed": 790,
+    "same as ACE": 502,
+    "analysis": 781
+   },
+   "news, in training/human": {
+    "n": 429,
+    "ACE parsed": 412,
+    "same as ACE": 243,
+    "analysis": 406
+   },
+   "news, in training/LLM": {
+    "n": 386,
+    "ACE parsed": 378,
+    "same as ACE": 259,
+    "analysis": 375
+   },
+   "news, not in training/LLM": {
+    "n": 114,
+    "ACE parsed": 112,
+    "same as ACE": 58,
+    "analysis": 113
+   }
+  },
+  "chart": {
+   "news, not in training": {
+    "n": 185,
+    "ACE parsed": 180,
+    "same as ACE": 146,
+    "analysis": 167
+   },
+   "news, not in training/human": {
+    "n": 71,
+    "ACE parsed": 68,
+    "same as ACE": 52,
+    "analysis": 62
+   },
+   "news, in training": {
+    "n": 815,
+    "ACE parsed": 790,
+    "same as ACE": 655,
+    "analysis": 742
+   },
+   "news, in training/human": {
+    "n": 429,
+    "ACE parsed": 412,
+    "same as ACE": 332,
+    "analysis": 382
+   },
+   "news, in training/LLM": {
+    "n": 386,
+    "ACE parsed": 378,
+    "same as ACE": 323,
+    "analysis": 360
+   },
+   "news, not in training/LLM": {
+    "n": 114,
+    "ACE parsed": 112,
+    "same as ACE": 94,
+    "analysis": 105
+   }
+  }
+ }
+}
