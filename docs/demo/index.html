@@ -913,23 +913,37 @@ function differenceQuestion(sentence, a, b) {
 // The same question answered on the page by Gemini, with the visitor's own key: browser to Google, never through this server
 const GEM = 'https://generativelanguage.googleapis.com/v1beta/';
 let GEM_Q = '';
-async function gemini(question, key) {
+async function gemini(question, key, say) {
   const call = model => fetch(GEM + model + ':generateContent', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify({ contents: [{ parts: [{ text: question }] }] }) });
-  let model = 'models/gemini-flash-latest', res = await call(model);
-  if (res.status === 404) {                    // the general name is gone: take the newest plain Flash model this key can use
+  // Google's models are often busy (HTTP 503, "overloaded"): try several, newest plain Flash first, then lighter and older ones
+  let models = ['models/gemini-flash-latest', 'models/gemini-flash-lite-latest'];
+  try {
     const list = await (await fetch(GEM + 'models?pageSize=1000', { headers: { 'x-goog-api-key': key } })).json();
-    const ok = (list.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent') && /flash/.test(m.name) && !/image|tts|audio|live|embed|lite|exp|preview/.test(m.name)).map(m => m.name).sort();
-    if (!ok.length) throw new Error('this key has no Gemini Flash model available');
-    model = ok[ok.length - 1]; res = await call(model);
+    if (list.error) throw new Error(list.error.message || '');
+    const ok = (list.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent') && /gemini.*flash/.test(m.name) && !/image|tts|audio|live|embed|exp|preview|thinking/.test(m.name)).map(m => m.name);
+    const plain = ok.filter(n => !/lite|latest/.test(n)).sort().reverse(), lite = ok.filter(n => /lite/.test(n) && !/latest/.test(n)).sort().reverse();
+    models = [...new Set([...models.filter(m => ok.includes(m)), ...plain, ...lite])];
+    if (!models.length) throw new Error('this key has no Gemini Flash model available');
+  } catch (e) { if (/API key not valid/.test(e.message)) throw new Error('Google does not accept this key'); if (/no Gemini Flash/.test(e.message)) throw e; }
+  let last = '';
+  for (let round = 0; round < 2; round++) {
+    for (const model of models.slice(0, 6)) {
+      const short = model.replace(/^models\//, '');
+      say(`Asking Gemini (${short}) …`);
+      const res = await call(model), data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        const parts = (((data.candidates || [])[0] || {}).content || {}).parts;
+        if (!parts || !parts.length) { last = 'Gemini gave no answer' + (data.promptFeedback && data.promptFeedback.blockReason ? ' (' + data.promptFeedback.blockReason + ')' : ''); continue; }
+        return { text: parts.map(p => p.text || '').join('').trim(), model: (data.modelVersion || short).replace(/^models\//, '') };
+      }
+      const msg = ((data.error && data.error.message) || `HTTP ${res.status}`).split('\n')[0].slice(0, 200);
+      if (/API key not valid/.test(msg)) throw new Error('Google does not accept this key');
+      last = `${short}: ${res.status === 503 ? 'busy' : res.status === 429 ? 'quota used up for now' : 'HTTP ' + res.status} (${msg})`;
+      if (![429, 500, 503, 404].includes(res.status)) throw new Error(last);     // only busy, quota and missing models are worth another model
+    }
+    if (round === 0) { say('All of Google’s models are busy; trying once more in a few seconds …'); await new Promise(r => setTimeout(r, 4000)); }
   }
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const msg = (data.error && data.error.message) || `HTTP ${res.status}`;
-    throw new Error(res.status === 429 ? 'the free quota of this key is used up for the moment; try again later (' + msg.split('\n')[0].slice(0, 160) + ')' : /API key not valid/.test(msg) ? 'Google does not accept this key' : msg.slice(0, 300));
-  }
-  const text = (((data.candidates || [])[0] || {}).content || {}).parts;
-  if (!text || !text.length) throw new Error('Gemini gave no answer' + (data.promptFeedback && data.promptFeedback.blockReason ? ' (' + data.promptFeedback.blockReason + ')' : ''));
-  return { text: text.map(p => p.text || '').join('').trim(), model: (data.modelVersion || model).replace(/^models\//, '') };
+  throw new Error('Google’s models were all busy or out of quota; the last answer was: ' + last);
 }
 function gemSetup() {
   let saved = null;
@@ -943,7 +957,7 @@ function gemSetup() {
     const asked = GEM_Q;
     btn.disabled = true; st.textContent = 'Asking Gemini …'; out.classList.add('hidden');
     try {
-      const ans = await gemini(asked, key);
+      const ans = await gemini(asked, key, m => { st.textContent = m; });
       if (asked !== GEM_Q) return;             // another sentence was parsed meanwhile
       out.innerHTML = esc(ans.text) + `<small>Answered by Gemini (${esc(ans.model)}) from the differences alone. Reading A is Orca’s analysis, reading B is ACE’s. It can be wrong; the graphs are what counts.</small>`;
       out.classList.remove('hidden'); st.textContent = '';
