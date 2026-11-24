@@ -1098,11 +1098,13 @@ def exp_judge_check():
         rr2 = rr2 if isinstance(rr2, dict) and 'exact' in rr2 else None
     if jv:
         R = jv['results']
-        vrow = lambda k: (f'<tr><td>{jv["variants"][k][0].upper() + jv["variants"][k][1:]}</td>' + td(pct(R[k]['all 60']['exact'], 60), True) + td(pct(R[k]['all 60']['lenient'], 60))
+        VN = {'v1': 'The readings\' differing predicates and links (the judge as used on this page)', 'v2': '… plus a plain-English paraphrase of each reading',
+              'v3': '… plus the grammar\'s description and examples for each differing predicate', 'v4': 'The previous variant asked three times, majority vote'}
+        vrow = lambda k: (f'<tr><td>{VN[k]}</td>' + td(pct(R[k]['all 60']['exact'], 60), True) + td(pct(R[k]['all 60']['lenient'], 60))
                           + td(pct(R[k]['without the 3 decided by Claude']['exact'], 57)) + '</tr>')
         body += ('    <h3>Can the judge do better?</h3>\n'
                  + table([('Judge variant, on the 60 reviewed cases', ''), ('Agrees with the person', 'n hl'), ('… counting \'both acceptable\' as compatible', 'n'), ('Agrees, without the three cases decided by Claude', 'n')],
-                         [vrow(k) for k in ('v1', 'v2', 'v3', 'v4')] + ([f'<tr><td>+ paraphrases, asked again</td>' + td(pct(rr2['exact'], 60), True) + td(pct(rr2['lenient'], 60)) + td(na('not split')) + '</tr>'] if rr2 else []))
+                         [vrow(k) for k in ('v1', 'v2', 'v3', 'v4')] + ([f'<tr><td>The paraphrase variant, asked again</td>' + td(pct(rr2['exact'], 60), True) + td(pct(rr2['lenient'], 60)) + td(na('not split')) + '</tr>'] if rr2 else []))
                  + notes('Paraphrases: a plain-English statement of what each reading means, written by Claude from the differences alone and told not to say which is better. Documentation: the lexical types of differing predicates, with their descriptions and example sentences from the ERG.',
                          f'Claude Opus as the judge (${jv["cost_usd total"]:.2f} in all). The cases were chosen by the original judge\'s verdict, so compare the variants with each other, not the absolute rates with dev as a whole; 60 cases leave about twelve points of uncertainty.',
                          'Asked again, the same variant agrees with the person noticeably less often: the judge varies from one run to the next about as much as the variants differ, so none of them is shown to be better. Re-judging all of dev with paraphrases leaves the totals for ACE and Orca within a few sentences of the original judge, while about one verdict in six changes. The judge column is meaningful as a total, not sentence by sentence.'))
