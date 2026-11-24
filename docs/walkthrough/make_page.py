@@ -170,7 +170,7 @@ def summary():
             (row('&nbsp;&nbsp;Orca (BERT-base), from raw text', N, pct(bn['counts']['same MRS'], N),
                  pct(bp['same with properties'], N) if bp else na('running'),
                  pct(bn['counts']['same MRS'] + bbj['verdicts']['orca'] + bbj['verdicts']['both'], N) if bbj else na('being judged'),
-                 pct(bn['counts']['with MRS'], N), f"{bn['sentences per second']:.1f}") if bn else
+                 pct(bn['counts']['with MRS'], N), na('not comparable: measured while kesha was fully loaded') if BERT_NEW == BERT_CUR else f"{bn['sentences per second']:.1f}") if bn else
              row('&nbsp;&nbsp;Orca (BERT-base), from raw text', N, na('re-running with the lookup fixes'), na('re-running'), na('re-running'), na('re-running'), na('re-running'))),
             row('&nbsp;&nbsp;ACE, first-ranked parse', N, pct(ace['same MRS'], N),
                 pct(load(f'{ORCA}/analysis/mrs/dev-ace-properties.json')['same with properties'], N) if load(f'{ORCA}/analysis/mrs/dev-ace-properties.json') else na('not measured'),
@@ -339,7 +339,7 @@ def results():
     def mrow(name, v):
         n = sum(v[:4])
         return f'<tr><td>{name}</td>' + td(f'{n:,}') + ''.join(td(pct(x, n), i == 0) for i, x in enumerate(v[:4])) + '</tr>'
-    bb = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-bert-current-breakdown.json')
+    bb = load(BERT_CUR) or load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-bert-current-breakdown.json')   # same run as the summary row
     bv = [0, 0, 0, 0]
     for x in (bb or {}).get('records', []):
         bv[3 if not x['accepted'] else 2 if not x['gold among accepted'] else 0 if x['same MRS'] else 1] += 1
