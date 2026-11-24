@@ -148,17 +148,16 @@ def runs():
     """Run-to-run spread, and the parser versions behind the tables."""
     seeds = exp_seeds()
     vers = [('Before the lookup fixes', 'dev-2025bothsurf-debertav3large-rawtext.json', 'Encoders; training on the judged sentences. BERT-base in From raw text, Training data, and Tense, number, information structure'),
-            ('With the lookup fixes', 'dev-2025bothsurf-debertav3large-rawtext-normlocate-rootcheck.json', 'The table above'),
-            ('<b>With the repair cutoff at 0.001 (current)</b>', None, 'The headline, the summary table, the error breakdown, the modes and fallback tables, EDM and fragments, encoders (all data), averaging')]
+            ('With the lookup fixes', 'dev-2025bothsurf-debertav3large-rawtext-normlocate-rootcheck.json', 'Nothing on this page now; kept for reference'),
+            ('<b>With the repair cutoff at 0.001 (current)</b>', None, 'The headline, the summary table, the error breakdown, the seeds above, the modes and fallback tables, EDM and fragments, encoders (all data), averaging')]
     rows = []
     for name, f, used in vers:
         x = BEST if f is None else load(f'{ORCA}/analysis/mrs/{f}')
         if x:
             rows.append(f'<tr><td>{name}</td>' + td(pct(x['counts']['same MRS'], N), True) + td(pct(x['counts']['with MRS'], N)) + f'<td>{used}</td></tr>')
     t = table([('Parser version (DeBERTa-v3 large, dev, raw text)', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Tables measured with it', '')], rows)
-    body = (seeds + t + cap('The same tagger under three versions of the parser. A table on an older version is comparable within itself, not with the headline.')
-            + notes(NOT_YET + 'the spread with the current defaults, and from more than two seeds.'))
-    return fold('How much two runs differ, and which parser version each table uses', 'About one point between seeds; three parser versions behind the tables.', body, id_='runs')
+    body = (seeds + t + cap('The same tagger under three versions of the parser. A table on an older version is comparable within itself, not with the headline.'))
+    return fold('How much two runs differ, and which parser version each table uses', 'Just under a point between seeds with the current parser; three parser versions behind the tables.', body, id_='runs')
 
 
 def summary():
@@ -815,18 +814,16 @@ def exp_replay_rate():
 
 
 def exp_seeds():
-    runs = [('DeBERTa-v3 large, all data, run 1', 'dev-2025bothsurf-debertav3large-rawtext-normlocate-rootcheck.json'),
-            ('DeBERTa-v3 large, all data, run 2 (another random seed)', 'dev-2025bothsurf-debertav3large-seed2-rawtext.json'),
-            ('DeBERTa-v3 large, all data and the judged generated sentences', 'dev-2025bothsurf-debertav3large-gen12-rawtext-normlocate.json')]
-    rows = []
-    for name, f in runs:
-        x = load(f'{ORCA}/analysis/mrs/{f}')
-        if not x:
-            return ''
-        rows.append(f'<tr><td>{name}</td>' + td(pct(x['counts']['same MRS'], N), True) + td(pct(x['counts']['with MRS'], N)) + '</tr>')
-    t = table([('Tagger', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n')], rows)
-    return (t
-            + notes('Redwoods dev, raw text, with the lookup fixes but before the repair cutoff change (run 1 gets the headline with the current defaults). The two runs differ only in the random seed; the run with the judged sentences falls between them.'))
+    s2 = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav3large-seed2-rawtext-minprob001.json')
+    s3 = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav3large-seed3-rawtext-minprob001.json')
+    if not s2:
+        return ''
+    row = lambda name, x: (f'<tr><td>{name}</td>' + td(pct(x['counts']['same MRS'], N), True) + td(pct(x['counts']['with MRS'], N))
+                           + td(pct(x['counts']['gold MRS among accepted'], N)) + '</tr>')
+    rows = [row('DeBERTa-v3 large, all data, seed 1 (the headline)', BEST), row('DeBERTa-v3 large, all data, seed 2', s2),
+            row('DeBERTa-v3 large, all data, seed 3', s3) if s3 else '<tr><td>DeBERTa-v3 large, all data, seed 3</td>' + td(na('training')) * 3 + '</tr>']
+    t = table([('Tagger', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Gold among the analyses found', 'n')], rows)
+    return (t + notes('Redwoods dev, raw text, current parser defaults. The runs differ only in the random seed of training; everything else, data and recipe included, is the same.'))
 
 
 def exp_hybrid():
@@ -918,10 +915,10 @@ def exp_ensemble():
         return (f'<tr><td>{name}</td>' + td(pct(r['exact'], N), True) + td(pct(r['any analysis'], N)) + td(pct(r['gold among accepted'], N))
                 + (td(pct(cx, N), True) if cx is not None else td(na('not run'))) + '</tr>')
     rows = [row('One tagger (seed 1)', 's1-top5'), row('Average of two (two seeds)', 'ens2'), row('Average of seven (two seeds, five folds)', 'ens7')]
-    xr, xc = load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext.json'), load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext-chart-0.001.json')
+    xr, xc = (load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext-minprob001.json') or load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext.json')), load(f'{ORCA}/analysis/mrs/dev-2025bothsurf-debertav2xlarge-rawtext-chart-0.001.json')
     if xr:
         rows.append('<tr><td>One larger tagger: DeBERTa-v2 xlarge (about 900M parameters)</td>' + td(pct(xr['counts']['same MRS'], N), True) + td(pct(xr['counts']['with MRS'], N))
-                    + td(na('not recorded')) + (td(pct(xc['counts']['same MRS'], N), True) if xc else td(na('running'))) + '</tr>')
+                    + (td(pct(xr['counts']['gold MRS among accepted'], N)) if 'gold MRS among accepted' in xr['counts'] else td(na('not recorded'))) + (td(pct(xc['counts']['same MRS'], N), True) if xc else td(na('running'))) + '</tr>')
     t = table([('DeBERTa-v3 large taggers', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('Gold among the analyses', 'n'), ('Same meaning as gold', 'n hl')], rows,
               group=[('', 1), ('Replay', 3), ('Chart mode', 1)])
     return ('    <h3>Averaging taggers, and a larger one</h3>\n' + t
