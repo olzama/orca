@@ -24,6 +24,7 @@ ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext.json'))  
 BEST_KEY, BEST_NAME = 'debertav3large', 'DeBERTa-v3 large tagger, all data'
 BEST_RUN = 'quiet2-replay'   # current parser defaults (O111): repair cutoff 0.001, persistent tokenizer, lexical filtering, word fallback; timed with chart and fallback
 BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-modes-speed-quiet2-replay.json'))
+CORES = json.load(open(f'{ORCA}/analysis/mrs/dev-o76-cores.json'))
 _TIMED = json.load(open(f'{ORCA}/analysis/mrs/dev-retime-o114-plain.json'))   # same run settings without --all-mrs (evaluation only): the speed and step times
 BEST['sentences per second'], BEST['seconds by step'] = _TIMED['sentences per second'], _TIMED['seconds by step']
 BEST_PROPS = f'{ORCA}/analysis/mrs/dev-{BEST_RUN}-properties.json'
@@ -493,7 +494,7 @@ def exp_ace_current():
     return ('    <h3>The current system</h3>\n' + t + cap('DeBERTa-v3 large tagger from raw text, current parser defaults; chart and fallback as in the mode table.')
             + t2 + cap('Only the sentences each system analyzes.')
             + notes('<b>Memory limits for ACE on this page:</b> ACE alone on dev gets 6 GB per sentence and retries failures at 16 GB, then 28 GB; chart and fallback modes give restricted ACE 6 GB for the chart and 7 GB for unpacking; Where ACE fails uses 6 GB and 300 s per sentence. One Orca process uses about 3.4 GB.',
-                    NOT_YET + 'the current system on several cores.')
+                    'The current system on several cores is in the speed table below: four processes, two to a GPU (one tagger takes about half a GPU\'s memory), give the same analyses as one process, about three times as fast.')
             + '    <h3>The first pipeline</h3>\n')
 
 
@@ -513,6 +514,7 @@ def exp_ace():
             f'<tr><td>Orca</td>{td(sps(N / full1), True)}{td("1 GPU, 1 core")}{td("about 2 GB")}{td(miss("best"))}</tr>',
             f'<tr><td>Orca</td>{td(sps(N / full6), True)}{td("1 GPU, 6 cores")}{td("about 2 GB")}{td(miss("best"))}</tr>',
             f'<tr><td>Orca (DeBERTa-v3 large), from raw text</td>{td(format(BEST["sentences per second"], ".1f"), True)}{td("1 GPU, 1 core")}{td("about 3 GB")}{td(pct(N - BEST["counts"]["with MRS"], N))}</tr>',
+            f'<tr><td>Orca (DeBERTa-v3 large), from raw text</td>{td(format(CORES["sentences per second"], ".1f"), True)}{td("2 GPUs, 4 cores")}{td("about 3 GB per process")}{td(pct(N - CORES["with MRS"], N))}</tr>',
             f'<tr><td>Orca + LLM repair</td>{td(sps(N / (full1 + LLM_SECS / STREAMS)), True)}{td(f"+ {STREAMS} model calls at a time")}{td("about 2 GB, plus the API")}{td(miss("best_llm"))}</tr>']
     speed = table([('System', ''), ('Sentences per second', 'n hl'), ('Hardware', 'n'), ('Memory', 'n'), ('Sentences with no analysis', 'n')], rows)
     rows = []

@@ -1,0 +1,14 @@
+{
+ "system": "replay, current defaults, 4 processes (2 per GPU, 2 GPUs), dev split 4 ways",
+ "processes": 4,
+ "sentences": 2062,
+ "same MRS": 1549,
+ "with MRS": 1935,
+ "wall seconds per process": [
+  81.53802268393338,
+  65.64381950814277,
+  76.08808513078839,
+  65.81747901253402
+ ],
+ "sentences per second": 25.288815354193105
+}

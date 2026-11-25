@@ -405,7 +405,7 @@ def ace_parse(text, ace=DEFAULTS['ace'], dat=DEFAULTS['dat'], timeout=30):
         return {'seconds': time.perf_counter() - t, 'mrs': None, 'error': str(e)[:200]}
 
 
-def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False, min_tokens=0):
+def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False, min_tokens=0, shard=None):
     """Raw-text run over a split, scored by exact MRS against the treebank."""
     import collections
     import glob
@@ -426,6 +426,9 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False,
                 if rec[names.index('derivation')]:
                     gold[f"{os.path.basename(prof)}/{rec[names.index('parse-id')]}"] = rec[names.index('mrs')]
     sents = [s for s in read(gold_path) if len(s['forms']) >= min_tokens][:limit]
+    if shard:                                           # 'K/N': every Nth sentence from the Kth, for several processes at once
+        k, n = map(int, shard.split('/'))
+        sents = sents[k::n]
     parser.parse('The dog barked.')                     # warm up GPU and caches
     c, secs = collections.Counter(), collections.Counter()
     recs = []
@@ -460,7 +463,7 @@ def evaluate(parser, split_dir, gold_path, out_path, limit=None, save_mrs=False,
                      **({'mrs': r.get('mrs'), 'labels': r.get('labels')} if save_mrs else {})})
     wall = time.perf_counter() - t0
     res = {'tagger': parser.tagger_name, 'mode': parser.mode, 'chart_k': parser.chart_k, 'chart_min_prob': parser.chart_min_prob, 'k': parser.k, 'kbest': parser.args.kbest, 'budget': parser.args.budget, 'label_filter': parser.args.label_filter,
-           'commit': parser.args.commit, 'commit_min': parser.args.commit_min, 'root_focus': parser.args.root_focus, 'locate_missing': parser.lx.locate_missing, 'normalized_lookup': parser.normalized_lookup, 'patterns': getattr(parser, 'patterns_name', None) if parser.patterns is not None else None, 'min_tokens': min_tokens, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
+           'commit': parser.args.commit, 'commit_min': parser.args.commit_min, 'root_focus': parser.args.root_focus, 'locate_missing': parser.lx.locate_missing, 'normalized_lookup': parser.normalized_lookup, 'patterns': getattr(parser, 'patterns_name', None) if parser.patterns is not None else None, 'min_tokens': min_tokens, 'shard': shard, 'counts': dict(c), 'seconds by step': dict(secs), 'wall seconds': wall,
            'sentences per second': c['sentences'] / wall, 'records': recs}
     with open(out_path, 'w') as f:
         json.dump(res, f, indent=1)
@@ -475,6 +478,7 @@ def main():
     ap.add_argument('--gold')
     ap.add_argument('--out')
     ap.add_argument('--limit', type=int)
+    ap.add_argument('--shard', help="with --eval: K/N, parse only every Nth sentence starting from the Kth (several processes at once)")
     ap.add_argument('--all-mrs', action='store_true', help='with --eval: also check whether the gold MRS is among the accepted derivations')
     ap.add_argument('--save-mrs', action='store_true', help='with --eval: keep each sentence\'s chosen MRS in the output')
     ap.add_argument('--k', type=int, default=5, help='tagger labels per word')
@@ -511,7 +515,7 @@ def main():
                label_map=args.label_map, word_fallback=args.word_fallback, readings=args.readings, margin=args.margin,
                lexical_filter=not args.no_lexical_filter)
     if args.eval:
-        evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens)
+        evaluate(p, args.eval, args.gold, args.out, args.limit, args.save_mrs, args.min_tokens, args.shard)
         return
     for text in args.sentences:
         r = p.parse(text)
