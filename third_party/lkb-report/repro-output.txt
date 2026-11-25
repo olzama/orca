@@ -1,0 +1,118 @@
+Welcome to LKB 5.6 (built with SBCL, 07:15:03 20 Jun 2023)
+
+; loading #P"~/.tsdbrc"
+
+; loading #P"/tmp/claude-1001/-mnt-kesha-orca/6a7d5c31-3d07-4fe8-9d15-9d50ab5e962b/scratchpad/lkb/twice.lisp"
+;; loading #P"ERG_DIR/lkb/script"
+set-coding-system(): activated UTF8.
+;;; loading #P"ERG_DIR/Version.lsp"
+;;; loading #P"ERG_DIR/lkb/globals.lsp"
+;;; loading #P"ERG_DIR/lkb/user-fns.lsp"
+;;; loading #P"ERG_DIR/lkb/checkpaths.lsp"
+;;; loading #P"ERG_DIR/lkb/patches.lsp"
+
+Reading in type file fundamentals
+Reading in type file tmt
+Reading in type file lextypes
+Reading in type file syntax
+Reading in type file ctype
+Reading in type file lexrules
+Reading in type file delims
+Reading in type file auxverbs
+Reading in type file mtr
+Checking type hierarchy
+Checking for unique greatest lower bounds
+Created 4730 glb types
+Expanding constraints
+Making constraints well formed
+Expanding defaults
+Type file checked successfully
+Computing display ordering
+Reading in cached leaf types
+Cached leaf types read
+Reading in cached lexicon (main)
+Cached lexicon read
+Reading in cached lexicon (gle)
+Cached lexicon read
+Reading in rules file constructions
+Reading in lexical rules file inflr
+Reading in root file roots
+Reading in lexical rules file lexrinst
+Reading in parse node file parse-nodes
+;;; loading #P"ERG_DIR/lkb/mrsglobals.lsp"
+;;; loading #P"ERG_DIR/lkb/eds.lsp"
+;;; loading #P"ERG_DIR/rpp/setup.lsp"
+read-repp(): reading file `xml.rpp'.
+read-repp(): reading file `latex.rpp'.
+read-repp(): reading file `ascii.rpp'.
+read-repp(): reading file `html.rpp'.
+read-repp(): reading file `wiki.rpp'.
+read-repp(): reading file `lgt.rpp'.
+read-repp(): reading file `gml.rpp'.
+read-repp(): reading file `robustness.rpp'.
+read-repp(): reading file `quotes.rpp'.
+read-repp(): reading file `ptb.rpp'.
+read-repp(): reading file `lkb.rpp'.
+read-repp(): reading file `micro.rpp'.
+read-repp(): reading file `tokenizer.rpp'.
+
+Reading in token mapping rules file gml
+Reading in token mapping rules file ptb
+Reading in token mapping rules file spelling
+Reading in token mapping rules file ne1
+Reading in token mapping rules file split
+Reading in token mapping rules file ne2
+Reading in token mapping rules file class
+Reading in token mapping rules file ne3
+Reading in token mapping rules file punctuation
+Reading in token mapping rules file pos
+Reading in token mapping rules file finis
+Reading in lexical filtering rules file lfr
+read-model(): reading file `redwoods.mem'.read-semi(): reading file `erg.smi'.
+read-semi(): reading file `hierarchy.smi'.
+read-semi(): reading file `abstract.smi'.
+read-semi(): reading file `surface.smi'.
+read-vpm(): reading file `semi.vpm'.
+read-vpm(): reading file `eds.vpm'.
+read-vpm(): reading file `abstract.vpm'.
+;;; loading #P"ERG_DIR/lkb/mt.lsp"
+read-transfer-rules(): reading file `paraphraser.mtr'.
+read-transfer-rules(): reading file `idioms.mtr'.
+read-transfer-rules(): reading file `trigger.mtr'.
+Building rule filter
+Building lr connections table
+Constructing lr table for non-morphological rules
+Grammar input complete
+
+=== PARSING: Where can i find your palmtops?
+
+=== RESULT: 4 parses
+
+=== PARSING: Where can i find your palmtops?
+Unhandled SIMPLE-ERROR in thread #<SB-THREAD:THREAD "Anonymous" RUNNING {1006D11373}>: Unification failure (CYCLE (SYNSEM LOCAL))
+Attempt to reunify #D[v_np_le ...] into rule V_N3S-BSE_ILR at < ARGS : FIRST > failed when constructing full FS
+
+Backtrace for: #<SB-THREAD:THREAD "Anonymous" RUNNING {1006D11373}>
+0: (SB-DEBUG::DEBUGGER-DISABLED-HOOK #<SIMPLE-ERROR "~A~%Attempt to reunify ~A into rule ~A at < ~{~A ~^: ~}> failed when constructing full FS" {10072B32A3}> #<unused argument> :QUIT T)
+1: (SB-DEBUG::RUN-HOOK SB-EXT:*INVOKE-DEBUGGER-HOOK* #<SIMPLE-ERROR "~A~%Attempt to reunify ~A into rule ~A at < ~{~A ~^: ~}> failed when constructing full FS" {10072B32A3}>)
+2: (INVOKE-DEBUGGER #<SIMPLE-ERROR "~A~%Attempt to reunify ~A into rule ~A at < ~{~A ~^: ~}> failed when constructing full FS" {10072B32A3}>)
+3: (ERROR "~A~%Attempt to reunify ~A into rule ~A at < ~{~A ~^: ~}> failed when constructing full FS" "Unification failure (CYCLE (SYNSEM LOCAL))" #D[v_np_le ...] V_N3S-BSE_ILR (ARGS FIRST))
+4: (REAPPLY-RULE #[rule V_N3S-BSE_ILR ] (#:EDGE137) NIL NIL)
+5: ((LABELS REBUILD-FULL-FS-1 :IN REBUILD-FULL-FS) #:EDGE316)
+6: ((LABELS REBUILD-FULL-FS-1 :IN REBUILD-FULL-FS) #:EDGE320)
+7: ((LABELS REBUILD-FULL-FS-1 :IN REBUILD-FULL-FS) #:EDGE321)
+8: ((LABELS REBUILD-FULL-FS-1 :IN REBUILD-FULL-FS) #:EDGE322)
+9: ((LABELS REBUILD-FULL-FS-1 :IN REBUILD-FULL-FS) #:EDGE323)
+10: (MAKE-NEW-PARSE-TREE #[Edge # 323: `flr-hd_wh-mc_c' <312 322> (0 c 31) ] 1 NIL)
+11: (SHOW-PARSE-SUMMARY-REALLY (#[Edge # 323: `flr-hd_wh-mc_c' <312 322> (0 c 31) ] #[Edge # 332: `flr-hd_wh-mc_c' <311 331> (0 c 31) ] #[Edge # 337: `flr-hd_wh-mc_c' <312 336> (0 c 31) ] #[Edge # 341: `flr-hd_wh-mc_c' <311 340> (0 c 31) ]) NIL)
+12: ((LAMBDA (&REST ACL-COMPAT.MP::ARGS) :IN ACL-COMPAT.MP:PROCESS-PRESET) (#[Edge # 323: `flr-hd_wh-mc_c' <312 322> (0 c 31) ] #[Edge # 332: `flr-hd_wh-mc_c' <311 331> (0 c 31) ] #[Edge # 337: `flr-hd_wh-mc_c' <312 336> (0 c 31) ] #[Edge # 341: `flr-hd_wh-mc_c' <311 340> (0 c 31) ]) NIL)
+13: ((LABELS ACL-COMPAT.MP::BOING :IN ACL-COMPAT.MP::RESTART-PROCESS))
+14: ((FLET SB-UNIX::BODY :IN SB-THREAD::RUN))
+15: ((FLET "WITHOUT-INTERRUPTS-BODY-10" :IN SB-THREAD::RUN))
+16: ((FLET SB-UNIX::BODY :IN SB-THREAD::RUN))
+17: ((FLET "WITHOUT-INTERRUPTS-BODY-3" :IN SB-THREAD::RUN))
+18: (SB-THREAD::RUN)
+19: ("foreign function: call_into_lisp_")
+20: ("foreign function: funcall1")
+
+unhandled condition in --disable-debugger mode, quitting

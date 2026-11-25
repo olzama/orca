@@ -1,0 +1,5 @@
+(lkb::read-script-file-aux "ERG_DIR/lkb/script")
+(dolist (s '("Where can i find your palmtops?" "Where can i find your palmtops?"))
+  (format t "~%=== PARSING: ~a~%" s)
+  (lkb::do-parse-tty s)
+  (format t "~%=== RESULT: ~a parses~%" (length lkb::*parse-record*)))
