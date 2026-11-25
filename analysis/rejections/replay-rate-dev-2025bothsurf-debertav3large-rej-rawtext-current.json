@@ -1,0 +1,16 @@
+{
+ "run": "analysis/mrs/dev-2025bothsurf-debertav3large-rej-rawtext-current.json",
+ "sentences": 2062,
+ "accepted": 1934,
+ "within k replays": {
+  "1": 1530,
+  "2": 1661,
+  "5": 1785,
+  "10": 1818,
+  "20": 1852,
+  "50": 1892,
+  "111": 1915,
+  "600": 1934
+ },
+ "median replays to first accepted, of accepted": 1
+}

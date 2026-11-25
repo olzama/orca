@@ -1,0 +1,16 @@
+{
+ "run": "analysis/mrs/dev-modes-speed-quiet2-replay.json",
+ "sentences": 2062,
+ "accepted": 1935,
+ "within k replays": {
+  "1": 1518,
+  "2": 1658,
+  "5": 1754,
+  "10": 1815,
+  "20": 1855,
+  "50": 1888,
+  "111": 1908,
+  "600": 1935
+ },
+ "median replays to first accepted, of accepted": 1
+}

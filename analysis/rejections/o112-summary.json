@@ -1,0 +1,9 @@
+{
+ "question": "Did training on grammar rejections (O89) make the tagger's first guesses acceptable more often? Redwoods dev, 2,062 sentences, same parser defaults (quiet2 / current).",
+ "first guess accepted": {"rejection-trained": 1530, "headline": 1518},
+ "accepted within 5 replays": {"rejection-trained": 1785, "headline": 1754},
+ "accepted within 600 replays": {"rejection-trained": 1934, "headline": 1935},
+ "same MRS as gold": {"rejection-trained": 1543, "headline": 1549},
+ "seed spread (seeds 2 and 3, older defaults, cutoff 0.001)": {"first guess accepted": [1532, 1509], "within 5": [1762, 1746]},
+ "verdict": "First-guess gain (+12) is within the seed spread; within-5 gain (+31) is just above the two-seed range, suggestive only. Accepted sooner, but not more often right: consistent with the negatives (labels differing from gold, not labels the grammar rejects) pushing toward other licensed analyses."
+}
