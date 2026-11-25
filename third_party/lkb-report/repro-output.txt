@@ -2,7 +2,7 @@ Welcome to LKB 5.6 (built with SBCL, 07:15:03 20 Jun 2023)
 
 ; loading #P"~/.tsdbrc"
 
-; loading #P"/tmp/claude-1001/-mnt-kesha-orca/6a7d5c31-3d07-4fe8-9d15-9d50ab5e962b/scratchpad/lkb/twice.lisp"
+; loading #P"repro.lisp"
 ;; loading #P"ERG_DIR/lkb/script"
 set-coding-system(): activated UTF8.
 ;;; loading #P"ERG_DIR/Version.lsp"
