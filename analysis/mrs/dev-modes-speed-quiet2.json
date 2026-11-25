@@ -1,23 +1,26 @@
 {
- "when": "quiet kesha, the three modes back to back (persistent tokenizer, lexical filtering, word fallback)",
+ "when": "quiet kesha, 25 Nov 2026, the three modes back to back on GPU 1, without --all-mrs (accuracy from the --all-mrs runs of 24 Nov, identical counts)",
  "runs": {
   "replay": {
    "same MRS": 1549,
    "with MRS": 1935,
-   "sentences per second": 5.44,
-   "wall seconds": 378.8
+   "sentences per second": 8.08,
+   "wall seconds": 255.2,
+   "timed run": "dev-retime-o114-plain.json"
   },
   "chart": {
    "same MRS": 1635,
    "with MRS": 1973,
-   "sentences per second": 4.36,
-   "wall seconds": 473.4
+   "sentences per second": 4.4,
+   "wall seconds": 468.4,
+   "timed run": "dev-retime-o114-plain-chart.json"
   },
   "fallback": {
    "same MRS": 1608,
    "with MRS": 2044,
-   "sentences per second": 4.37,
-   "wall seconds": 471.6
+   "sentences per second": 5.9,
+   "wall seconds": 349.3,
+   "timed run": "dev-retime-o114-plain-fallback.json"
   }
  }
 }

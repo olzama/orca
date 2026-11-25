@@ -24,6 +24,8 @@ ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext.json'))  
 BEST_KEY, BEST_NAME = 'debertav3large', 'DeBERTa-v3 large tagger, all data'
 BEST_RUN = 'quiet2-replay'   # current parser defaults (O111): repair cutoff 0.001, persistent tokenizer, lexical filtering, word fallback; timed with chart and fallback
 BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-modes-speed-quiet2-replay.json'))
+_TIMED = json.load(open(f'{ORCA}/analysis/mrs/dev-retime-o114-plain.json'))   # same run settings without --all-mrs (evaluation only): the speed and step times
+BEST['sentences per second'], BEST['seconds by step'] = _TIMED['sentences per second'], _TIMED['seconds by step']
 BEST_PROPS = f'{ORCA}/analysis/mrs/dev-{BEST_RUN}-properties.json'
 BEST_ICONS = f'{ORCA}/analysis/mrs/dev-{BEST_RUN}-icons.json'
 BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-{BEST_RUN}/score.json'
@@ -138,7 +140,7 @@ def modes():
     full = {c['sent to ACE']: c for c in r['curve']}
     none_n = N - BEST['counts']['with MRS']
     half = min((k for k in full if k > none_n and k >= 0.4 * N), key=lambda k: abs(k - 0.45 * N), default=None)
-    step_sps = BEST['sentences per second']
+    step_sps = load(f"{ORCA}/{r['run']}")['sentences per second']   # the Orca speed the routing curve was computed with
     def loaded(c):            # Orca under today's load, plus ACE's measured per-sentence time
         ace_s = N / c['sentences per second'] - N / step_sps
         return N / (N / S['replay']['sentences per second'] + ace_s)
@@ -849,7 +851,7 @@ def exp_hybrid():
     rc = load(ROUTE)
     sp = load(MODES_SPEED)
     if rc and sp:
-        rep = sp['runs']['replay']['sentences per second']; step = BEST['sentences per second']
+        rep = sp['runs']['replay']['sentences per second']; step = load(f"{ORCA}/{rc['run']}")['sentences per second']
         loaded = lambda c: N / (N / rep + N / c['sentences per second'] - N / step)
         none_n = N - BEST['counts']['with MRS']
         rows = ['<tr><td>0 (Orca alone)</td>' + td(pct(rc['orca exact'], N), True) + td(f'{rep:.1f}') + '</tr>']
@@ -921,7 +923,7 @@ def exp_supertag_ace():
                      'Speed end to end on one GPU (tagging) and one CPU core (ACE); replay, the 0.001 row and the fallback row timed together in one session.',
 
                      'The tagger gets lexical types right far more often than tree labels; the chart finds trees that label-by-label replay misses.')
-    return fold('The tagger plus a chart: ACE restricted to the tagger\'s words', 'More accurate than replay (about four points) at four fifths of its speed and about four times ACE\'s.', body, id_='chart')
+    return fold('The tagger plus a chart: ACE restricted to the tagger\'s words', 'More accurate than replay (about four points) at about half its speed and about four times ACE\'s.', body, id_='chart')
 
 
 def exp_ensemble():
