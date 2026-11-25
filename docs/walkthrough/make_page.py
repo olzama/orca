@@ -24,6 +24,7 @@ ORACLE = json.load(open(f'{ORCA}/analysis/mrs/dev-2025bothsurf-rawtext.json'))  
 BEST_KEY, BEST_NAME = 'debertav3large', 'DeBERTa-v3 large tagger, all data'
 BEST_RUN = 'quiet2-replay'   # current parser defaults (O111): repair cutoff 0.001, persistent tokenizer, lexical filtering, word fallback; timed with chart and fallback
 BEST = json.load(open(f'{ORCA}/analysis/mrs/dev-modes-speed-quiet2-replay.json'))
+ACE_RETRIES = json.load(open(f'{ORCA}/analysis/orca-ace/ace-retries-o106.json'))
 CORES = json.load(open(f'{ORCA}/analysis/mrs/dev-o76-cores.json'))
 _TIMED = json.load(open(f'{ORCA}/analysis/mrs/dev-retime-o114-plain.json'))   # same run settings without --all-mrs (evaluation only): the speed and step times
 BEST['sentences per second'], BEST['seconds by step'] = _TIMED['sentences per second'], _TIMED['seconds by step']
@@ -156,12 +157,14 @@ def modes():
     if half:
         rows.append(row(f'Orca, then full ACE for the least certain {half:,}', pct(full[half]['exact'], N), na('not recorded'), f1('ace-half'), f"{loaded(full[half]):.1f}"))
     rows.append(row('ACE alone, full lexicon', pct(ace['same MRS'], N), pct(ace['with MRS'], N), f1('ace'), f'{N / (ACE_PASS + ACE_RETRY):.1f}'))
+    nr = ACE_RETRIES['without retries']
+    rows.append(row('ACE alone, 6 GB per sentence, no retries', pct(nr['same MRS'], N), pct(nr['with MRS'], N), na('not recorded'), f"{nr['sentences per second']:.1f}"))
     t = table([('Redwoods dev, raw text', ''), ('Same meaning as gold', 'n hl'), ('Any analysis', 'n'), ('EDM<sub>NA</sub> F1', 'n'), ('Sentences per second', 'n')], rows)
     return (t
             + notes('Replay is Orca\'s own method and the headline; the other rows are different systems built on it. Fallback mode is the default for parsing corpora, chart mode where accuracy matters most.',
                     'Restricted ACE: ACE with only the tagger\'s five best lexical entries per word (probability 0.001 or more). Details in ' + link('chart', 'The tagger plus a chart') + ' and ' + link('fallback', 'Orca with a fallback') + '.',
                     'Full ACE rows: sentences picked first where Orca finds nothing, then where it is least certain (a cross-validated model on Orca\'s own signals).',
-                    '<b>Speeds:</b> the three Orca modes were timed together in one session on one GPU and one CPU core, so they compare with each other; the headline is the replay run of that session. Full-ACE rows add ACE\'s measured time for each sentence sent; ACE alone runs on one core.',
+                    '<b>Speeds:</b> the three Orca modes were timed together in one session on one GPU and one CPU core, so they compare with each other; the headline is the replay run of that session. Full-ACE rows add ACE\'s measured time for each sentence sent; ACE alone runs on one core. ACE alone first tries each sentence with 6 GB and 60 seconds, then retries the failures with 16 GB and 28 GB; the retries take two fifths of its time and add 13 analyses, two of them right.',
 
                     '<b>EDM<sub>NA</sub> F1:</b> predicates and arguments with partial credit (' + link('edm', 'EDM') + '); all and properties in that section.',
                     'On novels and news the modes come in the same order, with a wider gap between replay and chart mode (' + link('corpus', 'Novels and news') + ').'))

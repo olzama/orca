@@ -1,0 +1,20 @@
+{
+ "system": "ACE 0.9.34, ERG 2025, first-ranked, raw text, one core, quiet kesha (25 Nov 2026)",
+ "without retries": {
+  "memory": "6 GB chart and unpacking, 60 s",
+  "with MRS": 2045,
+  "same MRS": 1765,
+  "seconds": 1235.5,
+  "sentences per second": 1.668959935248887
+ },
+ "with retries": {
+  "memory": "then 16 GB / 120 s (17 sentences), 28 GB / 300 s (6)",
+  "with MRS": 2058,
+  "same MRS": 1767,
+  "seconds": 2028.8,
+  "sentences per second": 1.0163643533123028
+ },
+ "earlier run (20 Nov)": {
+  "seconds": 2015.8999999999999
+ }
+}
