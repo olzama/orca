@@ -12,6 +12,7 @@ or the time limit (default 300 s), and counts as no analysis. The LKB binary is 
 (run only).
 """
 import argparse
+import re
 import glob
 import json
 import os
@@ -156,7 +157,8 @@ def score(a):
         r['same MRS'] = False
         if r['mrs'] and r['id'] in gold:
             try:
-                r['same MRS'] = bool(M.is_isomorphic(normalized(simplemrs.decode(r['mrs'])), normalized(simplemrs.decode(gold[r['id']])), properties=False))
+                r['same MRS'] = bool(M.is_isomorphic(normalized(simplemrs.decode(re.sub(r'<-?\d+:-?\d+>', '', r['mrs']))),   # LKB glues spans to predicate names
+                                                     normalized(simplemrs.decode(gold[r['id']])), properties=False))
             except Exception as e:
                 r['mrs error'] = type(e).__name__
     secs = sum(r['seconds'] for r in recs)
