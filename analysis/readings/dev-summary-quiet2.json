@@ -1,0 +1,182 @@
+{
+ "sentences": 2062,
+ "distinct readings per sentence": {
+  "0": 127,
+  "1": 927,
+  "2": 488,
+  "3": 209,
+  "4": 144,
+  "5": 63,
+  "6": 39,
+  "7": 31,
+  "8": 17,
+  "9": 8,
+  "10": 4,
+  "11": 3,
+  "12": 1,
+  "13": 1
+ },
+ "derivations per sentence (with an analysis)": 9.485271317829458,
+ "readings per sentence (with an analysis)": 2.159173126614987,
+ "gold mixed in a reading": 0,
+ "gold among top k": {
+  "1": 1549,
+  "2": 1638,
+  "3": 1648,
+  "5": 1658,
+  "all": 1658
+ },
+ "by length": {
+  "under 10": {
+   "sentences": 953,
+   "1": 850,
+   "2": 877,
+   "3": 879,
+   "5": 882,
+   "all": 882,
+   "mean distinct readings": 1.4826862539349424
+  },
+  "10 to 19": {
+   "sentences": 781,
+   "1": 580,
+   "2": 629,
+   "3": 632,
+   "5": 635,
+   "all": 635,
+   "mean distinct readings": 2.3879641485275287
+  },
+  "20 to 29": {
+   "sentences": 213,
+   "1": 92,
+   "2": 104,
+   "3": 108,
+   "5": 112,
+   "all": 112,
+   "mean distinct readings": 2.8215962441314555
+  },
+  "30 and over": {
+   "sentences": 115,
+   "1": 27,
+   "2": 28,
+   "3": 29,
+   "5": 29,
+   "all": 29,
+   "mean distinct readings": 2.6
+  }
+ },
+ "curve (all dev, at most 5 readings)": {
+  "0": {
+   "gold in set": 1549,
+   "mean set size": 1.0,
+   "more than one": 0,
+   "set credit": 1549.0
+  },
+  "0.25": {
+   "gold in set": 1568,
+   "mean set size": 1.0434108527131782,
+   "more than one": 81,
+   "set credit": 1543.5
+  },
+  "0.5": {
+   "gold in set": 1595,
+   "mean set size": 1.1028423772609819,
+   "more than one": 184,
+   "set credit": 1533.3333333333335
+  },
+  "0.75": {
+   "gold in set": 1611,
+   "mean set size": 1.1576227390180878,
+   "more than one": 271,
+   "set credit": 1515.7500000000002
+  },
+  "1": {
+   "gold in set": 1622,
+   "mean set size": 1.2118863049095607,
+   "more than one": 344,
+   "set credit": 1496.3666666666663
+  },
+  "1.5": {
+   "gold in set": 1643,
+   "mean set size": 1.344186046511628,
+   "more than one": 517,
+   "set credit": 1436.233333333332
+  },
+  "2": {
+   "gold in set": 1647,
+   "mean set size": 1.4749354005167958,
+   "more than one": 650,
+   "set credit": 1371.6666666666647
+  },
+  "3": {
+   "gold in set": 1654,
+   "mean set size": 1.710077519379845,
+   "more than one": 832,
+   "set credit": 1274.8
+  },
+  "4": {
+   "gold in set": 1657,
+   "mean set size": 1.8645994832041344,
+   "more than one": 933,
+   "set credit": 1216.3833333333346
+  },
+  "6": {
+   "gold in set": 1658,
+   "mean set size": 1.9943152454780362,
+   "more than one": 992,
+   "set credit": 1175.8666666666686
+  }
+ },
+ "cross-validated margin (target mean set size)": {
+  "1.2": {
+   "margins chosen per fold": [
+    0.9,
+    0.9,
+    0.95,
+    0.9,
+    0.9
+   ],
+   "gold in set": 1620,
+   "mean set size": 1.193798449612403,
+   "more than one": 317,
+   "set credit": 1503.4
+  },
+  "1.3": {
+   "margins chosen per fold": [
+    1.3,
+    1.25,
+    1.3,
+    1.3,
+    1.3
+   ],
+   "gold in set": 1635,
+   "mean set size": 1.2950904392764857,
+   "more than one": 454,
+   "set credit": 1457.7
+  },
+  "1.5": {
+   "margins chosen per fold": [
+    2.05,
+    2.05,
+    2.1,
+    2.05,
+    2.1
+   ],
+   "gold in set": 1647,
+   "mean set size": 1.4909560723514212,
+   "more than one": 667,
+   "set credit": 1363.0
+  }
+ },
+ "top 1 only": {
+  "gold in set": 1549,
+  "mean set size": 1.0,
+  "more than one": 0,
+  "set credit": 1549.0
+ },
+ "definitions": {
+  "gold in set": "sentences whose returned readings include the gold meaning (exact MRS, without properties)",
+  "mean set size": "readings returned per sentence with an analysis",
+  "set credit": "sum over sentences of 1/size when gold is in the returned set, else 0; equals exact match when one reading is returned",
+  "margin": "return every distinct reading whose best derivation's MaxEnt score is within M of the top reading's (log space), at most 5"
+ }
+}

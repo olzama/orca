@@ -1,0 +1,23 @@
+{
+ "when": "quiet kesha, the three modes back to back (persistent tokenizer, lexical filtering, word fallback)",
+ "runs": {
+  "replay": {
+   "same MRS": 1549,
+   "with MRS": 1935,
+   "sentences per second": 5.44,
+   "wall seconds": 378.8
+  },
+  "chart": {
+   "same MRS": 1635,
+   "with MRS": 1973,
+   "sentences per second": 4.36,
+   "wall seconds": 473.4
+  },
+  "fallback": {
+   "same MRS": 1608,
+   "with MRS": 2044,
+   "sentences per second": 4.37,
+   "wall seconds": 471.6
+  }
+ }
+}

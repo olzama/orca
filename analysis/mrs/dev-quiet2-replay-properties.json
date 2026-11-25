@@ -1,0 +1,11 @@
+{
+ "sentences": 2062,
+ "same without properties": 1549,
+ "same with properties": 1540,
+ "differ by kind": {
+  "sentence force": 4,
+  "tense or aspect": 3,
+  "number, person or gender": 1,
+  "other": 1
+ }
+}

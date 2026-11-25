@@ -63,6 +63,8 @@ def _init(gold_dir):
     from repair_bench import load_gold
     g = Grammar(os.path.join(ERG, 'english.tdl'))
     _LX = Lexicon(g, ERG)
+    _LX.locate_missing = True           # as orca_parse.Parser: the lookup of the current parser defaults
+    _LX.word_fallback = True            # (O91 word fallback, on by default since 24 Nov)
     _ORTH, _ALLGEN = chart_index(_LX)
     _GOLD = load_gold(gold_dir) if gold_dir else {}
 

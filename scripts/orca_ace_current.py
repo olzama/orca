@@ -39,7 +39,10 @@ SYSTEMS = (('replay', 'analysis/mrs/dev-2025bothsurf-debertav3large-rawtext-minp
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default=os.path.join(ORCA, 'analysis/orca-ace/dev-current.json'))
+    ap.add_argument('--system', action='append', default=[], help='NAME=EVAL.json, replaces the default of that name')
     a = ap.parse_args()
+    systems = dict(SYSTEMS)
+    systems.update(x.split('=', 1) for x in a.system)
     length = {}
     for l in open(os.path.join(ORCA, 'data/encoded-2025/dev.jsonl')):
         r = json.loads(l)
@@ -54,7 +57,7 @@ def main():
                 if r[names.index('mrs')]:
                     gold[f"{os.path.basename(prof)}/{r[names.index('parse-id')]}"] = graph(normalized(simplemrs.decode(r[names.index('mrs')])))
     out = {'bands': [b for _, _, b in BANDS], 'systems': {}}
-    for name, path in SYSTEMS:
+    for name, path in systems.items():
         recs = json.load(open(os.path.join(ORCA, path)))['records']
         by = collections.defaultdict(collections.Counter)
         prec = collections.Counter()

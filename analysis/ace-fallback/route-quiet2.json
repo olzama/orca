@@ -1,0 +1,74 @@
+{
+ "sentences": 2062,
+ "orca exact": 1549,
+ "ace exact": 1767,
+ "cv AUC (Orca wrong)": 0.871,
+ "ace seconds per sentence (measured on no-analysis)": 3.7436109537210984,
+ "curve": [
+  {
+   "sent to ACE": 127,
+   "exact": 1634,
+   "sentences per second": 2.24
+  },
+  {
+   "sent to ACE": 177,
+   "exact": 1644,
+   "sentences per second": 2.09
+  },
+  {
+   "sent to ACE": 227,
+   "exact": 1665,
+   "sentences per second": 1.98
+  },
+  {
+   "sent to ACE": 327,
+   "exact": 1689,
+   "sentences per second": 1.82
+  },
+  {
+   "sent to ACE": 427,
+   "exact": 1705,
+   "sentences per second": 1.67
+  },
+  {
+   "sent to ACE": 527,
+   "exact": 1722,
+   "sentences per second": 1.54
+  },
+  {
+   "sent to ACE": 727,
+   "exact": 1739,
+   "sentences per second": 1.35
+  },
+  {
+   "sent to ACE": 927,
+   "exact": 1752,
+   "sentences per second": 1.2
+  },
+  {
+   "sent to ACE": 1127,
+   "exact": 1759,
+   "sentences per second": 1.08
+  },
+  {
+   "sent to ACE": 2062,
+   "exact": 1767,
+   "sentences per second": 0.73
+  }
+ ],
+ "features": [
+  "min leaf p",
+  "min tree p",
+  "mean log leaf p",
+  "mean log tree p",
+  "log replays",
+  "first try",
+  "log accepted",
+  "tagger-cost margin of the two best accepted",
+  "log length",
+  "no analysis"
+ ],
+ "run": "analysis/mrs/dev-modes-speed-quiet2-replay.json",
+ "ace seconds, sentences without a measured time": 0.978,
+ "no-analysis sentences without a measured ACE time": 8
+}

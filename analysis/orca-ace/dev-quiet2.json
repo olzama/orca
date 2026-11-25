@@ -1,0 +1,158 @@
+{
+ "bands": [
+  "under 10",
+  "10 to 19",
+  "20 to 29",
+  "30 and over"
+ ],
+ "systems": {
+  "replay": {
+   "file": "analysis/mrs/dev-modes-speed-quiet2-replay.json",
+   "by band": {
+    "all": {
+     "sentences": 2062,
+     "with MRS": 1935,
+     "same MRS": 1549
+    },
+    "under 10": {
+     "sentences": 953,
+     "with MRS": 929,
+     "same MRS": 850
+    },
+    "10 to 19": {
+     "sentences": 781,
+     "with MRS": 736,
+     "same MRS": 580
+    },
+    "20 to 29": {
+     "sentences": 213,
+     "with MRS": 180,
+     "same MRS": 92
+    },
+    "30 and over": {
+     "sentences": 115,
+     "with MRS": 90,
+     "same MRS": 27
+    }
+   },
+   "precision": {
+    "analyzed": 1935,
+    "right meaning": 1549,
+    "unreadable MRS": 0,
+    "predicate precision": 0.9781016708140775,
+    "link precision": 0.9500775995861356
+   }
+  },
+  "chart": {
+   "file": "analysis/mrs/dev-modes-speed-quiet2-chart.json",
+   "by band": {
+    "all": {
+     "sentences": 2062,
+     "with MRS": 1973,
+     "same MRS": 1635
+    },
+    "under 10": {
+     "sentences": 953,
+     "with MRS": 937,
+     "same MRS": 867
+    },
+    "10 to 19": {
+     "sentences": 781,
+     "with MRS": 748,
+     "same MRS": 617
+    },
+    "20 to 29": {
+     "sentences": 213,
+     "with MRS": 193,
+     "same MRS": 121
+    },
+    "30 and over": {
+     "sentences": 115,
+     "with MRS": 95,
+     "same MRS": 30
+    }
+   },
+   "precision": {
+    "analyzed": 1973,
+    "right meaning": 1635,
+    "unreadable MRS": 0,
+    "predicate precision": 0.9724305626905031,
+    "link precision": 0.9386363636363636
+   }
+  },
+  "fallback": {
+   "file": "analysis/mrs/dev-modes-speed-quiet2-fallback.json",
+   "by band": {
+    "all": {
+     "sentences": 2062,
+     "with MRS": 2044,
+     "same MRS": 1608
+    },
+    "under 10": {
+     "sentences": 953,
+     "with MRS": 952,
+     "same MRS": 865
+    },
+    "10 to 19": {
+     "sentences": 781,
+     "with MRS": 776,
+     "same MRS": 606
+    },
+    "20 to 29": {
+     "sentences": 213,
+     "with MRS": 208,
+     "same MRS": 108
+    },
+    "30 and over": {
+     "sentences": 115,
+     "with MRS": 108,
+     "same MRS": 29
+    }
+   },
+   "precision": {
+    "analyzed": 2044,
+    "right meaning": 1608,
+    "unreadable MRS": 0,
+    "predicate precision": 0.9739924946973405,
+    "link precision": 0.9408782070783897
+   }
+  },
+  "ace": {
+   "file": "analysis/mrs/dev-ace-final-as-eval.json",
+   "by band": {
+    "all": {
+     "sentences": 2062,
+     "with MRS": 2058,
+     "same MRS": 1767
+    },
+    "under 10": {
+     "sentences": 953,
+     "with MRS": 953,
+     "same MRS": 902
+    },
+    "10 to 19": {
+     "sentences": 781,
+     "with MRS": 781,
+     "same MRS": 672
+    },
+    "20 to 29": {
+     "sentences": 213,
+     "with MRS": 213,
+     "same MRS": 152
+    },
+    "30 and over": {
+     "sentences": 115,
+     "with MRS": 111,
+     "same MRS": 41
+    }
+   },
+   "precision": {
+    "analyzed": 2058,
+    "right meaning": 1767,
+    "unreadable MRS": 0,
+    "predicate precision": 0.9828301153297914,
+    "link precision": 0.9538941646253482
+   }
+  }
+ }
+}

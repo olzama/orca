@@ -1,0 +1,15 @@
+{
+ "sentences": {
+  "done": 32257,
+  "done: at least one single culprit": 31963,
+  "gold fails": 164,
+  "done: only pair culprits": 148,
+  "done: needs three or more labels": 32
+ },
+ "labels": {
+  "leaf licensed": 1490,
+  "leaf single": 24694,
+  "tree licensed": 9010,
+  "tree single": 39299
+ }
+}
