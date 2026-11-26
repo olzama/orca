@@ -1,0 +1,7 @@
+{
+ "pair": "chart-replay",
+ "orca side": "chart",
+ "reference side": "replay",
+ "disagreements": 286,
+ "judged": 150
+}

@@ -1,0 +1,214 @@
+{
+ "sentences": 1000,
+ "ACE parsed": 967,
+ "ACE derivation replayable": 966,
+ "modes": {
+  "replay": {
+   "sentences per second": 4.276353993544149,
+   "counts": {
+    "all": {
+     "n": 1000,
+     "analysis": 905,
+     "ACE parsed": 967,
+     "same as ACE": 615,
+     "n replayable": 966,
+     "same as ACE, replayable": 615
+    },
+    "news": {
+     "n": 1000,
+     "analysis": 905,
+     "ACE parsed": 967,
+     "same as ACE": 615,
+     "n replayable": 966,
+     "same as ACE, replayable": 615
+    },
+    "news/human": {
+     "n": 500,
+     "analysis": 430,
+     "ACE parsed": 476,
+     "same as ACE": 298,
+     "n replayable": 475,
+     "same as ACE, replayable": 298
+    },
+    "band 30 and over": {
+     "n": 256,
+     "analysis": 220,
+     "ACE parsed": 236,
+     "same as ACE": 96,
+     "n replayable": 235,
+     "same as ACE, replayable": 96
+    },
+    "band 20-29": {
+     "n": 437,
+     "analysis": 396,
+     "ACE parsed": 430,
+     "same as ACE": 270,
+     "n replayable": 430,
+     "same as ACE, replayable": 270
+    },
+    "band 10-19": {
+     "n": 219,
+     "analysis": 204,
+     "ACE parsed": 214,
+     "same as ACE": 168,
+     "n replayable": 214,
+     "same as ACE, replayable": 168
+    },
+    "band under 10": {
+     "n": 88,
+     "analysis": 85,
+     "ACE parsed": 87,
+     "same as ACE": 81,
+     "n replayable": 87,
+     "same as ACE, replayable": 81
+    },
+    "news/LLM": {
+     "n": 500,
+     "analysis": 475,
+     "ACE parsed": 491,
+     "same as ACE": 317,
+     "n replayable": 491,
+     "same as ACE, replayable": 317
+    }
+   }
+  },
+  "fallback": {
+   "sentences per second": 2.4849984145715753,
+   "counts": {
+    "all": {
+     "n": 1000,
+     "analysis": 975,
+     "ACE parsed": 967,
+     "same as ACE": 670,
+     "n replayable": 966,
+     "same as ACE, replayable": 669
+    },
+    "news": {
+     "n": 1000,
+     "analysis": 975,
+     "ACE parsed": 967,
+     "same as ACE": 670,
+     "n replayable": 966,
+     "same as ACE, replayable": 669
+    },
+    "news/human": {
+     "n": 500,
+     "analysis": 482,
+     "ACE parsed": 476,
+     "same as ACE": 338,
+     "n replayable": 475,
+     "same as ACE, replayable": 337
+    },
+    "band 30 and over": {
+     "n": 256,
+     "analysis": 245,
+     "ACE parsed": 236,
+     "same as ACE": 112,
+     "n replayable": 235,
+     "same as ACE, replayable": 111
+    },
+    "band 20-29": {
+     "n": 437,
+     "analysis": 429,
+     "ACE parsed": 430,
+     "same as ACE": 299,
+     "n replayable": 430,
+     "same as ACE, replayable": 299
+    },
+    "band 10-19": {
+     "n": 219,
+     "analysis": 214,
+     "ACE parsed": 214,
+     "same as ACE": 176,
+     "n replayable": 214,
+     "same as ACE, replayable": 176
+    },
+    "band under 10": {
+     "n": 88,
+     "analysis": 87,
+     "ACE parsed": 87,
+     "same as ACE": 83,
+     "n replayable": 87,
+     "same as ACE, replayable": 83
+    },
+    "news/LLM": {
+     "n": 500,
+     "analysis": 493,
+     "ACE parsed": 491,
+     "same as ACE": 332,
+     "n replayable": 491,
+     "same as ACE, replayable": 332
+    }
+   }
+  },
+  "chart": {
+   "sentences per second": 1.2373943309048896,
+   "counts": {
+    "all": {
+     "n": 1000,
+     "analysis": 911,
+     "ACE parsed": 967,
+     "same as ACE": 802,
+     "n replayable": 966,
+     "same as ACE, replayable": 801
+    },
+    "news": {
+     "n": 1000,
+     "analysis": 911,
+     "ACE parsed": 967,
+     "same as ACE": 802,
+     "n replayable": 966,
+     "same as ACE, replayable": 801
+    },
+    "news/human": {
+     "n": 500,
+     "analysis": 452,
+     "ACE parsed": 476,
+     "same as ACE": 392,
+     "n replayable": 475,
+     "same as ACE, replayable": 391
+    },
+    "band 30 and over": {
+     "n": 256,
+     "analysis": 221,
+     "ACE parsed": 236,
+     "same as ACE": 176,
+     "n replayable": 235,
+     "same as ACE, replayable": 175
+    },
+    "band 20-29": {
+     "n": 437,
+     "analysis": 399,
+     "ACE parsed": 430,
+     "same as ACE": 354,
+     "n replayable": 430,
+     "same as ACE, replayable": 354
+    },
+    "band 10-19": {
+     "n": 219,
+     "analysis": 206,
+     "ACE parsed": 214,
+     "same as ACE": 187,
+     "n replayable": 214,
+     "same as ACE, replayable": 187
+    },
+    "band under 10": {
+     "n": 88,
+     "analysis": 85,
+     "ACE parsed": 87,
+     "same as ACE": 85,
+     "n replayable": 87,
+     "same as ACE, replayable": 85
+    },
+    "news/LLM": {
+     "n": 500,
+     "analysis": 459,
+     "ACE parsed": 491,
+     "same as ACE": 410,
+     "n replayable": 491,
+     "same as ACE, replayable": 410
+    }
+   }
+  }
+ }
+}

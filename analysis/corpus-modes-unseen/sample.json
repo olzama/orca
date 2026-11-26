@@ -1,0 +1,5009 @@
+{
+ "note": "news sentences Orca never trained on: the held-out tenth of each 2025 news profile (data/encoded-nyt/held-out.jsonl; replay-checked like the training data), 500 human and 500 LLM, seed 11",
+ "pool sizes": {
+  "LLM": 19173,
+  "human": 2175
+ },
+ "sample": [
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23697",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23758",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23694",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23948",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22518",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22495",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23966",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23799",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22501",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22078",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23671",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23027",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22303",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22061",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21847",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23446",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23701",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22375",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21723",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21937",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21921",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21818",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22520",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22751",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21792",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23749",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23130",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23645",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22543",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23997",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22715",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22987",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23911",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21676",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22037",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23721",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22916",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23494",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22027",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22805",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23077",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22697",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23970",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22963",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21790",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21970",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22148",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23465",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22147",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22971",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23404",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21952",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21732",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21659",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22630",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22615",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21891",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23776",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23347",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23452",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23550",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21985",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22560",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22876",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23178",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22046",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23060",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23158",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21724",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23508",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22192",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22271",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22772",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22112",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21703",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21923",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23753",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23853",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22463",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22510",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23674",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23953",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22523",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22255",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23548",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23388",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22185",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23441",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23554",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22627",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21658",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23982",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23030",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21744",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22619",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22506",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23436",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22108",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21848",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22325",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22629",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23649",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22824",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21698",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23142",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22996",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23401",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21986",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21990",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22059",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22609",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22758",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21725",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23319",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23331",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23702",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22238",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23839",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22276",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23933",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22486",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22358",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23059",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22692",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22784",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24049",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22379",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22549",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23205",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23796",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22538",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23647",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22749",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23020",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21835",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24050",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21763",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21889",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21900",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21743",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22814",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23827",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22239",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22198",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23324",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23243",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22546",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22244",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22617",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23515",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23699",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23004",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22768",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22326",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22833",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22049",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23752",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23281",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23861",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21811",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24033",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22175",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22742",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22922",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23132",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23581",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23047",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23044",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21825",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22295",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22140",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23726",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24012",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22116",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23342",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21692",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21813",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23973",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22597",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22669",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22225",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24027",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21761",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22050",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22299",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22494",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22857",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22951",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21948",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21864",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22479",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21963",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23665",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22679",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22410",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23140",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23308",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23214",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22836",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22979",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23790",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24000",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22991",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21735",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23739",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21695",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22732",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23712",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22469",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23236",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22367",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21731",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21702",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23008",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23089",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21827",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22748",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21808",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23304",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22366",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22384",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21958",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21820",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21828",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22684",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22890",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22491",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23318",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21757",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23686",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23768",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23798",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23794",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23242",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21944",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23448",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23862",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22435",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22456",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21849",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23202",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22728",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23687",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21834",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23623",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23593",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23929",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23443",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24034",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23607",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22786",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22953",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21687",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23065",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23152",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22525",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22516",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22976",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21683",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23031",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21819",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21840",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21861",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23096",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21914",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23890",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23641",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22607",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23299",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22408",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23908",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23313",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23220",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22969",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22694",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22659",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22704",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23547",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22880",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24038",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22829",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23346",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22818",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23777",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22364",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23015",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21855",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22745",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21704",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22179",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23231",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21909",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22781",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23419",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23868",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23147",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23928",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22241",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23677",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21681",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24045",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22343",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21979",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23187",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23038",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22113",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22828",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22036",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23354",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23700",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22437",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23727",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22662",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22783",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23668",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22205",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22400",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22579",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23159",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22229",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22103",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23085",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22638",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23472",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23476",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23358",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23945",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23642",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22144",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22529",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22155",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22977",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22378",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22134",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21957",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21954",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22779",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22454",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23545",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23676",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23572",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21748",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23258",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21801",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22288",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23512",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22035",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23731",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23921",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22723",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22285",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23690",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23530",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22602",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23770",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23067",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22832",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22774",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23175",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24035",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23269",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23549",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23555",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23772",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22683",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22387",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21826",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23526",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21727",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22291",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23627",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23029",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21750",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23188",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23252",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22297",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22948",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22461",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22359",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23120",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23445",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22935",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23936",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23099",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23682",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22582",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22688",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22081",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21709",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23394",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23528",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22265",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22196",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23417",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21971",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23456",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21762",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23074",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23761",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22671",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23900",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23076",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22866",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23135",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23097",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23479",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23848",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23782",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23200",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22102",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22105",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23516",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22733",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22242",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22055",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23265",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21680",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23359",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22726",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22865",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23597",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21738",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22056",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22171",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22279",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23416",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22444",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23952",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23228",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23883",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22787",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23728",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23361",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22013",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24015",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23724",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23634",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23234",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22166",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21854",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22595",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23285",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22537",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21945",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23708",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22685",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22100",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23660",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21671",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23965",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22898",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/22944",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/24022",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22793",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23618",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23507",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22438",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22706",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22399",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23125",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22122",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21879",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23284",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23504",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23459",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23101",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23272",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/21931",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22142",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22207",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22542",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23736",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22362",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22869",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23778",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23650",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-046/23961",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23274",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21691",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22449",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22798",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21845",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21740",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23748",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22436",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22903",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23903",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-044/23391",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23840",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22761",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-041/21720",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22153",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23483",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23673",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22634",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23463",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-045/23897",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-042/22044",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22861",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-NYT-2025-human__NYT-2025-human-043/22420",
+   "corpus": "news",
+   "kind": "human"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50240",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-068/34478",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50511",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32313",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32369",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33441",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31496",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34408",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48419",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37867",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33415",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32653",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/33731",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36660",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/33825",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/35914",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32520",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32232",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/33773",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/39069",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37393",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-062/31439",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37410",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-073/37150",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50263",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33252",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32571",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-071/36071",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34206",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31669",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/37164",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32452",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32958",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49367",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31856",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/45698",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39599",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46464",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/33038",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-093/47008",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32295",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/32092",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33228",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/33869",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/49621",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31443",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48661",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/36000",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-095/47742",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/33051",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-067/34081",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32543",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32220",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-071/35944",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/38726",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-068/34567",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31512",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/49788",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38337",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33213",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-068/34687",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32596",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37581",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49176",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36841",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/32735",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46521",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/39191",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/49873",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46296",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-093/46733",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36932",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-069/35595",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/38069",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/45930",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36450",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37744",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/38868",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38666",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31708",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/49049",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31737",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34518",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/49649",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32105",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/38868",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/37053",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32774",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33320",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46312",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39556",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32531",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32741",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/35737",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/33034",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37272",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32894",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37764",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32750",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37689",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33193",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50106",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38251",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38604",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36488",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37536",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37504",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36951",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37757",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36946",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48782",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/50021",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38486",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/49975",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48490",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/39168",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-062/31662",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48789",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33254",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/32806",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33205",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/49756",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/37153",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/32167",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46126",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48755",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/37163",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34103",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/38941",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39069",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49405",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31942",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38467",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31842",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36753",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-095/47896",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-069/34880",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49092",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46349",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-093/46793",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33487",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32256",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/34065",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-069/34849",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50442",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36771",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36602",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49390",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37260",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36192",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/35681",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36416",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48729",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34435",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-095/47608",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/50038",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-067/34188",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48139",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48778",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-075/37902",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/31765",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-068/34357",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/32969",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32271",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/38842",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/33092",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37474",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39468",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/45978",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-093/46906",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/37141",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36492",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32349",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-067/33905",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39010",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39366",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32259",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36965",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/35940",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48714",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32178",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/46050",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-075/37798",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48380",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32232",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/34096",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36821",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31893",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34597",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38382",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/39127",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36297",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49434",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/35752",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32270",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/49997",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-075/38007",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/33056",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39355",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/33144",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36502",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32274",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37361",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36613",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38407",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-073/37053",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-068/34420",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48916",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/45889",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/38877",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-094/47195",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38233",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-073/36954",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38274",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37685",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32289",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/34092",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36515",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32863",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48113",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/31720",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32252",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31668",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37585",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49543",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/31916",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34272",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46297",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49384",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49156",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38404",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/39073",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33558",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/32125",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31910",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-094/47225",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36977",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39554",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/45895",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48835",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/39137",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/38879",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-071/36165",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38376",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33432",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33110",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/32015",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32608",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32450",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/34039",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48875",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33583",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48090",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33408",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-093/47047",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-062/31613",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/35746",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-062/31596",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-068/34519",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/36079",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31598",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33159",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-094/47495",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/33076",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31563",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/32774",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36463",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32656",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/32025",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37417",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39214",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32776",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36509",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31185",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-071/35962",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/33796",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36430",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-073/36859",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46435",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/46003",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38684",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-093/46969",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-069/35630",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32377",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/31732",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-094/47303",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37511",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/31998",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-094/47215",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34502",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37650",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-095/47999",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37943",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/33074",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-069/34722",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/38880",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38641",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-093/47057",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32540",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48836",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-068/34404",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50368",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38690",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49395",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-094/47223",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32656",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-067/33963",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49489",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37252",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-094/47279",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/38912",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32700",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-069/35567",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/49701",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39136",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33531",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50217",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32650",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-067/33958",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-077/39259",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39160",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32788",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50123",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36658",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/49852",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38455",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-069/34842",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49354",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31848",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37288",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31998",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/38996",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-071/36134",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-071/36020",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/33935",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36786",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36267",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38489",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36779",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/38813",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-063/31821",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36994",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-093/46861",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-095/47570",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/45851",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-071/36002",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/32927",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46436",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-093/46813",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48969",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37904",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33149",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-071/36255",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-095/47962",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48433",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/35782",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33451",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-075/38322",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39469",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31212",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-069/34755",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/38827",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37495",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38288",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38474",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31559",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-099/50003",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-095/48027",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49549",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33681",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37583",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/32900",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/39121",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/31737",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-069/35429",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39325",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-069/35525",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-075/37855",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36685",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33381",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36580",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/33011",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39335",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34464",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-067/34186",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-075/37813",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48169",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33216",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48320",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/33156",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/33913",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31240",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-068/34237",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/45844",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48086",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37338",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-073/37587",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48275",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-073/37127",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31571",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-075/37942",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36410",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50321",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37779",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/38948",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-075/37910",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39241",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49470",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37756",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33468",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/34082",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36285",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-066/33365",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/32769",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-073/37160",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-067/34056",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37595",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37860",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/32059",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32301",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/38792",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48362",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39082",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39213",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46343",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39137",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/31924",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-069/34605",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-062/31652",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-072/36960",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/33899",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39301",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/31741",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33113",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-069/35570",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/33866",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36358",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-071/36332",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48545",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-067/33918",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-072/36360",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46277",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37861",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32283",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-094/47468",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33233",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/35702",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-067/34022",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-073/36854",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46281",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/32844",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-095/47680",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-068/34509",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33321",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-073/37183",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33276",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48355",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-075/38165",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48274",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-071/36094",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/49066",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-074/37465",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48376",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46404",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50352",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-097/48803",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/32820",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/38698",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-074/37835",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31376",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32480",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38286",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-067/34085",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-063/31883",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38703",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-075/38110",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50114",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31534",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-062/31345",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-065/33006",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-095/47961",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-094/47084",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-064/32436",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-076/38660",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/45661",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39630",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-096/48529",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-068/34275",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-066/33139",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-092/46350",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen72B-2025-llm__Qwen72B-2025-llm-064/32558",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-077/39094",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-091/45873",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-098/49220",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Qwen32B-2025-llm__Qwen32B-2025-llm-065/32766",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-GPT4o-2025-llm__GPT4o-2025-llm-100/50429",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-076/38707",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/35834",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Mistral7B_i-2025-llm__Mistral7B_i-2025-llm-078/39549",
+   "corpus": "news",
+   "kind": "LLM"
+  },
+  {
+   "id": "news-Llama70B-2025-llm__Llama70B-2025-llm-070/36029",
+   "corpus": "news",
+   "kind": "LLM"
+  }
+ ]
+}
