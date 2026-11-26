@@ -168,7 +168,7 @@ def cmd_run(a):
     from delphin import mrs as M
     from orca_parse import Parser
     s, texts = load_sample(a.out)
-    p = Parser(mode=a.mode, chart_min_prob=a.chart_min_prob)
+    p = Parser(mode=a.mode, chart_min_prob=a.chart_min_prob, **({'tagger': a.tagger} if a.tagger else {}))
     p.parse('The dog barked.')
     recs, t0 = [], time.time()
     for x in s:
@@ -185,8 +185,8 @@ def cmd_run(a):
         recs.append({'id': x['id'], 'analysis': m is not None, 'same as ACE': same, 'ACE parsed': bool(ref),
                      'outcome': r.get('outcome'), 'seconds': r.get('seconds'), 'mrs': r.get('mrs')})
     wall = time.time() - t0
-    json.dump({'mode': a.mode, 'chart_min_prob': a.chart_min_prob, 'wall seconds': wall, 'sentences per second': len(recs) / wall, 'records': recs},
-              open(os.path.join(a.out, f'run-{a.mode}.json'), 'w'))
+    json.dump({'mode': a.mode, 'tagger': a.tagger, 'chart_min_prob': a.chart_min_prob, 'wall seconds': wall, 'sentences per second': len(recs) / wall, 'records': recs},
+              open(os.path.join(a.out, f'run-{a.mode}{a.suffix}.json'), 'w'))
     print(a.mode, len(recs), round(len(recs) / wall, 2))
 
 
@@ -197,7 +197,7 @@ def cmd_score(a):
     band = lambda sid: next(nm for lo, hi, nm in BANDS if lo <= len(texts[sid][0].split()) < hi)
     out = {'sentences': len(s), 'ACE parsed': sum(bool(texts[x['id']][1]) for x in s), 'ACE derivation replayable': len(rp), 'modes': {}}
     for mode in ('replay', 'fallback', 'chart'):
-        f = os.path.join(a.out, f'run-{mode}.json')
+        f = os.path.join(a.out, f'run-{mode}{a.suffix}.json')
         if not os.path.exists(f):
             continue
         run = json.load(open(f))
@@ -213,7 +213,7 @@ def cmd_score(a):
                     c[key]['n replayable'] += 1
                     c[key]['same as ACE, replayable'] += bool(r['same as ACE'])
         out['modes'][mode] = {'sentences per second': run['sentences per second'], 'counts': {k: dict(v) for k, v in c.items()}}
-    json.dump(out, open(os.path.join(a.out, 'summary.json'), 'w'), indent=1)
+    json.dump(out, open(os.path.join(a.out, f'summary{a.suffix}.json'), 'w'), indent=1)
     print(json.dumps({m: {k: v for k, v in d['counts']['all'].items()} | {'sps': round(d['sentences per second'], 2)} for m, d in out['modes'].items()}, indent=1))
 
 
@@ -275,6 +275,8 @@ def main():
     ap.add_argument('--workers', type=int, default=3)
     ap.add_argument('--pair', default='chart-replay')
     ap.add_argument('--max', type=int, default=150)
+    ap.add_argument('--tagger', help='run: another tagger directory (default: the headline tagger)')
+    ap.add_argument('--suffix', default='', help='run/score: suffix of run-<mode><suffix>.json (another tagger)')
     a = ap.parse_args()
     {'sample': cmd_sample, 'replay': cmd_replay, 'run': cmd_run, 'score': cmd_score, 'judgeeval': cmd_judgeeval, 'judgeitems': cmd_judgeitems}[a.cmd](a)
 
