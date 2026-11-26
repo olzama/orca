@@ -1,0 +1,26 @@
+{
+ "when": "quiet kesha, 25 Nov 2026, the three modes back to back on GPU 1, without --all-mrs (accuracy from the --all-mrs runs of 24 Nov, identical counts); accuracy updated 26 Nov from the --all-mrs runs of 26 Nov (dev-modes-speed-quiet3-*), with the lexical filtering in restricted ACE: replay identical, fallback and chart within 3% of the 24 Nov speeds under --all-mrs, so the speeds are kept",
+ "runs": {
+  "replay": {
+   "same MRS": 1549,
+   "with MRS": 1935,
+   "sentences per second": 8.08,
+   "wall seconds": 255.2,
+   "timed run": "dev-retime-o114-plain.json"
+  },
+  "chart": {
+   "same MRS": 1645,
+   "with MRS": 1975,
+   "sentences per second": 4.4,
+   "wall seconds": 468.4,
+   "timed run": "dev-retime-o114-plain-chart.json"
+  },
+  "fallback": {
+   "same MRS": 1613,
+   "with MRS": 2045,
+   "sentences per second": 5.9,
+   "wall seconds": 349.3,
+   "timed run": "dev-retime-o114-plain-fallback.json"
+  }
+ }
+}

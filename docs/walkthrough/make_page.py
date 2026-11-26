@@ -31,7 +31,7 @@ BEST['sentences per second'], BEST['seconds by step'] = _TIMED['sentences per se
 BEST_PROPS = f'{ORCA}/analysis/mrs/dev-{BEST_RUN}-properties.json'
 BEST_ICONS = f'{ORCA}/analysis/mrs/dev-{BEST_RUN}-icons.json'
 BEST_JUDGE = f'{ORCA}/analysis/adjudicate/dev-{BEST_RUN}/score.json'
-MODES_SPEED = f'{ORCA}/analysis/mrs/dev-modes-speed-quiet2.json'
+MODES_SPEED = f'{ORCA}/analysis/mrs/dev-modes-speed-quiet3.json'   # quiet2 speeds, accuracy with the chart lexical filtering (O115)
 ROUTE = f'{ORCA}/analysis/ace-fallback/route-quiet2.json'
 EDM_CUR = f'{ORCA}/analysis/edm/dev-quiet2.json'
 BERT_CUR = f'{ORCA}/analysis/mrs/dev-2025bothsurf-bert-rawtext-minprob001.json'   # BERT-base with the current defaults
@@ -945,7 +945,7 @@ def exp_supertag_ace():
                  else f"{run['sentences per second']:.1f}" if run else f"{1 / (x['ace seconds per sentence'] + tag_s):.1f} (estimate)")
         rows.append(f'<tr><td>ACE restricted to the tagger\'s lexical entries (top 5, probability ≥ {cut})</td>' + td(pct(x['same MRS'], N), True) + td(pct(x['parsed'], N))
                     + td(speed) + '</tr>')
-    fb = load(f'{ORCA}/analysis/mrs/dev-modes-speed-quiet2-fallback.json')
+    fb = load(f'{ORCA}/analysis/mrs/dev-modes-speed-quiet3-fallback.json')
     if fb:
         rows.append(f'<tr><td>Orca, and restricted ACE (≥ 0.001) where Orca finds no analysis</td>' + td(pct(fb['counts']['same MRS'], N), True) + td(pct(fb['counts']['with MRS'], N))
                     + td(f"{SP['fallback']['sentences per second']:.1f}" if SP else f"{fb['sentences per second']:.1f}") + '</tr>')
