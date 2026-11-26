@@ -84,6 +84,13 @@ def allowed_and_disabled(item, k, min_prob, lx=None, orth=None, allgen=None):
             if lextype in ('<cont>', '<none>', ''):
                 continue
             found = _LX.lookup([item['path'][i][0]], lextype.lower(), rules.split())
+            lf = getattr(_LX, 'lexical_filter', None)
+            if lf is not None and any(lf.is_generic(e) for e in found):
+                # the grammar's lexical filtering, as in replay (O105): restricted ACE never sees the word's native
+                # entries, so its own filtering rules cannot remove a generic proposed for a known word
+                toks = [item['path'][i][1]]
+                kept = [e for e in found if lf.keeps(e, tuple(r.lower() for r in rules.split()), [item['path'][i][0]], toks)]
+                found = kept or _LX.fallback_entries([item['path'][i][0]], lextype.lower(), rules.split())
             if not found:
                 unresolved += 1
             allowed.update(found)
