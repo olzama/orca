@@ -127,6 +127,17 @@ Keeping a reading is saved as decisions about the meaning (type 10 in the `decis
 is there, or is not). When all remaining trees mean the same, they are shown as small trees and are told apart
 by structure.
 
+### Review of two given analyses (built)
+
+`python -m kelp.review --input FILE.jsonl` shows, per sentence, two analyses that come from outside Kelp
+(for example gold against a parser's first analysis, or the same treebank before and after a grammar change),
+side by side: the meanings with their differences in orange, the differing lexical entries, and both trees
+with the nodes that the other tree lacks marked. One verdict per item (left, right, both, neither) and an
+optional note are appended to `FILE.verdicts.jsonl`, in terms of the input's sides `a` and `b`. Sides are
+blind unless `--labeled` is given. Items can carry a group label and size, for reviews where one example
+stands for a group. The input format is described at the top of `kelp/review.py`. No parser is loaded.
+This view is also the inspection step that the update after a grammar change needs (section 9).
+
 ## 6. Proposals
 
 For each item, before the annotator opens it, Kelp prepares:
