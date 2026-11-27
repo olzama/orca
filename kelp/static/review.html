@@ -450,6 +450,8 @@ function render() {
     })));
     if (s.tree) box.append(el('div', {class: 'part'}, 'Tree'), el('div', {class: 'scroll'}, drawTree(s, o)));
     sides.append(box);
+    const first = box.querySelector('.node.diff'), pane = first && first.closest('.scroll');    // bring the first difference into view
+    if (first) pane.scrollLeft = Math.max(0, first.getBBox().x - pane.clientWidth / 3);
   });
   const v = $('verdict'); v.replaceChildren();
   for (const [what, text, key] of [['left', 'Left is right', '1'], ['right', 'Right is right', '2'], ['both', 'Both are right', 'b'], ['neither', 'Neither', 'x']]) {

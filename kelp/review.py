@@ -254,6 +254,9 @@ def main():
         used = set()
 
         def note(n):
+            entry = str(n['entry'] or '').lower()       # a leaf without its lexical type gets it from the grammar
+            if entry and n['labels'][-1] == n['entry'] and lookup.info.get(entry, {}).get('type'):
+                n['labels'][-1] = lookup.info[entry]['type']
             used.update(str(x).lower() for x in n['labels'] + [n['entry'] or ''])
             for c in n['children']:
                 note(c)
