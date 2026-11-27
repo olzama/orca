@@ -308,12 +308,15 @@ $('lookupq').addEventListener('keydown', ev => {
 /* ---- meaning graphs ---- */
 function prepare(it) {            // facts of both sides; with character positions when both have them everywhere
   const gs = [it.left.dmrs, it.right.dmrs].filter(Boolean);
-  const pos = gs.every(g => g.nodes.every(n => n.from >= 0 && n.to >= 0));
+  const has = n => n.from >= 0 && n.to >= 0;
+  const pos = gs.every(g => g.nodes.filter(has).length * 2 > g.nodes.length);     // a few predicates never have positions
   for (const g of gs) {
     const name = {}, f = g.facts = {}, add = x => { f[x] = (f[x] || 0) + 1; return x; };
+    let last = 0;
     for (const n of g.nodes) {
-      name[n.id] = n.pred + (n.carg ? '("' + n.carg + '")' : '') + (pos ? '<' + n.from + ':' + n.to + '>' : '');
+      name[n.id] = n.pred + (n.carg ? '("' + n.carg + '")' : '') + (pos && has(n) ? '<' + n.from + ':' + n.to + '>' : '');
       n.fact = add('node ' + name[n.id]);
+      if (pos && !has(n)) { n.from = last; n.to = last; } else last = n.from;
     }
     for (const k of g.links) k.fact = add(name[k.from] + ' -' + (k.role || '') + (k.post && k.post !== 'NEQ' ? '/' + k.post : '') + '-> ' + name[k.to]);
     const i = new Map(g.nodes.map((n, k) => [n, k]));
