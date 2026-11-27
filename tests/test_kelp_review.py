@@ -25,3 +25,22 @@ def test_blind_review_and_verdicts(tmp_path):
     assert again['verdict'] == 'left' and again['left']['is'] == shown and again['left']['label']
     labeled = Review(path, labeled=True).listing()[0]
     assert labeled['left']['is'] == 'a' and labeled['verdict'] == ('left' if shown == 'a' else 'right')
+
+
+def test_groups_and_resolved_verdicts(tmp_path):
+    path = str(tmp_path / 'set.jsonl')
+    recs = [json.loads(line) for line in open(SAMPLE)]
+    recs[1]['group'] = recs[0]['group']                      # both items in one group; the second is its example
+    recs[1]['example'] = True
+    with open(path, 'w') as f:
+        f.write(''.join(json.dumps(r) + '\n' for r in recs))
+    r = Review(path, author='tester')
+    first, second = (it['id'] for it in r.items)
+    r.judge(second, 'neither', '')
+    resolved = lambda: {d['id']: d for d in map(json.loads, open(str(tmp_path / 'set.resolved.jsonl')))}
+    assert resolved()[first] == {'id': first, 'group': recs[0]['group'], 'verdict': 'neither', 'from': 'group', 'example': False}
+    r.move(first, None)                                      # taken out: the group's verdict no longer holds for it
+    assert resolved()[first]['verdict'] == '' and resolved()[first]['group'] is None
+    assert Review(path).entry(Review(path).by_id[first])['moved']
+    r.move(first, '')                                        # put back
+    assert resolved()[first]['from'] == 'group' and not r.moves

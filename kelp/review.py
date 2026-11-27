@@ -8,6 +8,7 @@ Usage:
 Input: one JSON object per line,
     {"id": "profile/i-id", "sentence": "...",
      "group": "g017", "group_label": "...", "group_size": 36,          (optional)
+     "example": true,                    (optional: the item that stands for its group)
      "a": {"label": "gold", "derivation": "(root_strict ...)", "mrs": "[ LTOP: ... ]"},
      "b": {"label": "orca", "derivation": "...", "mrs": "..."}}
 with the reference analysis in "a". A side without an analysis has null for
@@ -23,6 +24,15 @@ Verdicts are appended to FILE.verdicts.jsonl, one line per decision; the last
 line of an id counts:
     {"id", "group", "verdict": "a" | "b" | "both" | "neither" | "", "note",
      "shown": {"left": "a" | "b", "right": ...}, "author", "time"}
+
+Groups. Items with the same "group" form a group; the page lists one example
+per group (the first member marked "example", or the first member) and the
+other members under it. A verdict on the example holds for every member that
+has no verdict of its own. An item can be taken out of its group or put into
+another one; each such change is appended to FILE.groups.jsonl
+    {"id", "from": the input's group, "to": group or null, "author", "time"}
+and FILE.resolved.jsonl is rewritten after every change with one line per item:
+    {"id", "group": as it is now, "verdict", "from": "own" | "group" | "", "example"}
 
 With --grammar, rule, type and entry names can be looked up, and the
 grammar's notes on them are shown. No parser is loaded.
@@ -132,6 +142,9 @@ class Review:
         self.author = author or getpass.getuser()
         self.lock = threading.Lock()
         self.items, self.verdicts = [], {}
+        base = re.sub(r'\.jsonl?$', '', path)
+        self.groups_file, self.resolved = base + '.groups.jsonl', base + '.resolved.jsonl'
+        self.moves, self.labels = {}, {}        # item id -> the group it was put in (None: none); group -> label
         self.notes = re.sub(r'\.jsonl?$', '', path) + '.explanations.json'     # {id: {difference, a, b}}
         self.explained = {}
         if os.path.exists(self.notes):
@@ -143,12 +156,24 @@ class Review:
                     rec = json.loads(line)
                     flip = not labeled and hashlib.sha1(str(rec['id']).encode()).digest()[0] % 2 == 1
                     self.items.append({'id': str(rec['id']), 'sentence': rec.get('sentence', ''),
-                                       'group': rec.get('group'), 'group_label': rec.get('group_label', ''),
+                                       'group': rec.get('group'), 'example': bool(rec.get('example')),
                                        'group_size': rec.get('group_size'),
                                        'left': 'b' if flip else 'a', 'right': 'a' if flip else 'b',
                                        'a': side_json(rec.get('a'), rec.get('sentence', '')),
                                        'b': side_json(rec.get('b'), rec.get('sentence', ''))})
+                    if rec.get('group') is not None:
+                        self.labels.setdefault(rec['group'], rec.get('group_label') or str(rec['group']))
         self.by_id = {it['id']: it for it in self.items}
+        if os.path.exists(self.groups_file):
+            with open(self.groups_file, encoding='utf-8') as f:
+                for line in f:
+                    if line.strip():
+                        m = json.loads(line)
+                        if m['id'] in self.by_id:
+                            if m['to'] == self.by_id[m['id']]['group']:
+                                self.moves.pop(m['id'], None)
+                            else:
+                                self.moves[m['id']] = m['to']
         if os.path.exists(self.out):
             with open(self.out, encoding='utf-8') as f:
                 for line in f:
@@ -156,25 +181,74 @@ class Review:
                         v = json.loads(line)
                         self.verdicts[v['id']] = v
 
+    def _group(self, it):
+        """The group the item is in now: its own, or where the reviewer put it (None: in no group)."""
+        return self.moves[it['id']] if it['id'] in self.moves else it['group']
+
+    def entry(self, it):
+        """One item as the page needs it. Labels are held back while the item is blind and has no verdict."""
+        v = self.verdicts.get(it['id'], {})
+        hide = not self.labeled and not v.get('verdict')
+        sides = {}
+        for where in ('left', 'right'):
+            s = dict(it[it[where]])
+            s['label'] = '' if hide else s['label']
+            s['is'] = None if hide else it[where]
+            sides[where] = s
+        return dict(self._status(it), sentence=it['sentence'], group0=it['group'], example=it['example'],
+                    group_size=it['group_size'], left=sides['left'], right=sides['right'], explanation=self._shown(it))
+
+    def _status(self, it):
+        v = self.verdicts.get(it['id'], {})
+        return {'id': it['id'], 'group': self._group(it), 'moved': it['id'] in self.moves,
+                'verdict': {'a': it['left'] == 'a' and 'left' or 'right', 'b': it['left'] == 'b' and 'left' or 'right'}
+                .get(v.get('verdict'), v.get('verdict', '')), 'note': v.get('note', '')}
+
     def listing(self):
-        """Every item as the page needs it. Labels are held back while an item is blind and has no verdict."""
-        out = []
+        return [self.entry(it) for it in self.items]
+
+    def changed(self, ident):
+        """What the page needs after a change: the changed item in full, and the status of every item."""
+        return {'item': self.entry(self.by_id[ident]), 'status': [self._status(it) for it in self.items]}
+
+    def move(self, ident, to):
+        """Put an item into another group, into none (to=None), or back (to='')."""
+        with self.lock:
+            it = self.by_id[ident]
+            if to == '' or to == it['group']:
+                self.moves.pop(ident, None)
+            elif to is None or to in self.labels:
+                self.moves[ident] = to
+            else:
+                raise ValueError(f'no such group: {to}')
+            rec = {'id': ident, 'from': it['group'], 'to': self._group(it), 'author': self.author,
+                   'time': time.strftime('%Y-%m-%dT%H:%M:%S')}
+            with open(self.groups_file, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(rec, ensure_ascii=False) + '\n')
+                f.flush()
+                os.fsync(f.fileno())
+            self._resolve()
+
+    def _resolve(self):
+        """Write, for every item, its group as it is now and the verdict that
+        holds for it: its own, or else that of its group's example (the first
+        member marked as example, or the first member)."""
+        members = {}
         for it in self.items:
-            v = self.verdicts.get(it['id'], {})
-            hide = not self.labeled and not v.get('verdict')
-            sides = {}
-            for where in ('left', 'right'):
-                s = dict(it[it[where]])
-                s['label'] = '' if hide else s['label']
-                s['is'] = None if hide else it[where]
-                sides[where] = s
-            out.append({'id': it['id'], 'sentence': it['sentence'], 'group': it['group'],
-                        'group_label': it['group_label'], 'group_size': it['group_size'],
-                        'left': sides['left'], 'right': sides['right'],
-                        'verdict': {'a': it['left'] == 'a' and 'left' or 'right', 'b': it['left'] == 'b' and 'left' or 'right'}
-                        .get(v.get('verdict'), v.get('verdict', '')), 'note': v.get('note', ''),
-                        'explanation': self._shown(it)})
-        return out
+            g = self._group(it)
+            if g is not None:
+                members.setdefault(g, []).append(it)
+        rep = {g: next((m for m in ms if m['example']), ms[0]) for g, ms in members.items()}
+        tmp = self.resolved + '.tmp'
+        with open(tmp, 'w', encoding='utf-8') as f:
+            for it in self.items:
+                g = self._group(it)
+                own = self.verdicts.get(it['id'], {}).get('verdict', '')
+                via = self.verdicts.get(rep[g]['id'], {}).get('verdict', '') if g is not None and not own else ''
+                f.write(json.dumps({'id': it['id'], 'group': g, 'verdict': own or via,
+                                    'from': 'own' if own else 'group' if via else '',
+                                    'example': g is not None and rep[g] is it}, ensure_ascii=False) + '\n')
+        os.replace(tmp, self.resolved)
 
     def judge(self, ident, verdict, note):
         """verdict: left, right, both, neither or ''."""
@@ -191,6 +265,7 @@ class Review:
                 f.flush()
                 os.fsync(f.fileno())
             self.verdicts[ident] = rec
+            self._resolve()
 
     def _shown(self, it):
         e = self.explained.get(it['id'])
@@ -246,7 +321,7 @@ def make_handler(review, docs, lookup, explainer):
                     self._send(200, f.read(), 'text/html')
             elif path == '/api/review':
                 self._send(200, {'file': os.path.basename(review.path), 'labeled': review.labeled,
-                                 'explainer': explainer, 'items': review.listing()})
+                                 'explainer': explainer, 'groups': review.labels, 'items': review.listing()})
             elif path == '/api/docs':
                 self._send(200, docs)
             elif path == '/api/lookup':
@@ -262,7 +337,10 @@ def make_handler(review, docs, lookup, explainer):
                 body = json.loads(self.rfile.read(int(self.headers.get('Content-Length', 0))) or b'{}')
                 if self.path == '/api/verdict':
                     review.judge(str(body['id']), body.get('verdict', ''), body.get('note', ''))
-                    self._send(200, {'items': review.listing()})
+                    self._send(200, review.changed(str(body['id'])))
+                elif self.path == '/api/move':
+                    review.move(str(body['id']), body.get('to'))
+                    self._send(200, review.changed(str(body['id'])))
                 elif self.path == '/api/explain':
                     self._send(200, review.explain_item(str(body['id'])))
                 else:

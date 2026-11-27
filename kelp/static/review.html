@@ -177,6 +177,14 @@ body { grid-template-columns: 300px minmax(0, 1fr); }
 .side { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
 .side.won { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
 .side h4 { margin: 0 0 6px; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+.item.member { padding-left: 26px; background: var(--bg); }
+.item.member.current { background: var(--accent-soft); }
+.badge.via { color: var(--muted); border: 1px dashed var(--line); }
+#grouptools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; color: var(--muted); }
+#grouptools select { font: inherit; max-width: 340px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 2px 4px; }
+.shape { overflow-x: auto; margin-bottom: 4px; }
+svg .mini-dot.diff { fill: var(--chg); }
+svg .mini-edge.diff { stroke: var(--chg); stroke-width: 1.6; }
 .tick { font-size: 15px; padding: 2px 12px; border-radius: 16px; }
 .tick.on { background: var(--accent); color: var(--panel); border-color: var(--accent); }
 #diffbox { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 15px; }
@@ -203,6 +211,7 @@ svg .node.diff .box { fill: var(--chg-soft); stroke: var(--chg); stroke-width: 1
   <div id="top">
     <div id="sentence"></div>
     <div id="group"></div>
+    <div id="grouptools"></div>
   </div>
   <div id="treewrap">
     <div id="guide"></div>
@@ -215,7 +224,7 @@ svg .node.diff .box { fill: var(--chg-soft); stroke: var(--chg); stroke-width: 1
 </section>
 <footer id="keys">
   <span><kbd>1</kbd> <kbd>2</kbd> check or uncheck the left, right analysis (both can be checked)</span><span><kbd>x</kbd> neither is right</span>
-  <span><kbd>0</kbd> clear</span><span><kbd>t</kbd> unfold or fold the parts both trees share</span><span><kbd>Enter</kbd> next without a verdict</span><span><kbd>n</kbd><kbd>p</kbd> next, previous</span>
+  <span><kbd>0</kbd> clear</span><span><kbd>t</kbd> unfold or fold the parts both trees share</span><span><kbd>Enter</kbd> next without a verdict</span><span><kbd>n</kbd><kbd>p</kbd> next, previous</span><span><kbd>o</kbd> take out of its group</span>
   <span><kbd>w</kbd> whole graphs</span><span><kbd>e</kbd> explain the difference</span><span><kbd>l</kbd> look up in the grammar</span>
 </footer>
 <aside id="lookup">
@@ -228,6 +237,7 @@ svg .node.diff .box { fill: var(--chg-soft); stroke: var(--chg); stroke-width: 1
 'use strict';
 const $ = id => document.getElementById(id);
 let items = [], cur = 0, docs = {}, whole = false, explainer = null, labeled = false, asking = false, busy = false;
+let groupLabels = {}, rows = [];
 let fold = {}, unfolded = false;      // per item and side: nodes folded or unfolded by hand; everything unfolded
 function el(tag, attrs, ...kids) {
   const e = document.createElement(tag);
@@ -423,26 +433,97 @@ function badge(it) {
   const text = it.verdict === 'left' || it.verdict === 'right' ? (it[it.verdict].label || NAME[it.verdict]) : NAME[it.verdict];
   return el('span', {class: 'badge ' + (it.verdict === 'neither' ? 'rejected' : 'accepted')}, text);
 }
-function renderList() {
-  const list = $('itemlist'); list.replaceChildren();
+function groupsNow() {              // the groups as they are now, in the order of the file; an item in no group stands alone
+  const m = new Map();
   items.forEach((it, i) => {
-    const row = el('div', {class: 'item' + (i === cur ? ' current' : '')}, el('span', {class: 'text'}, it.sentence), badge(it),
-      el('span', {class: 'grp'}, (it.group_label || it.group || it.id) + (it.group_size ? ' · ' + it.group_size + (it.group_size === 1 ? ' item' : ' items') : '')));
-    row.onclick = () => go(i);
-    list.append(row);
-    if (i === cur) row.scrollIntoView({block: 'nearest'});
+    it.i = i;
+    const k = it.group === null || it.group === undefined ? '\u0000' + it.id : 'g' + it.group;
+    if (!m.has(k)) m.set(k, []);
+    m.get(k).push(it);
   });
-  const done = items.filter(it => it.verdict).length;
-  $('profile').textContent = done + ' of ' + items.length + ' with a verdict';
+  for (const ms of m.values()) { const rep = ms.find(x => x.example) || ms[0]; for (const x of ms) { x.rep = rep; x.members = ms; } }
+  return m;
+}
+const labelOf = it => it.group === null || it.group === undefined ? '' : (groupLabels[it.group] || String(it.group));
+function sizeText(it) {             // the input's own count where this file holds only part of the group
+  const n = it.members.length > 1 || it.moved ? it.members.length : (it.group_size || 1);
+  return n + (n === 1 ? ' item' : ' items');
+}
+function renderList() {
+  const list = $('itemlist'); list.replaceChildren(); rows = [];
+  const here = items[cur];
+  for (const ms of groupsNow().values()) {
+    const rep = ms[0].rep, open = here && ms.includes(here) && ms.length > 1;
+    for (const it of open ? [rep].concat(ms.filter(x => x !== rep)) : [rep]) {
+      const member = it !== rep;
+      const b = it.verdict || !it.rep.verdict || !member ? badge(it) : el('span', {class: 'badge via', title: 'the verdict on the group\u2019s example holds for this item'}, 'as group');
+      const row = el('div', {class: 'item' + (member ? ' member' : '') + (it === here ? ' current' : '')}, el('span', {class: 'text'}, it.sentence), b,
+        el('span', {class: 'grp'}, member ? it.id : (labelOf(it) || 'in no group' + (it.group0 !== null && it.group0 !== undefined ? ', taken out of: ' + (groupLabels[it.group0] || it.group0) : '')) +
+          (labelOf(it) ? ' · ' + sizeText(it) : '')));
+      row.onclick = () => go(it.i);
+      list.append(row); rows.push(it.i);
+      if (it === here) row.scrollIntoView({block: 'nearest'});
+    }
+  }
+  const reps = [...new Set(items.map(it => it.rep))];
+  $('profile').textContent = reps.filter(it => it.verdict).length + ' of ' + reps.length + ' groups with a verdict · ' + items.length + ' items';
+}
+function renderGroup(it) {
+  const grp = $('group'); grp.replaceChildren(el('span', {}, it.id));
+  const tools = $('grouptools'); tools.replaceChildren();
+  const label = labelOf(it), others = it.members.length - 1;
+  if (label) grp.append(' · group: ', el('b', {}, label), ' · ' + sizeText(it));
+  else grp.append(' · in no group');
+  if (label && it === it.rep && (others || it.group_size > 1)) grp.append(' · the example of its group: your verdict here holds for the group');
+  if (label && it !== it.rep) grp.append(' · follows the verdict on the group\u2019s example unless you check one here');
+  if (it.moved) grp.append(' · moved by you');
+  if (!Object.keys(groupLabels).length) return;
+  if (label) { const out = el('button', {}, 'Take out of this group ', el('kbd', {}, 'o')); out.onclick = () => move(null); tools.append(out); }
+  const pick = el('select', {}, el('option', {value: ''}, 'Move to another group …'));
+  for (const g of Object.keys(groupLabels).sort((a, b) => groupLabels[a].localeCompare(groupLabels[b])))
+    if (String(g) !== String(it.group)) pick.append(el('option', {value: g}, groupLabels[g]));
+  pick.onchange = () => { if (pick.value !== '') move(pick.value); };
+  tools.append(pick);
+  if (it.moved && it.group0 !== null && it.group0 !== undefined) { const back = el('button', {}, 'Put back into: ' + (groupLabels[it.group0] || it.group0)); back.onclick = () => move(''); tools.append(back); }
+}
+function apply(data) {              // the server's answer after a change
+  const at = items.findIndex(x => x.id === data.item.id);
+  if (at >= 0) items[at] = data.item;
+  const by = new Map(data.status.map(s => [s.id, s]));
+  for (const it of items) Object.assign(it, by.get(it.id) || {});
+}
+async function move(to) {
+  if (busy) return;
+  busy = true;
+  try {
+    const r = await fetch('/api/move', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id: items[cur].id, to})});
+    const data = await r.json();
+    if (!r.ok) showError(data.error || 'not saved'); else apply(data);
+  } catch (e) { showError('not saved: ' + e.message); }
+  busy = false; render();
+}
+/* ---- the whole tree, small ---- */
+function miniTree(side) {           // call after drawTree, which marks the nodes the other tree lacks
+  const MG = 7, all = flat(side.tree, []);
+  const measure = n => { n.mw0 = n.children.length ? -MG : 9; for (const c of n.children) { measure(c); n.mw0 += c.mw + MG; } n.mw = Math.max(n.mw0, 9); };
+  const place = (n, x, d) => { n.my = 8 + d * 13; let cx = x + (n.mw - n.mw0) / 2; for (const c of n.children) { place(c, cx, d + 1); cx += c.mw + MG; }
+    n.mx = n.children.length ? (n.children[0].mx + n.children[n.children.length - 1].mx) / 2 : x + n.mw / 2; };
+  measure(side.tree); place(side.tree, 4, 0);
+  const g = svg('svg', {width: side.tree.mw + 8, height: Math.max(...all.map(n => n.my)) + 10});
+  for (const n of all) for (const c of n.children) g.append(svg('line', {class: 'mini-edge' + (c.diff ? ' diff' : ''), x1: n.mx, y1: n.my, x2: c.mx, y2: c.my}));
+  for (const n of all) {
+    const dot = svg('circle', {class: 'mini-dot' + (n.diff ? ' diff' : ''), cx: n.mx, cy: n.my, r: n.diff ? 3.2 : 1.8});
+    dot.append(svg('title', {}, n.labels.join(' › ') + ': ' + side.words.slice(n.start, n.end).join(' ')));
+    g.append(dot);
+  }
+  return g;
 }
 function render() {
   const it = items[cur];
   renderList();
   if (!it) { $('guide').textContent = 'This file has no items.'; return; }
   $('sentence').textContent = it.sentence;
-  const grp = $('group'); grp.replaceChildren(el('span', {}, it.id));
-  if (it.group_label || it.group) grp.append(' · group: ', el('b', {}, it.group_label || it.group));
-  if (it.group_size > 1) grp.append(' · your verdict stands for the ' + it.group_size + ' items of this group');
+  renderGroup(it);
   const varying = prepare(it);
   $('guide').replaceChildren('Which analysis is right? ', el('span', {class: 'orange'}, 'Orange'), ' marks what the other side lacks, in the meaning and in the tree. ' +
     (labeled ? '' : 'Which side is which is hidden until you give a verdict. '));
@@ -480,7 +561,12 @@ function render() {
       return el('div', {}, el('span', {class: 'w'}, s.words.slice(l.start, l.end).join(' ')), ': ', el('span', {class: 't'}, link(String(l.entry).toLowerCase(), l.entry)),
         ty !== l.entry ? el('span', {class: 't'}, ' — ', link(String(ty).toLowerCase(), ty)) : '', d.doc ? ' — ' + plain(d.doc) : '');
     })));
-    if (s.tree) box.append(el('div', {class: 'part'}, 'Tree'), el('div', {class: 'scroll'}, drawTree(s, o, fold[it.id + w] = fold[it.id + w] || {})));
+    if (s.tree) {
+      const full = drawTree(s, o, fold[it.id + w] = fold[it.id + w] || {});
+      box.append(el('div', {class: 'part'}, 'Tree'),
+        el('div', {class: 'where'}, 'Its whole shape, then in full' + (unfolded ? '.' : ', with the parts both trees share folded (▸ unfolds one, t all).')),
+        el('div', {class: 'shape'}, miniTree(s)), el('div', {class: 'scroll'}, full));
+    }
     sides.append(box);
     const first = box.querySelector('.node.diff'), pane = first && first.closest('.scroll');    // bring the first difference into view
     if (first) pane.scrollLeft = Math.max(0, first.getBBox().x - pane.clientWidth / 3);
@@ -499,7 +585,7 @@ function check(w) {                 // toggle one side's check mark; both checke
   judge(on[w] && on[o] ? 'both' : on[w] ? w : on[o] ? o : '');
 }
 function toggleTrees() { unfolded = !unfolded; fold = {}; render(); }
-function go(i) { if (i >= 0 && i < items.length) { cur = i; location.hash = encodeURIComponent(items[i].id); render(); $('treewrap').scrollTop = 0; } }
+function go(i) { if (i !== undefined && i >= 0 && i < items.length) { cur = i; location.hash = encodeURIComponent(items[i].id); render(); $('treewrap').scrollTop = 0; } }
 async function judge(verdict, note) {
   if (busy) return;
   busy = true;
@@ -508,7 +594,7 @@ async function judge(verdict, note) {
     const r = await fetch('/api/verdict', {method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({id: it.id, verdict: verdict === undefined ? it.verdict : verdict, note: note === undefined ? $('note').value : note})});
     const data = await r.json();
-    if (!r.ok) showError(data.error || 'not saved'); else items = data.items;
+    if (!r.ok) showError(data.error || 'not saved'); else apply(data);
   } catch (e) { showError('not saved: ' + e.message); }
   busy = false; render();
 }
@@ -534,9 +620,10 @@ document.addEventListener('keydown', ev => {
   else if (k === 'x') judge(items[cur].verdict === 'neither' ? '' : 'neither');
   else if (k === 't') toggleTrees();
   else if (k === '0') judge('');
-  else if (k === 'n' || k === 'ArrowDown') go(cur + 1);
-  else if (k === 'p' || k === 'ArrowUp') go(cur - 1);
-  else if (k === 'Enter') { const i = items.findIndex((it, j) => j > cur && !it.verdict); go(i >= 0 ? i : items.findIndex(it => !it.verdict)); }
+  else if (k === 'n' || k === 'ArrowDown') go(rows[rows.indexOf(cur) + 1]);
+  else if (k === 'p' || k === 'ArrowUp') go(rows[rows.indexOf(cur) - 1]);
+  else if (k === 'Enter') { const todo = it => it === it.rep && !it.verdict, i = items.findIndex((it, j) => j > cur && todo(it)); go(i >= 0 ? i : items.findIndex(todo)); }
+  else if (k === 'o') { if (labelOf(items[cur])) move(null); }
   else if (k === 'w') { whole = !whole; render(); }
   else if (k === 'e') explain();
   else if (k === 'l') { $('lookup').classList.add('on'); $('lookupq').focus(); }
@@ -545,11 +632,12 @@ document.addEventListener('keydown', ev => {
 });
 (async () => {
   const data = await (await fetch('/api/review')).json();
-  items = data.items; explainer = data.explainer; labeled = data.labeled;
+  items = data.items; explainer = data.explainer; labeled = data.labeled; groupLabels = data.groups || {};
   try { docs = await (await fetch('/api/docs')).json(); } catch (e) { docs = {}; }
   const want = decodeURIComponent(location.hash.slice(1));
   cur = Math.max(0, items.findIndex(it => it.id === want));
-  if (!want) { const i = items.findIndex(it => !it.verdict); if (i > 0) cur = i; }
+  groupsNow();
+  if (!want) { const i = items.findIndex(it => it === it.rep && !it.verdict); if (i > 0) cur = i; }
   render();
 })();
 </script>
