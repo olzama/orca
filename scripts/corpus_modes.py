@@ -239,8 +239,11 @@ def cmd_judgeitems(a):
         return runs[sys_][sid]['mrs']
     rng = random.Random(23)
     cand = []
+    only = set(json.load(open(a.ids))) if a.ids else None
     for x in s:
         sid = x['id']
+        if only is not None and sid not in only:
+            continue
         m1, m2 = mrs_of(first, sid), mrs_of(second, sid)
         if not m1 or not m2:
             continue
@@ -252,14 +255,14 @@ def cmd_judgeitems(a):
         if o or b:
             cand.append((sid, o, b))
     rng.shuffle(cand)
-    d = os.path.join(a.out, f'judge-{a.pair}')
+    d = os.path.join(a.out, f'judge-{a.pair}{a.suffix}')
     os.makedirs(d, exist_ok=True)
     with open(os.path.join(d, 'items.jsonl'), 'w') as f:
         for sid, o, b in cand[:a.max]:
             first_a = rng.random() < 0.5
             f.write(json.dumps({'id': sid, 'sentence': texts[sid][0], 'A': o if first_a else b, 'B': b if first_a else o,
                                 'orca': 'A' if first_a else 'B'}, ensure_ascii=False) + '\n')
-    json.dump({'pair': a.pair, 'orca side': first, 'reference side': second, 'disagreements': len(cand), 'judged': min(a.max, len(cand))},
+    json.dump({'pair': a.pair, 'only ids': a.ids, 'orca side': first, 'reference side': second, 'disagreements': len(cand), 'judged': min(a.max, len(cand))},
               open(os.path.join(d, 'prepare.json'), 'w'), indent=1)
     print(a.pair, 'disagreements', len(cand), 'to judge', min(a.max, len(cand)))
 
@@ -275,6 +278,7 @@ def main():
     ap.add_argument('--workers', type=int, default=3)
     ap.add_argument('--pair', default='chart-replay')
     ap.add_argument('--max', type=int, default=150)
+    ap.add_argument('--ids', help='judgeitems: only these sentence ids (a JSON list)')
     ap.add_argument('--tagger', help='run: another tagger directory (default: the headline tagger)')
     ap.add_argument('--suffix', default='', help='run/score: suffix of run-<mode><suffix>.json (another tagger)')
     a = ap.parse_args()

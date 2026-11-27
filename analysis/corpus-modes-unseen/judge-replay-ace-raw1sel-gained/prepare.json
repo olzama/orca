@@ -1,0 +1,8 @@
+{
+ "pair": "replay-ace",
+ "only ids": "analysis/corpus-modes-unseen/raw1sel-gained-ids.json",
+ "orca side": "replay",
+ "reference side": "ace",
+ "disagreements": 162,
+ "judged": 162
+}
