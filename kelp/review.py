@@ -55,7 +55,9 @@ def _surface(terminals, sentence):
 
 def tree_json(text, sentence=''):
     """A derivation string as (root condition, tree, words). Unary chains are
-    one node, as in Kelp's trees; spans count the lexical entries."""
+    one node, as in Kelp's trees. Spans count the words between spaces, so that
+    two trees of one sentence have comparable spans even where one of them has
+    a lexical entry of several words."""
     d = derivation.from_string(text)
     term = lambda n: [t for t in n.daughters if isinstance(t, derivation.UDFTerminal)]
     root = None
@@ -69,7 +71,7 @@ def tree_json(text, sentence=''):
             labels.append(n.entity)
             n = n.daughters[0]
         if term(n):
-            words.append(_surface(term(n), sentence))
+            words.extend(_surface(term(n), sentence).split() or ['?'])
             labels.append(n.type or n.entity)
             return {'labels': labels, 'entry': n.entity, 'start': start, 'end': len(words), 'children': []}
         labels.append(n.entity)
