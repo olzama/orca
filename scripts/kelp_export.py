@@ -71,6 +71,7 @@ def main():
     ap.add_argument('--groups', default=os.path.join(ORCA, 'analysis/review-groups/dev/groups.json'))
     ap.add_argument('--out', default=os.path.join(ORCA, 'analysis/review-groups/dev/kelp-review.jsonl'))
     ap.add_argument('--min-size', type=int, default=1)
+    ap.add_argument('--all', action='store_true', help='every member of every group, its example first (Kelp checks the groups)')
     a = ap.parse_args()
     from orca_parse import Parser
     from compare_mrs import normalized
@@ -85,20 +86,21 @@ def main():
         for k, g in enumerate(G['groups']):
             if g['size'] < a.min_size:
                 continue
-            sid = g['example']
-            x = gd[sid]
-            r = p.parse(x['sentence'], sid)
-            m = r.get('_mrs_obj')
-            saved = run[sid].get('mrs')
-            same = m is not None and saved and M.is_isomorphic(normalized(m), normalized(simplemrs.decode(saved)), properties=True)
-            if not same:
-                dropped.append(sid)
-                continue
-            f.write(json.dumps({'id': sid, 'sentence': x['sentence'], 'group': f'g{k:03d}', 'group_label': LABELS.get(g['key'][0], str)(g['key']),
-                                'group_size': g['size'],
-                                'a': {'label': 'gold', 'derivation': x['derivation'], 'mrs': x['mrs']},
-                                'b': {'label': 'orca', 'derivation': udf(r['derivation']), 'mrs': r['mrs']}}, ensure_ascii=False) + '\n')
-            kept += 1
+            members = [g['example']] + ([i for i in g['items'] if i != g['example']] if a.all else [])
+            for sid in members:
+              x = gd[sid]
+              r = p.parse(x['sentence'], sid)
+              m = r.get('_mrs_obj')
+              saved = run[sid].get('mrs')
+              same = m is not None and saved and M.is_isomorphic(normalized(m), normalized(simplemrs.decode(saved)), properties=True)
+              if not same:
+                  dropped.append(sid)
+                  continue
+              f.write(json.dumps({'id': sid, 'sentence': x['sentence'], 'group': f'g{k:03d}', 'group_label': LABELS.get(g['key'][0], str)(g['key']),
+                                  'group_size': g['size'], 'example': sid == g['example'],
+                                  'a': {'label': 'gold', 'derivation': x['derivation'], 'mrs': x['mrs']},
+                                  'b': {'label': 'orca', 'derivation': udf(r['derivation']), 'mrs': r['mrs']}}, ensure_ascii=False) + '\n')
+              kept += 1
     print('written', kept, 'dropped (parse differs from the saved run)', len(dropped), dropped[:5])
 
 
