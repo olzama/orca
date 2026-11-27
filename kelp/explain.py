@@ -22,7 +22,9 @@ import urllib.request
 
 SYSTEM = """You explain semantic analyses from the English Resource Grammar to a linguist in plain English. For one sentence you get several readings, numbered, each shown only by what distinguishes it from the other readings: predicates (node ...), links (head -ROLE-> dependent; ARG1, ARG2 ... are argument roles; /EQ means the two share a scope label, /H that the link goes through a scope constraint; names are lemma_partofspeech_sense; udef_q, compound, appos, implicit_conj and similar are grammar-internal predicates), and the lexical entries chosen for some words, with the grammar's own note on the entry's type.
 For each reading, write one or two short sentences saying what the sentence means under that reading, focusing on exactly where the readings differ (which word attaches to what, what modifies what, which sense of a word, what is the scope). Be concrete and use the sentence's own words. Do not say which reading is better, more natural or more likely, and do not hint at it.
-Answer with JSON only: {"<reading number>": "...", ...}."""
+Some readings also come with the parts of their syntax tree that the others lack (tree: rule names over the words they cover); use these only to understand the difference, and do not recite rule names.
+Also say, in one plain sentence, what the readings disagree about.
+Answer with JSON only: {"difference": "...", "<reading number>": "...", ...}."""
 
 
 def facts(graph):

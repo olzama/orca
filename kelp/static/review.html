@@ -177,6 +177,13 @@ body { grid-template-columns: 300px minmax(0, 1fr); }
 .side { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
 .side.won { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
 .side h4 { margin: 0 0 6px; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+.tick { font-size: 15px; padding: 2px 12px; border-radius: 16px; }
+.tick.on { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+#diffbox { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 15px; }
+#diffbox small { color: var(--muted); display: block; font-size: 12px; }
+svg .fold { cursor: pointer; fill: var(--muted); font: 12px system-ui, sans-serif; }
+svg .node.folded .box { stroke-dasharray: 2 3; }
+svg .foldwords { font: 13px system-ui, sans-serif; fill: var(--muted); }
 .side h4 .n { font: 600 13px var(--mono); background: var(--accent-soft); color: var(--accent); border-radius: 5px; padding: 1px 8px; }
 .side h4 .lab { color: var(--muted); font-weight: 400; }
 .side .scroll { overflow-x: auto; }
@@ -199,6 +206,7 @@ svg .node.diff .box { fill: var(--chg-soft); stroke: var(--chg); stroke-width: 1
   </div>
   <div id="treewrap">
     <div id="guide"></div>
+    <div id="diffbox"></div>
     <div id="readbar"><span id="readbtns"></span></div>
     <div id="sides"></div>
     <div id="verdict"></div>
@@ -206,9 +214,9 @@ svg .node.diff .box { fill: var(--chg-soft); stroke: var(--chg); stroke-width: 1
   </div>
 </section>
 <footer id="keys">
-  <span><kbd>1</kbd> left is right</span><span><kbd>2</kbd> right is right</span><span><kbd>b</kbd> both</span><span><kbd>x</kbd> neither</span>
-  <span><kbd>0</kbd> clear</span><span><kbd>Enter</kbd> next without a verdict</span><span><kbd>n</kbd><kbd>p</kbd> next, previous</span>
-  <span><kbd>w</kbd> whole graphs</span><span><kbd>e</kbd> explain in plain English</span><span><kbd>l</kbd> look up in the grammar</span>
+  <span><kbd>1</kbd> <kbd>2</kbd> check or uncheck the left, right analysis (both can be checked)</span><span><kbd>x</kbd> neither is right</span>
+  <span><kbd>0</kbd> clear</span><span><kbd>t</kbd> unfold or fold the parts both trees share</span><span><kbd>Enter</kbd> next without a verdict</span><span><kbd>n</kbd><kbd>p</kbd> next, previous</span>
+  <span><kbd>w</kbd> whole graphs</span><span><kbd>e</kbd> explain the difference</span><span><kbd>l</kbd> look up in the grammar</span>
 </footer>
 <aside id="lookup">
   <header><input id="lookupq" placeholder="rule, type, lexical entry or predicate" spellcheck="false">
@@ -219,7 +227,8 @@ svg .node.diff .box { fill: var(--chg-soft); stroke: var(--chg); stroke-width: 1
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
-let items = [], cur = 0, docs = {}, whole = false, explainer = null, labeled = false, expl = {}, asking = false, busy = false;
+let items = [], cur = 0, docs = {}, whole = false, explainer = null, labeled = false, asking = false, busy = false;
+let fold = {}, unfolded = false;      // per item and side: nodes folded or unfolded by hand; everything unfolded
 function el(tag, attrs, ...kids) {
   const e = document.createElement(tag);
   for (const k in attrs || {}) { if (k === 'class') e.className = attrs[k]; else e.setAttribute(k, attrs[k]); }
@@ -346,41 +355,57 @@ const keyOf = n => n.start + ' ' + n.end + ' ' + n.labels.join('>') + ' ' + (n.e
 const CH = 7.3, LH = 15, PADX = 8, PADY = 5, GAPX = 14, GAPY = 26;
 function measure(n, words) {
   n.lines = n.entry && n.entry !== n.labels[n.labels.length - 1] ? n.labels.concat([n.entry]) : n.labels;
-  n.bw = Math.max(...n.lines.map(l => l.length)) * CH + 2 * PADX;
+  n.bw = Math.max(...n.lines.map(l => l.length)) * CH + 2 * PADX + (n.children.length ? 14 : 0);
   n.bh = n.lines.length * LH + 2 * PADY;
-  n.word = n.children.length ? null : words.slice(n.start, n.end).join(' ');
-  let inner = n.children.length ? -GAPX : n.word.length * 8;
-  for (const c of n.children) { measure(c, words); inner += c.w + GAPX; }
+  n.word = n.kids.length ? null : words.slice(n.start, n.end).join(' ');
+  if (n.word && n.children.length && n.word.length > 34) n.word = n.word.slice(0, 16) + ' … ' + n.word.slice(-14);
+  let inner = n.kids.length ? -GAPX : n.word.length * 8;
+  for (const c of n.kids) { measure(c, words); inner += c.w + GAPX; }
   n.inner = inner; n.w = Math.max(n.bw, inner);
 }
 function place(n, x, y) {
   n.y = y;
   let cx = x + (n.w - n.inner) / 2;
-  for (const c of n.children) { place(c, cx, y + n.bh + GAPY); cx += c.w + GAPX; }
-  n.x = n.children.length ? (n.children[0].x + n.children[n.children.length - 1].x) / 2 : x + n.w / 2;
+  for (const c of n.kids) { place(c, cx, y + n.bh + GAPY); cx += c.w + GAPX; }
+  n.x = n.kids.length ? (n.kids[0].x + n.kids[n.kids.length - 1].x) / 2 : x + n.w / 2;
 }
-function drawTree(side, other) {
-  const theirs = new Set(other.tree ? flat(other.tree, []).map(keyOf) : []);
-  const root = side.tree, all = flat(root, []);
+function shownNodes(n, out) { out.push(n); for (const c of n.kids) shownNodes(c, out); return out; }
+function drawTree(side, other, mine) {      // mine: the folding done by hand in this tree, {node key: folded?}
+  const theirs = other.tree ? new Set(flat(other.tree, []).map(keyOf)) : null;
+  const root = side.tree;
+  const mark = n => { n.diff = !!theirs && !theirs.has(keyOf(n)); n.has = n.diff; for (const c of n.children) { mark(c); n.has = n.has || c.has; } };
+  mark(root);
+  for (const n of flat(root, [])) {          // a part that both trees share is folded, unless the trees do not differ at all
+    const k = keyOf(n), auto = !unfolded && root.has && !n.has && n.children.length > 0;
+    n.folded = n.children.length > 0 && (k in mine ? mine[k] : auto);
+    n.kids = n.folded ? [] : n.children;
+  }
+  const all = shownNodes(root, []);
   measure(root, side.words); place(root, 10, 10);
   const wordY = Math.max(...all.map(n => n.y + n.bh)) + 34;
   const g = svg('svg', {width: root.w + 20, height: wordY + 12});
   for (const n of all) {
-    for (const c of n.children) g.append(svg('line', {class: 'edge', x1: n.x, y1: n.y + n.bh, x2: c.x, y2: c.y}));
-    if (!n.children.length) {
+    for (const c of n.kids) g.append(svg('line', {class: 'edge', x1: n.x, y1: n.y + n.bh, x2: c.x, y2: c.y}));
+    if (!n.kids.length) {
       g.append(svg('line', {class: 'edge drop', x1: n.x, y1: n.y + n.bh, x2: n.x, y2: wordY - 16}));
-      g.append(svg('text', {class: 'word-label', x: n.x, y: wordY, 'text-anchor': 'middle'}, n.word));
+      g.append(svg('text', {class: n.folded ? 'foldwords' : 'word-label', x: n.x, y: wordY, 'text-anchor': 'middle'}, n.word));
     }
   }
   for (const n of all) {
-    const grp = svg('g', {class: 'node' + (other.tree && !theirs.has(keyOf(n)) ? ' diff' : '')});
+    const grp = svg('g', {class: 'node' + (n.diff ? ' diff' : '') + (n.folded ? ' folded' : '')});
     grp.append(svg('title', {}, n.labels.map(l => { const d = docs[String(l).toLowerCase()]; return l + (d && d.doc ? ': ' + d.doc : ''); }).join('\n')));
     grp.append(svg('rect', {class: 'box', x: n.x - n.bw / 2, y: n.y, width: n.bw, height: n.bh, rx: 5}));
     n.lines.forEach((l, i) => {
       const t = svg('text', {x: n.x, y: n.y + PADY + 11 + i * LH, 'text-anchor': 'middle', class: i >= n.labels.length ? 'entry' : ''}, l);
-      t.onclick = () => lookUp(String(l).toLowerCase());
+      t.onclick = ev => { ev.stopPropagation(); lookUp(String(l).toLowerCase()); };
       grp.append(t);
     });
+    if (n.children.length) {
+      const toggle = () => { mine[keyOf(n)] = !n.folded; render(); };
+      const f = svg('text', {class: 'fold', x: n.x - n.bw / 2 + 5, y: n.y + PADY + 11}, n.folded ? '▸' : '▾');
+      f.append(svg('title', {}, n.folded ? 'unfold this part' : 'fold this part'));
+      grp.append(f); grp.onclick = toggle;
+    }
     g.append(grp);
   }
   return g;
@@ -421,15 +446,23 @@ function render() {
   const varying = prepare(it);
   $('guide').replaceChildren('Which analysis is right? ', el('span', {class: 'orange'}, 'Orange'), ' marks what the other side lacks, in the meaning and in the tree. ' +
     (labeled ? '' : 'Which side is which is hidden until you give a verdict. '));
+  const e = it.explanation, box0 = $('diffbox');
+  box0.style.display = e && e.difference || explainer && it.left.tree && it.right.tree ? '' : 'none';
+  if (e && e.difference) box0.replaceChildren(el('b', {}, 'The difference: '), e.difference,
+    el('small', {}, 'Suggested by ' + explainer + ' from the differences alone, without knowing which side is which. It can be wrong.'));
+  else { const b = el('button', {}, asking ? 'Asking ' + explainer + ' …' : 'Explain the difference in plain English ', el('kbd', {}, 'e')); b.onclick = explain; box0.replaceChildren(b); }
   const btns = $('readbtns'); btns.replaceChildren();
   const button = (text, key, fn, on) => { const b = el('button', {class: on ? 'on' : ''}, text + ' ', el('kbd', {}, key)); b.onclick = fn; btns.append(b); };
   button(whole ? 'Only the differences' : 'Whole graphs', 'w', () => { whole = !whole; render(); }, whole);
-  if (explainer && it.left.dmrs && it.right.dmrs) button(asking ? 'Asking ' + explainer + ' …' : 'Explain in plain English', 'e', explain, asking);
+  button(unfolded ? 'Fold what both trees share' : 'Unfold the trees', 't', toggleTrees, unfolded);
   const sides = $('sides'); sides.replaceChildren();
   ['left', 'right'].forEach((w, k) => {
     const s = it[w], o = it[w === 'left' ? 'right' : 'left'];
-    const box = el('div', {class: 'side' + (it.verdict === w || it.verdict === 'both' ? ' won' : '')},
-      el('h4', {}, el('span', {class: 'n'}, String(k + 1)), NAME[w], el('span', {class: 'lab'}, s.label ? '— ' + s.label : ''),
+    const won = it.verdict === w || it.verdict === 'both';
+    const tick = el('button', {class: 'tick' + (won ? ' on' : ''), title: 'this analysis is right'}, '✓ ', el('kbd', {}, String(k + 1)));
+    tick.onclick = () => check(w);
+    const box = el('div', {class: 'side' + (won ? ' won' : '')},
+      el('h4', {}, tick, won ? 'right' : '', el('span', {class: 'lab'}, s.label ? '— ' + s.label : ''),
         el('span', {class: 'lab'}, s.root ? '(' + s.root + ')' : '')));
     if (s.error) box.append(el('div', {class: 'empty'}, 'This analysis could not be read: ' + s.error));
     else if (!s.tree && !s.dmrs) box.append(el('div', {class: 'empty'}, 'No analysis.'));
@@ -439,7 +472,6 @@ function render() {
       if (same) box.append(el('div', {class: 'where'}, 'The two meanings are the same' + (whole ? '.' : ' (w draws them).')));
       if (!same || whole) box.append(el('div', {class: 'scroll'}, drawGraph(s.dmrs, varying, whole || !mine)));
       if (!same && !mine && !whole && o.dmrs) box.append(el('div', {class: 'where'}, 'This side has nothing that the other lacks: it lacks what is orange there.'));
-      const e = expl[it.id];
       if (e && e[w]) box.append(el('div', {class: 'expl'}, e[w], el('small', {}, 'Suggested by ' + explainer + ' from the differences alone. It can be wrong; the graph is what counts.')));
     }
     const notes = wordNotes(s, o);
@@ -448,19 +480,25 @@ function render() {
       return el('div', {}, el('span', {class: 'w'}, s.words.slice(l.start, l.end).join(' ')), ': ', el('span', {class: 't'}, link(String(l.entry).toLowerCase(), l.entry)),
         ty !== l.entry ? el('span', {class: 't'}, ' — ', link(String(ty).toLowerCase(), ty)) : '', d.doc ? ' — ' + plain(d.doc) : '');
     })));
-    if (s.tree) box.append(el('div', {class: 'part'}, 'Tree'), el('div', {class: 'scroll'}, drawTree(s, o)));
+    if (s.tree) box.append(el('div', {class: 'part'}, 'Tree'), el('div', {class: 'scroll'}, drawTree(s, o, fold[it.id + w] = fold[it.id + w] || {})));
     sides.append(box);
     const first = box.querySelector('.node.diff'), pane = first && first.closest('.scroll');    // bring the first difference into view
     if (first) pane.scrollLeft = Math.max(0, first.getBBox().x - pane.clientWidth / 3);
   });
   const v = $('verdict'); v.replaceChildren();
-  for (const [what, text, key] of [['left', 'Left is right', '1'], ['right', 'Right is right', '2'], ['both', 'Both are right', 'b'], ['neither', 'Neither', 'x']]) {
-    const b = el('button', {class: it.verdict === what ? 'on' : ''}, text + ' ', el('kbd', {}, key));
-    b.onclick = () => judge(what); v.append(b);
-  }
+  { const b = el('button', {class: it.verdict === 'neither' ? 'on' : ''}, '✗ Neither is right ', el('kbd', {}, 'x'));
+    b.onclick = () => judge(it.verdict === 'neither' ? '' : 'neither'); v.append(b); }
+  v.append(el('span', {class: 'where'}, it.verdict === 'both' ? 'Both are checked: both are right.' : it.verdict ? '' : 'Check the analysis that is right (1 or 2); check both if both are.'));
   if (it.verdict) { const c = el('button', {}, 'Clear ', el('kbd', {}, '0')); c.onclick = () => judge(''); v.append(c); }
   if (document.activeElement !== $('note')) $('note').value = it.note || '';
 }
+function check(w) {                 // toggle one side's check mark; both checked means both are right
+  const v = items[cur].verdict, o = w === 'left' ? 'right' : 'left';
+  const on = {left: v === 'left' || v === 'both', right: v === 'right' || v === 'both'};
+  on[w] = !on[w];
+  judge(on[w] && on[o] ? 'both' : on[w] ? w : on[o] ? o : '');
+}
+function toggleTrees() { unfolded = !unfolded; fold = {}; render(); }
 function go(i) { if (i >= 0 && i < items.length) { cur = i; location.hash = encodeURIComponent(items[i].id); render(); $('treewrap').scrollTop = 0; } }
 async function judge(verdict, note) {
   if (busy) return;
@@ -476,12 +514,12 @@ async function judge(verdict, note) {
 }
 async function explain() {
   const it = items[cur];
-  if (asking || !explainer || !it.left.dmrs || !it.right.dmrs) return;
+  if (asking || !explainer || it.explanation) return;
   asking = true; render();
   try {
     const r = await fetch('/api/explain', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id: it.id})});
     const data = await r.json();
-    if (!r.ok) showError(data.error || 'no explanation'); else expl[it.id] = data;
+    if (!r.ok) showError(data.error || 'no explanation'); else it.explanation = data;
   } catch (e) { showError('no explanation: ' + e.message); }
   asking = false; render();
 }
@@ -491,10 +529,10 @@ document.addEventListener('keydown', ev => {
   if (ev.metaKey || ev.ctrlKey || ev.altKey || !items.length) return;
   const k = ev.key; let used = true;
   if ($('lookup').classList.contains('on') && k === 'Escape') $('lookup').classList.remove('on');
-  else if (k === '1') judge('left');
-  else if (k === '2') judge('right');
-  else if (k === 'b') judge('both');
-  else if (k === 'x') judge('neither');
+  else if (k === '1') check('left');
+  else if (k === '2') check('right');
+  else if (k === 'x') judge(items[cur].verdict === 'neither' ? '' : 'neither');
+  else if (k === 't') toggleTrees();
   else if (k === '0') judge('');
   else if (k === 'n' || k === 'ArrowDown') go(cur + 1);
   else if (k === 'p' || k === 'ArrowUp') go(cur - 1);

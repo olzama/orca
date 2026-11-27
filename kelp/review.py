@@ -2,7 +2,7 @@
 
 Usage:
     python -m kelp.review --input FILE.jsonl [--grammar ERG_DIR/english.tdl] [--labeled]
-                          [--author NAME] [--explain PROVIDER] [--explain-model MODEL]
+                          [--author NAME] [--explain PROVIDER] [--explain-model MODEL] [--explain-ahead]
                           [--port 8768] [--host 127.0.0.1]
 
 Input: one JSON object per line,
@@ -15,6 +15,9 @@ derivation and mrs.
 
 Sides are shown blind unless --labeled is given: which of a and b is on the
 left depends on the item's id, and the labels appear once a verdict is given.
+
+Explanations from the model are kept in FILE.explanations.json, so each item
+is asked about once. With --explain-ahead they are all fetched in the background.
 
 Verdicts are appended to FILE.verdicts.jsonl, one line per decision; the last
 line of an id counts:
@@ -105,13 +108,35 @@ def side_json(side, sentence=''):
     return out
 
 
+def _nodes(tree):
+    out = [tree] if tree else []
+    for c in (tree or {}).get('children', []):
+        out += _nodes(c)
+    return out
+
+
+def _tree_notes(side, other, most=10):
+    """The widest nodes of one side's tree that the other tree lacks, for the model."""
+    key = lambda n: (n['start'], n['end'], tuple(n['labels']), n['entry'])
+    theirs = {key(n) for n in _nodes(other['tree'])}
+    mine = [n for n in _nodes(side['tree']) if key(n) not in theirs]
+    mine.sort(key=lambda n: (n['start'] - n['end'], n['start']))
+    return [f'tree: {" > ".join(str(x) for x in n["labels"])}' + (f' (lexical entry {n["entry"]})' if n['entry'] else '')
+            + f' over "{" ".join(side["words"][n["start"]:n["end"]])}"' for n in mine[:most]]
+
+
 class Review:
     def __init__(self, path, labeled=False, author=None, explain=None):
         self.path, self.labeled, self.explain = path, labeled, explain
         self.out = re.sub(r'\.jsonl?$', '', path) + '.verdicts.jsonl'
         self.author = author or getpass.getuser()
         self.lock = threading.Lock()
-        self.items, self.verdicts, self.explained = [], {}, {}
+        self.items, self.verdicts = [], {}
+        self.notes = re.sub(r'\.jsonl?$', '', path) + '.explanations.json'     # {id: {difference, a, b}}
+        self.explained = {}
+        if os.path.exists(self.notes):
+            with open(self.notes, encoding='utf-8') as f:
+                self.explained = json.load(f)
         with open(path, encoding='utf-8') as f:
             for line in f:
                 if line.strip():
@@ -147,7 +172,8 @@ class Review:
                         'group_label': it['group_label'], 'group_size': it['group_size'],
                         'left': sides['left'], 'right': sides['right'],
                         'verdict': {'a': it['left'] == 'a' and 'left' or 'right', 'b': it['left'] == 'b' and 'left' or 'right'}
-                        .get(v.get('verdict'), v.get('verdict', '')), 'note': v.get('note', '')})
+                        .get(v.get('verdict'), v.get('verdict', '')), 'note': v.get('note', ''),
+                        'explanation': self._shown(it)})
         return out
 
     def judge(self, ident, verdict, note):
@@ -166,19 +192,39 @@ class Review:
                 os.fsync(f.fileno())
             self.verdicts[ident] = rec
 
+    def _shown(self, it):
+        e = self.explained.get(it['id'])
+        return e and {'difference': e.get('difference', ''), 'left': e.get(it['left'], ''), 'right': e.get(it['right'], '')}
+
     def explain_item(self, ident):
+        """What the two analyses disagree about, in plain English: asked of the
+        model once per item and kept in a file next to the input."""
         from kelp import explain as X
         if self.explain is None:
             raise ValueError('this server has no model for explanations (see --explain)')
         it = self.by_id[ident]
-        graphs = [it[it[w]]['dmrs'] for w in ('left', 'right')]
-        if not all(graphs):
-            raise ValueError('there is nothing to compare')
-        left, right = X.distinguishing(graphs)
-        text = X.prompt(it['sentence'], [(1, left, []), (2, right, [])])
-        if text not in self.explained:
-            self.explained[text] = self.explain(text)
-        return {'left': self.explained[text].get('1', ''), 'right': self.explained[text].get('2', '')}
+        if ident not in self.explained:
+            sides = [it['a'], it['b']]
+            if not all(s['tree'] or s['dmrs'] for s in sides):
+                raise ValueError('there is nothing to compare')
+            facts = X.distinguishing([s['dmrs'] for s in sides]) if all(s['dmrs'] for s in sides) else [[], []]
+            text = X.prompt(it['sentence'], [(k + 1, facts[k], _tree_notes(s, sides[1 - k])) for k, s in enumerate(sides)])
+            answer = self.explain(text)                 # outside the lock: this takes seconds
+            with self.lock:
+                self.explained[ident] = {'difference': answer.get('difference', ''), 'a': answer.get('1', ''), 'b': answer.get('2', '')}
+                tmp = self.notes + '.tmp'
+                with open(tmp, 'w', encoding='utf-8') as f:
+                    json.dump(self.explained, f, ensure_ascii=False, indent=1)
+                os.replace(tmp, self.notes)
+        return self._shown(it)
+
+    def explain_ahead(self):
+        """Explain every item that has no explanation yet; meant for a background thread."""
+        for it in self.items:
+            try:
+                self.explain_item(it['id'])
+            except Exception as e:                      # one failure must not stop the rest
+                print(f'no explanation for {it["id"]}: {e}', flush=True)
 
 
 def make_handler(review, docs, lookup, explainer):
@@ -240,6 +286,8 @@ def main():
     ap.add_argument('--author')
     ap.add_argument('--explain', default='auto', choices=['auto', 'none', 'claude-cli', 'anthropic', 'openai', 'gemini'])
     ap.add_argument('--explain-model')
+    ap.add_argument('--explain-ahead', action='store_true',
+                    help='ask the model about every item in the background, so that explanations are there when an item is opened')
     ap.add_argument('--host', default='127.0.0.1')
     ap.add_argument('--port', type=int, default=8768)
     args = ap.parse_args()
@@ -266,6 +314,8 @@ def main():
                 if it[s]['tree']:
                     note(it[s]['tree'])
         docs = {name: d for name, d in lookup.info.items() if name in used}
+    if args.explain_ahead and explain:
+        threading.Thread(target=review.explain_ahead, daemon=True).start()
     bad = sum(bool(it[s]['error']) for it in review.items for s in ('a', 'b'))
     print(f'{len(review.items)} items, {len(review.verdicts)} with a verdict' + (f', {bad} analyses unreadable' if bad else ''), flush=True)
     print(f'Verdicts: {review.out}', flush=True)
