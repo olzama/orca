@@ -185,6 +185,15 @@ body { grid-template-columns: 300px minmax(0, 1fr); }
 .shape { overflow-x: auto; margin-bottom: 4px; }
 svg .mini-dot.diff { fill: var(--chg); }
 svg .mini-edge.diff { stroke: var(--chg); stroke-width: 1.6; }
+.gcard { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
+.gcard.out { opacity: .45; }
+.gcard.ex { border-color: var(--accent); }
+.gcard .ghead { display: flex; gap: 10px; align-items: baseline; margin-bottom: 4px; }
+.gcard .ghead .s { font-size: 16px; flex: 1; cursor: pointer; }
+.gcard .ghead .s:hover { text-decoration: underline; }
+.gcard .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.gcard .two > div { min-width: 0; overflow-x: auto; }
+.gcard .tdiff { font: 12px var(--mono); color: var(--muted); margin-top: 2px; }
 .tick { font-size: 15px; padding: 2px 12px; border-radius: 16px; }
 .tick.on { background: var(--accent); color: var(--panel); border-color: var(--accent); }
 #diffbox { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 15px; }
@@ -224,7 +233,7 @@ svg .node.diff .box { fill: var(--chg-soft); stroke: var(--chg); stroke-width: 1
 </section>
 <footer id="keys">
   <span><kbd>1</kbd> <kbd>2</kbd> check or uncheck the left, right analysis (both can be checked)</span><span><kbd>x</kbd> neither is right</span>
-  <span><kbd>0</kbd> clear</span><span><kbd>t</kbd> unfold or fold the parts both trees share</span><span><kbd>Enter</kbd> next without a verdict</span><span><kbd>n</kbd><kbd>p</kbd> next, previous</span><span><kbd>o</kbd> take out of its group</span>
+  <span><kbd>0</kbd> clear</span><span><kbd>t</kbd> unfold or fold the parts both trees share</span><span><kbd>Enter</kbd> next without a verdict</span><span><kbd>n</kbd><kbd>p</kbd> next, previous</span><span><kbd>m</kbd> the other items of the group</span><span><kbd>o</kbd> take a member out of its group</span>
   <span><kbd>w</kbd> whole graphs</span><span><kbd>e</kbd> explain the difference</span><span><kbd>l</kbd> look up in the grammar</span>
 </footer>
 <aside id="lookup">
@@ -237,7 +246,7 @@ svg .node.diff .box { fill: var(--chg-soft); stroke: var(--chg); stroke-width: 1
 'use strict';
 const $ = id => document.getElementById(id);
 let items = [], cur = 0, docs = {}, whole = false, explainer = null, labeled = false, asking = false, busy = false;
-let groupLabels = {}, rows = [];
+let groupLabels = {}, rows = [], groupView = false;
 let fold = {}, unfolded = false;      // per item and side: nodes folded or unfolded by hand; everything unfolded
 function el(tag, attrs, ...kids) {
   const e = document.createElement(tag);
@@ -481,7 +490,12 @@ function renderGroup(it) {
   if (label && it !== it.rep) grp.append(' · follows the verdict on the group\u2019s example unless you check one here');
   if (it.moved) grp.append(' · moved by you');
   if (!Object.keys(groupLabels).length) return;
-  if (label) { const out = el('button', {}, 'Take out of this group ', el('kbd', {}, 'o')); out.onclick = () => move(null); tools.append(out); }
+  if (it === it.rep && others) {    // the example stays; its members are checked against it
+    const b = el('button', {class: groupView ? 'on' : ''}, groupView ? 'Back to the example ' : 'Check the ' + others + ' other ' + (others === 1 ? 'item' : 'items') + ' of this group ', el('kbd', {}, 'm'));
+    b.onclick = toggleGroupView; tools.append(b);
+    return;
+  }
+  if (label) { const out = el('button', {}, 'Not like the example: take out of this group ', el('kbd', {}, 'o')); out.onclick = () => move(null); tools.append(out); }
   const pick = el('select', {}, el('option', {value: ''}, 'Move to another group …'));
   for (const g of Object.keys(groupLabels).sort((a, b) => groupLabels[a].localeCompare(groupLabels[b])))
     if (String(g) !== String(it.group)) pick.append(el('option', {value: g}, groupLabels[g]));
@@ -495,11 +509,43 @@ function apply(data) {              // the server's answer after a change
   const by = new Map(data.status.map(s => [s.id, s]));
   for (const it of items) Object.assign(it, by.get(it.id) || {});
 }
-async function move(to) {
+function toggleGroupView() { groupView = !groupView; render(); $('treewrap').scrollTop = 0; }
+function treeDiff(side, other) {    // the widest nodes of one tree that the other lacks, as text
+  if (!side.tree || !other.tree) return [];
+  const theirs = new Set(flat(other.tree, []).map(keyOf));
+  return flat(side.tree, []).filter(n => !theirs.has(keyOf(n))).sort((a, b) => (b.end - b.start) - (a.end - a.start) || a.start - b.start).slice(0, 3)
+    .map(n => n.labels.join(' › ') + ' over “' + side.words.slice(n.start, n.end).join(' ') + '”');
+}
+function renderGroupView(rep) {     // the example and every other item of its group, small, to check that they are alike
+  const holder = $('sides'); holder.replaceChildren(); holder.style.display = 'block';
+  const gone = items.filter(x => x.moved && x.group0 === rep.group && x.group !== rep.group);    // taken out earlier: still listed, faded
+  const others = rep.members.filter(x => x !== rep);
+  $('guide').replaceChildren('The example of the group, then the ' + others.length + ' other ' + (others.length === 1 ? 'item' : 'items') + ' said to differ in the same way. ' +
+    'Each shows only where its two analyses differ: the meanings, then the tree nodes. Take out any item that is not like the example; ' +
+    'it then stands alone and needs its own verdict. Click a sentence to see that item in full.');
+  for (const it of [rep].concat(others, gone)) {
+    const out = it.group !== rep.group, varying = prepare(it);
+    const b = it === rep ? el('span', {class: 'badge accepted'}, 'the example') : el('button', {}, out ? 'Put back' : '✗ Not like the example');
+    if (it !== rep) b.onclick = () => move(out ? '' : null, it.id);
+    const s = el('span', {class: 's', title: 'open this item'}, it.sentence);
+    s.onclick = () => { groupView = false; go(it.i); };
+    const card = el('div', {class: 'gcard' + (out ? ' out' : '') + (it === rep ? ' ex' : '')}, el('div', {class: 'ghead'}, s, el('span', {class: 'where'}, it.id), b));
+    const two = el('div', {class: 'two'});
+    for (const w of ['left', 'right']) {
+      const side = it[w], o = it[w === 'left' ? 'right' : 'left'], cell = el('div', {});
+      if (side.dmrs && Object.keys(side.dmrs.facts).some(x => varying.has(x))) cell.append(drawGraph(side.dmrs, varying, false));
+      else cell.append(el('div', {class: 'where'}, !side.dmrs ? 'no meaning' : varying.size ? 'nothing in the meaning that the other side lacks' : 'same meaning'));
+      for (const line of treeDiff(side, o)) cell.append(el('div', {class: 'tdiff'}, line));
+      two.append(cell);
+    }
+    card.append(two); holder.append(card);
+  }
+}
+async function move(to, id) {
   if (busy) return;
   busy = true;
   try {
-    const r = await fetch('/api/move', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id: items[cur].id, to})});
+    const r = await fetch('/api/move', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id: id || items[cur].id, to})});
     const data = await r.json();
     if (!r.ok) showError(data.error || 'not saved'); else apply(data);
   } catch (e) { showError('not saved: ' + e.message); }
@@ -526,12 +572,16 @@ function render() {
   renderList();
   if (!it) { $('guide').textContent = 'This file has no items.'; return; }
   $('sentence').textContent = it.sentence;
+  if (it !== it.rep || it.members.length < 2) groupView = false;
   renderGroup(it);
+  for (const id of ['diffbox', 'readbar', 'verdict', 'note']) $(id).style.display = groupView ? 'none' : '';
+  $('sides').style.display = '';
+  if (groupView) return renderGroupView(it);
   const varying = prepare(it);
   $('guide').replaceChildren('Which analysis is right? ', el('span', {class: 'orange'}, 'Orange'), ' marks what the other side lacks, in the meaning and in the tree. ' +
     (labeled ? '' : 'Which side is which is hidden until you give a verdict. '));
   const e = it.explanation, box0 = $('diffbox');
-  box0.style.display = e && e.difference || explainer && it.left.tree && it.right.tree ? '' : 'none';
+  if (!groupView) box0.style.display = e && e.difference || explainer && it.left.tree && it.right.tree ? '' : 'none';
   if (e && e.difference) box0.replaceChildren(el('b', {}, 'The difference: '), e.difference,
     el('small', {}, 'Suggested by ' + explainer + ' from the differences alone, without knowing which side is which. It can be wrong.'));
   else { const b = el('button', {}, asking ? 'Asking ' + explainer + ' …' : 'Explain the difference in plain English ', el('kbd', {}, 'e')); b.onclick = explain; box0.replaceChildren(b); }
@@ -626,7 +676,8 @@ document.addEventListener('keydown', ev => {
   else if (k === 'n' || k === 'ArrowDown') go(rows[rows.indexOf(cur) + 1]);
   else if (k === 'p' || k === 'ArrowUp') go(rows[rows.indexOf(cur) - 1]);
   else if (k === 'Enter') { const todo = it => it === it.rep && !it.verdict, i = items.findIndex((it, j) => j > cur && todo(it)); go(i >= 0 ? i : items.findIndex(todo)); }
-  else if (k === 'o') { if (labelOf(items[cur])) move(null); }
+  else if (k === 'o') { const it = items[cur]; if (labelOf(it) && !(it === it.rep && it.members.length > 1)) move(null); }
+  else if (k === 'm') { const it = items[cur]; if (it === it.rep && it.members.length > 1) toggleGroupView(); }
   else if (k === 'w') { whole = !whole; render(); }
   else if (k === 'e') explain();
   else if (k === 'l') { $('lookup').classList.add('on'); $('lookupq').focus(); }

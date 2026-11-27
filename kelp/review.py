@@ -15,7 +15,7 @@ with the reference analysis in "a". A side without an analysis has null for
 derivation and mrs.
 
 Sides are shown blind unless --labeled is given: which of a and b is on the
-left depends on the item's id, and the labels appear once a verdict is given.
+left depends on the item's group (or on its id, for an item without a group), and the labels appear once a verdict is given.
 
 Explanations from the model are kept in FILE.explanations.json, so each item
 is asked about once. With --explain-ahead they are all fetched in the background.
@@ -154,7 +154,9 @@ class Review:
             for line in f:
                 if line.strip():
                     rec = json.loads(line)
-                    flip = not labeled and hashlib.sha1(str(rec['id']).encode()).digest()[0] % 2 == 1
+                    # one placement per group, so that its members can be compared with its example
+                    by = rec['group'] if rec.get('group') is not None else rec['id']
+                    flip = not labeled and hashlib.sha1(str(by).encode()).digest()[0] % 2 == 1
                     self.items.append({'id': str(rec['id']), 'sentence': rec.get('sentence', ''),
                                        'group': rec.get('group'), 'example': bool(rec.get('example')),
                                        'group_size': rec.get('group_size'),
