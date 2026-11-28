@@ -14,11 +14,16 @@ Quen14B-2025-llm here is Qwen14B-2025-llm in the training data.
             given the forms as typed, renamed SOURCE/i-id, and appended to
             OUT/train.jsonl; OUT/state.json records what was ingested, so a later
             retry tier adds only its own new sentences.
+  split     divides OUT/train.jsonl by sentence into train/dev/test files
+            (2/3, 1/6, 1/6 with --seed); used for the hard retries, whose dev and
+            test parts measure Orca on long or costly news (test kept untouched).
   assemble  writes a training folder: the base training files plus OUT/train.jsonl,
             with dev and test linked from the base folder.
 
 Usage:
     ingest_news.py run [--tiers T ...] [--out data/encoded-news25] [--workers 6]
+    ingest_news.py run --out data/encoded-news25-retry --known data/encoded-news25/state.json --tiers ...
+    ingest_news.py split --out data/encoded-news25-retry [--seed 71]
     ingest_news.py assemble --into data/encoded-2025-bothall-news25-surface
 """
 import argparse
@@ -45,11 +50,51 @@ ALIAS = {'Quen14B-2025-llm': 'Qwen14B-2025-llm'}
 BASE = [os.path.join(ROOT, 'data/encoded-2025-bothall-surface/train.jsonl'),
         os.path.join(ROOT, 'data/encoded-lit-new/train.jsonl')]
 HOLD = os.path.join(ROOT, 'analysis/corpus-modes/sample.json')
+UNSEEN = os.path.join(ROOT, 'analysis/corpus-modes-unseen/sample.json')
+HELD = os.path.join(ROOT, 'data/encoded-nyt/held-out.jsonl')      # the held-out tenth (unseen-news sample)
 ID = re.compile(r'^\{"id": "([^"/]+)/(\d+)"')
 
 
 def canon(src):
     return ALIAS.get(src, src)
+
+
+def norm(s):
+    """Sentence key: letters and digits only, lowercased (tokenization and spacing differ between files)."""
+    return re.sub(r'\W', '', s.lower())
+
+
+def known_texts(paths):
+    """Normalized text of every sentence in these encoded files. Ids are no use for this: the same
+    SOURCE/i-id names different sentences in the training data and in the tiered profiles."""
+    out = set()
+    for p in paths:
+        if os.path.exists(p):
+            with open(p, encoding='utf-8') as f:
+                for line in f:
+                    out.add(norm(''.join(t['form'] for t in json.loads(line)['tokens'])))
+    return out
+
+
+def sample_texts(path):
+    """Normalized text of the news sentences of an evaluation sample (its encoded file, next to it)."""
+    enc = os.path.join(os.path.dirname(path), 'encoded.jsonl')
+    return known_texts([enc])
+
+
+def item_texts(chunk):
+    """i-id -> normalized i-input of a chunk profile."""
+    p = os.path.join(chunk, 'item.gz')
+    op = gzip.open if os.path.exists(p) else open
+    p = p if os.path.exists(p) else os.path.join(chunk, 'item')
+    out = {}
+    if not os.path.exists(p):                         # an empty chunk (nothing to retry in it)
+        return out
+    with op(p, 'rt', encoding='utf-8', errors='replace') as f:
+        for line in f:
+            a = line.split('@')
+            out[int(a[0])] = norm(a[6])
+    return out
 
 
 def known_keys(paths):
@@ -136,12 +181,15 @@ def _encode(split_dir, e2t_dir, out):
 
 
 def run(args):
+    args.out = os.path.abspath(args.out)             # links made below must not be relative
     os.makedirs(args.out, exist_ok=True)
     state_path = os.path.join(args.out, 'state.json')
     state = json.load(open(state_path)) if os.path.exists(state_path) else {'ingested': []}
     done = {(s, i) for t in state['ingested'] for s, ids in t.get('ids', {}).items() for i in ids}
-    have = known_keys(BASE) | done
-    hold = held_out_keys(HOLD)
+    # by text: the base training data, earlier ingests (this one's and --known ones'), and every
+    # evaluation sample (the old corpus sample, the unseen-news sample and the held-out tenth it is drawn from)
+    have = known_texts(BASE + [os.path.join(args.out, 'train.jsonl')] + [os.path.join(os.path.dirname(k), 'train.jsonl') for k in args.known])
+    hold = sample_texts(HOLD) | sample_texts(UNSEEN) | known_texts([HELD])
     grammar = os.path.join(args.erg, 'english.tdl')
     for tier in args.tiers:
         tdir = os.path.join(RESULTS, tier)
@@ -153,22 +201,24 @@ def run(args):
             continue
         stats = collections.Counter()
         want = {}                                       # link name -> set of new i-ids
-        links = os.path.join(args.out, 'profiles', tier)
+        links = os.path.join(args.out, 'profiles', os.path.basename(tier.rstrip('/')))   # never inside RESULTS
         os.makedirs(links, exist_ok=True)
         for src in sorted(os.listdir(tdir)):
             for ch in sorted(os.listdir(os.path.join(tdir, src))):
                 chunk = os.path.join(tdir, src, ch)
                 ids = parsed_ids(chunk)
+                text = item_texts(chunk)
                 stats['parsed'] += len(ids)
                 new = set()
                 for i in ids:
-                    k = (canon(src), i)
+                    k = text[i]
                     if k in hold:
                         stats['held out (evaluation sample)'] += 1
                     elif k in have:
                         stats['already in training'] += 1
                     else:
                         new.add(i)
+                        have.add(k)                     # a sentence repeated across chunks or tiers is added once
                 stats['new'] += len(new)
                 if new:
                     link = os.path.join(links, ch)
@@ -271,16 +321,35 @@ def assemble(args):
     print(json.dumps(counts))
 
 
+def split(args):
+    import random
+    src = os.path.join(args.out, 'train.jsonl')
+    lines = open(src, encoding='utf-8').read().splitlines(keepends=True)
+    order = list(range(len(lines)))
+    random.Random(args.seed).shuffle(order)
+    n_dev = n_test = len(lines) // 6
+    parts = {'test': order[:n_test], 'dev': order[n_test:n_test + n_dev], 'train': order[n_test + n_dev:]}
+    os.makedirs(os.path.join(args.out, 'split'), exist_ok=True)
+    for name, idx in parts.items():
+        with open(os.path.join(args.out, 'split', f'{name}.jsonl'), 'w', encoding='utf-8') as f:
+            f.writelines(lines[i] for i in sorted(idx))
+    json.dump({'from': os.path.relpath(src, ROOT), 'seed': args.seed, 'sizes': {k: len(v) for k, v in parts.items()}},
+              open(os.path.join(args.out, 'split', 'split.json'), 'w'), indent=1)
+    print({k: len(v) for k, v in parts.items()})
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=('run', 'assemble'))
+    ap.add_argument('cmd', choices=('run', 'split', 'assemble'))
+    ap.add_argument('--known', nargs='*', default=[], help="other ingests' state.json: their sentences are skipped")
+    ap.add_argument('--seed', type=int, default=71)
     ap.add_argument('--tiers', nargs='+', default=TIERS)
     ap.add_argument('--out', default=os.path.join(ROOT, 'data/encoded-news25'))
     ap.add_argument('--into', default=os.path.join(ROOT, 'data/encoded-2025-bothall-news25-surface'))
     ap.add_argument('--erg', default=os.path.join(ROOT, 'data/erg/2025'))
     ap.add_argument('--workers', type=int, default=6)
     args = ap.parse_args()
-    run(args) if args.cmd == 'run' else assemble(args)
+    {'run': run, 'split': split, 'assemble': assemble}[args.cmd](args)
 
 
 if __name__ == '__main__':
